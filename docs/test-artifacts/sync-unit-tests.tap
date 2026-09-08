@@ -1,0 +1,316 @@
+TAP version 13
+# Subtest: memory: cross-page little-endian reads/writes and protection
+ok 1 - memory: cross-page little-endian reads/writes and protection
+  ---
+  duration_ms: 1.0695
+  type: 'test'
+  ...
+# Subtest: heap: aligned zeroing, reuse, coalescing, realloc copy
+ok 2 - heap: aligned zeroing, reuse, coalescing, realloc copy
+  ---
+  duration_ms: 0.2634
+  type: 'test'
+  ...
+# Subtest: ANSI/UTF16 strings retain supported characters and terminate
+ok 3 - ANSI/UTF16 strings retain supported characters and terminate
+  ---
+  duration_ms: 0.3608
+  type: 'test'
+  ...
+# Subtest: ALU: 18,000 deterministic arithmetic/flag cases vs BigInt reference
+ok 4 - ALU: 18,000 deterministic arithmetic/flag cases vs BigInt reference
+  ---
+  duration_ms: 19.662
+  type: 'test'
+  ...
+# Subtest: CPU: byte/high-byte and operand-size register preservation
+ok 5 - CPU: byte/high-byte and operand-size register preservation
+  ---
+  duration_ms: 0.6703
+  type: 'test'
+  ...
+# Subtest: CPU: ModRM/SIB and FS segment base
+ok 6 - CPU: ModRM/SIB and FS segment base
+  ---
+  duration_ms: 0.252
+  type: 'test'
+  ...
+# Subtest: CPU: call/ret and stack restoration
+ok 7 - CPU: call/ret and stack restoration
+  ---
+  duration_ms: 0.1469
+  type: 'test'
+  ...
+# Subtest: CPU: signed multiply/divide, divide errors
+ok 8 - CPU: signed multiply/divide, divide errors
+  ---
+  duration_ms: 0.5498
+  type: 'test'
+  ...
+# Subtest: CPU: REP MOVSB yields and resumes with correct ECX
+ok 9 - CPU: REP MOVSB yields and resumes with correct ECX
+  ---
+  duration_ms: 1.657
+  type: 'test'
+  ...
+# Subtest: CPU: reverse REP and REPE termination
+ok 10 - CPU: reverse REP and REPE termination
+  ---
+  duration_ms: 0.3579
+  type: 'test'
+  ...
+# Subtest: CPU: CPUID preserves non-output registers and stack
+ok 11 - CPU: CPUID preserves non-output registers and stack
+  ---
+  duration_ms: 0.5113
+  type: 'test'
+  ...
+# Subtest: CPU: SHLD/SHRD preserve full unsigned 32-bit precision
+ok 12 - CPU: SHLD/SHRD preserve full unsigned 32-bit precision
+  ---
+  duration_ms: 0.2942
+  type: 'test'
+  ...
+# Subtest: CPU: x87 subtract/reverse subtract/divide destinations and pops
+ok 13 - CPU: x87 subtract/reverse subtract/divide destinations and pops
+  ---
+  duration_ms: 1.1107
+  type: 'test'
+  ...
+# Subtest: CPU: scalar SSE addition and clearing only documented lanes
+ok 14 - CPU: scalar SSE addition and clearing only documented lanes
+  ---
+  duration_ms: 0.4536
+  type: 'test'
+  ...
+# Subtest: CPU: unimplemented instructions fail with address/bytes
+ok 15 - CPU: unimplemented instructions fail with address/bytes
+  ---
+  duration_ms: 0.2219
+  type: 'test'
+  ...
+# Subtest: ZIP: CRC32 standard known vector
+ok 16 - ZIP: CRC32 standard known vector
+  ---
+  duration_ms: 0.4757
+  type: 'test'
+  ...
+# Subtest: ZIP: stored Unicode/empty directory round-trip
+ok 17 - ZIP: stored Unicode/empty directory round-trip
+  ---
+  duration_ms: 0.3438
+  type: 'test'
+  ...
+# Subtest: ZIP: real DEFLATE compiled package imports twelve entries
+ok 18 - ZIP: real DEFLATE compiled package imports twelve entries
+  ---
+  duration_ms: 0.0762
+  type: 'test'
+  ...
+# Subtest: ZIP: traversal, drives, absolute and ambiguous filenames rejected
+ok 19 - ZIP: traversal, drives, absolute and ambiguous filenames rejected
+  ---
+  duration_ms: 0.324
+  type: 'test'
+  ...
+# Subtest: ZIP: case-insensitive duplicate and parent-as-file rejected
+ok 20 - ZIP: case-insensitive duplicate and parent-as-file rejected
+  ---
+  duration_ms: 0.3187
+  type: 'test'
+  ...
+# Subtest: ZIP: CRC mismatch and truncation do not mount
+ok 21 - ZIP: CRC mismatch and truncation do not mount
+  ---
+  duration_ms: 0.17
+  type: 'test'
+  ...
+# Subtest: ZIP: symlink, encryption, unsupported methods, limits rejected
+ok 22 - ZIP: symlink, encryption, unsupported methods, limits rejected
+  ---
+  duration_ms: 0.2575
+  type: 'test'
+  ...
+# Subtest: VFS: package mounts preserve folders and case-insensitive paths
+ok 23 - VFS: package mounts preserve folders and case-insensitive paths
+  ---
+  duration_ms: 5.676
+  type: 'test'
+  ...
+# Subtest: VFS: writes, sparse file growth, quota and snapshot independence
+ok 24 - VFS: writes, sparse file growth, quota and snapshot independence
+  ---
+  duration_ms: 0.6652
+  type: 'test'
+  ...
+# Subtest: VFS: file-parent conflicts and nonempty directory removal rejected
+ok 25 - VFS: file-parent conflicts and nonempty directory removal rejected
+  ---
+  duration_ms: 0.1877
+  type: 'test'
+  ...
+# Subtest: Backup: complete virtual C drive restores EXE selection and files
+ok 26 - Backup: complete virtual C drive restores EXE selection and files
+  ---
+  duration_ms: 1.8552
+  type: 'test'
+  ...
+# Subtest: PE: identifies compiled console/GUI images and imports
+ok 27 - PE: identifies compiled console/GUI images and imports
+  ---
+  duration_ms: 1.3032
+  type: 'test'
+  ...
+# Subtest: PE: malformed headers, managed and wrong CPU rejected
+ok 28 - PE: malformed headers, managed and wrong CPU rejected
+  ---
+  duration_ms: 0.4539
+  type: 'test'
+  ...
+# Subtest: PE: 80 malformed section/import mutations fail safely or parse within bounds
+ok 29 - PE: 80 malformed section/import mutations fail safely or parse within bounds
+  ---
+  duration_ms: 2.1979
+  type: 'test'
+  ...
+# Subtest: EXE: console program runs native x86 instructions, imports and CRT then exits 0
+ok 30 - EXE: console program runs native x86 instructions, imports and CRT then exits 0
+  ---
+  duration_ms: 8.8033
+  type: 'test'
+  ...
+# Subtest: EXE: relative package file reads and real virtual file writes
+ok 31 - EXE: relative package file reads and real virtual file writes
+  ---
+  duration_ms: 2.3886
+  type: 'test'
+  ...
+# Subtest: EXE: two packaged DLLs initialize, relocate and resolve dynamic exports
+ok 32 - EXE: two packaged DLLs initialize, relocate and resolve dynamic exports
+  ---
+  duration_ms: 2.0876
+  type: 'test'
+  ...
+# Subtest: EXE: console ReadFile blocks then resumes on input
+ok 33 - EXE: console ReadFile blocks then resumes on input
+  ---
+  duration_ms: 1.4512
+  type: 'test'
+  ...
+# Subtest: EXE: window callbacks, GDI, button write, modal result, timers, quit
+ok 34 - EXE: window callbacks, GDI, button write, modal result, timers, quit
+  ---
+  duration_ms: 4.5898
+  type: 'test'
+  ...
+# Subtest: EXE: computed DIB pixel buffer has genuine varied RGBA data
+ok 35 - EXE: computed DIB pixel buffer has genuine varied RGBA data
+  ---
+  duration_ms: 53.8971
+  type: 'test'
+  ...
+# Subtest: EXE: unsupported API is a structured fault, never a fabricated success
+ok 36 - EXE: unsupported API is a structured fault, never a fabricated success
+  ---
+  duration_ms: 1.6478
+  type: 'test'
+  ...
+# Subtest: Debugger: entry breakpoint, single step, resume and instruction budget
+ok 37 - Debugger: entry breakpoint, single step, resume and instruction budget
+  ---
+  duration_ms: 2.0098
+  type: 'test'
+  ...
+# Subtest: API: private heap ownership, capacity, zeroing, destruction
+ok 38 - API: private heap ownership, capacity, zeroing, destruction
+  ---
+  duration_ms: 1.2597
+  type: 'test'
+  ...
+# Subtest: Isolation: independent process disks and capped console input
+ok 39 - Isolation: independent process disks and capped console input
+  ---
+  duration_ms: 2.035
+  type: 'test'
+  ...
+# Subtest: Static server delivers modules/ZIP without an execution or upload endpoint
+ok 40 - Static server delivers modules/ZIP without an execution or upload endpoint
+  ---
+  duration_ms: 106.5759
+  type: 'test'
+  ...
+# Subtest: Win32 sync: A/W manual and auto events preserve reset semantics
+ok 41 - Win32 sync: A/W manual and auto events preserve reset semantics
+  ---
+  duration_ms: 5.8193
+  type: 'test'
+  ...
+# Subtest: Win32 sync: A/W mutex initial ownership, recursion and unowned release
+ok 42 - Win32 sync: A/W mutex initial ownership, recursion and unowned release
+  ---
+  duration_ms: 2.6131
+  type: 'test'
+  ...
+# Subtest: Win32 sync: A/W semaphore counts, signed LONG bounds and failed release atomicity
+ok 43 - Win32 sync: A/W semaphore counts, signed LONG bounds and failed release atomicity
+  ---
+  duration_ms: 2.5217
+  type: 'test'
+  ...
+# Subtest: Win32 sync: wait-any chooses the first ready index and consumes only that object
+ok 44 - Win32 sync: wait-any chooses the first ready index and consumes only that object
+  ---
+  duration_ms: 0.8872
+  type: 'test'
+  ...
+# Subtest: Win32 sync: wait-all is atomic for event, semaphore and mutex on timeout and success
+ok 45 - Win32 sync: wait-all is atomic for event, semaphore and mutex on timeout and success
+  ---
+  duration_ms: 1.0683
+  type: 'test'
+  ...
+# Subtest: Win32 sync: invalid handles, duplicate handles and array bounds leave signals untouched
+ok 46 - Win32 sync: invalid handles, duplicate handles and array bounds leave signals untouched
+  ---
+  duration_ms: 1.0327
+  type: 'test'
+  ...
+# Subtest: Win32 sync: unsupported naming, security and APC modes fail explicitly
+ok 47 - Win32 sync: unsupported naming, security and APC modes fail explicitly
+  ---
+  duration_ms: 2.1096
+  type: 'test'
+  ...
+# Subtest: Win32 sync: pending waits integrate with process polling and resume only when ready
+ok 48 - Win32 sync: pending waits integrate with process polling and resume only when ready
+  ---
+  duration_ms: 1.7362
+  type: 'test'
+  ...
+# Subtest: Win32 sync: finite timeout is deterministic; infinite waits have no deadline
+ok 49 - Win32 sync: finite timeout is deterministic; infinite waits have no deadline
+  ---
+  duration_ms: 1.2509
+  type: 'test'
+  ...
+# Subtest: EXE: compiled synchronization imports, stdcall stack, blocked wait and clean exit
+ok 50 - EXE: compiled synchronization imports, stdcall stack, blocked wait and clean exit
+  ---
+  duration_ms: 3.6868
+  type: 'test'
+  ...
+# Subtest: EXE: compiled synchronization timeout resumes through the guest ABI
+ok 51 - EXE: compiled synchronization timeout resumes through the guest ABI
+  ---
+  duration_ms: 1.8753
+  type: 'test'
+  ...
+1..51
+# tests 51
+# suites 0
+# pass 51
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 160.5981

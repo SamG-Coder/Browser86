@@ -4,7 +4,7 @@
 
 Browser86 is an original JavaScript IA-32 interpreter, PE32 loader, and **partial** Windows user-mode compatibility runtime. It does not use Wine, Boxedwine, v86, QEMU, a Windows installation, remote execution, or an existing CPU emulator. The application and demo source are MIT licensed.
 
-**This is an executable prototype, not universal Windows compatibility.** It executes real 32-bit x86 machine code and can run the six included supported demonstration programs. It will not run arbitrary modern Windows applications. Importing a package successfully does not mean its software is compatible. See [COMPATIBILITY.md](docs/COMPATIBILITY.md) for the actual boundary.
+**This is an executable prototype, not universal Windows compatibility.** It executes real 32-bit x86 machine code and can run the seven included supported demonstration programs. It will not run arbitrary modern Windows applications. Importing a package successfully does not mean its software is compatible. See [COMPATIBILITY.md](docs/COMPATIBILITY.md) for the actual boundary.
 
 ## Start on Windows
 
@@ -63,7 +63,7 @@ Importing the exact same original ZIP again restores that package's saved disk; 
 | Windows compatibility | Original kernel/file/heap/path/console handlers, portions of CRT, basic registry storage, window callbacks/messages, timers, basic controls and GDI drawing. |
 | Diagnostics | Pause/resume/step, breakpoint, register and memory-map display, recent API/EIP traces, exact unsupported import/opcode reports and JSON export. |
 
-`src/api-catalog.json` contains **403 registered import entries**, including A/W variants, CRT functions and data entries. **That count is not 403 fully compatible Windows APIs.** Many handlers implement a restricted argument/behavior subset; others explicitly reject unsupported modes. See the source and compatibility notes before assuming parity.
+`src/api-catalog.json` contains **412 registered import entries**, including A/W variants, CRT functions and data entries. **That count is not 412 fully compatible Windows APIs.** Many handlers implement a restricted argument/behavior subset; others explicitly reject unsupported modes. See the source and compatibility notes before assuming parity.
 
 ## Included compiled programs
 
@@ -77,6 +77,7 @@ These are PE32 binaries compiled from the included C source with LLVM, not JavaS
 | `apps/DllLoader.exe` | Two application DLLs, `DllMain`, IAT exports, dynamic `GetProcAddress`, and relocation when preferred bases collide. |
 | `apps/WindowStudio.exe` | Guest window procedure, controls, GDI shapes/text, timer, file-writing button and modal dialog result. |
 | `apps/PixelCanvas.exe` | Guest-computed pixels displayed with `StretchDIBits`; clicking regenerates the image. |
+| `tests/SyncPrimitives.exe` | Events, recursive mutexes, semaphores, atomic multi-object waits, error codes and a suspended wait. |
 | `tests/UnsupportedApi.exe` | An **intentional failure** at `CreateThread`, demonstrating an honest unsupported-API diagnostic. |
 
 ## Verification
@@ -87,7 +88,7 @@ npm test
 node --test tests/*.test.mjs
 ```
 
-The recorded run passes **40 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all six supported demos, the intentional failure, GUI callbacks, DLL relocation and static-server delivery.
+The recorded run passes **51 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all seven supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks and static-server delivery.
 
 The optional browser harness is:
 
@@ -128,6 +129,7 @@ src/runtime/memory.js      Sparse protected pages and allocation
 src/runtime/pe.js          PE images, linking, relocation and DLL initialization
 src/runtime/process.js     Guest process, stack/TEB/PEB, imports and callbacks
 src/runtime/win32.js        Original kernel/file/path/heap/registry compatibility
+src/runtime/sync.js         Single-thread event/mutex/semaphore waits
 src/runtime/gui.js          Window messaging, controls and GDI command generation
 src/runtime/crt.js          Restricted C runtime implementation
 src/runtime/zip.js          ZIP reader/writer and validation

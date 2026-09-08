@@ -25,7 +25,7 @@ def main():
         page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(args.url,wait_until='networkidle')
         page.locator('#zip-input').set_input_files(str(ROOT/'demos/browser86-demo.zip'))
-        page.wait_for_function("document.querySelectorAll('.exe-option').length===7",timeout=30000)
+        page.wait_for_function("document.querySelectorAll('.exe-option').length===8",timeout=30000)
         checks.append('Real-origin module import and ZIP import worker under deployed CSP')
         page.locator('.exe-option').filter(has_text='HelloConsole.exe').click()
         page.locator('#run').click()
@@ -46,14 +46,14 @@ def main():
         saved=page.evaluate("""async()=>{const db=await new Promise((ok,no)=>{const r=indexedDB.open('browser86-packages',1);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error);});const all=await new Promise((ok,no)=>{const r=db.transaction('packages').objectStore('packages').getAll();r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error);});db.close();return all.some(p=>p.entries.some(e=>e.path.endsWith('window-note.txt')));} """)
         assert saved;checks.append('Guest callback writes a file that reaches real IndexedDB')
         page.reload(wait_until='networkidle')
-        page.wait_for_function("document.querySelectorAll('.exe-option').length===7")
+        page.wait_for_function("document.querySelectorAll('.exe-option').length===8")
         assert 'WindowStudio' in page.locator('.exe-option.selected').inner_text()
         checks.append('Package and selected EXE restore after actual page reload')
         with page.expect_download() as capture:page.locator('#export-zip').click()
         download=capture.value;backup=out/'virtual-disk-backup.zip';download.save_as(str(backup));assert backup.stat().st_size>0
         checks.append('Virtual-disk export produces a real downloadable ZIP')
         page.locator('#zip-input').set_input_files(str(backup))
-        page.wait_for_function("document.querySelectorAll('.exe-option').length===7")
+        page.wait_for_function("document.querySelectorAll('.exe-option').length===8")
         checks.append('Backup ZIP is accepted for reimport')
         assert not errors,errors
         report={'result':'PASS','browser':browser.version,'url':args.url,'checks':checks,'pageErrors':errors}

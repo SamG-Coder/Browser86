@@ -15,6 +15,7 @@ A green/imported executable is a candidate, not a compatibility guarantee. A kno
 | Floating point | Selected x87 operations and scalar/vector SSE operations. | Exact x87 extended precision, full SSE/MMX/AVX, floating exception/denormal control and all rounding semantics. |
 | Loading | Section mapping, imports/exports, HIGHLOW/HIGH/LOW relocation, application DLL initialization, TLS structures/callbacks, basic resources. | Delay imports, loader-lock parity, full manifests/SxS, full loader search policy, complete unloading/detach semantics. |
 | Process model | One emulated thread in one active guest process. Guest callbacks can nest and block. | `CreateThread`, child processes, general synchronization across threads, scheduling multiple guests, Windows exception dispatch/SEH. |
+| Synchronization | Unnamed A/W events, recursive mutexes, counting semaphores; single/multiple waits (up to 64 distinct handles), wait-any/wait-all, polling and finite/infinite timeouts; non-alertable Ex waits. | Named objects, security attributes/handle inheritance, cross-process/thread contention, mutex abandonment, APC/alertable waits and other waitable object types. |
 | Files | Virtual C: only, regular files/directories, relative paths, basic sharing flags accepted in limited modes, synchronous I/O. | Real devices, network shares, host paths, overlapped I/O, full Windows file sharing/locking, reparse points, alternate streams and full filename rules. |
 | Memory | Protected sparse guest pages; process heap and separately owned private heap allocations. | Full Windows reserve/commit accounting. Reserve-only VirtualAlloc occupies host memory. HeapCreate's initial reservation is not modelled as a distinct committed region. Heap exceptions require unsupported SEH. |
 | GUI | Custom guest window procedures, basic messages/timers, BUTTON/STATIC/EDIT, pointer/keyboard events, basic message boxes. | Full USER32 behavior, menus, rich edit, common controls, common file dialogs, complete focus/activation/accessibility/IME, multi-monitor/DPI parity. |
@@ -25,6 +26,8 @@ A green/imported executable is a candidate, not a compatibility guarantee. A kno
 | Devices/network/audio | No guest host-device or network bridge. | WinSock, internet access, audio devices, hardware acceleration/device drivers, printing, USB, DRM/anti-cheat. |
 
 The original CPU uses direct interpretation, not a JIT. Native-speed execution is not claimed. Sustained workloads, large applications and real games may be slow or fail long before producing a window.
+
+Synchronization waits suspend the existing guest continuation without spinning the CPU. Wait-any consumes only the lowest-index ready object; wait-all changes object state only when every object is ready. Mutex acquisition is recursive for the sole emulated thread. A timeout never consumes an event or semaphore. Named objects and non-null security attributes raise `UNSUPPORTED_SYNC`; alertable Ex waits raise `UNSUPPORTED_APC`. An infinite wait that cannot be signaled remains suspended until the guest is stopped. These APIs do not add thread creation or background guest execution.
 
 ## Import/storage limits
 

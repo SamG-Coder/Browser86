@@ -7,6 +7,7 @@
     "apps/WindowStudio.exe",
     "apps/PixelCanvas.exe",
     "apps/DllLoader.exe",
+    "tests/SyncPrimitives.exe",
     "tests/UnsupportedApi.exe",
     "apps/mathhelper.dll",
     "apps/scalehelper.dll",

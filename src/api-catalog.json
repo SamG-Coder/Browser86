@@ -323,6 +323,34 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "CreateMutexA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "CreateMutexW",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "CreateSemaphoreA",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "CreateSemaphoreW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "DeleteCriticalSection",
     "argc": 1,
     "cdecl": false,
@@ -1240,6 +1268,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "ReleaseMutex",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "ReleaseSemaphore",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "RemoveDirectoryA",
     "argc": 1,
     "cdecl": false,
@@ -1471,8 +1513,29 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "WaitForMultipleObjects",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "WaitForMultipleObjectsEx",
+    "argc": 5,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "WaitForSingleObject",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "WaitForSingleObjectEx",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },

@@ -2,6 +2,7 @@ import {RuntimeFault,requireThat,hex} from './errors.js';
 import {alignUp,ansiEncode,ansiDecode} from './memory.js';
 import {GUI} from './gui.js';
 import {installCRT} from './crt.js';
+import {installSynchronization} from './sync.js';
 const INVALID=0xFFFFFFFF;
 const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
 export class Win32 {
@@ -108,7 +109,6 @@ export class Win32 {
       k('FindNextFile'+suffix,2,(h,out)=>{const f=p.object(h,'find');if(!f)return this.fail(6);const next=f.list[++f.index];if(!next)return this.fail(18);this.findData(next,out,wide);return 1;});
       k('FindResource'+suffix,3,(h,name,type)=>{const module=this.module(h);if(!module)return this.fail(126);const resource=p.loader.resource(module,type<65536?type:str(type),name<65536?name:str(name));if(!resource)return this.fail(1813);return p.handle('resource',resource);});
       k('GetVersionEx'+suffix,1,out=>{const size=m.u32(out);if(size<(wide?276:148))return this.fail(87);m.fill(out+4,size-4);m.w32(out+4,5);m.w32(out+8,1);m.w32(out+12,2600);m.w32(out+16,2);return 1;});
-      k('CreateEvent'+suffix,4,(security,manual,initial,name)=>{if(name)throw new RuntimeFault('UNSUPPORTED_SYNC','Named cross-process events are not implemented.');return p.handle('event',{manual:!!manual,signalled:!!initial});});
     }
     k('FindClose',1,h=>p.object(h,'find')?(p.handles.delete(h),1):this.fail(6));
     k('LoadResource',2,(h,r)=>p.object(r,'resource')?.address??this.fail(6));k('LockResource',1,a=>a);k('SizeofResource',2,(h,r)=>p.object(r,'resource')?.size??0);k('FreeResource',1,()=>0);
@@ -129,8 +129,7 @@ export class Win32 {
     k('TlsAlloc',0,()=>{while(this.tls.has(this.nextTls))this.nextTls++;if(this.nextTls>=1088)return INVALID;const i=this.nextTls++;this.tls.set(i,0);return i;});k('TlsFree',1,i=>this.tls.delete(i)?1:this.fail(87));k('TlsGetValue',1,i=>{if(!this.tls.has(i))return this.fail(87);p.setError(0);return this.tls.get(i);});k('TlsSetValue',2,(i,value)=>{if(!this.tls.has(i))return this.fail(87);this.tls.set(i,value);if(i<64)m.w32(p.teb+0xE10+i*4,value);return 1;});
     k('InitializeCriticalSection',1,a=>{this.critical.set(a,0);m.fill(a,24);return 0;});k('InitializeCriticalSectionAndSpinCount',2,(a,spin)=>{this.critical.set(a,0);m.fill(a,24);return 1;});k('EnterCriticalSection',1,a=>{if(!this.critical.has(a))throw new RuntimeFault('CRITICAL_SECTION','Critical section was not initialized.');this.critical.set(a,this.critical.get(a)+1);return 0;});k('TryEnterCriticalSection',1,a=>{if(!this.critical.has(a))return 0;this.critical.set(a,this.critical.get(a)+1);return 1;});k('LeaveCriticalSection',1,a=>{const n=this.critical.get(a);if(!n)throw new RuntimeFault('CRITICAL_SECTION','Unbalanced LeaveCriticalSection.');this.critical.set(a,n-1);return 0;});k('DeleteCriticalSection',1,a=>{this.critical.delete(a);return 0;});
     k('InterlockedIncrement',1,a=>{const n=(m.u32(a)+1)>>>0;m.w32(a,n);return n;});k('InterlockedDecrement',1,a=>{const n=(m.u32(a)-1)>>>0;m.w32(a,n);return n;});k('InterlockedExchange',2,(a,value)=>{const old=m.u32(a);m.w32(a,value);return old;});k('InterlockedExchangeAdd',2,(a,value)=>{const old=m.u32(a);m.w32(a,old+value);return old;});k('InterlockedCompareExchange',3,(a,value,compare)=>{const old=m.u32(a);if(old===compare)m.w32(a,value);return old;});
-    k('SetEvent',1,h=>{const e=p.object(h,'event');if(!e)return this.fail(6);e.signalled=true;return 1;});k('ResetEvent',1,h=>{const e=p.object(h,'event');if(!e)return this.fail(6);e.signalled=false;return 1;});
-    k('WaitForSingleObject',2,(h,timeout)=>{const e=p.object(h,'event');if(!e)return this.fail(6,INVALID);const deadline=timeout===INVALID?Infinity:performance.now()+timeout;const test=()=>{if(e.signalled){if(!e.manual)e.signalled=false;return 0;}return performance.now()>=deadline?258:undefined;};return test()??p.wait(test,'WaitForSingleObject');});
+    installSynchronization(this);
     k('SetUnhandledExceptionFilter',1,callback=>{const old=this.exceptionFilter||0;this.exceptionFilter=callback;p.note('An exception filter was registered, but guest SEH dispatch is not implemented. Faults stop with diagnostics.');return old;});
     this.add('winmm.dll','timeGetTime',0,()=>Math.floor(performance.now()-p.started));
     this.add('ntdll.dll','RtlMoveMemory',3,(dst,src,n)=>{m.write(dst,m.read(src,n));return 0;});this.add('ntdll.dll','RtlZeroMemory',2,(dst,n)=>{m.fill(dst,n);return 0;});

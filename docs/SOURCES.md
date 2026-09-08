@@ -10,3 +10,9 @@ These primary/platform documents informed the implementation. Referencing a spec
 - MDN, **DecompressionStream constructor**: browser stream formats and native DEFLATE integration. https://developer.mozilla.org/en-US/docs/Web/API/DecompressionStream/DecompressionStream
 
 The test artifacts record the local tools and browser actually exercised; they are not inferred from these references.
+
+Synchronization contracts checked for the compatibility extension:
+
+- Microsoft, [WaitForMultipleObjects](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitformultipleobjects): wait-all atomicity, lowest-index wait-any, distinct handles and timeout results.
+- Microsoft, [ReleaseSemaphore](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-releasesemaphore): positive release count, maximum count and optional previous-count output.
+- Microsoft, [CreateMutexW](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-createmutexw) and [ReleaseMutex](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-releasemutex): initial ownership and balanced recursive acquisitions/releases.
