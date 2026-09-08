@@ -1,4 +1,15 @@
 import {RuntimeFault} from './errors.js';
+import {sbcsTables} from './sbcs-tables.js';
+const menuBestFit=new Map(sbcsTables[1252].encode[0]);
+function menuPointer(gui,cls,wide){
+ if(cls.menu<65536)return cls.menu;
+ const key=wide?'W':'A';cls.menuBuffers??={};
+ if(cls.menuBuffers[key])return cls.menuBuffers[key];
+ const text=cls.menuName,m=gui.m,pointer=gui.p.heap.alloc((text.length+1)*(wide?2:1));
+ if(wide)m.string(pointer,text,true,text.length+1);
+ else {for(let i=0;i<text.length;i++)m.w8(pointer+i,menuBestFit.get(text.charCodeAt(i))??63);m.w8(pointer+text.length,0);}
+ cls.menuBuffers[key]=pointer;return pointer;
+}
 const fields=new Map([[-32,'atom'],[-26,'style'],[-20,'classExtra'],[-18,'windowExtra'],[-16,'instance'],[-14,'icon'],[-12,'cursor'],[-10,'background'],[-34,'smallIcon']]);
 function extraLong(cls,index){let value=0;for(let i=0;i<4;i++)value|=(cls.extraBytes?.get(index+i)||0)<<(i*8);return value>>>0;}
 export function installClassQueries(gui){
@@ -10,7 +21,7 @@ export function installClassQueries(gui){
   if(index>=0){if(index+4>cls.classExtra)return api.fail(1413);return extraLong(cls,index);}
   if(fields.has(index)){const value=cls[fields.get(index)];return index===-16?(value||p.main.base):value;}
   if(index===-24){if(wide!==cls.wide)throw new RuntimeFault('UNSUPPORTED_GUI','Cross-encoding class procedure thunks are not implemented.');return cls.proc;}
-  if(index===-8){if(cls.menu>=65536)throw new RuntimeFault('UNSUPPORTED_GUI','Class menu string pointer lifetime is not implemented.');return cls.menu;}
+  if(index===-8)return menuPointer(gui,cls,wide);
   if(index===-7)return cls.atom;
   return api.fail(1413);
  });

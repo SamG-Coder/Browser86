@@ -9,7 +9,7 @@ test('Class extra DWORD queries accept unaligned in-bounds offsets and reject ov
  const {p,call,h}=setup(false,false);for(const i of [0,1,4]){p.setError(1234);assert.equal(call('GetClassLongA',h,i),0);assert.equal(p.lastError,1234);}for(const i of [5,8,0x7fffffff,-100]){assert.equal(call('GetClassLongW',h,i),0);assert.equal(p.lastError,1413);}
 });
 test('Class procedure queries remain class-based after window subclassing and reject unsupported thunks',()=>{
- const {p,call,h}=setup(false,false);call('SetWindowLongW',h,-4,456);assert.equal(call('GetClassLongA',h,-24),0);assert.throws(()=>call('GetClassLongW',h,-24),/thunks/);p.apis.gui.classes.get('queryclass').menu=0x60000000;assert.throws(()=>call('GetClassLongA',h,-8),/menu string/);
+ const {p,call,h}=setup(false,false);call('SetWindowLongW',h,-4,456);assert.equal(call('GetClassLongA',h,-24),0);assert.throws(()=>call('GetClassLongW',h,-24),/thunks/);
 });
 test('Class queries reject invalid and destroyed windows and explicitly identify built-in metadata gaps',()=>{
  const {p,m,call,h}=setup(true,true);assert.equal(call('GetClassLongW',123,-32),0);assert.equal(p.lastError,1400);call('DestroyWindow',h);assert.equal(call('GetClassLongA',h,-32),0);assert.equal(p.lastError,1400);const name=p.heap.alloc(16);m.string(name,'STATIC',false,16);const builtin=call('CreateWindowExA',0,name,0,0,0,0,20,20,0,0,0,0);assert.throws(()=>call('GetClassLongA',builtin,-32),/Built-in/);

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Class menu-name pointer lifetime - 2026-09-08
+
+**397 Node tests passed, 0 failed, 0 skipped.** RegisterClass/ExA/W copies string menu names, and GetClassLongA/W returns stable class-owned pointers with CP1252 best-fit conversion. Tests cover all registration variants, caller-buffer modification/freeing, shared pointers across windows, failed unregistration, successful cleanup, integer/null identifiers and unreadable input without atom consumption. The rebuilt HandleObjects.exe checks ANSI and Unicode menu-name queries in the guest runtime. Catalog remains 580 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-menu-tests.tap), [browser report](test-artifacts/class-menu-browser-report.json).
+
+Native private hidden-window probes used GetClassLongPtrA/W on the 64-bit host, with an explicitly supplied owned menu to avoid resource loading. Both registration encodings retained the original text after the caller buffer changed; returned pointers were stable and distinct from the caller buffer, preserving error 1234. Unicode Cafe-with-accent followed by U+0100 converted to the corresponding CP1252 text ending in A. Windows and classes were cleaned up. Reference: [Microsoft GetClassLongA](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getclasslonga). Menu replacement, registered menu-resource loading and rendering remain unfinished; the compiled fixture validates metadata within Browser86 and does not claim native menu-loading parity.
+
 ## Top-level window owner replacement - 2026-09-08
 
 **393 Node tests passed, 0 failed, 0 skipped.** SetWindowLongA/W supports GWL_HWNDPARENT owner replacement for top-level windows. Tests cover A/W setters, prior owners, direct child-owner storage, null detachment, hierarchy queries, destruction under old/new owners, invalid/self owners, no failure notifications and explicit rejection of reparenting/cycles. The rebuilt HandleObjects.exe assigns a child owner to its popup, verifies the query and restores the top-level owner before existing lifetime checks. Catalog remains 580 entries.
