@@ -3658,6 +3658,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetWindowWord",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "InflateRect",
     "argc": 3,
     "cdecl": false,
@@ -4045,6 +4052,13 @@
     "dll": "user32.dll",
     "name": "SetWindowTextW",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetWindowWord",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## WORD window storage accessors - 2026-09-08
+
+**458 Node tests passed, 0 failed, 0 skipped.** GetWindowWord/SetWindowWord share backing bytes with DWORD per-window accessors. Tests cover overlapping unaligned writes, truncation, per-window isolation, allocation bounds after class defaults change, low-half user-data mutation and invalid/destroyed HWNDs. The rebuilt HandleObjects.exe imports both APIs and checks last-slot WORD storage. Catalog now contains 592 entries, without implying full API parity.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-word-tests.tap), [browser report](test-artifacts/window-word-browser-report.json).
+
+Native private A/W window probes accepted offsets 0, 1 and 6 in eight-byte storage and rejected 7 with error 1413. User-data WORD writes changed 0x12345678 to 0x1234abcd and returned 0x5678 while preserving error 1234. Metadata behavior on the 64-bit host differed from the legacy documentation; instance/parent/ID translation and style writes remain explicit gaps pending x86 validation. Probe windows/classes were cleaned up. Reference: [Microsoft GetWindowWord](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowword). Dialog fields remain unfinished.
+
 ## WORD class storage accessors - 2026-09-08
 
 **454 Node tests passed, 0 failed, 0 skipped.** GetClassWord/SetClassWord share backing bytes with DWORD class accessors. Tests cover overlapping unaligned writes, WORD truncation, neighboring-byte preservation, cross-window sharing, two-byte bounds, atom queries, metadata-index rejection and invalid/destroyed HWNDs. The rebuilt HandleObjects.exe imports both APIs and checks atom lookup, last-slot storage and boundary rejection. Catalog now contains 590 entries, without implying full API parity.

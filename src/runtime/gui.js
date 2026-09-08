@@ -1,4 +1,5 @@
 import {installCursors,defaultSetCursor} from './cursors.js';
+import {installWindowWord} from './window-word.js';
 import {installClassQueries} from './class-queries.js';
 import {installWindowIdentity} from './window-identity.js';
 import {installWindowProperties,releaseWindowProperties} from './window-properties.js';
@@ -83,10 +84,10 @@ export class GUI {
     return finish(this.defWindow(hwnd,msg,wp,lp,wide));
   }
   defWindow(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(msg===0x81)return 1;if(msg===0x205){const [x,y]=windowOrigin(this,hwnd),point=((((lp<<16)>>16)+x)&65535)|((((lp>>16)+y)&65535)<<16);return this.send(hwnd,0x7b,hwnd,point>>>0,wide,()=>0);}if(msg===0x7b)return (w.style&0x40000000)&&w.parent?this.send(w.parent,msg,wp,lp,wide,()=>0):0;if(msg===0x1f)return cancelCapture(this,hwnd);if(msg===0x20)return defaultSetCursor(this,w,wp,lp,wide);if(msg===WM_CLOSE)return this.destroy(hwnd);if(msg===0x0C){w.title=this.api.str(lp,wide);this.notify(w);return 1;}if(msg===0x0D){this.m.string(lp,w.title,wide,wp);return Math.min(w.title.length,Math.max(0,wp-1));}if(msg===0x0E)return w.title.length;if(msg===0x14)return this.eraseBackground(w,wp);if(msg===0x84)return 1;if(msg===WM_PAINT){w.paintPending=false;return 0;}if(msg===0xF5&&w.className.toUpperCase()==='BUTTON'){this.p.postMessage(w.parent,WM_COMMAND,w.id&65535,hwnd);return 0;}if(msg===0x30){w.font=wp;return 0;}return 0;}
-  windowExtra(w,index,value){
-    if(index+4>w.extraSize)return this.api.fail(1413);
-    let old=0;for(let i=0;i<4;i++)old|=(w.extraBytes?.get(index+i)||0)<<(i*8);
-    if(value!==undefined){w.extraBytes??=new Map();for(let i=0;i<4;i++)w.extraBytes.set(index+i,(value>>>(i*8))&255);}
+  windowExtra(w,index,value,size=4){
+    if(index+size>w.extraSize)return this.api.fail(1413);
+    let old=0;for(let i=0;i<size;i++)old|=(w.extraBytes?.get(index+i)||0)<<(i*8);
+    if(value!==undefined){w.extraBytes??=new Map();for(let i=0;i<size;i++)w.extraBytes.set(index+i,(value>>>(i*8))&255);}
     return old>>>0;
   }
   eraseBackground(w,dc){
@@ -185,7 +186,7 @@ export class GUI {
     u('IsWindow',1,h=>this.window(h)?1:0);
     u('GetActiveWindow',0,()=>this.focus||[...this.windows.keys()][0]||0);u('SetActiveWindow',1,h=>{const old=this.focus;this.focus=h;return old;});
     u('GetDlgCtrlID',1,h=>this.window(h)?.id||0);u('GetDlgItem',2,(h,id)=>[...this.windows.values()].find(w=>w.parent===h&&w.id===id)?.hwnd||0);
-    installCursors(this);installMouseCapture(this);installDoubleClick(this);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,36:4,37:4,61:1,80:1}[index]??0));installClassQueries(this);installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
+    installCursors(this);installMouseCapture(this);installDoubleClick(this);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,36:4,37:4,61:1,80:1}[index]??0));installClassQueries(this);installWindowWord(this);installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
     installRectangles(this.api);
