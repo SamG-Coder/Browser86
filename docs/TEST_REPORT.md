@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## PolylineTo current-position drawing extension - 2026-09-08
+
+**229 Node tests passed, 0 failed, 0 skipped.** Two new tests check initial/current/final points, selected DC pen color, subsequent LineTo continuation, saved-state restoration, null-pen position changes, zero-count success and atomic failure behavior. The rebuilt HandleObjects.exe imports PolylineTo and verifies final position and zero-count behavior through x86 calls. The catalog contains 511 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The updated fixture ran in the actual worker; persistence/reload/deletion/backup checks passed. Evidence: [Node TAP](test-artifacts/polyline-to-tests.tap) and [browser report](test-artifacts/polyline-to-browser-report.json). This stage reuses the previously tested open-polyline canvas path.
+
+Native ctypes probes used an owned memory DC, deleted in finally, to verify zero/one/two points, null arrays, invalid DC errors and final positions. No guest executable ran on the host. Microsoft [PolylineTo](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-polylineto) documents current-position use/update and unfilled figures. Mapping transforms, clipping and native pixel-exact stroke edges remain unfinished.
+
 ## Polygon and polyline drawing extension - 2026-09-08
 
 **227 Node tests passed, 0 failed, 0 skipped.** Three new tests cover raw fill-mode state, saved-state restoration, independent DCs, selected objects/DC colors, signed point copies, current-position preservation, invalid counts/handles/pointers and atomic input validation. HandleObjects.exe imports Polygon, Polyline, GetPolyFillMode and SetPolyFillMode and checks success/failure through x86 calls. The catalog contains 510 entries.

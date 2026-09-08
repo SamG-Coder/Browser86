@@ -288,6 +288,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "PolylineTo",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "Rectangle",
     "argc": 5,
     "cdecl": false,

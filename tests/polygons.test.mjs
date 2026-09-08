@@ -2,6 +2,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {guest} from './helpers.mjs';
 function setup(){const {p,events}=guest('HelloConsole.exe');return {p,events,m:p.memory,h:p.apis.gui.newDC(0),call:(name,...a)=>p.apis.lookup('gdi32.dll',name).fn(...a)};}
+test('PolylineTo connects and updates current position across drawing and saved state',()=>{
+  const {p,m,events,h,call}=setup(),input=p.heap.alloc(16);[2,3,-4,5].forEach((n,i)=>m.w32(input+4*i,n));
+  call('MoveToEx',h,7,8,0);call('SaveDC',h);call('SelectObject',h,call('GetStockObject',19));call('SetDCPenColor',h,0x123456);p.setError(1234);
+  assert.equal(call('PolylineTo',h,input,2),1);const draw=events.filter(e=>e.type==='draw').at(-1);assert.deepEqual(draw.points,[[7,8],[2,3],[-4,5]]);assert.equal(draw.pen.color,0x123456);assert.equal(draw.brush,null);assert.equal(p.lastError,1234);
+  call('LineTo',h,10,11);const line=events.filter(e=>e.type==='draw').at(-1);assert.deepEqual([line.x,line.y],[-4,5]);
+  call('RestoreDC',h,-1);assert.deepEqual([p.apis.gui.dc(h).x,p.apis.gui.dc(h).y],[7,8]);call('SelectObject',h,call('GetStockObject',8));assert.equal(call('PolylineTo',h,input,1),1);assert.deepEqual([p.apis.gui.dc(h).x,p.apis.gui.dc(h).y],[2,3]);
+});
+test('PolylineTo zero count succeeds and failed inputs leave position and output intact',()=>{
+  const {p,m,events,h,call}=setup();call('MoveToEx',h,7,8,0);m.map(0x60000000,4096);p.setError(1234);
+  assert.equal(call('PolylineTo',h,0,0),1);assert.equal(call('PolylineTo',h,0,1),0);assert.equal(p.lastError,1234);
+  assert.throws(()=>call('PolylineTo',h,0x60000ffc,1));assert.throws(()=>call('PolylineTo',h,0x60000000,0xffffffff),e=>e.code==='GDI_LIMIT');
+  assert.deepEqual([p.apis.gui.dc(h).x,p.apis.gui.dc(h).y],[7,8]);assert.equal(events.filter(e=>e.type==='draw').length,0);assert.equal(call('PolylineTo',0,0,0),0);assert.equal(p.lastError,6);
+});
 test('Polygon fill mode retains native raw values, per-DC isolation and saved state',()=>{
   const {p,h,call}=setup(),other=p.apis.gui.newDC(0);assert.equal(call('GetPolyFillMode',h),1);let previous=1;
   for(const mode of [0,1,2,3,255,-1]){p.setError(1234);assert.equal(call('SetPolyFillMode',h,mode),previous);assert.equal(call('GetPolyFillMode',h),mode);assert.equal(p.lastError,1234);previous=mode;}

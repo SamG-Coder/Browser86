@@ -116,6 +116,8 @@ CreateFontA/W now retain all LOGFONT scalar fields and a bounded face name. Crea
 
 Polygon and Polyline read signed POINT arrays, use the selected pen/brush and DC colors, and leave the current position unchanged. Polygon closes and fills its path; Polyline remains open. GetPolyFillMode/SetPolyFillMode maintain per-DC state across SaveDC/RestoreDC. Native raw mode values are retained; only WINDING selects nonzero fill, with other probed values using alternate coverage. Browser canvas rendering supports both fill rules. Inputs are validated before drawing, with a runtime limit of 1,048,576 points. Native pixel-exact edge coverage, mapping transforms, clipping, dashed pens and patterned brushes remain unfinished.
 
+PolylineTo connects the current position to a copied POINT array using the selected pen, then advances the position to the final point. Zero points succeed without drawing; null or unreadable nonempty input leaves position unchanged. Null pens still advance position. SaveDC/RestoreDC preserve the resulting current position. It uses the existing open-polyline renderer and the same 1,048,576-point runtime limit; native stroke-edge rasterization and coordinate transforms remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
