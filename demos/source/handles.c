@@ -195,6 +195,12 @@ void mainCRTStartup(void){
   CHECK(CompareStringOrdinal(ordinalA,3,ordinalB,3,1)==1);
   CHECK(CompareStringOrdinal(ordinalA,1,ordinalB,1,0)==1);
   CHECK(!CompareStringOrdinal(ordinalA,1,ordinalB,1,2)&&GetLastError()==87);
+  WORD searchSource[]={'a','b','A','B',0},searchValue[]={'a','b',0};
+  CHECK(FindStringOrdinal(0,searchSource,-1,searchValue,-1,1)==0);
+  CHECK(FindStringOrdinal(0x800000,searchSource,-1,searchValue,-1,1)==2);
+  CHECK(FindStringOrdinal(0x100000,searchSource,-1,searchValue,-1,1)==0);
+  CHECK(FindStringOrdinal(0x200000,searchSource,-1,searchValue,-1,0)==-1&&GetLastError()==0);
+  CHECK(FindStringOrdinal(1,searchSource,-1,searchValue,-1,0)==-1&&GetLastError()==1004);
   CHECK(DosDateTimeToFileTime(0x21,0,&stamp));CHECK(FileTimeToDosDateTime(&stamp,&fatDate,&fatTime));
   CHECK(fatDate==0x21&&fatTime==0);stamp.low++;
   CHECK(FileTimeToDosDateTime(&stamp,&fatDate,&fatTime)&&fatTime==1);

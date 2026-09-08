@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Ordinal Unicode search extension — 2026-09-08
+
+**174 Node tests passed, 0 failed, 0 skipped.** Four new tests cover all search modes, default flags, found/not-found last-error clearing, empty values/source, embedded NULs, UTF-16 offsets, ordinal case behavior, invalid flags/arguments and memory boundaries. The rebuilt HandleObjects.exe imports FindStringOrdinal with six x86 stack slots and checks forward/backward/prefix/suffix results plus error 1004. The catalog contains 472 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** Actual module workers ran the updated fixture under the deployed CSP; IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/ordinal-search-tests.tap) and [browser report](test-artifacts/ordinal-search-browser-report.json).
+
+Native ctypes probes on owned strings verified all four modes and the zero-flag default, empty-value indices, no-match behavior, strict boolean validation and last-error clearing. No guest executable ran on the host. Microsoft's [FindStringOrdinal documentation](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-findstringordinal) establishes the search modes, length semantics and error distinctions. Case matching inherits the pinned Windows table and version limitations documented for CompareStringOrdinal.
+
 ## Ordinal Unicode comparison extension — 2026-09-08
 
 **170 Node tests passed, 0 failed, 0 skipped.** Four new tests cover UTF-16 lengths, embedded NULs, terminated strings, CSTR result codes, last-error preservation, nonlinguistic case behavior, surrogates, invalid arguments and counted-buffer validation. The suite checks 512 deterministic native reference comparisons recorded in tests/ordinal-native-vectors.json. HandleObjects.exe now imports CompareStringOrdinal and checks case-sensitive/insensitive results, embedded NUL handling and invalid boolean failure through the x86 interpreter. The catalog contains 471 entries.

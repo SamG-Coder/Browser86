@@ -554,6 +554,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "FindStringOrdinal",
+    "argc": 6,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "FlushFileBuffers",
     "argc": 1,
     "cdecl": false,
