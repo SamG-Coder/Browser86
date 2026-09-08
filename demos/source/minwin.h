@@ -21,6 +21,8 @@ API DWORD WINAPI GetDCPenColor(HDC);
 API DWORD WINAPI SetDCPenColor(HDC,DWORD);
 API DWORD WINAPI GetDCBrushColor(HDC);
 API DWORD WINAPI SetDCBrushColor(HDC,DWORD);
+API BOOL WINAPI PolyBezier(HDC,const void*,DWORD);
+API BOOL WINAPI PolyBezierTo(HDC,const void*,DWORD);
 API BOOL WINAPI Polygon(HDC,const void*,int);
 API BOOL WINAPI Polyline(HDC,const void*,int);
 API BOOL WINAPI PolylineTo(HDC,const void*,DWORD);

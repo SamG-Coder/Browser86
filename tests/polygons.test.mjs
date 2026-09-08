@@ -2,6 +2,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {guest} from './helpers.mjs';
 function setup(){const {p,events}=guest('HelloConsole.exe');return {p,events,m:p.memory,h:p.apis.gui.newDC(0),call:(name,...a)=>p.apis.lookup('gdi32.dll',name).fn(...a)};}
+test('Bezier calls retain cubic control points and apply distinct current-position rules',()=>{
+  const {p,m,events,h,call}=setup(),input=p.heap.alloc(56),points=[[1,1],[-3,9],[7,9],[9,1],[12,-4],[15,-4],[18,1]];points.flat().forEach((n,i)=>m.w32(input+4*i,n));call('MoveToEx',h,77,88,0);call('SaveDC',h);call('SelectObject',h,call('GetStockObject',19));call('SetDCPenColor',h,0x123456);p.setError(1234);
+  assert.equal(call('PolyBezier',h,input,7),1);let draw=events.filter(e=>e.type==='draw').at(-1);assert.deepEqual(draw.points,points);assert.equal(draw.op,'bezier');assert.equal(draw.pen.color,0x123456);assert.deepEqual([p.apis.gui.dc(h).x,p.apis.gui.dc(h).y],[77,88]);assert.equal(p.lastError,1234);
+  assert.equal(call('PolyBezierTo',h,input+8,6),1);draw=events.filter(e=>e.type==='draw').at(-1);assert.deepEqual(draw.points,[[77,88],...points.slice(1)]);assert.deepEqual([p.apis.gui.dc(h).x,p.apis.gui.dc(h).y],[18,1]);m.w32(input+8,999);assert.equal(draw.points[1][0],-3);call('RestoreDC',h,-1);assert.deepEqual([p.apis.gui.dc(h).x,p.apis.gui.dc(h).y],[77,88]);
+});
+test('Bezier input errors preserve current position and never emit partial curves',()=>{
+  const {p,m,events,h,call}=setup(),input=p.heap.alloc(64);m.map(0x60000000,4096);call('MoveToEx',h,7,8,0);
+  for(const [name,valid] of [['PolyBezier',4],['PolyBezierTo',3]]){
+    for(let n=0;n<8;n++){if(n>=valid&&(n-valid)%3===0)continue;assert.equal(call(name,h,input,n),0);assert.equal(p.lastError,87);}
+    p.setError(1234);assert.equal(call(name,h,0,valid),0);assert.equal(p.lastError,1234);assert.throws(()=>call(name,h,0x60000ffc,valid));assert.equal(events.filter(e=>e.type==='draw').length,0);assert.deepEqual([p.apis.gui.dc(h).x,p.apis.gui.dc(h).y],[7,8]);
+    assert.equal(call(name,0,input,valid),0);assert.equal(p.lastError,6);
+  }
+});
 test('PolyPolygon emits a single compound path with selected fill mode and independent contours',()=>{
   const {p,m,events,h,call}=setup(),input=p.heap.alloc(64),counts=p.heap.alloc(8),paths=[[[1,1],[9,1],[9,9],[1,9]],[[3,3],[7,3],[7,7],[3,7]]];paths.flat(2).forEach((v,i)=>m.w32(input+4*i,v));m.w32(counts,4);m.w32(counts+4,4);call('MoveToEx',h,77,88,0);call('SetPolyFillMode',h,2);
   assert.equal(call('PolyPolygon',h,input,counts,2),1);const draws=events.filter(e=>e.type==='draw');assert.equal(draws.length,1);assert.equal(draws[0].op,'polypolygon');assert.deepEqual(draws[0].paths,paths);assert.equal(draws[0].fillMode,2);assert.equal(draws[0].brush.color,0xffffff);assert.deepEqual([p.apis.gui.dc(h).x,p.apis.gui.dc(h).y],[77,88]);

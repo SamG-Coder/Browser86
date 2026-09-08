@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Cubic Bezier drawing extension - 2026-09-08
+
+**235 Node tests passed, 0 failed, 0 skipped.** Two new tests cover multi-curve control-point grouping, selected pen color, signed copied points, distinct current-position rules, saved-state restoration, invalid counts, null arrays and atomic memory validation. HandleObjects.exe imports PolyBezier and PolyBezierTo, checking both position contracts and invalid counts through x86 calls. The catalog contains 515 entries.
+
+**Ten real-canvas checks passed in Edge 152.0.4191.66**, including cubic midpoint coverage from both APIs plus prior polygon/fill-rule checks. Evidence: [canvas report](test-artifacts/bezier-canvas-report.json). **Eight existing real-origin browser checks passed with no page errors**, including execution of the updated fixture, persistence and backup. Evidence: [Node TAP](test-artifacts/bezier-tests.tap) and [browser report](test-artifacts/bezier-browser-report.json).
+
+Native ctypes probes used an owned memory DC, deleted in finally, to verify counts 0 through 7, null arrays, invalid DCs and final current positions. No guest executable ran on the host. Microsoft documents [PolyBezier](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-polybezier) and [PolyBezierTo](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-polybezierto). Canvas curves provide cubic geometry but do not establish native pixel-exact rasterization; clipping, transforms and unsupported pen styles remain unfinished.
+
 ## PolyPolygon compound contours extension - 2026-09-08
 
 **233 Node tests passed, 0 failed, 0 skipped.** Two new tests cover compound contour boundaries, selected fill mode, copied points, unchanged current position, signed count errors and complete validation before drawing. The rebuilt HandleObjects.exe imports PolyPolygon and executes a multi-contour call through x86. The catalog contains 513 entries.

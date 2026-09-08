@@ -3,6 +3,14 @@ import {RuntimeFault} from './errors.js';
 
 export function installPolygons(gui){
   const g=(name,n,fn)=>gui.api.add('gdi32.dll',name,n,fn);
+  for(const to of [false,true])g(to?'PolyBezierTo':'PolyBezier',3,(h,input,count)=>{
+    const dc=gui.dc(h);if(!dc)return gui.api.fail(6);count>>>=0;
+    if(count<(to?3:4)||(count-(to?0:1))%3)return gui.api.fail(87);
+    if(!input)return 0;if(count>1048576)throw new RuntimeFault('GDI_LIMIT','Bezier point count exceeds the runtime limit.');
+    checkBuffer(gui.m,input,count*8,'r');const points=to?[[dc.x,dc.y]]:[];
+    for(let i=0;i<count;i++)points.push([gui.m.i32(input+i*8),gui.m.i32(input+i*8+4)]);
+    const result=gui.draw(h,{op:'bezier',points,pen:gui.drawingObject(dc,dc.pen)});if(to&&result)[dc.x,dc.y]=points.at(-1);return result;
+  });
   g('GetPolyFillMode',1,h=>gui.dc(h)?.polyFillMode??0);
   for(const closed of [false,true])g(closed?'PolyPolygon':'PolyPolyline',4,(h,input,countsAddress,groups)=>{
     const dc=gui.dc(h);if(!dc)return gui.api.fail(6);groups=closed?groups|0:groups>>>0;

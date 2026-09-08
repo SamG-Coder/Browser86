@@ -274,6 +274,20 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "PolyBezier",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "PolyBezierTo",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "Polygon",
     "argc": 3,
     "cdecl": false,

@@ -122,6 +122,8 @@ PolyPolyline accepts consecutive POINT groups and a DWORD count array, emitting 
 
 PolyPolygon reads signed contour counts and consecutive POINT arrays, validates all input before drawing, and emits a compound closed path using the selected pen/brush and polygon fill mode. Contours interact under a shared alternate/nonzero fill rule, including holes from nested or oppositely directed contours. Current position is unchanged. Empty/null inputs and invalid signed counts follow native-probed returns/errors. It shares the existing point limits and canvas rasterization/mapping limitations.
 
+PolyBezier and PolyBezierTo draw unfilled cubic curves with the selected pen. PolyBezier takes an initial point followed by triples of control/control/end points and preserves current position; PolyBezierTo starts at current position, consumes triples and advances to the last endpoint. Complete point-count and buffer validation precede drawing. Browser rendering uses canvas cubic curves; native rasterization, clipping, transforms and unsupported pen styles remain limitations.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

@@ -192,6 +192,10 @@ void mainCRTStartup(void){
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
   POINT shapePoints[3]={{1,1},{9,1},{5,9}};
+  POINT curvePoints[4]={{1,1},{3,9},{7,9},{9,1}};
+  CHECK(MoveToEx(savedDC,7,8,NULL)&&PolyBezier(savedDC,curvePoints,4)&&GetCurrentPositionEx(savedDC,&savedPosition)&&savedPosition.x==7&&savedPosition.y==8);
+  CHECK(PolyBezierTo(savedDC,curvePoints+1,3)&&GetCurrentPositionEx(savedDC,&savedPosition)&&savedPosition.x==9&&savedPosition.y==1);
+  CHECK(!PolyBezier(savedDC,curvePoints,3)&&GetLastError()==87);
   POINT groupedPoints[4]={{1,1},{4,1},{7,7},{9,7}};DWORD groupedCounts[2]={2,2};
   CHECK(PolyPolygon(savedDC,groupedPoints,(int*)groupedCounts,2));
   CHECK(PolyPolyline(savedDC,groupedPoints,groupedCounts,2));groupedCounts[1]=1;CHECK(!PolyPolyline(savedDC,groupedPoints,groupedCounts,2)&&GetLastError()==87);
