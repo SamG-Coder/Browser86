@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Rectangle clip intersection - 2026-09-08
+
+**279 Node tests passed, 0 failed, 0 skipped.** IntersectClipRect creates a copied application clip when none exists and intersects subsequent rectangles, preserving normalized coordinates outside the surface. Tests cover progressive narrowing, disjoint/empty intersections, saved-state restoration, invalid DCs and atomic coordinate-range failures. The rebuilt HandleObjects.exe imports the API and verifies queried bounds after intersection and restoration. The catalog contains 542 entries.
+
+**Nine canvas checks and eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** The canvas clip is constructed by two intersecting rectangles and tested against fills, lines, polygons, inversion, text and bitmap transport, plus empty/restore/removal behavior. Evidence: [Node TAP](test-artifacts/intersect-clip-tests.tap), [canvas report](test-artifacts/intersect-clip-canvas-report.json), [browser report](test-artifacts/intersect-clip-browser-report.json).
+
+Native region queries verified resulting bounds, reversed input, empty intersections, coordinate range failures and preserved prior state. Native success codes frequently reported 3 even for simple or empty results; reducing the batch limit did not remove this behavior, so its cause is unconfirmed. Browser86 currently returns exact application-rectangle complexity (1 or 2), and native return-code parity is an explicit limitation. Reference: [IntersectClipRect](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-intersectcliprect). Native resources were released; no guest executable ran on the host. Complex clips, transforms and visibility/meta-region integration remain unfinished.
+
 ## Clip bounds and visibility queries - 2026-09-08
 
 **277 Node tests passed, 0 failed, 0 skipped.** GetClipBox, PtVisible and RectVisible now query the effective rectangular visible area. Tests cover application/surface intersections, empty bounds, right/bottom exclusion, reversed and degenerate queries, saved clipping restoration, window resizing, unchanged output tails, invalid handles and atomic buffer validation. The rebuilt HandleObjects.exe imports all three functions and verifies bounds and visibility with an application clip. The catalog contains 541 entries.

@@ -344,6 +344,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "IntersectClipRect",
+    "argc": 5,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "InvertRgn",
     "argc": 2,
     "cdecl": false,

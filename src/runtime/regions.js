@@ -18,6 +18,11 @@ export function installRegions(gui){
   const dc=gui.dc(h);if(!dc)return api.fail(6);if(!r){dc.clipRegion=null;return 2;}const o=region(r);if(!o)return 0;
   dc.clipRegion={rect:o.rect?[...o.rect]:null};return visible(dc)?2:1;
  });
+ g('IntersectClipRect',5,(h,l,t,r,b)=>{
+  const dc=gui.dc(h);if(!dc)return api.fail(6);const values=[l,t,r,b].map(n=>n|0);if(!inRange(values))return api.fail(87);
+  let rect=normalize(...values);if(dc.clipRegion){const old=dc.clipRegion.rect;if(!old||!rect)rect=null;else{const next=[Math.max(old[0],rect[0]),Math.max(old[1],rect[1]),Math.min(old[2],rect[2]),Math.min(old[3],rect[3])];rect=next[0]<next[2]&&next[1]<next[3]?next:null;}}
+  dc.clipRegion={rect};return rect?2:1;
+ });
  g('GetClipRgn',2,(h,r)=>{
   const dc=gui.dc(h);if(!dc)return api.fail(r?87:6,-1);const o=region(r);if(!o)return -1;if(!dc.clipRegion)return 0;
   o.rect=dc.clipRegion.rect?[...dc.clipRegion.rect]:null;return 1;

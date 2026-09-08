@@ -160,6 +160,8 @@ SelectClipRgn and GetClipRgn support independent copied rectangular application 
 
 GetClipBox, PtVisible and RectVisible query the intersection of the rectangular application clip and current surface bounds. GetClipBox returns zero bounds for an empty visible area. Point queries exclude right/bottom edges; RectVisible normalizes reversed corners and uses strict overlap, including native degenerate-query behavior. Queries track SaveDC/RestoreDC and current window dimensions; screen DCs use the fixed 1280x720 profile. Native invalid-handle/null-pointer distinctions are preserved. Complex visibility regions, mapping transforms, update/meta regions and native window occlusion remain unfinished.
 
+IntersectClipRect creates or narrows a rectangular application clip, normalizes reversed corners and keeps the application coordinates independent of surface bounds. Empty intersections remain empty, and SaveDC/RestoreDC preserve earlier clips. Out-of-range coordinates fail without mutation. Browser86 returns the resulting application rectangle complexity (1 or 2); exact native return-code parity remains unfinished because Windows probes frequently returned 3 even when subsequent queries showed simple or empty results. Complex clips, transforms and visibility/meta-region integration remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

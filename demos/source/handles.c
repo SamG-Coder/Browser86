@@ -274,6 +274,7 @@ void mainCRTStartup(void){
   CHECK(OffsetRgn(regionB,2,-1)==2&&!EqualRgn(regionA,regionB));
   CHECK(SetRectRgn(regionB,3,4,3,8)&&GetRgnBox(regionB,&regionBox)==1&&regionBox.left==0&&regionBox.bottom==0);
   CHECK(!GetClipRgn(savedDC,regionB)&&SelectClipRgn(savedDC,regionA)==2&&GetClipRgn(savedDC,regionB)==1&&EqualRgn(regionA,regionB));
+  CHECK(SaveDC(savedDC)==1&&IntersectClipRect(savedDC,2,3,8,9)!=0&&GetClipBox(savedDC,&regionBox)==2&&regionBox.left==2&&regionBox.bottom==9&&RestoreDC(savedDC,-1));
   CHECK(GetClipBox(savedDC,&regionBox)==2&&regionBox.left==1&&regionBox.bottom==20&&PtVisible(savedDC,1,2)&&!PtVisible(savedDC,10,20)&&RectVisible(savedDC,&regionBox));
   CHECK(SaveDC(savedDC)==1&&SelectClipRgn(savedDC,NULL)==2&&RestoreDC(savedDC,-1)&&GetClipRgn(savedDC,regionB)==1);
   CHECK(SelectClipRgn(savedDC,NULL)==2&&SetRectRgn(regionB,0,0,0,0));
