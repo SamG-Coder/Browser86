@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Logical font creation and inspection extension - 2026-09-08
+
+**222 Node tests passed, 0 failed, 0 skipped.** Three new tests cover preservation of all LOGFONT scalar fields, independent input storage, Unicode face-name array preservation, bounded ANSI conversion, direct and indirect constructors, selected/saved font lifetime, partial queries, A/W alignment, ANSI tail preservation, null input and atomic memory validation. HandleObjects.exe imports CreateFontIndirectA/W and inspects both through GetObjectA/W using actual x86 calls. The catalog contains 506 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The rebuilt fixture ran in the actual worker; persistence/reload/deletion/backup checks passed. Evidence: [Node TAP](test-artifacts/fonts-tests.tap) and [browser report](test-artifacts/fonts-browser-report.json).
+
+Native ctypes probes verified scalar preservation, bounded names, null constructors, partial query counts, A/W alignment and ANSI tail behavior. An initial extended-size probe exceeded its scratch buffer and terminated; its results are not used to claim extended-structure support. The alignment/name checks were repeated with 512-byte buffers and owned fonts deleted after use. No guest executable ran on the host. References: Microsoft [CreateFontIndirectA](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createfontindirecta) and [GetObject](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getobject). Extended structures, full ANSI best-fit face conversion, native font matching and rendering of every stored LOGFONT property remain unfinished; stock descriptions use the existing synthetic profile.
+
 ## Rectangle brush drawing extension - 2026-09-08
 
 **219 Node tests passed, 0 failed, 0 skipped.** Three new tests compare emitted fill coverage with 72 recorded native offscreen raster cases and verify hollow brushes, selected-brush fallback, DC_BRUSH colors, system-color lookup, invalid DC errors and complete input validation before drawing. HandleObjects.exe imports FillRect and the new FrameRect, checking ordinary and inverted rectangles through x86 calls. The catalog contains 504 entries.

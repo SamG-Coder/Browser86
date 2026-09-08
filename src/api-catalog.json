@@ -92,6 +92,20 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "CreateFontIndirectA",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "CreateFontIndirectW",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "CreateFontW",
     "argc": 14,
     "cdecl": false,

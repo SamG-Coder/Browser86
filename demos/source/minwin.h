@@ -13,6 +13,8 @@ API long WINAPI CompareFileTime(const FILETIME*,const FILETIME*);
 API int WINAPI CompareStringOrdinal(const WORD*,int,const WORD*,int,BOOL);
 API BOOL WINAPI GetStringTypeW(DWORD,const WORD*,int,WORD*);
 API int WINAPI MulDiv(int,int,int);
+API HANDLE WINAPI CreateFontIndirectA(const void*);
+API HANDLE WINAPI CreateFontIndirectW(const void*);
 API int WINAPI GetObjectA(HANDLE,int,void*);
 API int WINAPI GetObjectW(HANDLE,int,void*);
 API DWORD WINAPI GetDCPenColor(HDC);

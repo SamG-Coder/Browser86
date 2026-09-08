@@ -1,5 +1,6 @@
 import {checkBuffer} from './files.js';
 import {RuntimeFault} from './errors.js';
+import {getFontObject} from './fonts.js';
 
 export function installGDIObjects(gui){
   const g=(name,count,fn)=>gui.api.add('gdi32.dll',name,count,fn),m=gui.m;
@@ -22,7 +23,8 @@ export function installGDIObjects(gui){
   });
   for(const suffix of ['A','W'])gui.api.add('gdi32.dll','GetObject'+suffix,3,(handle,count,out)=>{
     const object=gui.p.object(handle,'gdi');if(!object)return 0;
-    if(!['pen','brush'].includes(object.kind))throw new RuntimeFault('UNSUPPORTED_GDI','GetObject currently supports pens and brushes; font descriptions are not implemented.');
+    if(object.kind==='font')return getFontObject(gui,object,suffix==='W',count,out);
+    if(!['pen','brush'].includes(object.kind))throw new RuntimeFault('UNSUPPORTED_GDI','This GDI object description is not implemented.');
     const pen=object.kind==='pen',size=pen?16:12;
     if(!out)return size;
     count>>>=0;if((out&3)||!count||(pen&&count<size))return 0;

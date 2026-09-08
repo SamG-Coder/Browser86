@@ -1,6 +1,7 @@
 import {ansiDecode} from './memory.js';
 import {installRectangleDrawing} from './rectangle-drawing.js';
 import {installRectangles} from './rectangles.js';
+import {installFonts} from './fonts.js';
 import {installGDIObjects} from './gdi-objects.js';
 import {installDCState,dcSelectsObject} from './dc-state.js';
 import {RuntimeFault,requireThat} from './errors.js';
@@ -58,7 +59,6 @@ export class GUI {
       g('TextOut'+suffix,5,(hdc,x,y,text,count)=>{const dc=this.dc(hdc);if(!dc)return 0;requireThat(count<=1024*1024,'STRING_LIMIT','GDI text is too long.');const value=wide?Array.from({length:count},(_,i)=>String.fromCharCode(m.u16(text+i*2))).join(''):ansiDecode(m.read(text,count));const font=p.object(dc.font,'gdi');return this.draw(hdc,{op:'text',x:x|0,y:y|0,text:value,color:dc.textColor,background:dc.background,opaque:dc.bkMode===2,font:{height:Math.abs(font?.height||16),face:font?.face||'Arial',weight:font?.weight||400},align:dc.align});});
       u('DrawText'+suffix,5,(hdc,text,count,rect,format)=>{const dc=this.dc(hdc);if(!dc)return 0;const value=count===0xFFFFFFFF?str(text):wide?Array.from({length:count},(_,i)=>String.fromCharCode(m.u16(text+i*2))).join(''):ansiDecode(m.read(text,count));const font=p.object(dc.font,'gdi'),height=Math.abs(font?.height||16),x=m.i32(rect),y=m.i32(rect+4),width=m.i32(rect+8)-x;if(format&0x400){m.w32(rect+12,y+height);m.w32(rect+8,x+Math.min(width||1e6,Math.ceil(value.length*height*0.6)));return height;}this.draw(hdc,{op:'text',x,y,text:value,color:dc.textColor,background:dc.background,opaque:dc.bkMode===2,font:{height,face:font?.face||'Arial',weight:font?.weight||400},maxWidth:width,align:format&1?6:format&2?2:0});return height;});
       g('GetTextExtentPoint32'+suffix,4,(hdc,text,count,out)=>{const dc=this.dc(hdc);if(!dc)return 0;const font=p.object(dc.font,'gdi'),h=Math.abs(font?.height||16);m.w32(out,Math.ceil(count*h*0.6));m.w32(out+4,h);p.note('Text extents use approximate browser-font metrics; Windows font rasterization is not reproduced exactly.');return 1;});
-      g('CreateFont'+suffix,14,(height,width,escapement,orientation,weight,italic,underline,strike,charset,outPrecision,clipPrecision,quality,pitch,name)=>p.handle('gdi',{kind:'font',height:height|0,weight,italic:!!italic,face:str(name)||'Arial'}));
     }
     u('TranslateMessage',1,address=>{const msg=this.readMsg(address);if(msg.message===0x100){const char=this.keyChars.get(msg.wParam);if(char){for(const c of char)p.postMessage(msg.hwnd,0x102,c.charCodeAt(0),msg.lParam);return 1;}}return 0;});
     u('PostQuitMessage',1,code=>{p.postMessage(0,WM_QUIT,code,0);return 0;});u('DestroyWindow',1,h=>this.destroy(h));
@@ -81,6 +81,7 @@ export class GUI {
     installRectangleDrawing(this);
     installDCState(this);
     installGDIObjects(this);
+    installFonts(this);
     g('GetStockObject',1,i=>this.stockObject(i));g('CreateSolidBrush',1,color=>p.handle('gdi',{kind:'brush',color}));
     g('SelectObject',2,(hdc,obj)=>{const dc=this.dc(hdc),object=p.object(obj,'gdi');if(!dc||!object)return 0;const old=dc[object.kind];dc[object.kind]=obj;return old||0;});
     g('DeleteObject',1,h=>{const obj=p.object(h,'gdi');if(!obj||obj.stock)return 0;if([...p.handles.values()].some(dc=>dc.type==='dc'&&dcSelectsObject(dc,h)))return 0;p.releaseHandle(h);return 1;});

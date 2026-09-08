@@ -42,7 +42,7 @@ test('GetObject enforces alignment and pen capacity, and bounds short brush writ
     for(const h of [pen,brush])assert.equal(call(name,h,32,out+1),0);
     for(const count of [1,3,8,11,12,20]){m.write(out,new Uint8Array(32).fill(204));assert.equal(call(name,brush,count,out),12);assert.equal(m.u8(out+Math.min(count,12)),204);}
     assert.equal(call(name,0,32,out),0);assert.equal(call(name,p.apis.gui.newDC(0),32,out),0);
-    assert.throws(()=>call(name,call('GetStockObject',17),0,0),e=>e.code==='UNSUPPORTED_GDI');
+    assert.equal(call(name,call('GetStockObject',17),0,0),name.endsWith('W')?92:60);
   }
 });
 test('GetObject validates the actual write range before changing guest memory',()=>{

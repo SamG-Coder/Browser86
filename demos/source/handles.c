@@ -191,6 +191,10 @@ void mainCRTStartup(void){
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
+  DWORD logicalFont[23]={0},fontCopy[23]={0};logicalFont[0]=(DWORD)-17;logicalFont[4]=700;logicalFont[7]=65;
+  HANDLE fontA=CreateFontIndirectA(logicalFont),fontW=CreateFontIndirectW(logicalFont);
+  CHECK(fontA&&fontW&&GetObjectW(fontA,92,fontCopy)==92&&fontCopy[0]==(DWORD)-17&&fontCopy[4]==700&&fontCopy[7]==65);
+  CHECK(GetObjectA(fontW,60,fontCopy)==60&&((BYTE*)fontCopy)[28]==65&&DeleteObject(fontA)&&DeleteObject(fontW));
   RECT paintRect={1,1,4,4};HANDLE paintBrush=CreateSolidBrush(0x123456);
   CHECK(FillRect(savedDC,&paintRect,paintBrush)&&FrameRect(savedDC,&paintRect,paintBrush));
   paintRect.left=5;CHECK(!FrameRect(savedDC,&paintRect,paintBrush)&&FillRect(savedDC,&paintRect,paintBrush));
