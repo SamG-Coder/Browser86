@@ -132,6 +132,12 @@ void mainCRTStartup(void){
   CHECK(file!=INVALID_HANDLE&&ReadFile(file,bytes,3,&count,NULL)&&count==3);
   CHECK(bytes[0]=='a'&&bytes[1]=='b'&&bytes[2]=='c');
   CHECK(CloseHandle(file)&&DeleteFileA("append.txt"));
+  CHECK(GetTempFileNameA("C:\\Temp","b86",0,finalPath)!=0);
+  file=CreateFileA(finalPath,GENERIC_READ,7,NULL,3,0,NULL);
+  CHECK(file!=INVALID_HANDLE&&GetFileSizeEx(file,&position)&&position==0);
+  CHECK(CloseHandle(file)&&DeleteFileA(finalPath));
+  finalWide[0]='.';finalWide[1]=0;rename.name[0]='t';rename.name[1]='m';rename.name[2]='p';rename.name[3]=0;
+  CHECK(GetTempFileNameW(finalWide,rename.name,0x12345,filename.name)==0x2345);
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
   CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);

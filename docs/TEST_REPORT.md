@@ -82,6 +82,12 @@ Native Windows probes verified rename tracking in both name modes, invalid flag 
 
 Native Windows probes verified append-only seeking and flushing, EOF resize denial (5), positional writes when FILE_WRITE_DATA is also granted, CREATE_ALWAYS truncation, TRUNCATE_EXISTING rejection (87) and unchanged cursors on zero writes. Contract: [File Access Rights Constants](https://learn.microsoft.com/en-us/windows/win32/fileio/file-access-rights-constants). Results: `test-artifacts/file-append-tests.tap` and `test-artifacts/file-append-browser-report.json`.
 
+## Temporary file names — 2026-09-08
+
+**124 Node tests passed without failures or skips; eight real-origin Edge checks passed without page errors.** Four new tests cover automatic reservation, collisions with files/directories, numeric wrap, low-word masking, explicit name-only behavior, three-character prefixes, A/W paths, guest reopen/delete, missing/pending directories, length limits and invalid output atomicity. HandleObjects.exe imports GetTempFileNameA/W and exercises reserved empty-file creation and explicit Unicode naming. Catalog: 442 entries.
+
+Native Windows probes confirmed uppercase hexadecimal without zero padding, lowercase .tmp, three-character truncation, directory validation (267), low-word return values and automatic creation when the supplied low word is zero. Contract: [GetTempFileNameW](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-gettempfilenamew). Results: `test-artifacts/temp-file-tests.tap` and `test-artifacts/temp-file-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

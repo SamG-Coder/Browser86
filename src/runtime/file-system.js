@@ -1,6 +1,8 @@
 import {RuntimeFault} from './errors.js';
 import {FILE_ATTRIBUTE_MASK} from './vfs.js';
 import {moveFileObject} from './file-rename.js';
+import {checkBuffer} from './files.js';
+import {ansiEncode} from './memory.js';
 
 const INVALID=0xFFFFFFFF;
 export function installFileSystem(api){
@@ -9,6 +11,32 @@ export function installFileSystem(api){
   const removeWhenClosed=node=>{if(!node.openObjects&&node.deletePending&&v.get(node.path)===node)v.remove(node.path);};
   for(const wide of [false,true]){
     const suffix=wide?'W':'A',str=ptr=>api.str(ptr,wide);
+    k('GetTempFileName'+suffix,4,(directory,prefix,unique,out)=>api.expected(()=>{
+      if(!directory||!prefix||!out)return api.fail(87);
+      const path=str(directory),pre=str(prefix).slice(0,3),parent=v.get(path);
+      if(!parent?.directory)return api.fail(267);if(parent.deletePending)return api.fail(5);
+      if(path.length>246)return api.fail(111);
+      const supplied=unique&0xffff;
+      let value=supplied||((p.tempFileCounter??Date.now())&0xffff)||1;
+      for(let attempts=0;attempts<65535;attempts++){
+        const result=path+(path.endsWith('\\')?'':'\\')+pre+value.toString(16).toUpperCase()+'.tmp';
+        const bytes=wide?null:ansiEncode(result),length=wide?result.length:bytes.length;
+        if(length>=260)return api.fail(111);
+        checkBuffer(m,out,(length+1)*(wide?2:1));
+        if(supplied||!v.exists(result)){
+          if(!supplied){
+            const full=v.path(result),destinationParent=v.get(full.slice(0,full.lastIndexOf('/'))||'C:/');
+            if(!destinationParent?.directory)return api.fail(3);
+            v.writeFile(full,new Uint8Array());p.tempFileCounter=value===65535?1:value+1;
+          }
+          if(wide){for(let i=0;i<length;i++)m.w16(out+i*2,result.charCodeAt(i));m.w16(out+length*2,0);}
+          else {m.write(out,bytes);m.w8(out+length,0);}
+          return value;
+        }
+        value=value===65535?1:value+1;
+      }
+      return api.fail(80);
+    }));
     k('CreateFile'+suffix,7,(name,access,share,security,creation,flags,template)=>api.expected(()=>{
       if(flags&0x40000000)throw new RuntimeFault('UNSUPPORTED_IO','FILE_FLAG_OVERLAPPED is not implemented.');
       if(flags&0x20000000)throw new RuntimeFault('UNSUPPORTED_IO','Unbuffered I/O and sector alignment are not implemented.');

@@ -62,6 +62,8 @@ GetFinalPathNameByHandleA/W support DOS (`\\?\C:\...`) and volume-relative outpu
 
 FILE_APPEND_DATA is tracked separately from FILE_WRITE_DATA. Append-only handles can seek, read if separately permitted, and flush; nonempty writes always select the current EOF and update their shared cursor to the end of the appended data. Zero-byte writes leave the cursor unchanged. Append access participates in mutual write sharing and read-only checks, but does not grant EOF resizing. Adding FILE_WRITE_DATA restores ordinary positioned writes. These operations remain synchronous within the single guest thread.
 
+GetTempFileNameA/W implement the three-character prefix, 16-bit hexadecimal suffix and .tmp naming scheme. A zero low word reserves an empty file under an unused name; a nonzero low word only generates a name and does not overwrite or verify uniqueness. Collision search wraps over the nonzero 16-bit range. Directory existence/pending state, MAX_PATH limits and output memory are checked before creating a file. Temporary files remain on the virtual disk until explicitly deleted. ANSI uses the runtime's Windows-1252 mapping rather than emulating arbitrary OEM code pages.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

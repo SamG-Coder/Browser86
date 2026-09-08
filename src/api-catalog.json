@@ -918,6 +918,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GetTempFileNameA",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GetTempFileNameW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GetTempPathA",
     "argc": 2,
     "cdecl": false,

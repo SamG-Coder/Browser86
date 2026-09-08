@@ -27,6 +27,8 @@ API BOOL WINAPI DeleteFileA(const char*);
 API BOOL WINAPI CreateDirectoryA(const char*,void*);
 API BOOL WINAPI RemoveDirectoryA(const char*);
 API BOOL WINAPI MoveFileA(const char*,const char*);
+API DWORD WINAPI GetTempFileNameA(const char*,const char*,DWORD,char*);
+API DWORD WINAPI GetTempFileNameW(const WORD*,const WORD*,DWORD,WORD*);
 API BOOL WINAPI CloseHandle(HANDLE);
 API HANDLE WINAPI GetCurrentProcess(void);
 API HANDLE WINAPI GetCurrentThread(void);
