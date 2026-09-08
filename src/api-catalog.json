@@ -2608,6 +2608,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "_configure_narrow_argv",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_crt_atexit",
     "argc": 1,
     "cdecl": true,
@@ -2644,6 +2651,20 @@
     "dll": "msvcrt.dll",
     "name": "_get_fmode",
     "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "_get_initial_narrow_environment",
+    "argc": 0,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "_initialize_narrow_environment",
+    "argc": 0,
     "cdecl": true,
     "data": false
   },

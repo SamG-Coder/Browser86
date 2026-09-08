@@ -20,6 +20,13 @@ export function installCRT(api){const p=api.p,m=api.m,v=api.vfs;const c=(name,n,
   c('getenv',1,name=>{const value=p.environment.get(m.cstr(name).toUpperCase());return value===undefined?0:ptr(value);});c('_putenv',1,pointer=>{const text=m.cstr(pointer),i=text.indexOf('=');if(i<1)return -1;if(i===text.length-1)p.environment.delete(text.slice(0,i).toUpperCase());else p.environment.set(text.slice(0,i).toUpperCase(),text.slice(i+1));return 0;});
   const argv=splitCommandLine(p.commandLine);const argc=argv.length,argvArray=p.heap.alloc((argc+1)*4,true),wargvArray=p.heap.alloc((argc+1)*4,true);argv.forEach((s,i)=>{m.w32(argvArray+i*4,p.heap.string(s));m.w32(wargvArray+i*4,p.heap.string(s,true));});const argcP=p.heap.alloc(4),argvP=p.heap.alloc(4),wargvP=p.heap.alloc(4);m.w32(argcP,argc);m.w32(argvP,argvArray);m.w32(wargvP,wargvArray);
   const environment=[...p.environment].map(([k,val])=>k+'='+val),envArray=p.heap.alloc((environment.length+1)*4,true),envP=p.heap.alloc(4);environment.forEach((s,i)=>m.w32(envArray+i*4,ptr(s)));m.w32(envP,envArray);
+  c('_configure_narrow_argv',1,mode=>{
+    if(mode===0)return 0;
+    requireThat(mode!==2,'CRT_ARGV','Wildcard-expanded CRT arguments are not implemented.');
+    if(mode!==1){m.w32(errno,22);return 22;}
+    m.w32(argcP,argc);m.w32(argvP,argvArray);return 0;
+  });
+  c('_initialize_narrow_environment',0,()=>0);c('_get_initial_narrow_environment',0,()=>envArray);
   c('__getmainargs',5,(outc,outv,oute,wildcard,info)=>{m.w32(outc,argc);m.w32(outv,argvArray);m.w32(oute,envArray);return 0;});c('__p___argc',0,()=>argcP);c('__p___argv',0,()=>argvP);c('__p___wargv',0,()=>wargvP);c('__p__environ',0,()=>envP);c('__p__acmdln',0,()=>{const a=p.heap.alloc(4);m.w32(a,p.commandA);return a;});
   api.data('msvcrt.dll','__argc',argcP);api.data('msvcrt.dll','__argv',argvP);api.data('msvcrt.dll','_environ',envP);const acmdln=p.heap.alloc(4);m.w32(acmdln,p.commandA);api.data('msvcrt.dll','_acmdln',acmdln);
   const atExit=[];for(const name of ['atexit','_crt_atexit'])c(name,1,fn=>{atExit.push(fn);return 0;});c('_onexit',1,fn=>{atExit.push(fn);return fn;});
