@@ -1,4 +1,4 @@
-import {installCursors} from './cursors.js';
+import {installCursors,defaultSetCursor} from './cursors.js';
 import {installClassQueries} from './class-queries.js';
 import {installWindowIdentity} from './window-identity.js';
 import {installWindowProperties,releaseWindowProperties} from './window-properties.js';
@@ -76,9 +76,10 @@ export class GUI {
     }
     if(w.proc){const temporary=[];if(msg===0x0C)lp=this.convertString(lp,wide,w.wide,temporary);
       return this.p.call(w.proc,[hwnd,msg,wp,lp],result=>{for(const address of temporary)this.p.heap.free(address);return done(result);});}
-    return done(this.defWindow(hwnd,msg,wp,lp,wide));
+    const finish=result=>result?.call?{...result,then:value=>finish(result.then?result.then(value):value)}:done(result);
+    return finish(this.defWindow(hwnd,msg,wp,lp,wide));
   }
-  defWindow(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(msg===0x81)return 1;if(msg===WM_CLOSE)return this.destroy(hwnd);if(msg===0x0C){w.title=this.api.str(lp,wide);this.notify(w);return 1;}if(msg===0x0D){this.m.string(lp,w.title,wide,wp);return Math.min(w.title.length,Math.max(0,wp-1));}if(msg===0x0E)return w.title.length;if(msg===0x14)return this.eraseBackground(w,wp);if(msg===0x84)return 1;if(msg===WM_PAINT){w.paintPending=false;return 0;}if(msg===0xF5&&w.className.toUpperCase()==='BUTTON'){this.p.postMessage(w.parent,WM_COMMAND,w.id&65535,hwnd);return 0;}if(msg===0x30){w.font=wp;return 0;}return 0;}
+  defWindow(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(msg===0x81)return 1;if(msg===0x20)return defaultSetCursor(this,w,wp,lp,wide);if(msg===WM_CLOSE)return this.destroy(hwnd);if(msg===0x0C){w.title=this.api.str(lp,wide);this.notify(w);return 1;}if(msg===0x0D){this.m.string(lp,w.title,wide,wp);return Math.min(w.title.length,Math.max(0,wp-1));}if(msg===0x0E)return w.title.length;if(msg===0x14)return this.eraseBackground(w,wp);if(msg===0x84)return 1;if(msg===WM_PAINT){w.paintPending=false;return 0;}if(msg===0xF5&&w.className.toUpperCase()==='BUTTON'){this.p.postMessage(w.parent,WM_COMMAND,w.id&65535,hwnd);return 0;}if(msg===0x30){w.font=wp;return 0;}return 0;}
   windowExtra(w,index,value){
     if(index+4>w.extraSize)return this.api.fail(1413);
     let old=0;for(let i=0;i<4;i++)old|=(w.extraBytes?.get(index+i)||0)<<(i*8);

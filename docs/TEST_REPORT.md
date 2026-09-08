@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Default cursor message handling - 2026-09-08
+
+**418 Node tests passed, 0 failed, 0 skipped.** DefWindowProcA/W now handles explicit WM_SETCURSOR messages, including class selection, null-class preservation, resize shapes, child-parent forwarding and nonzero parent replies. Tests cover hidden selection, unchanged parameters, cross-encoding callbacks, owned popups, nested forwarding, destruction during callbacks and explicit unsupported error-hit beeps. The nested test exposed and fixed premature completion of default-procedure callbacks in GUI.send. The rebuilt HandleObjects.exe exercises client and resize-border cursor selection. Catalog remains 583 entries.
+
+**Nine real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/cursor-messages-tests.tap), [browser report](test-artifacts/cursor-messages-browser-report.json).
+
+Native private A/W hidden-window probes selected a non-null class cursor for HTCLIENT and returned zero, preserved the current cursor for a null class cursor, selected resize shapes for hits 10 through 17 and returned one, and selected the arrow for other tested nonclient hits. Child forwarding preserved both parameters and normalized parent reply 7 to one; owned popups did not forward to their owner. Error 1234 was preserved in tested cases. Probe windows/classes were cleaned up and the original cursor restored. Reference: [Microsoft WM_SETCURSOR](https://learn.microsoft.com/en-us/windows/win32/menurc/wm-setcursor). Built-in client cursor metadata, error-hit button beeps, automatic mouse-triggered message generation and capture integration remain unfinished.
+
 ## Cursor display counts - 2026-09-08
 
 **412 Node tests passed, 0 failed, 0 skipped.** ShowCursor now maintains the display count and returns its new signed value. Tests cover nested hides/shows, noncanonical true BOOL values, last-error preservation, visibility threshold crossings, selection changes while hidden, null selection, invalid SetCursor calls, shared cursor lifetime and guest isolation. The rebuilt HandleObjects.exe checks counts -1, -2, -1 and 0 while retaining its selected cursor. Catalog now contains 583 entries, without implying full API parity.
