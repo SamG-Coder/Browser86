@@ -52,6 +52,8 @@ The UI offers 128/256/512 MiB guest-memory caps. A single PE image is capped at 
 
 SetFileInformationByHandle supports FileEndOfFileInfo with its 8-byte signed LARGE_INTEGER input. It shares resizing behavior with SetEndOfFile, preserves all seek positions, zero-fills growth, and respects existing write rights, timestamp suppression and pending-deletion lifetime. Negative lengths fail with ERROR_INVALID_PARAMETER; growth exceeding virtual disk capacity fails with ERROR_DISK_FULL before mutation. Other setting classes remain explicit unsupported operations.
 
+FileDispositionInfo supports marking and canceling deletion through a handle with DELETE access. Cancellation through another existing handle restores the name, link count and saved-disk entry, including after the requesting handle closes. FILE_FLAG_DELETE_ON_CLOSE still takes effect when its final alias closes. Empty directories can be marked; nonempty directories report ERROR_DIR_NOT_EMPTY, and pending directories reject child creation. The virtual drive root cannot be marked. FileDispositionInfoEx/POSIX flags remain unsupported.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

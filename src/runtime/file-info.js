@@ -8,6 +8,16 @@ export function installFileInformation(api){
   k('SetFileInformationByHandle',4,(h,infoClass,input,size)=>{
     const f=p.object(h,'file');if(!f)return api.fail(6);
     if(![0,3,4,5,6,12,21,22,23].includes(infoClass))return api.fail(87);
+    if(infoClass===4){
+      if(size<1)return api.fail(24);if(!input)return api.fail(87);
+      if(!f.deleteAccess)return api.fail(5);
+      checkBuffer(m,input,1,'r');const deleting=!!m.u8(input),node=f.node;
+      if(deleting){
+        if(node.path==='C:/'||!node.directory&&(node.attributes&1))return api.fail(5);
+        if(node.directory&&v.list(node.path).length)return api.fail(145);
+      }
+      node.deletePending=deleting;v.revision++;return 1;
+    }
     if(infoClass!==6)throw new RuntimeFault('UNSUPPORTED_FILE_INFO',`Setting file information class ${infoClass} is not implemented.`,{infoClass});
     if(size<8)return api.fail(24);if(!input)return api.fail(87);
     if(f.directory||!f.write)return api.fail(5);

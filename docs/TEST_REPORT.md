@@ -52,6 +52,12 @@ Native kernel32 probes on this Windows host verified ERROR_BAD_LENGTH (24) for b
 
 Native Windows probes on disposable data files verified that EOF changes leave a cursor at offset 5 unchanged through growth, truncation and clearing; seven-byte inputs return ERROR_BAD_LENGTH (24), and negative lengths return ERROR_INVALID_PARAMETER (87). Contract: [SetFileInformationByHandle](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfileinformationbyhandle) and [FILE_END_OF_FILE_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_end_of_file_info). Results: `test-artifacts/file-set-info-tests.tap` and `test-artifacts/file-set-info-browser-report.json`.
 
+## Handle-based disposition — 2026-09-08
+
+**102 Node tests passed with no failures or skips.** Five new tests cover cancellation through independent/duplicate handles, cancellation after the requesting handle closes, link counts, snapshots, exclusive opens, DeleteFile cancellation, delete-on-close precedence, termination cleanup, empty/nonempty directories, pending-parent protection, permissions, read-only files, root protection and invalid input. HandleObjects.exe exercises the one-byte disposition structure through the existing SetFileInformationByHandle import. The catalog remains at 438 entries.
+
+Native Windows probes verified cross-handle cancellation and restored link counts, delete-on-close precedence, DELETE access for both marking and cancellation, short-buffer error 24, read-only marking error 5 and nonempty-directory error 145. Contract: [FILE_DISPOSITION_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_disposition_info). **Eight real-origin Edge checks passed without page errors**, including absence of the disposition fixture file from the persisted backup. Results: `test-artifacts/file-disposition-tests.tap` and `test-artifacts/file-disposition-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

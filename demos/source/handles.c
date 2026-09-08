@@ -13,6 +13,7 @@ void mainCRTStartup(void){
   FILE_ATTRIBUTE_TAG_INFO tag;
   FILE_NAME_BUFFER filename;
   DWORD originalId;
+  BYTE disposition;
   const WORD wideFile[]={'h','a','n','d','l','e','s','.','t','x','t',0};
   file=CreateFileA("handles.txt",GENERIC_READ|GENERIC_WRITE,0,NULL,2,0,NULL);
   CHECK(file!=INVALID_HANDLE);
@@ -79,6 +80,16 @@ void mainCRTStartup(void){
   CHECK(WriteFile(copy,"z",1,&count,NULL)&&count==1);
   CHECK(CloseHandle(copy));
   CHECK(CreateFileA("temporary.txt",GENERIC_READ,7,NULL,3,0,NULL)==INVALID_HANDLE&&GetLastError()==2);
+  file=CreateFileA("disposition.txt",GENERIC_READ|GENERIC_WRITE|0x10000,7,NULL,2,0,NULL);
+  CHECK(file!=INVALID_HANDLE);
+  CHECK(DuplicateHandle(self,file,self,&copy,0,0,2));
+  disposition=1;CHECK(SetFileInformationByHandle(file,4,&disposition,1));
+  CHECK(GetFileInformationByHandleEx(copy,1,&standard,sizeof(standard))&&standard.deletePending&&standard.links==0);
+  disposition=0;CHECK(SetFileInformationByHandle(copy,4,&disposition,1));
+  CHECK(GetFileInformationByHandleEx(file,1,&standard,sizeof(standard))&&!standard.deletePending&&standard.links==1);
+  disposition=1;CHECK(SetFileInformationByHandle(copy,4,&disposition,1));
+  CHECK(CloseHandle(file)&&CloseHandle(copy));
+  CHECK(CreateFileA("disposition.txt",GENERIC_READ,7,NULL,3,0,NULL)==INVALID_HANDLE&&GetLastError()==2);
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
   CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);

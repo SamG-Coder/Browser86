@@ -56,6 +56,7 @@ try{
   assert.deepEqual(fileMetadata(restored.get('C:/app/tests/handles.txt')),metadata);
   assert.equal(restored.get('C:/app/tests/pending.txt'),undefined);
   assert.equal(restored.get('C:/app/tests/temporary.txt'),undefined);
+  assert.equal(restored.get('C:/app/tests/disposition.txt'),undefined);
   checks.push('Deleted and delete-on-close guest files are absent from the persisted backup');
   checks.push('Downloaded ZIP preserves file ID, attributes and 100-nanosecond FILETIMEs');
   const oldId=await page.evaluate(()=>localStorage.getItem('browser86-last-package'));

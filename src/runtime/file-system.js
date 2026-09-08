@@ -26,6 +26,7 @@ export function installFileSystem(api){
       if(deleteOnClose&&(flags&1))return api.fail(5,INVALID);
       for(const f of opens(existing))if(read&&!(f.share&1)||write&&!(f.share&2)||deleteAccess&&!(f.share&4)||f.read&&!(share&1)||f.write&&!(share&2)||f.deleteAccess&&!(share&4))return api.fail(32,INVALID);
       const parent=path.slice(0,path.lastIndexOf('/'))||'C:/';if(!v.get(parent)?.directory)return api.fail(3,INVALID);
+      if(v.get(parent).deletePending)return api.fail(5,INVALID);
       let inherit=0;
       if(security){
         if(m.u32(security)!==12)return api.fail(87,INVALID);
