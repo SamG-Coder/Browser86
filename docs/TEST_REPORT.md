@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Keyboard focus callbacks - 2026-09-08
+
+**305 Node tests passed, 0 failed, 0 skipped.** SetFocus now delivers loss/gain callbacks with updated GetFocus state, handles null and same-window requests, rejects invalid windows and disabled child ancestry, and avoids stale gain notifications after a nested focus change. EnableWindow clears a directly focused window between WM_CANCELMODE and its disabled-state transition. Tests cover message arguments, prior-focus return values, callback-time state, popup-owner distinction and nested transitions. The rebuilt HandleObjects.exe checks six focus callbacks and error 87 beneath a disabled child ancestor. Catalog: 547 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-focus-tests.tap), [browser report](test-artifacts/window-focus-browser-report.json).
+
+Native ctypes probes used owned hidden STATIC windows and verified sibling loss/gain order with the new focus observable in both callbacks, no callbacks for repeated focus, null-focus loss, error 87 for disabled ancestry and error 1400 for invalid handles. Disabling the focused window produced WM_CANCELMODE (old focus, enabled), WM_KILLFOCUS (null focus, still enabled), then WM_ENABLE (null focus, disabled). Disabling its hidden ancestor did not clear child focus in the observed case, so general parent-disable focus transfer remains unresolved. Initial native focus also triggered activation-related focus events that the runtime does not yet emulate. All probe windows were destroyed; no guest executable ran on the host. Reference: [SetFocus](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setfocus). Activation messages, destruction focus restoration, changed-focus last-error parity and general reentrant focus parity remain unfinished.
+
 ## Visibility and enabled state - 2026-09-08
 
 **301 Node tests passed, 0 failed, 0 skipped.** IsWindowVisible now checks child ancestry, while IsWindowEnabled reads the window's own disabled style bit. EnableWindow delivers WM_CANCELMODE and WM_ENABLE through guest callbacks, preserves the previous-disabled return value, and does not notify a window destroyed during cancellation. Tests cover repeated calls, callback-time state, invalid handles, popup ownership, ShowWindow visibility bits and SetWindowLongA/W state synchronization. HandleObjects.exe imports all three APIs and verifies the native enable/disable callback sequence and the child's independent enabled bit. Catalog: 547 entries.

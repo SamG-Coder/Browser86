@@ -1,4 +1,5 @@
 import {RuntimeFault} from './errors.js';
+import {setKeyboardFocus} from './window-focus.js';
 export function installWindowState(gui){
  const {api,p}=gui,u=(n,c,f)=>api.add('user32.dll',n,c,f);
  u('IsWindowEnabled',1,h=>{const w=gui.window(h);return w?(w.style&0x08000000?0:1):api.fail(1400);});
@@ -16,6 +17,7 @@ export function installWindowState(gui){
    if(changed){gui.notify(w);if(w.proc)return p.call(w.proc,[h,10,enabled?1:0,0],()=>wasDisabled?1:0);}
    return wasDisabled?1:0;
   };
-  return !enabled&&w.proc?p.call(w.proc,[h,31,0,0],change):change();
+  const cancelled=()=>!enabled&&gui.focus===h?setKeyboardFocus(gui,0,change):change();
+  return !enabled&&w.proc?p.call(w.proc,[h,31,0,0],cancelled):cancelled();
  });
 }

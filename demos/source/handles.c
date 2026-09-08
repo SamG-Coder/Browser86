@@ -4,8 +4,11 @@ unsigned long __readfsdword(unsigned long);
 #pragma intrinsic(__readfsdword)
 #define CHECK(expression) do { if(!(expression)) { printf("Handle failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
 static HWND lifetimeWindows[4];
+static DWORD focusCount,focusMessages[8];
+static HWND focusObserved[8],focusOther[8];
 static DWORD lifetimeLog[8],lifetimeCount,enableLog[5],enableState[5],enableCount;
 static long WINAPI lifetimeProc(HWND h,DWORD msg,DWORD wp,long lp){
+  if((msg==7||msg==8)&&focusCount<8){focusMessages[focusCount]=msg;focusOther[focusCount]=(HWND)wp;focusObserved[focusCount++]=GetFocus();}
   if((msg==31||msg==10)&&enableCount<5){enableLog[enableCount]=msg;enableState[enableCount++]=IsWindowEnabled(h);}
   if(msg==2||msg==130){for(int i=0;i<4;i++)if(h==lifetimeWindows[i]&&lifetimeCount<8)lifetimeLog[lifetimeCount++]=i*256+msg;}
   return DefWindowProcA(h,msg,wp,lp);
@@ -322,6 +325,15 @@ void mainCRTStartup(void){
   CHECK(enableCount==4&&enableLog[0]==31&&enableState[0]==1&&enableLog[1]==10&&enableState[1]==0&&enableLog[2]==31&&enableState[2]==0&&enableLog[3]==10&&enableState[3]==1);
   CHECK(GetParent(lifetimeWindows[2])==lifetimeWindows[1]&&GetParent(lifetimeWindows[3])==lifetimeWindows[0]);
   CHECK(IsChild(lifetimeWindows[0],lifetimeWindows[2])&&!IsChild(lifetimeWindows[0],lifetimeWindows[3])&&!IsChild(lifetimeWindows[0],lifetimeWindows[0]));
+  CHECK(!SetFocus(lifetimeWindows[1])&&GetFocus()==lifetimeWindows[1]);
+  CHECK(SetFocus(lifetimeWindows[2])==lifetimeWindows[1]&&GetFocus()==lifetimeWindows[2]);
+  CHECK(SetFocus(lifetimeWindows[2])==lifetimeWindows[2]);CHECK(SetFocus(NULL)==lifetimeWindows[2]&&!GetFocus());
+  CHECK(focusCount==4&&focusMessages[0]==7&&focusMessages[1]==8&&focusMessages[2]==7&&focusMessages[3]==8);
+  CHECK(focusObserved[0]==lifetimeWindows[1]&&focusObserved[1]==lifetimeWindows[2]&&focusObserved[2]==lifetimeWindows[2]&&!focusObserved[3]);
+  CHECK(!focusOther[0]&&focusOther[1]==lifetimeWindows[2]&&focusOther[2]==lifetimeWindows[1]&&!focusOther[3]);
+  CHECK(!SetFocus(lifetimeWindows[1]));CHECK(!EnableWindow(lifetimeWindows[1],0)&&!GetFocus());
+  CHECK(focusCount==6&&focusMessages[5]==8&&!focusObserved[5]);
+  SetLastError(1234);CHECK(!SetFocus(lifetimeWindows[2])&&GetLastError()==87);
   CHECK(DestroyWindow(lifetimeWindows[0]));CHECK(lifetimeCount==8);
   DWORD expectedLifetime[8]={770,898,2,258,514,642,386,130};
   for(int i=0;i<8;i++)CHECK(lifetimeLog[i]==expectedLifetime[i]);
