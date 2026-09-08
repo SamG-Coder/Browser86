@@ -3287,6 +3287,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "CheckDlgButton",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "ClientToScreen",
     "argc": 2,
     "cdecl": false,
@@ -3715,6 +3722,13 @@
   {
     "dll": "user32.dll",
     "name": "IsChild",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "IsDlgButtonChecked",
     "argc": 2,
     "cdecl": false,
     "data": false

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Dialog check-message dispatch - 2026-09-08
+
+**482 Node tests passed, 0 failed, 0 skipped.** Added CheckDlgButton and IsDlgButtonChecked. Tests cover raw check-state forwarding, synchronous callback arguments, setter success independent of callback result, unsigned query results, last-error preservation, non-button custom controls and lookup failures. Catalog now contains 602 entries, without implying full API parity.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Rebuilt HandleObjects.exe imports both APIs and uses a custom subclass procedure to set/read state 2 inside the browser worker. Evidence: [Node TAP](test-artifacts/dlg-check-tests.tap), [browser report](test-artifacts/dlg-check-browser-report.json).
+
+Native private A/W custom-control probes confirmed raw BM_SETCHECK states including 3/0xffffffff, setter return 1 for callback results 0/7/-1, raw unsigned BM_GETCHECK results and lookup errors 1421/1400. Successful calls preserved error 1234. Probe windows/classes were cleaned up. References: [Microsoft CheckDlgButton](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-checkdlgbutton), [Microsoft IsDlgButtonChecked](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-isdlgbuttonchecked). Built-in BUTTON check-state storage, automatic toggling, radio grouping and visual checkbox rendering remain unfinished; these tests establish the dispatch layer only.
+
 ## Dialog integer parsing - 2026-09-08
 
 **479 Node tests passed, 0 failed, 0 skipped.** Added GetDlgItemInt with synchronous Unicode WM_GETTEXT, a native 47-character request, optional translated output and exact integer overflow checks. Tests cover numeric boundaries, leading spaces, rejected signs/whitespace, numeric prefixes with false status, long truncated input, null status pointers, invalid targets and callback buffer release. Catalog now contains 600 entries, without implying full API parity.

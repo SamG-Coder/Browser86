@@ -58,3 +58,13 @@ test('GetDlgItemInt queries callbacks synchronously with native capacity and rel
 test('GetDlgItemInt clears translation status for invalid targets and checks status output',()=>{
  const {p,u,parent}=setup(),flag=p.heap.alloc(4);for(const h of [parent,0,123]){p.memory.w32(flag,123);assert.equal(u('GetDlgItemInt',h,99,flag,1),0);assert.equal(p.memory.u32(flag),0);assert.equal(p.lastError,h===parent?1421:1400);}assert.throws(()=>u('GetDlgItemInt',parent,99,0xffffffff,1));
 });
+
+test('CheckDlgButton forwards raw check states synchronously and ignores control return values',()=>{
+ const {p,u,create,parent}=setup(),child=create(parent,7);u('SetWindowLongA',child,-4,12345);for(const state of [0,1,2,3,0xffffffff])for(const reply of [0,7,-1]){p.setError(1234);const result=u('CheckDlgButton',parent,7,state);assert.deepEqual(result.call.args,[child,0xf1,state,0]);assert.equal(result.then(reply),1);assert.equal(p.lastError,1234);assert.equal(p.messageQueue.length,0);}
+});
+test('IsDlgButtonChecked returns raw unsigned control results with zero message parameters',()=>{
+ const {p,u,create,parent}=setup(),child=create(parent,7);u('SetWindowLongW',child,-4,12345);for(const reply of [0,1,2,7,-1]){p.setError(1234);const result=u('IsDlgButtonChecked',parent,7);assert.deepEqual(result.call.args,[child,0xf0,0,0]);assert.equal(result.then(reply),reply>>>0);assert.equal(p.lastError,1234);}
+});
+test('Dialog check APIs reject missing and invalid targets and accept non-button custom controls',()=>{
+ const {p,u,create,parent}=setup();create(parent,7);assert.equal(u('CheckDlgButton',parent,7,1),1);assert.equal(u('IsDlgButtonChecked',parent,7),0);for(const name of ['CheckDlgButton','IsDlgButtonChecked'])for(const h of [parent,0,123]){assert.equal(u(name,h,99,1),0);assert.equal(p.lastError,h===parent?1421:1400);}
+});
