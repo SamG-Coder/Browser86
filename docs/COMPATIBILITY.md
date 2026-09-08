@@ -66,6 +66,8 @@ GetTempFileNameA/W implement the three-character prefix, 16-bit hexadecimal suff
 
 Dynamic TLS supports 1,088 process-local indices for the single emulated thread. TlsAlloc reuses freed slots and initializes them to zero; exhaustion returns TLS_OUT_OF_INDEXES and error 8. Values live in the x86 TEB's 64 inline slots and lazily allocated expansion slots, separately from PE static TLS. TlsGetValue clears last error on valid-range reads; TlsGetValue2 leaves it unchanged. TlsSetValue follows the native bounds-based model, while TlsFree requires an allocated index and does not free application data pointed to by a value. This does not add thread creation, fiber-local storage or additional thread scheduling.
 
+InitOnceInitialize, InitOnceBeginInitialize, InitOnceComplete and InitOnceExecuteOnce use the guest's x86 initialization word for pending/completed state and DWORD-aligned context. Failed callbacks permit retry and retain the callback's last error. Completed calls return the stored context without rerunning initialization. Synchronous pending calls suspend through the runtime's wait mechanism; ASYNC supports multiple begin attempts and a single winning completion within the existing single-thread process. These flags do not create background execution or additional threads. Recursive synchronous initialization of the same object can remain waiting until the guest is stopped.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

@@ -8,6 +8,7 @@ import {installFileIO} from './files.js';
 import {installFileInformation,writeFileTime} from './file-info.js';
 import {installFileSystem} from './file-system.js';
 import {installTLS} from './tls.js';
+import {installInitOnce} from './init-once.js';
 const INVALID=0xFFFFFFFF;
 const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
 export class Win32 {
@@ -111,6 +112,7 @@ export class Win32 {
     k('MultiByteToWideChar',6,(cp,flags,src,count,out,capacity)=>{if(cp!==0&&cp!==1252&&cp!==65001)return this.fail(87);if(!count)return this.fail(87);const nullTerm=count===INVALID,data=nullTerm?(()=>{const s=m.cstr(src);return m.read(src,s.length+1);})():m.read(src,count);let text;try{text=cp===65001?new TextDecoder('utf-8',{fatal:!!(flags&8)}).decode(data):ansiDecode(data);}catch{return this.fail(1113);}if(!capacity)return text.length;if(capacity<text.length)return this.fail(122);for(let i=0;i<text.length;i++)m.w16(out+i*2,text.charCodeAt(i));return text.length;});
     k('WideCharToMultiByte',8,(cp,flags,src,count,out,capacity,defaultChar,usedDefault)=>{if(cp!==0&&cp!==1252&&cp!==65001)return this.fail(87);if(!count)return this.fail(87);const text=count===INVALID?m.wstr(src)+'\0':Array.from({length:count},(_,i)=>String.fromCharCode(m.u16(src+i*2))).join('');const data=cp===65001?new TextEncoder().encode(text):ansiEncode(text);if(usedDefault)m.w32(usedDefault,0);if(!capacity)return data.length;if(capacity<data.length)return this.fail(122);m.write(out,data);return data.length;});
     installTLS(this);
+    installInitOnce(this);
     k('InitializeCriticalSection',1,a=>{this.critical.set(a,0);m.fill(a,24);return 0;});k('InitializeCriticalSectionAndSpinCount',2,(a,spin)=>{this.critical.set(a,0);m.fill(a,24);return 1;});k('EnterCriticalSection',1,a=>{if(!this.critical.has(a))throw new RuntimeFault('CRITICAL_SECTION','Critical section was not initialized.');this.critical.set(a,this.critical.get(a)+1);return 0;});k('TryEnterCriticalSection',1,a=>{if(!this.critical.has(a))return 0;this.critical.set(a,this.critical.get(a)+1);return 1;});k('LeaveCriticalSection',1,a=>{const n=this.critical.get(a);if(!n)throw new RuntimeFault('CRITICAL_SECTION','Unbalanced LeaveCriticalSection.');this.critical.set(a,n-1);return 0;});k('DeleteCriticalSection',1,a=>{this.critical.delete(a);return 0;});
     k('InterlockedIncrement',1,a=>{const n=(m.u32(a)+1)>>>0;m.w32(a,n);return n;});k('InterlockedDecrement',1,a=>{const n=(m.u32(a)-1)>>>0;m.w32(a,n);return n;});k('InterlockedExchange',2,(a,value)=>{const old=m.u32(a);m.w32(a,value);return old;});k('InterlockedExchangeAdd',2,(a,value)=>{const old=m.u32(a);m.w32(a,old+value);return old;});k('InterlockedCompareExchange',3,(a,value,compare)=>{const old=m.u32(a);if(old===compare)m.w32(a,value);return old;});
     installSynchronization(this);

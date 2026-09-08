@@ -19,6 +19,7 @@ K.update({'SetFileInformationByHandle':4})
 K.update({'GetFinalPathNameByHandleA':4,'GetFinalPathNameByHandleW':4})
 K.update({'GetTempFileNameA':4,'GetTempFileNameW':4})
 K.update({'TlsAlloc':0,'TlsFree':1,'TlsSetValue':2,'TlsGetValue':1,'TlsGetValue2':1,'SetLastError':1})
+K.update({'InitOnceInitialize':1,'InitOnceBeginInitialize':4,'InitOnceComplete':3,'InitOnceExecuteOnce':4})
 K.update({'CreateDirectoryA':2,'RemoveDirectoryA':1,'MoveFileA':2})
 K.update({'GetFileTime':4,'SetFileTime':4,'GetFileInformationByHandle':2,'SetFileAttributesA':2,'SetFileAttributesW':2,'GetFileAttributesA':1})
 for suffix in ['A','W']:

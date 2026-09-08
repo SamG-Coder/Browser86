@@ -2,6 +2,11 @@
 unsigned long __readfsdword(unsigned long);
 #pragma intrinsic(__readfsdword)
 #define CHECK(expression) do { if(!(expression)) { printf("Handle failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
+static DWORD initializationCalls;
+static BOOL WINAPI initializeOnce(DWORD *once,void *parameter,void **context){
+  initializationCalls++;if(initializationCalls==1){SetLastError(123);return 0;}
+  *context=parameter;return 1;
+}
 void mainCRTStartup(void){
   HANDLE self=GetCurrentProcess(),file,copy,process,thread;
   DWORD flags,count,code;
@@ -19,6 +24,7 @@ void mainCRTStartup(void){
   FILE_RENAME_BUFFER rename;
   DWORD originalId;
   DWORD tls[65],index;
+  DWORD once=0,manual=0;BOOL pending;void *onceContext=NULL;
   BYTE disposition;
   const WORD wideFile[]={'h','a','n','d','l','e','s','.','t','x','t',0};
   file=CreateFileA("handles.txt",GENERIC_READ|GENERIC_WRITE,0,NULL,2,0,NULL);
@@ -150,6 +156,13 @@ void mainCRTStartup(void){
   CHECK(TlsGetValue(tls[64])==(void*)0xFEDCBA98&&GetLastError()==0);
   CHECK(TlsFree(tls[12]));index=TlsAlloc();CHECK(index==tls[12]&&TlsGetValue(index)==NULL);
   for(index=0;index<65;index++)CHECK(TlsFree(tls[index]));
+  CHECK(!InitOnceExecuteOnce(&once,initializeOnce,(void*)0x123400,&onceContext)&&GetLastError()==123);
+  CHECK(InitOnceExecuteOnce(&once,initializeOnce,(void*)0x123400,&onceContext)&&onceContext==(void*)0x123400);
+  CHECK(InitOnceExecuteOnce(&once,initializeOnce,NULL,&onceContext)&&initializationCalls==2);
+  InitOnceInitialize(&manual);
+  CHECK(InitOnceBeginInitialize(&manual,0,&pending,&onceContext)&&pending);
+  CHECK(InitOnceComplete(&manual,0,(void*)0x567800));
+  CHECK(InitOnceBeginInitialize(&manual,1,&pending,&onceContext)&&!pending&&onceContext==(void*)0x567800);
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
   CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);

@@ -94,6 +94,12 @@ Native Windows probes confirmed uppercase hexadecimal without zero padding, lowe
 
 Native probes verified reused indices with zero values, double-free error 87, valid-range zero reads, GetValue2 preserving last error even on out-of-range reads, and allocation-exhaustion error 8. Contracts: [TlsAlloc](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsalloc), [TlsGetValue](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsgetvalue). Results: `test-artifacts/tls-tests.tap` and `test-artifacts/tls-browser-report.json`.
 
+## One-time initialization — 2026-09-08
+
+**134 Node tests passed without failures or skips; eight real-origin Edge checks passed without page errors.** Five new tests cover check-only, begin/complete, failed-attempt retry, saved context, callback arguments and last-error preservation, async-mode consistency, completion races expressed as sequential attempts, synchronous wait continuation, reserved context bits and invalid output atomicity. HandleObjects.exe imports all four functions and executes a compiled stdcall initializer that fails once, succeeds on retry and is not called after completion. Catalog: 447 entries.
+
+Native probes verified uninitialized check-only and duplicate-complete error 31, invalid context/mode error 87, pending/context output preservation, callback-error preservation, null callback context forwarding and encoded completion context. Contracts: [InitOnceExecuteOnce](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-initonceexecuteonce), [InitOnceBeginInitialize](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-initoncebegininitialize), [InitOnceComplete](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-initoncecomplete). Results: `test-artifacts/init-once-tests.tap` and `test-artifacts/init-once-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

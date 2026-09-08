@@ -1100,6 +1100,34 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "InitOnceBeginInitialize",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "InitOnceComplete",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "InitOnceExecuteOnce",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "InitOnceInitialize",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "InterlockedCompareExchange",
     "argc": 3,
     "cdecl": false,
