@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Class background brush lifetime - 2026-09-08
+
+**361 Node tests passed, 0 failed, 0 skipped.** Successful UnregisterClassA/W releases ordinary background brush handles. Tests cover RegisterClass/Ex A/W variants, failed registration, live windows, instance mismatch, stock/system/color pseudo-handles, and brush invalidation while selected in a DC. The rebuilt HandleObjects.exe assigns a real brush to its ANSI class, confirms validity after rejected unregistration, and checks that GetObjectType returns zero after successful removal. Catalog remains 576 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-brush-lifetime-tests.tap), [browser report](test-artifacts/class-brush-lifetime-browser-report.json).
+
+Native probes used private A/W classes, owned hidden windows and CreateSolidBrush. Failed unregistration retained object type 2; successful removal changed GetObjectType to zero and preserved prior last error. A second probe selected the brush into an owned memory DC and observed the same invalidation before deselection; DCs were cleaned up. Reference: [Microsoft WNDCLASSW background ownership](https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-wndclassw). Retained-object DC drawing, shared-brush ownership and class-brush replacement remain unfinished.
+
 ## Window class atom unregistration - 2026-09-08
 
 **357 Node tests passed, 0 failed, 0 skipped.** UnregisterClassA/W resolves integer class atoms and checks module identity before live-window state. Tests cover all A/W registration/unregistration combinations including RegisterClassEx, live windows, destruction, stale atoms, failed creation after removal, re-registration, instance mismatch, null/integer/string failures, case-insensitive names and invalid string memory. The rebuilt HandleObjects.exe imports both unregister variants and verifies opposite-encoding atom removal, live-window rejection and stale-atom error. Catalog remains 576 entries.

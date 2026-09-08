@@ -53,7 +53,7 @@ static BOOL WINAPI initializeOnce(DWORD *once,void *parameter,void **context){
   *context=parameter;return 1;
 }
 void mainCRTStartup(void){
-  WNDCLASSA encodingA={0};encodingA.proc=encodingProc;encodingA.name="A\xe9";WORD encodingAtomA=RegisterClassA(&encodingA);CHECK(encodingAtomA);
+  WNDCLASSA encodingA={0};encodingA.proc=encodingProc;encodingA.name="A\xe9";encodingA.brush=CreateSolidBrush(0x123456);WORD encodingAtomA=RegisterClassA(&encodingA);CHECK(encodingAtomA);
   WORD aName[]={'A',233,0},wTitle[]={'C','a','f',233,' ',256,0};
   HWND encodingWindow=CreateWindowExW(0,aName,wTitle,0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);
   CHECK(SendMessageW(encodingWindow,12,99,(long)wTitle)==7);CHECK(SetWindowTextW(encodingWindow,wTitle)==1);CHECK(textMessageCount==2);
@@ -61,8 +61,10 @@ void mainCRTStartup(void){
   CHECK(GetWindowTextW(encodingWindow,readWide,16)==4);CHECK(readWide[3]==233&&readWide[4]==0);
   CHECK(GetWindowTextLengthA(encodingWindow)==7);CHECK(GetWindowTextLengthW(encodingWindow)==4);CHECK(SendMessageW(encodingWindow,14,0,0)==4);
   CHECK(!UnregisterClassW((const WORD*)(DWORD)encodingAtomA,NULL));CHECK(GetLastError()==1412);
+  CHECK(GetObjectType(encodingA.brush)==2);
   readWide[2]=0x5858;CHECK(SendMessageW(encodingWindow,13,2,(long)readWide)==3);CHECK(readWide[0]=='C'&&readWide[1]=='a'&&readWide[2]==0x5858);CHECK(DestroyWindow(encodingWindow));
   CHECK(UnregisterClassW((const WORD*)(DWORD)encodingAtomA,NULL));CHECK(!UnregisterClassW((const WORD*)(DWORD)encodingAtomA,NULL));CHECK(GetLastError()==6);
+  CHECK(!GetObjectType(encodingA.brush));
   WORD wName[]={'W',233,0};WNDCLASSW encodingW={0};encodingW.proc=encodingProc;encodingW.name=wName;WORD encodingAtomW=RegisterClassW(&encodingW);CHECK(encodingAtomW);creationWide=1;creationCount=0;
   encodingWindow=CreateWindowExA(0,"W\xe9","Caf\xe9",0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);
   CHECK(SendMessageA(encodingWindow,12,99,(long)"Caf\xe9")==7);CHECK(SetWindowTextA(encodingWindow,"Caf\xe9")==1);CHECK(textMessageCount==4);

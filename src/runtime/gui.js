@@ -109,7 +109,10 @@ export class GUI {
         if(!cls)return a.fail(atom&&name>=0xC000?6:1411);
         if((instance||p.main.base)!==(cls.instance||p.main.base))return a.fail(1411);
         const key=cls.name.toLowerCase();if([...this.windows.values()].some(w=>w.className.toLowerCase()===key))return a.fail(1412);
-        this.classes.delete(key);return 1;
+        this.classes.delete(key);
+        const background=p.object(cls.background,'gdi');
+        if(background?.kind==='brush'&&!background.stock&&!background.system)p.releaseHandle(cls.background);
+        return 1;
       });
       u('CreateWindowEx'+suffix,12,(exStyle,className,title,style,x,y,width,height,parent,menu,instance,param)=>{const cls=className<65536?[...this.classes.values()].find(c=>c.atom===className):this.classes.get(str(className).toLowerCase());const name=cls?.name||(className>=65536?str(className):'');if(!cls&&!['BUTTON','STATIC','EDIT'].includes(name.toUpperCase()))return a.fail(1407);
         if(parent&&!this.window(parent))return a.fail(1400);const requestedParent=parent;if(parent&&!(style&0x40000000))parent=childRoot(this,parent);const text=str(title),hwnd=p.handle('window',{});const w={hwnd,className:name,title:text,parent,id:menu,proc:cls?.proc||0,wide:cls?.wide??wide,style,exStyle,x:x===0x80000000?40:x|0,y:y===0x80000000?40:y|0,width:width===0x80000000?640:Math.max(1,Math.min(1920,width|0)),height:height===0x80000000?420:Math.max(1,Math.min(1080,height|0)),visible:!!(style&0x10000000),enabled:!(style&0x08000000),paintPending:false,dc:0};
