@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Top-level window owner replacement - 2026-09-08
+
+**393 Node tests passed, 0 failed, 0 skipped.** SetWindowLongA/W supports GWL_HWNDPARENT owner replacement for top-level windows. Tests cover A/W setters, prior owners, direct child-owner storage, null detachment, hierarchy queries, destruction under old/new owners, invalid/self owners, no failure notifications and explicit rejection of reparenting/cycles. The rebuilt HandleObjects.exe assigns a child owner to its popup, verifies the query and restores the top-level owner before existing lifetime checks. Catalog remains 580 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-owner-mutation-tests.tap), [browser report](test-artifacts/window-owner-mutation-browser-report.json).
+
+Native private hidden-window probes used SetWindowLongPtrA/W on the 64-bit host. Owner changes returned the previous handle and preserved error 1234. A supplied child owner was stored directly. Invalid and self owners returned zero/error 87 without changing ownership. Null detachment returned the old handle and set error 1400. Owned windows/classes were cleaned up. Reference: [Microsoft SetWindowLongA owner field](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowlonga). Child reparenting, cyclic ownership, z-order/activation and cross-process effects remain unfinished.
+
 ## Window instance handle queries and mutation - 2026-09-08
 
 **389 Node tests passed, 0 failed, 0 skipped.** GetWindowLongA/W and SetWindowLongA/W now support GWL_HINSTANCE and preserve the exact creation argument. Tests cover null and high-bit values, previous-value returns, encoding/class/process isolation, creation callback access and mutation, unchanged CREATESTRUCT, invalid indices and destroyed HWNDs. The rebuilt HandleObjects.exe reads, replaces and restores its instance handle and checks invalid-index error 1413. Catalog remains 580 entries.
