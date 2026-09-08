@@ -103,7 +103,14 @@ export class GUI {
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
     for(const wide of [false,true]){const suffix=wide?'W':'A',str=pointer=>a.str(pointer,wide);
       for(const extended of [false,true])u('RegisterClass'+(extended?'Ex':'')+suffix,1,pointer=>{const o=extended?4:0;if(extended&&m.u32(pointer)<48)return a.fail(87);const proc=m.u32(pointer+o+4),name=str(m.u32(pointer+o+36));if(!name)return a.fail(87);if(this.classes.has(name.toLowerCase()))return a.fail(1410);const atom=this.nextAtom++;this.classes.set(name.toLowerCase(),{name,atom,proc,instance:m.u32(pointer+o+16),background:m.u32(pointer+o+28),wide});return atom;});
-      u('UnregisterClass'+suffix,2,(name,instance)=>{const key=str(name).toLowerCase();if([...this.windows.values()].some(w=>w.className.toLowerCase()===key))return a.fail(1412);return this.classes.delete(key)?1:a.fail(1411);});
+      u('UnregisterClass'+suffix,2,(name,instance)=>{
+        name>>>=0;if(!name)return a.fail(87);
+        const atom=name<65536,cls=atom?[...this.classes.values()].find(c=>c.atom===name):this.classes.get(str(name).toLowerCase());
+        if(!cls)return a.fail(atom&&name>=0xC000?6:1411);
+        if((instance||p.main.base)!==(cls.instance||p.main.base))return a.fail(1411);
+        const key=cls.name.toLowerCase();if([...this.windows.values()].some(w=>w.className.toLowerCase()===key))return a.fail(1412);
+        this.classes.delete(key);return 1;
+      });
       u('CreateWindowEx'+suffix,12,(exStyle,className,title,style,x,y,width,height,parent,menu,instance,param)=>{const cls=className<65536?[...this.classes.values()].find(c=>c.atom===className):this.classes.get(str(className).toLowerCase());const name=cls?.name||(className>=65536?str(className):'');if(!cls&&!['BUTTON','STATIC','EDIT'].includes(name.toUpperCase()))return a.fail(1407);
         if(parent&&!this.window(parent))return a.fail(1400);const requestedParent=parent;if(parent&&!(style&0x40000000))parent=childRoot(this,parent);const text=str(title),hwnd=p.handle('window',{});const w={hwnd,className:name,title:text,parent,id:menu,proc:cls?.proc||0,wide:cls?.wide??wide,style,exStyle,x:x===0x80000000?40:x|0,y:y===0x80000000?40:y|0,width:width===0x80000000?640:Math.max(1,Math.min(1920,width|0)),height:height===0x80000000?420:Math.max(1,Math.min(1080,height|0)),visible:!!(style&0x10000000),enabled:!(style&0x08000000),paintPending:false,dc:0};
         w.dc=this.newDC(hwnd);this.windows.set(hwnd,w);this.notify(w,'create');

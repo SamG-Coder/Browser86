@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Window class atom unregistration - 2026-09-08
+
+**357 Node tests passed, 0 failed, 0 skipped.** UnregisterClassA/W resolves integer class atoms and checks module identity before live-window state. Tests cover all A/W registration/unregistration combinations including RegisterClassEx, live windows, destruction, stale atoms, failed creation after removal, re-registration, instance mismatch, null/integer/string failures, case-insensitive names and invalid string memory. The rebuilt HandleObjects.exe imports both unregister variants and verifies opposite-encoding atom removal, live-window rejection and stale-atom error. Catalog remains 576 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-unregister-tests.tap), [browser report](test-artifacts/window-unregister-browser-report.json).
+
+Native probes registered private A/W classes and created owned hidden windows. Opposite-encoding UnregisterClass calls returned error 1412 while a window existed, error 1411 for a mismatched module, and success after destruction while preserving error 1234. Null identifier returned error 87, integer 1 error 1411, and missing/stale high-range atoms error 6. All owned windows and classes were cleaned up. Reference: [Microsoft UnregisterClassW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-unregisterclassw). Class-background brush ownership, shared atom lifetime and complete module/global class namespaces remain unfinished.
+
 ## Window text length callbacks - 2026-09-08
 
 **353 Node tests passed, 0 failed, 0 skipped.** GetWindowTextLengthA/W now invokes the guest procedure. Cross-encoding WM_GETTEXTLENGTH follows a positive reported length with WM_GETTEXT and returns the retrieved count for CP1252/UTF-16. Tests cover four encoding combinations, zero-length early completion, message parameters, invalid HWNDs, callback errors, allocation limits, invalid callback counts and destruction cleanup. The rebuilt HandleObjects.exe imports both APIs and checks same-encoding length 7 versus actual cross-encoding counts 4 and 6. Catalog remains 576 entries.

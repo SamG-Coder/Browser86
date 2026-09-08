@@ -211,6 +211,8 @@ API DWORD WINAPI WaitForMultipleObjects(DWORD,const HANDLE*,BOOL,DWORD);
 API DWORD WINAPI WaitForMultipleObjectsEx(DWORD,const HANDLE*,BOOL,DWORD,BOOL);
 API WORD WINAPI RegisterClassA(const WNDCLASSA*);
 API WORD WINAPI RegisterClassW(const WNDCLASSW*);
+API BOOL WINAPI UnregisterClassA(const char*,HANDLE);
+API BOOL WINAPI UnregisterClassW(const WORD*,HANDLE);
 API HWND WINAPI CreateWindowExW(DWORD,const WORD*,const WORD*,DWORD,int,int,int,int,HWND,HANDLE,HANDLE,void*);
 API HWND WINAPI CreateWindowExA(DWORD,const char*,const char*,DWORD,int,int,int,int,HWND,HANDLE,HANDLE,void*);
 API BOOL WINAPI ShowWindow(HWND,int);

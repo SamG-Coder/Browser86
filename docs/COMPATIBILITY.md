@@ -200,6 +200,8 @@ GetWindowTextA/W now retrieves same-process custom text through WM_GETTEXT, incl
 
 GetWindowTextLengthA/W now queries custom procedures with WM_GETTEXTLENGTH. Cross-encoding length messages clear lParam and follow a positive result with WM_GETTEXT using capacity length + 1 in the procedure encoding. Under the current CP1252 model, the retrieved count is the converted length; same-encoding queries retain the reported length. Zero skips the second callback, invalid API HWNDs report error 1400, and temporary buffers are released after return. Conversion lengths are bounded below 1,048,576 characters and invalid callback counts fault. Multibyte code pages, conversion-specific last-error details and arbitrary procedure changes during these callbacks remain unfinished.
 
+UnregisterClassA/W now accepts class atoms from RegisterClass/ExA/W without dereferencing them, as well as case-insensitive class names. It checks module identity before live-window state, rejects null identifiers with error 87, missing string/integer classes with 1411 and absent string-range class atoms with 6. Live windows prevent removal with error 1412. Successful removal preserves last error and permits re-registration. Class-background brush ownership, global/local class namespaces, shared native atom lifetime and same-named classes from different modules remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
