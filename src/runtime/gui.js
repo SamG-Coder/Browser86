@@ -72,8 +72,6 @@ export class GUI {
     u('InvalidateRect',3,(h,rect,erase)=>{const w=this.window(h);if(!w)return 0;this.queuePaint(w);return 1;});u('ValidateRect',2,(h,rect)=>{const w=this.window(h);if(!w)return 0;w.paintPending=false;p.messageQueue=p.messageQueue.filter(msg=>!(msg.hwnd===h&&msg.message===WM_PAINT));return 1;});
     u('BeginPaint',2,(h,ps)=>{const w=this.window(h);if(!w)return 0;m.fill(ps,64);m.w32(ps,w.dc);m.w32(ps+4,1);m.w32(ps+16,w.width);m.w32(ps+20,w.height);w.paintPending=false;return w.dc;});u('EndPaint',2,(h,ps)=>this.window(h)?1:0);
     u('GetDC',1,h=>this.window(h)?.dc||(h===0?this.newDC(0):0));u('GetWindowDC',1,h=>this.window(h)?.dc||0);u('ReleaseDC',2,(h,dc)=>this.dc(dc)?1:0);
-    u('GetClientRect',2,(h,out)=>{const w=this.window(h);if(!w)return 0;[0,0,w.width,w.height].forEach((v,i)=>m.w32(out+i*4,v));return 1;});
-    u('GetWindowRect',2,(h,out)=>{const w=this.window(h);if(!w)return 0;[w.x,w.y,w.x+w.width,w.y+w.height].forEach((v,i)=>m.w32(out+i*4,v));return 1;});
     u('AdjustWindowRect',3,(rect,style,menu)=>{if(menu)throw new RuntimeFault('UNSUPPORTED_MENU','Native menus are not implemented.');return 1;});
     u('MoveWindow',6,(h,x,y,width,height,repaint)=>{const w=this.window(h);if(!w)return 0;w.x=x|0;w.y=y|0;w.width=Math.max(1,Math.min(1920,width|0));w.height=Math.max(1,Math.min(1080,height|0));this.notify(w);if(repaint)this.queuePaint(w);return 1;});
     u('IsWindow',1,h=>this.window(h)?1:0);u('IsWindowVisible',1,h=>this.window(h)?.visible?1:0);u('IsWindowEnabled',1,h=>this.window(h)?.enabled?1:0);u('EnableWindow',2,(h,enabled)=>{const w=this.window(h);if(!w)return 0;const wasDisabled=!w.enabled;w.enabled=!!enabled;this.notify(w);return wasDisabled?1:0;});

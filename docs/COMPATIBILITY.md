@@ -166,6 +166,8 @@ OffsetClipRgn moves a copied rectangular application clip without changing sourc
 
 ClientToScreen, ScreenToClient and MapWindowPoints translate points using the current runtime window origins, accumulating WS_CHILD ancestry while treating popup owner positions independently. MapWindowPoints supports screen-coordinate null handles, arrays and packed signed 16-bit translation results, including zero-count calls. Input arrays are fully validated before writes. Mirrored layouts explicitly fault. This follows the current simplified client/window geometry profile; native nonclient borders, DPI virtualization, desktop-window handles and full GetWindowRect child-coordinate parity remain unfinished.
 
+GetWindowRect now accumulates WS_CHILD ancestry to return screen bounds, including nested children; popup owners do not shift bounds. GetClientRect returns the runtime client dimensions with origin (0,0). Both reject invalid windows/null output pointers with error 1400 and validate the entire 16-byte output before writing. These use the current simplified window geometry: native nonclient borders, DPI virtualization, desktop handles and mirrored screen rectangles remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

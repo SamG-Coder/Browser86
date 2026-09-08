@@ -270,4 +270,6 @@ API BYTE WINAPI TryAcquireSRWLockShared(void*);
 API BYTE WINAPI TryAcquireSRWLockExclusive(void*);
 API void WINAPI ReleaseSRWLockShared(void*);
 API void WINAPI ReleaseSRWLockExclusive(void*);
+API BOOL WINAPI GetClientRect(HWND,RECT*);
+API BOOL WINAPI GetWindowRect(HWND,RECT*);
 #endif

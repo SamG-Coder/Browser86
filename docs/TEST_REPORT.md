@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Window rectangle queries - 2026-09-08
+
+**286 Node tests passed, 0 failed, 0 skipped.** GetWindowRect now returns screen bounds through nested child ancestry and ignores popup owners. GetClientRect retains client-local dimensions. Both return error 1400 for invalid windows or null output pointers, preserve last error on success, and validate all sixteen output bytes before writing. Regression tests cover negative positions, changed parent origins and truncated guest buffers. The rebuilt HandleObjects.exe imports both APIs and checks child screen bounds (47,59,67,79), client bounds (0,0,20,20), and null-output failure. The catalog remains at 546 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-rectangle-tests.tap), [browser report](test-artifacts/window-rectangle-browser-report.json).
+
+Native ctypes probes used an owned hidden borderless STATIC parent at (40,50) and child at (7,9), size 20x20. GetWindowRect returned (47,59,67,79); GetClientRect returned (0,0,20,20). Both preserved sentinel error 1234 on success and returned zero/error 1400 for null output or handles 0/123. The parent was destroyed, cleaning up its child; no guest executable ran on the host. References: [GetWindowRect](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowrect), [GetClientRect](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getclientrect). Native nonclient borders, DPI virtualization, desktop handles and mirrored screen rectangles remain unfinished.
+
 ## Window coordinate conversion - 2026-09-08
 
 **284 Node tests passed, 0 failed, 0 skipped.** ClientToScreen, ScreenToClient and MapWindowPoints now translate points through WS_CHILD ancestry, distinguish popup owners, support point arrays and pack signed translation words. Tests cover round trips, null screen handles, zero-count mapping, unchanged last error, invalid windows/pointers, full-array validation and explicit mirrored-layout rejection. The rebuilt HandleObjects.exe creates guest parent/child windows, verifies (47,59) for a child at (7,9) under a parent at (40,50), checks the reverse conversion and packed mapping result, then destroys the windows. The catalog contains 546 entries.

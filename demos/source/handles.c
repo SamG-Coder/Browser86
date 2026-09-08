@@ -294,7 +294,9 @@ void mainCRTStartup(void){
   HWND coordinateChild=CreateWindowExA(0,"STATIC","",0x40000000,7,9,20,20,coordinateWindow,NULL,NULL,NULL);POINT coordinatePoint={0,0};
   CHECK(coordinateWindow&&coordinateChild&&ClientToScreen(coordinateChild,&coordinatePoint)&&coordinatePoint.x==47&&coordinatePoint.y==59);
   CHECK(ScreenToClient(coordinateChild,&coordinatePoint)&&coordinatePoint.x==0&&coordinatePoint.y==0);
-  CHECK(MapWindowPoints(coordinateChild,NULL,&coordinatePoint,1)==0x003b002f&&coordinatePoint.x==47&&coordinatePoint.y==59);CHECK(DestroyWindow(coordinateWindow));
+  CHECK(MapWindowPoints(coordinateChild,NULL,&coordinatePoint,1)==0x003b002f&&coordinatePoint.x==47&&coordinatePoint.y==59);RECT coordinateRect;CHECK(GetWindowRect(coordinateChild,&coordinateRect)&&coordinateRect.left==47&&coordinateRect.top==59&&coordinateRect.right==67&&coordinateRect.bottom==79);
+  CHECK(GetClientRect(coordinateChild,&coordinateRect)&&coordinateRect.left==0&&coordinateRect.top==0&&coordinateRect.right==20&&coordinateRect.bottom==20);
+  SetLastError(1234);CHECK(!GetWindowRect(coordinateChild,NULL)&&GetLastError()==1400);CHECK(DestroyWindow(coordinateWindow));
   RECT rectA,rectB,rectOut;POINT rectPoint={0,0};
   CHECK(SetRect(&rectA,0,0,10,10)&&SetRect(&rectB,0,0,5,10));
   CHECK(PtInRect(&rectA,rectPoint));rectPoint.x=10;CHECK(!PtInRect(&rectA,rectPoint));
