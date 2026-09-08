@@ -1,0 +1,4 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {guest} from './helpers.mjs';
+test('Buffered paint emits commands only on commit and releases the temporary DC',()=>{const {p,events}=guest('HelloConsole.exe'),m=p.memory,b=(n,...a)=>p.apis.lookup('uxtheme.dll',n).fn(...a),gui=p.apis.gui,target=gui.newDC(123),rect=p.heap.alloc(16),out=p.heap.alloc(4);[0,0,100,100].forEach((n,i)=>m.w32(rect+i*4,n));b('BufferedPaintInit');for(const commit of [0,1]){const handle=b('BeginBufferedPaint',target,rect,0,0,out),dc=m.u32(out);events.length=0;gui.draw(dc,{op:'fill',color:42,x:0,y:0,width:5,height:5});assert.equal(events.length,0);assert.equal(b('EndBufferedPaint',handle,commit),0);assert.equal(events.length,commit);assert.equal(gui.dc(dc),null);if(commit)assert.equal(events[0].hwnd,123);}assert.equal(b('BufferedPaintUnInit'),0);});

@@ -1,4 +1,5 @@
 import {installCursors,defaultSetCursor} from './cursors.js';
+import {installMenus} from './menus.js';
 import {installWindowWord} from './window-word.js';
 import {installDialogIntegers} from './dialog-integers.js';
 import {dialogCode} from './dialog-code.js';
@@ -32,11 +33,11 @@ export class GUI {
   constructor(apis){this.api=apis;this.p=apis.p;this.m=apis.m;this.classes=new Map();this.windows=new Map();this.nextAtom=0xC000;this.stock=new Map();this.focus=0;this.keyChars=new Map();this.nextTimer=1;this.install();}
   window(h){return this.windows.get(h>>>0);}
   dialogItem(h,id){if(!this.window(h))return this.api.fail(1400);const child=[...this.windows.values()].find(w=>(w.style&0x40000000)&&w.parent===(h>>>0)&&(w.id|0)===(id|0));return child?child.hwnd:this.api.fail(1421);}
-  serialize(w){return {hwnd:w.hwnd,parent:w.parent,title:w.title,className:w.className,x:w.x,y:w.y,width:w.width,height:w.height,style:w.style,visible:w.visible,enabled:w.enabled,id:w.id,checkState:w.checkState||0};}
+  serialize(w){return {hwnd:w.hwnd,parent:w.parent,title:w.title,className:w.className,x:w.x,y:w.y,width:w.width,height:w.height,style:w.style,visible:w.visible,enabled:w.enabled,id:w.id,checkState:w.checkState||0,menu:this.serializeMenu?.(w.menu)||null};}
   notify(w,op='update'){this.p.emit('window',{op,window:this.serialize(w)});}
   dc(h){return this.p.object(h,'dc');}
   newDC(hwnd){return this.p.handle('dc',{hwnd,clipRegion:null,brushOrgX:0,brushOrgY:0,miterLimitBits:0x41200000,polyFillMode:1,dcPenColor:0,dcBrushColor:0xFFFFFF,textColor:0,background:0xFFFFFF,bkMode:2,x:0,y:0,pen:this.stockObject(7),brush:this.stockObject(0),font:this.stockObject(17),fontSize:16,align:0});}
-  draw(hdc,command){const dc=this.dc(hdc);if(!dc)return 0;this.p.emit('draw',{hwnd:dc.hwnd,...command,...(dc.clipRegion?{clip:dc.clipRegion.rect?[[...dc.clipRegion.rect]]:[]}: {})});return 1;}
+  draw(hdc,command){const dc=this.dc(hdc);if(!dc)return 0;const output={hwnd:dc.hwnd,...command,...(dc.clipRegion?{clip:dc.clipRegion.rect?[[...dc.clipRegion.rect]]:[]}: {})};if(dc.bufferedCommands){requireThat(dc.bufferedCommands.length<100000,'BUFFERED_PAINT','Buffered drawing command limit exceeded.');dc.bufferedCommands.push(structuredClone(output));}else this.p.emit('draw',output);return 1;}
   drawingObject(dc,handle){const object=this.p.object(handle,'gdi');if(object?.geometric&&dc){const view=new DataView(new ArrayBuffer(4));view.setUint32(0,dc.miterLimitBits,true);const miterLimit=view.getFloat32(0,true);if(object.lineJoin==='miter'&&!Number.isFinite(miterLimit))throw new RuntimeFault('UNSUPPORTED_GDI','Nonfinite geometric miter rendering is not implemented.');return {...object,miterLimit};}return object?.dcColor&&dc?{...object,color:dc[object.dcColor]}:object;}
   stockObject(index){if(this.stock.has(index))return this.stock.get(index);let object;if(index<=5)object={kind:'brush',color:[0xFFFFFF,0xC0C0C0,0x808080,0x404040,0,0][index],null:index===5};else if(index<=8)object={kind:'pen',color:index===6?0xFFFFFF:0,width:1,null:index===8};else if([10,11,12,13,14,16,17].includes(index))object={kind:'font',height:16,face:'Arial',weight:400};else if(index===18)object={kind:'brush',color:0xFFFFFF,dcColor:'dcBrushColor'};else if(index===19)object={kind:'pen',color:0,width:1,dcColor:'dcPenColor'};else return 0;const h=this.p.handle('gdi',{...object,stock:true});this.stock.set(index,h);return h;}
   queuePaint(w){if(!w.paintPending){w.paintPending=true;this.p.postMessage(w.hwnd,WM_PAINT);}}
@@ -122,6 +123,7 @@ export class GUI {
     return descendants(false,()=>nonclientOnly?children():notify(WM_DESTROY,children));
   }
   input(event){const p=this.p,w=this.window(event.hwnd);if(!w)return;
+    if(event.kind==='menu'||event.kind==='menu-open'){this.menuInput(event);return;}
     if(event.kind==='close')p.postMessage(w.hwnd,WM_CLOSE);
     else if(event.kind==='click'){if(w.enabled&&w.parent&&w.className.toUpperCase()==='BUTTON'){if(w.builtin&&!w.proc)buttonClick(this,w,true);else p.postMessage(w.parent,WM_COMMAND,w.id&65535,w.hwnd);}}
     else if(event.kind==='edit'){if(!w.enabled||(w.style&0x800))return;w.title=String(event.text).slice(0,65535);if(w.parent)p.postMessage(w.parent,WM_COMMAND,((0x300<<16)|(w.id&65535))>>>0,w.hwnd);}
@@ -129,6 +131,7 @@ export class GUI {
     else if(event.kind==='key'){const code=event.code>>>0;this.keyChars.set(code,event.char||'');p.postMessage(w.hwnd,event.down?0x100:0x101,code,event.down?1:0xC0000001);}
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
+    installMenus(this);
     installDialogIntegers(this);
     installRadioChecks(this);
     u('CheckDlgButton',3,(h,id,state)=>{const child=this.dialogItem(h,id);return child?this.send(child,0xf1,state,0,true,()=>1):0;});
@@ -161,6 +164,7 @@ export class GUI {
       });
       u('CreateWindowEx'+suffix,12,(exStyle,className,title,style,x,y,width,height,parent,menu,instance,param)=>{const cls=className<65536?[...this.classes.values()].find(c=>c.atom===className):this.classes.get(str(className).toLowerCase());const name=cls?.name||(className>=65536?str(className):'');if(!cls&&!['BUTTON','STATIC','EDIT'].includes(name.toUpperCase()))return a.fail(1407);
         if(cls?.windowExtra>0x7fffffff)throw new RuntimeFault('UNSUPPORTED_GUI','Window creation with a negative class extra-storage size is not implemented.');if(parent&&!this.window(parent))return a.fail(1400);const requestedParent=parent;if(parent&&!(style&0x40000000))parent=childRoot(this,parent);const text=str(title),hwnd=p.handle('window',{});const w={hwnd,instance:instance>>>0,className:name,builtin:!cls,title:text,parent,id:menu,proc:cls?.proc||0,wide:cls?.wide??wide,style,exStyle,x:x===0x80000000?40:x|0,y:y===0x80000000?40:y|0,width:width===0x80000000?640:Math.max(1,Math.min(1920,width|0)),height:height===0x80000000?420:Math.max(1,Math.min(1080,height|0)),visible:!!(style&0x10000000),enabled:!(style&0x08000000),paintPending:false,extraSize:cls?.windowExtra||0,dc:0};
+        if(!(style&0x40000000))w.menu=menu||(cls?.menu?this.loadMenu(instance||cls.instance,cls.menuName??cls.menu):0);
         w.dc=this.newDC(hwnd);this.windows.set(hwnd,w);this.notify(w,'create');
         const temporary=[];
         const creationString=(pointer,atom=false)=>{
@@ -209,7 +213,8 @@ export class GUI {
     u('InvalidateRect',3,(h,rect,erase)=>{const w=this.window(h);if(!w)return 0;this.queuePaint(w);return 1;});u('ValidateRect',2,(h,rect)=>{const w=this.window(h);if(!w)return 0;w.paintPending=false;p.messageQueue=p.messageQueue.filter(msg=>!(msg.hwnd===h&&msg.message===WM_PAINT));return 1;});
     u('BeginPaint',2,(h,ps)=>{const w=this.window(h);if(!w)return 0;m.fill(ps,64);m.w32(ps,w.dc);m.w32(ps+4,1);m.w32(ps+16,w.width);m.w32(ps+20,w.height);w.paintPending=false;return w.dc;});u('EndPaint',2,(h,ps)=>this.window(h)?1:0);
     u('GetDC',1,h=>this.window(h)?.dc||(h===0?this.newDC(0):0));u('GetWindowDC',1,h=>this.window(h)?.dc||0);u('ReleaseDC',2,(h,dc)=>this.dc(dc)?1:0);
-    u('AdjustWindowRect',3,(rect,style,menu)=>{if(menu)throw new RuntimeFault('UNSUPPORTED_MENU','Native menus are not implemented.');return 1;});
+    // Browser decorations are outside the guest client surface, so its dimensions stay unchanged.
+    u('AdjustWindowRect',3,(rect,style,menu)=>1);
     u('MoveWindow',6,(h,x,y,width,height,repaint)=>{const w=this.window(h);if(!w)return 0;w.x=x|0;w.y=y|0;w.width=Math.max(1,Math.min(1920,width|0));w.height=Math.max(1,Math.min(1080,height|0));this.notify(w);if(repaint)this.queuePaint(w);return 1;});
     u('IsWindow',1,h=>this.window(h)?1:0);
     u('GetActiveWindow',0,()=>this.focus||[...this.windows.keys()][0]||0);u('SetActiveWindow',1,h=>{const old=this.focus;this.focus=h;return old;});

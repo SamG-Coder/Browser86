@@ -1,3 +1,4 @@
+import {updateGuestMenu} from './menus.js';
 const element=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
 const color=value=>`rgb(${value&255},${(value>>>8)&255},${(value>>>16)&255})`;
 export class GuestDisplay {
@@ -27,6 +28,7 @@ export class GuestDisplay {
       else{node.removeAttribute('role');node.removeAttribute('aria-checked');node.textContent=w.title;}
     }else node.textContent=w.title;}
     else{record.title.textContent=w.title;record.client.style.width=w.width+'px';record.client.style.height=w.height+'px';if(record.canvas.width!==w.width||record.canvas.height!==w.height){record.canvas.width=w.width;record.canvas.height=w.height;record.context.fillStyle='#ffffff';record.context.fillRect(0,0,w.width,w.height);}}
+    if(!record.control)updateGuestMenu(record,w,this.input);
     document.getElementById('desktop-empty').hidden=this.windows.size>0;
   }
   draw(commands){for(const c of commands){const record=this.windows.get(c.hwnd);if(!record?.context)continue;const ctx=record.context;ctx.save();try{

@@ -3545,6 +3545,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "AppendMenuA",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "AppendMenuW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "BeginPaint",
     "argc": 2,
     "cdecl": false,
@@ -3573,6 +3587,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "CheckMenuItem",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "CheckRadioButton",
     "argc": 4,
     "cdecl": false,
@@ -3589,6 +3610,20 @@
     "dll": "user32.dll",
     "name": "CopyRect",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "CreateMenu",
+    "argc": 0,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "CreatePopupMenu",
+    "argc": 0,
     "cdecl": false,
     "data": false
   },
@@ -3659,6 +3694,13 @@
     "dll": "user32.dll",
     "name": "DrawTextW",
     "argc": 5,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "EnableMenuItem",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },
@@ -3860,6 +3902,34 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetMenu",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "GetMenuItemCount",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "GetMenuItemInfoA",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "GetMenuItemInfoW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetMessageA",
     "argc": 4,
     "cdecl": false,
@@ -3896,6 +3966,13 @@
   {
     "dll": "user32.dll",
     "name": "GetPropW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "GetSubMenu",
     "argc": 2,
     "cdecl": false,
     "data": false
@@ -4105,6 +4182,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "LoadMenuA",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "LoadMenuW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "LoadStringA",
     "argc": 4,
     "cdecl": false,
@@ -4233,6 +4324,13 @@
     "dll": "user32.dll",
     "name": "ReleaseDC",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "RemoveMenu",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },
@@ -4500,6 +4598,34 @@
     "name": "wsprintfA",
     "argc": 2,
     "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "uxtheme.dll",
+    "name": "BeginBufferedPaint",
+    "argc": 5,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "uxtheme.dll",
+    "name": "BufferedPaintInit",
+    "argc": 0,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "uxtheme.dll",
+    "name": "BufferedPaintUnInit",
+    "argc": 0,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "uxtheme.dll",
+    "name": "EndBufferedPaint",
+    "argc": 2,
+    "cdecl": false,
     "data": false
   },
   {
