@@ -4001,6 +4001,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "ShowCursor",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "ShowWindow",
     "argc": 2,
     "cdecl": false,

@@ -1,7 +1,8 @@
 import {RuntimeFault} from './errors.js';
 const systemCursors=new Map([[32512,'default'],[32513,'text'],[32514,'wait'],[32515,'crosshair'],[32516,'default'],[32642,'nwse-resize'],[32643,'nesw-resize'],[32644,'ew-resize'],[32645,'ns-resize'],[32646,'move'],[32648,'not-allowed'],[32649,'pointer'],[32650,'progress'],[32651,'help'],[32671,'default'],[32672,'default']]);
 export function installCursors(gui){
- const {api,p}=gui,shared=new Map();gui.currentCursor=0;
+ const {api,p}=gui,shared=new Map();gui.currentCursor=0;gui.cursorDisplayCount=0;
+ const publish=()=>p.emit('cursor',{css:gui.cursorDisplayCount<0?'none':p.object(gui.currentCursor,'cursor')?.css||'none'});
  for(const wide of [false,true])api.add('user32.dll','LoadCursor'+(wide?'W':'A'),2,(instance,name)=>{
   if(instance)throw new RuntimeFault('UNSUPPORTED_GUI','Module cursor resources are not implemented.');
   name>>>=0;let id=name;
@@ -15,8 +16,13 @@ export function installCursors(gui){
  api.add('user32.dll','SetCursor',1,handle=>{
   handle>>>=0;const cursor=p.object(handle,'cursor');if(handle&&!cursor)return api.fail(1402);
   const old=gui.currentCursor;gui.currentCursor=handle;
-  if(old!==handle)p.emit('cursor',{css:cursor?.css||'none'});
+  if(old!==handle)publish();
   return old;
+ });
+ api.add('user32.dll','ShowCursor',1,show=>{
+  const old=gui.cursorDisplayCount;gui.cursorDisplayCount=(old+(show?1:-1))|0;
+  if((old<0)!==(gui.cursorDisplayCount<0))publish();
+  return gui.cursorDisplayCount;
  });
  api.add('user32.dll','DestroyCursor',1,handle=>{
   const cursor=p.object(handle,'cursor');if(!cursor)return api.fail(1402);

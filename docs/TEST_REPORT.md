@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Cursor display counts - 2026-09-08
+
+**412 Node tests passed, 0 failed, 0 skipped.** ShowCursor now maintains the display count and returns its new signed value. Tests cover nested hides/shows, noncanonical true BOOL values, last-error preservation, visibility threshold crossings, selection changes while hidden, null selection, invalid SetCursor calls, shared cursor lifetime and guest isolation. The rebuilt HandleObjects.exe checks counts -1, -2, -1 and 0 while retaining its selected cursor. Catalog now contains 583 entries, without implying full API parity.
+
+**Nine real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/cursor-visibility-tests.tap), [browser report](test-artifacts/cursor-visibility-browser-report.json). The guest fixture executes ShowCursor in the actual runtime worker alongside the browser cursor bridge regression.
+
+A native probe returned counts -1, -2, -1, 0, 1 and 0 for arguments 0, 0, 2, -1, 1 and 0. It preserved error 1234 and left GetCursor unchanged throughout. The probe balanced its display-count changes in a finally block. Reference: [Microsoft ShowCursor](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showcursor). The runtime assumes a virtual mouse and a single guest input thread. Cursor suppression, mouse-less startup, multiple input queues and counter-overflow parity remain unverified or unfinished.
+
 ## Shared cursor handles, selection and browser display - 2026-09-08
 
 **408 Node tests passed, 0 failed, 0 skipped.** LoadCursorA/W now provides shared typed system-cursor handles. SetCursor/GetCursor track selection and return prior state; shared DestroyCursor calls preserve the handle. SetClassLongA/W supports cursor replacement with native invalid-handle clearing behavior. Tests cover all supported IDs, A/W ordinal strings, errors, shared lifetime, kernel-handle rejection, class sharing, browser surface updates and reset. The rebuilt HandleObjects.exe loads both encodings, changes selection, replaces the class cursor and checks shared destruction. Catalog now contains 582 entries, without implying full API parity.

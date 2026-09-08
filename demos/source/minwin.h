@@ -9,6 +9,7 @@ API HANDLE WINAPI LoadCursorA(HANDLE,const char*);
 API HANDLE WINAPI LoadCursorW(HANDLE,const WORD*);
 API HANDLE WINAPI SetCursor(HANDLE);
 API HANDLE WINAPI GetCursor(void);
+API int WINAPI ShowCursor(BOOL);
 API BOOL WINAPI DestroyCursor(HANDLE);
 typedef struct {DWORD low,high;} FILETIME;
 typedef struct {WORD year,month,weekday,day,hour,minute,second,millis;} SYSTEMTIME;
