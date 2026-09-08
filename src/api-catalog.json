@@ -211,6 +211,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "GetClipBox",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetClipRgn",
     "argc": 2,
     "cdecl": false,
@@ -435,6 +442,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "PtVisible",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "Rectangle",
     "argc": 5,
     "cdecl": false,
@@ -443,6 +457,13 @@
   {
     "dll": "gdi32.dll",
     "name": "RectInRegion",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "RectVisible",
     "argc": 2,
     "cdecl": false,
     "data": false

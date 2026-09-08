@@ -4,10 +4,19 @@ const inRange=values=>values.every(n=>n>=-0x8000000&&n<0x8000000);
 export function installRegions(gui){
  const {p,m,api}=gui,g=(n,c,f)=>api.add('gdi32.dll',n,c,f),region=h=>{const o=p.object(h,'gdi');return o?.kind==='region'?o:null;};
  const create=(...values)=>{values=values.map(n=>n|0);if(!inRange(values))return api.fail(87);return p.handle('gdi',{kind:'region',rect:normalize(...values)});};
+ const visible=dc=>{
+  const w=gui.window(dc.hwnd),surface=[0,0,w?.width??1280,w?.height??720];if(!dc.clipRegion)return surface;const r=dc.clipRegion.rect;if(!r)return null;
+  const box=[Math.max(0,r[0]),Math.max(0,r[1]),Math.min(surface[2],r[2]),Math.min(surface[3],r[3])];return box[0]<box[2]&&box[1]<box[3]?box:null;
+ };
+ g('GetClipBox',2,(h,out)=>{const dc=gui.dc(h);if(!dc)return api.fail(6);if(!out)return 0;const r=visible(dc);checkBuffer(m,out,16);(r||[0,0,0,0]).forEach((n,i)=>m.w32(out+4*i,n));return r?2:1;});
+ g('PtVisible',3,(h,x,y)=>{const dc=gui.dc(h);if(!dc)return api.fail(6,-1);const r=visible(dc);x|=0;y|=0;return r&&x>=r[0]&&x<r[2]&&y>=r[1]&&y<r[3]?1:0;});
+ g('RectVisible',2,(h,input)=>{
+  if(!input)return 0;const dc=gui.dc(h);if(!dc)return api.fail(6,-1);checkBuffer(m,input,16,'r');const r=visible(dc);if(!r)return 0;
+  const [l,t,right,bottom]=[0,4,8,12].map(i=>m.i32(input+i));return Math.min(l,right)<r[2]&&Math.max(l,right)>r[0]&&Math.min(t,bottom)<r[3]&&Math.max(t,bottom)>r[1]?1:0;
+ });
  g('SelectClipRgn',2,(h,r)=>{
   const dc=gui.dc(h);if(!dc)return api.fail(6);if(!r){dc.clipRegion=null;return 2;}const o=region(r);if(!o)return 0;
-  dc.clipRegion={rect:o.rect?[...o.rect]:null};const bounds=o.rect,w=gui.window(dc.hwnd),width=w?.width??1280,height=w?.height??720;
-  return bounds&&bounds[0]<width&&bounds[1]<height&&bounds[2]>0&&bounds[3]>0?2:1;
+  dc.clipRegion={rect:o.rect?[...o.rect]:null};return visible(dc)?2:1;
  });
  g('GetClipRgn',2,(h,r)=>{
   const dc=gui.dc(h);if(!dc)return api.fail(r?87:6,-1);const o=region(r);if(!o)return -1;if(!dc.clipRegion)return 0;

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Clip bounds and visibility queries - 2026-09-08
+
+**277 Node tests passed, 0 failed, 0 skipped.** GetClipBox, PtVisible and RectVisible now query the effective rectangular visible area. Tests cover application/surface intersections, empty bounds, right/bottom exclusion, reversed and degenerate queries, saved clipping restoration, window resizing, unchanged output tails, invalid handles and atomic buffer validation. The rebuilt HandleObjects.exe imports all three functions and verifies bounds and visibility with an application clip. The catalog contains 541 entries.
+
+**Nine existing clipping canvas checks and eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/clip-visibility-tests.tap), [canvas report](test-artifacts/clip-visibility-canvas-report.json), [browser report](test-artifacts/clip-visibility-browser-report.json).
+
+Native probes on an owned 8x8 bitmap/DC confirmed bounds, boundary/degenerate query behavior and errors. PtVisible and nonnull RectVisible invalid-DC calls returned -1/error 6; null RectVisible input returned zero without changing last error. GetClipBox returned zero for null output and error 6 for invalid DCs. Owned resources were released, and no guest executable ran on the host. Reference: [Clipping Functions](https://learn.microsoft.com/en-us/windows/win32/gdi/clipping-functions). Complex visibility, mapping, update/meta regions and window occlusion remain unfinished; screen dimensions use the existing fixed runtime profile.
+
 ## Rectangular application clipping - 2026-09-08
 
 **274 Node tests passed, 0 failed, 0 skipped.** SelectClipRgn and GetClipRgn now copy rectangular application clips independently of source and destination handles. Tests cover mutation/deletion isolation, draw-command snapshots, no-clip versus empty-clip states, nested SaveDC/RestoreDC, independent DCs, invalid-handle error distinctions and offscreen complexity results. SelectObject region selection uses the clipping path. The rebuilt HandleObjects.exe imports both APIs and checks query/copy/save/restore/removal. The catalog contains 538 entries.

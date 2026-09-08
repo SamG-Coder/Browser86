@@ -158,6 +158,8 @@ The inversion renderer intersects coordinates with the canvas bounds before issu
 
 SelectClipRgn and GetClipRgn support independent copied rectangular application clips, including the distinction between no clip and an empty clip. Source deletion/mutation and query-destination mutation do not alter the clip. SaveDC/RestoreDC preserve clipping, and SelectObject accepts rectangular regions through the same selection path. Every draw command snapshots its clip; Canvas applies it to fills, paths, text, inversion and bitmaps. Return complexity accounts for the current window bounds (or the fixed 1280x720 screen profile for screen DCs). This supersedes earlier rectangular application-clipping limitations; complex clips, combination operations, mapping transforms, BeginPaint update-region integration and native occlusion/visibility handling remain unfinished.
 
+GetClipBox, PtVisible and RectVisible query the intersection of the rectangular application clip and current surface bounds. GetClipBox returns zero bounds for an empty visible area. Point queries exclude right/bottom edges; RectVisible normalizes reversed corners and uses strict overlap, including native degenerate-query behavior. Queries track SaveDC/RestoreDC and current window dimensions; screen DCs use the fixed 1280x720 profile. Native invalid-handle/null-pointer distinctions are preserved. Complex visibility regions, mapping transforms, update/meta regions and native window occlusion remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
