@@ -112,7 +112,13 @@ export class GUI {
       u('SendMessage'+suffix,4,(h,msg,wp,lp)=>this.send(h,msg,wp,lp,wide));
       u('PostMessage'+suffix,4,(h,msg,wp,lp)=>{if(h&&!this.window(h))return a.fail(1400);p.postMessage(h,msg,wp,lp);return 1;});
       u('SetWindowText'+suffix,2,(h,text)=>{if(!this.window(h))return a.fail(1400);return this.send(h,0x0C,0,text,wide,result=>result?1:0);});
-      u('GetWindowText'+suffix,3,(h,out,n)=>{const w=this.window(h);if(!w)return a.fail(1400);m.string(out,w.title,wide,n);return Math.min(w.title.length,Math.max(0,n-1));});
+      u('GetWindowText'+suffix,3,(h,out,n)=>{
+        n|=0;if(!out||!n)return 0;
+        checkBuffer(m,out,wide?2:1);if(wide)m.w16(out,0);else m.w8(out,0);
+        const w=this.window(h);if(!w)return a.fail(1400);if(n<0)return a.fail(0);
+        if(!wide&&w.wide&&n===1)p.setError(0);
+        return this.send(h,0x0D,n,out,wide);
+      });
       u('GetWindowTextLength'+suffix,1,h=>this.window(h)?.title.length||0);
       u('GetClassName'+suffix,3,(h,out,n)=>{const w=this.window(h);if(!w)return a.fail(1400);m.string(out,w.className,wide,n);return Math.min(w.className.length,Math.max(0,n-1));});
       u('MessageBox'+suffix,4,(hwnd,text,caption,type)=>{const groups={0:[['OK',1]],1:[['OK',1],['Cancel',2]],2:[['Abort',3],['Retry',4],['Ignore',5]],3:[['Yes',6],['No',7],['Cancel',2]],4:[['Yes',6],['No',7]],5:[['Retry',4],['Cancel',2]],6:[['Cancel',2],['Try again',10],['Continue',11]]};const buttons=groups[type&15];if(!buttons)throw new RuntimeFault('UNSUPPORTED_DIALOG','This MessageBox button type is not implemented.');const id=p.nextDialog++;p.emit('dialog',{id,hwnd,text:str(text),caption:str(caption),buttons,flags:type});return p.wait(()=>{if(!p.dialogResults.has(id))return undefined;const value=p.dialogResults.get(id);p.dialogResults.delete(id);return value;},'MessageBox response');});

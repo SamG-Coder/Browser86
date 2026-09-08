@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## GetWindowText API callback dispatch - 2026-09-08
+
+**349 Node tests passed, 0 failed, 0 skipped.** GetWindowTextA/W now sends WM_GETTEXT through the guest procedure and conversion path. Tests cover all four encodings, custom output, zero capacity and null pointers before HWND validation, invalid HWND and negative count behavior, initial terminator width, short Unicode output, callback-set errors, the ANSI-to-Unicode capacity-one error path and truncated output memory. The rebuilt HandleObjects.exe imports both APIs and verifies converted custom output and invalidated HWND failure. Catalog remains 576 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-text-api-tests.tap), [browser report](test-artifacts/window-text-api-browser-report.json).
+
+Native ctypes probes used private hidden A/W windows and 512-byte output buffers with counts -1, 0, 1, 2, 4 and 16. They confirmed callback dispatch, cross-encoding capacities/results, early exits for null output or zero capacity, first-character clearing on invalid HWND/error 1400, and negative-capacity rejection. A separate callback set last error 4321, which survived both zero and positive returns. All owned windows/classes were cleaned up. Reference: [Microsoft GetWindowTextA](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtexta). Cross-process caption retrieval, GetWindowTextLength dispatch and full length-message conversion remain unfinished.
+
 ## Window text output conversion - 2026-09-08
 
 **344 Node tests passed, 0 failed, 0 skipped.** Cross-encoding WM_GETTEXT now supplies a temporary procedure-encoded buffer and converts output back to the caller encoding. Tests cover capacities 0, 1, 2, 4 and 16 in both directions, native callback capacities and return counts, output sentinels, same-encoding passthrough, invalid output memory, explicit conversion limits, invalid callback counts, nesting, window destruction and allocation cleanup. The rebuilt HandleObjects.exe checks full ANSI/Unicode results, best-fit conversion and native short Unicode output behavior. Catalog remains 576 entries.
