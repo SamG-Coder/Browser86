@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Visibility and enabled state - 2026-09-08
+
+**301 Node tests passed, 0 failed, 0 skipped.** IsWindowVisible now checks child ancestry, while IsWindowEnabled reads the window's own disabled style bit. EnableWindow delivers WM_CANCELMODE and WM_ENABLE through guest callbacks, preserves the previous-disabled return value, and does not notify a window destroyed during cancellation. Tests cover repeated calls, callback-time state, invalid handles, popup ownership, ShowWindow visibility bits and SetWindowLongA/W state synchronization. HandleObjects.exe imports all three APIs and verifies the native enable/disable callback sequence and the child's independent enabled bit. Catalog: 547 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-state-tests.tap), [browser report](test-artifacts/window-state-browser-report.json).
+
+Native ctypes probes used an owned hidden STATIC parent with a WS_VISIBLE child and subclassed the parent. Disable produced WM_CANCELMODE observing enabled=1, then WM_ENABLE observing enabled=0; repeated disable produced WM_CANCELMODE only. Enable produced WM_ENABLE observing enabled=1; repeated enable produced no messages. The child remained enabled according to IsWindowEnabled but was invisible beneath its hidden parent. Valid calls preserved error 1234; invalid handles returned zero/error 1400. Both windows were destroyed; no guest executable ran on the host. References: [IsWindowVisible](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-iswindowvisible), [EnableWindow](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enablewindow). Focus-loss notifications, mouse capture cancellation, full ShowWindow behavior and disabled-ancestor input routing remain unfinished.
+
 ## Child and owner hierarchy - 2026-09-08
 
 **297 Node tests passed, 0 failed, 0 skipped.** IsChild now follows child ancestry and excludes self/ownership relationships. GetParent distinguishes child parents from popup and overlapped ownership, and both APIs return error 1400 for invalid handles. CreateWindowExA/W resolves a nonchild window's owner to the requested child's top-level ancestor; CREATESTRUCT retains the caller's original hwndParent. Tests cover both creation variants and inspect the original argument during both creation callbacks. HandleObjects.exe imports GetParent and IsChild, creates its owned popup through a child handle, verifies normalized ownership and nested child queries, then runs the existing destruction sequence. Catalog: 547 entries.

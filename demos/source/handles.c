@@ -4,8 +4,9 @@ unsigned long __readfsdword(unsigned long);
 #pragma intrinsic(__readfsdword)
 #define CHECK(expression) do { if(!(expression)) { printf("Handle failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
 static HWND lifetimeWindows[4];
-static DWORD lifetimeLog[8],lifetimeCount;
+static DWORD lifetimeLog[8],lifetimeCount,enableLog[5],enableState[5],enableCount;
 static long WINAPI lifetimeProc(HWND h,DWORD msg,DWORD wp,long lp){
+  if((msg==31||msg==10)&&enableCount<5){enableLog[enableCount]=msg;enableState[enableCount++]=IsWindowEnabled(h);}
   if(msg==2||msg==130){for(int i=0;i<4;i++)if(h==lifetimeWindows[i]&&lifetimeCount<8)lifetimeLog[lifetimeCount++]=i*256+msg;}
   return DefWindowProcA(h,msg,wp,lp);
 }
@@ -315,6 +316,10 @@ void mainCRTStartup(void){
   lifetimeWindows[2]=CreateWindowExA(0,"LifetimeFixture","",0x40000000,0,0,20,20,lifetimeWindows[1],NULL,NULL,NULL);
   lifetimeWindows[3]=CreateWindowExA(0,"LifetimeFixture","",0x80000000,0,0,20,20,lifetimeWindows[1],NULL,NULL,NULL);
   for(int i=0;i<4;i++)CHECK(lifetimeWindows[i]&&IsWindow(lifetimeWindows[i]));
+  CHECK(IsWindowEnabled(lifetimeWindows[0])&&!IsWindowVisible(lifetimeWindows[0]));
+  CHECK(!EnableWindow(lifetimeWindows[0],0)&&!IsWindowEnabled(lifetimeWindows[0])&&IsWindowEnabled(lifetimeWindows[1]));
+  CHECK(EnableWindow(lifetimeWindows[0],0));CHECK(EnableWindow(lifetimeWindows[0],1));CHECK(!EnableWindow(lifetimeWindows[0],1));
+  CHECK(enableCount==4&&enableLog[0]==31&&enableState[0]==1&&enableLog[1]==10&&enableState[1]==0&&enableLog[2]==31&&enableState[2]==0&&enableLog[3]==10&&enableState[3]==1);
   CHECK(GetParent(lifetimeWindows[2])==lifetimeWindows[1]&&GetParent(lifetimeWindows[3])==lifetimeWindows[0]);
   CHECK(IsChild(lifetimeWindows[0],lifetimeWindows[2])&&!IsChild(lifetimeWindows[0],lifetimeWindows[3])&&!IsChild(lifetimeWindows[0],lifetimeWindows[0]));
   CHECK(DestroyWindow(lifetimeWindows[0]));CHECK(lifetimeCount==8);

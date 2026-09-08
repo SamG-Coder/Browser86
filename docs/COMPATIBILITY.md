@@ -174,6 +174,8 @@ CreateWindowExA/W rejection now sends WM_NCDESTROY after a false WM_NCCREATE res
 
 IsChild now follows nested WS_CHILD ancestry, excludes self and popup ownership, and reports error 1400 for invalid handles. GetParent distinguishes child parents, popup owners and overlapped windows. CreateWindowExA/W normalizes nonchild ownership to the requested child's top-level window while preserving the original hwndParent in CREATESTRUCT. GetAncestor and a guest desktop-window handle remain unimplemented.
 
+IsWindowVisible now checks WS_VISIBLE through child ancestry without treating popup ownership as parent visibility. IsWindowEnabled queries the window's own WS_DISABLED bit; it does not inherit the parent's bit. EnableWindow sends WM_CANCELMODE for every disable request and WM_ENABLE only on a state transition, with updated state visible during WM_ENABLE. ShowWindow and SetWindowLong style changes keep query/display state consistent. Invalid state-query or EnableWindow handles return error 1400. Focus-loss notifications, mouse capture cancellation, full ShowWindow behavior and disabled-ancestor input routing remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
