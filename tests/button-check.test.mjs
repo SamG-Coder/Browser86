@@ -31,3 +31,11 @@ test('CheckRadioButton synchronously visits custom controls and skips destroyed 
 test('CheckRadioButton accepts empty and reversed ranges and rejects invalid parents',()=>{
  const {p,u,create}=setup(),parent=create(0);for(const args of [[1,2,9],[2,1,1]]){p.setError(1234);assert.equal(u('CheckRadioButton',parent,...args),1);assert.equal(p.lastError,1234);}for(const h of [0,123]){assert.equal(u('CheckRadioButton',h,2,1,1),0);assert.equal(p.lastError,1400);}
 });
+
+test('Automatic radio activation respects group boundaries and clears manual radios but not checkboxes',()=>{
+ const {p,u,create}=setup(),parent=create(0),styles=[0x20009,4,3,9,0x20009,9],buttons=styles.map(style=>{const h=create(style),w=p.apis.gui.window(h);w.parent=parent;w.style|=0x50000000;w.visible=true;u('SendMessageA',h,0xf1,1,0);return h;});
+ for(const [index,expected]of [[3,[0,0,1,1,1,1]],[3,[0,0,1,1,1,1]],[5,[0,0,1,1,0,1]],[0,[1,0,1,0,0,1]]]){assert.equal(u('SendMessageW',buttons[index],0xf5,0,0),0);assert.deepEqual(buttons.map(h=>u('SendMessageA',h,0xf0,0,0)),expected);}
+});
+test('Automatic radio activation skips hidden and disabled peers and updates browser-click state',()=>{
+ const {p,u,create}=setup(),parent=create(0),buttons=[0x20009,4,9].map(type=>{const h=create(type),w=p.apis.gui.window(h);w.parent=parent;w.style|=0x50000000;w.visible=true;u('SendMessageA',h,0xf1,1,0);return h;});p.apis.gui.window(buttons[0]).visible=false;p.apis.gui.window(buttons[1]).enabled=false;p.inputEvent({kind:'click',hwnd:buttons[2]});assert.deepEqual(buttons.map(h=>u('SendMessageA',h,0xf0,0,0)),[1,1,1]);assert.equal(p.messageQueue.at(-1).lParam,buttons[2]);
+});

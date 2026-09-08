@@ -10,6 +10,14 @@ export function buttonCheck(gui,w,message,value){
 export function buttonClick(gui,w,queued=false){
   const type=w.style&15;
   if(type===3||type===6)buttonCheck(gui,w,0xf1,((w.checkState||0)+1)%(type===6?3:2));
+  if(type===9){
+    const siblings=[...gui.windows.values()].filter(c=>(c.style&0x40000000)&&c.parent===w.parent),index=siblings.indexOf(w);
+    let start=index,end=index+1;
+    while(start>0&&!(siblings[start].style&0x20000))start--;
+    while(end<siblings.length&&!(siblings[end].style&0x20000))end++;
+    for(let i=Math.max(0,start);i<end;i++){const c=siblings[i];if(c!==w&&c.builtin&&!c.proc&&c.className.toUpperCase()==='BUTTON'&&[4,9].includes(c.style&15)&&c.visible&&c.enabled)buttonCheck(gui,c,0xf1,0);}
+    buttonCheck(gui,w,0xf1,1);
+  }
   if(!w.parent)return 0;
   if(queued){gui.p.postMessage(w.parent,0x111,w.id&65535,w.hwnd);return 0;}
   return gui.send(w.parent,0x111,w.id&65535,w.hwnd,w.wide,()=>0);

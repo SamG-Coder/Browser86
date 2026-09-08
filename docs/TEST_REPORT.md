@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Automatic radio group activation - 2026-09-08
+
+**493 Node tests passed, 0 failed, 0 skipped.** Built-in automatic radio clicks now select the clicked control and clear visible, enabled manual/automatic radio siblings within WS_GROUP boundaries. Tests cover repeated selection, two independent groups, checkbox preservation, manual-radio clearing and hidden/disabled peer preservation. Catalog remains 603 entries.
+
+**Fourteen real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** The production runtime/display integration test clicks radio controls in two groups and verifies visible independent selection. Evidence: [Node TAP](test-artifacts/auto-radio-tests.tap), [browser report](test-artifacts/auto-radio-browser-report.json).
+
+Native private A/W controls confirmed mixed manual/automatic radio exclusion, unchanged checkboxes, WS_GROUP isolation and skipped hidden/disabled siblings. Probe windows/classes were cleaned up. Reference: [Microsoft button types and styles](https://learn.microsoft.com/en-us/windows/win32/controls/button-types-and-styles). This implementation covers built-in immediate siblings in current insertion order. Custom/subclassed radio procedures, nested WS_EX_CONTROLPARENT traversal, reordered siblings and full focus/mouse message sequencing remain incomplete.
+
 ## Radio selection by control ID range - 2026-09-08
 
 **491 Node tests passed, 0 failed, 0 skipped.** Added CheckRadioButton with inclusive signed-ID filtering, immediate-child scope and synchronous BM_SETCHECK callbacks. Tests cover built-in state, excluded grandchildren/owned popups, out-of-range selection, empty/reversed ranges, custom callback order/results, destroyed later children and invalid parent handles. Catalog now contains 603 entries, without implying full API parity.
