@@ -2831,6 +2831,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "_strnicmp",
+    "argc": 3,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_wcsdup",
     "argc": 1,
     "cdecl": true,
@@ -3083,6 +3090,20 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "isdigit",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "isspace",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "labs",
     "argc": 1,
     "cdecl": true,
@@ -3301,6 +3322,13 @@
   {
     "dll": "msvcrt.dll",
     "name": "strstr",
+    "argc": 2,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "strtok",
     "argc": 2,
     "cdecl": true,
     "data": false
