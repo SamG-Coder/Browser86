@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## UTF-8 conversion correction — 2026-09-08
+
+**178 Node tests passed, 0 failed, 0 skipped.** Four new tests cover BOM preservation, supplementary characters, UTF-16/byte count distinctions, terminated and counted inputs, embedded NULs, native malformed-prefix replacement vectors, strict rejection, unpaired surrogates, flags/default-pointer validation, insufficient buffers and atomic memory validation. HandleObjects.exe was rebuilt with both conversion imports and verifies BOM round-trip and strict surrogate rejection through x86 calls. The catalog remains at 472 entries; this stage corrects existing CP_UTF8 handlers.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The updated fixture ran in actual workers under the deployed CSP; IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/utf8-tests.tap) and [browser report](test-artifacts/utf8-browser-report.json).
+
+Native ctypes probes on owned input/output buffers confirmed BOM preservation, signed negative counts, malformed-sequence replacement consumption and strict failure. In particular, Windows emits two U+FFFD characters for ED A0 80, whereas WHATWG decoding differs. No guest executable ran on the host. Contracts were checked against Microsoft's [MultiByteToWideChar](https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-multibytetowidechar) and [WideCharToMultiByte](https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-widechartomultibyte) documentation. The existing Windows-1252 implementation and its best-fit/default-character limitations are unchanged.
+
 ## Ordinal Unicode search extension — 2026-09-08
 
 **174 Node tests passed, 0 failed, 0 skipped.** Four new tests cover all search modes, default flags, found/not-found last-error clearing, empty values/source, embedded NULs, UTF-16 offsets, ordinal case behavior, invalid flags/arguments and memory boundaries. The rebuilt HandleObjects.exe imports FindStringOrdinal with six x86 stack slots and checks forward/backward/prefix/suffix results plus error 1004. The catalog contains 472 entries.

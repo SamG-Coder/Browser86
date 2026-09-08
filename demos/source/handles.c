@@ -190,6 +190,10 @@ void mainCRTStartup(void){
   CHECK(CompareFileTime(&epoch,&stamp)==-1&&CompareFileTime(&stamp,&epoch)==1&&CompareFileTime(&stamp,&stamp)==0);
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
+  const char utf8Bom[]={ (char)0xef,(char)0xbb,(char)0xbf,'A',0 };WORD decoded[8];char encoded[16];
+  CHECK(MultiByteToWideChar(65001,8,utf8Bom,-1,decoded,8)==3&&decoded[0]==0xfeff&&decoded[1]=='A');
+  CHECK(WideCharToMultiByte(65001,0x80,decoded,3,encoded,16,NULL,NULL)==5&&encoded[0]==(char)0xef);
+  decoded[0]=0xd800;CHECK(!WideCharToMultiByte(65001,0x80,decoded,1,encoded,16,NULL,NULL)&&GetLastError()==1113);
   WORD ordinalA[]={'A',0,'x',0},ordinalB[]={'a',0,'y',0};
   CHECK(CompareStringOrdinal(ordinalA,-1,ordinalB,-1,1)==2);
   CHECK(CompareStringOrdinal(ordinalA,3,ordinalB,3,1)==1);
