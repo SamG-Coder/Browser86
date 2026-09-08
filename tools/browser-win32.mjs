@@ -63,31 +63,31 @@ try{
     try{
       const base={title:'Options',x:0,y:0,width:240,height:160,visible:true,enabled:true};display.window({op:'create',window:{...base,hwnd:321,className:'Custom',style:0}});
       const control={...base,hwnd:322,parent:321,className:'BUTTON',style:0x40010005,title:'Remember choice',width:180,height:24};
-      const states=[];for(const checkState of [0,1,2,0]){display.window({op:'update',window:{...control,checkState}});const node=display.windows.get(322).element;states.push({role:node.getAttribute('role'),checked:node.getAttribute('aria-checked'),mark:node.querySelector('.check-mark').textContent,label:node.querySelector('.check-label').textContent,tab:node.tabIndex});}
+      const states=[];for(const checkState of [0,1,2,0]){display.window({op:'update',window:{...control,checkState}});const node=display.windows.get(322).element;states.push({role:node.getAttribute('role'),checked:node.getAttribute('aria-checked'),tag:node.tagName,label:node.getAttribute('aria-label'),tab:node.tabIndex});}
       const node=display.windows.get(322).element;node.click();const afterClick=node.getAttribute('aria-checked');
-      display.window({op:'update',window:{...control,style:0x40000004,checkState:1,enabled:false,title:'Radio choice'}});const radio={role:node.getAttribute('role'),checked:node.getAttribute('aria-checked'),disabled:node.disabled,tab:node.tabIndex};node.click();
-      display.window({op:'update',window:{...control,style:0x40010000,checkState:1,title:'Push'}});const push={role:node.getAttribute('role'),checked:node.getAttribute('aria-checked'),text:node.textContent};
+      display.window({op:'update',window:{...control,style:0x40000004,checkState:1,enabled:false,title:'Radio choice'}});const radio={role:node.getAttribute('role'),checked:node.getAttribute('aria-checked'),disabled:node.getAttribute('aria-disabled')==='true',tab:node.tabIndex};node.click();
+      display.window({op:'update',window:{...control,style:0x40010000,checkState:1,title:'Push'}});const push={role:node.getAttribute('role'),checked:node.getAttribute('aria-checked'),text:node.getAttribute('aria-label')};
       return {states,afterClick,inputs,radio,push};
     }finally{display.reset();root.remove();}
   });
   assert.deepEqual(checkControls.states.map(s=>s.checked),['false','true','mixed','false']);
-  assert.deepEqual(checkControls.states.map(s=>s.mark),['\u2610','\u2611','\u25a3','\u2610']);
+  assert.ok(checkControls.states.every(s=>s.tag==='CANVAS'));
   assert.ok(checkControls.states.every(s=>s.role==='checkbox'&&s.label==='Remember choice'&&s.tab===0));
   assert.equal(checkControls.afterClick,'false');assert.deepEqual(checkControls.inputs,[{kind:'click',hwnd:322}]);
-  assert.deepEqual(checkControls.radio,{role:'radio',checked:'true',disabled:true,tab:-1});assert.deepEqual(checkControls.push,{role:null,checked:null,text:'Push'});
+  assert.deepEqual(checkControls.radio,{role:'radio',checked:'true',disabled:true,tab:-1});assert.deepEqual(checkControls.push,{role:'button',checked:null,text:'Push'});
   checks.push('Checkbox and radio display follows guest state, accessibility, enabled state and style changes');
   const automaticClicks=await page.evaluate(async()=>{
     const {GuestDisplay}=await import(new URL('src/ui/display.js',document.baseURI).href),{GuestProcess}=await import(new URL('src/runtime/process.js',document.baseURI).href),{readZip}=await import(new URL('src/runtime/zip.js',document.baseURI).href);
     const entries=await readZip(new Uint8Array(await (await fetch(new URL('demos/browser86-demo.zip',document.baseURI))).arrayBuffer())),root=document.createElement('div');document.body.append(root);let process;const display=new GuestDisplay(root,event=>process.inputEvent(event));
     try{
-      process=new GuestProcess({entries,exePath:'C:/app/HelloConsole.exe',emit:(type,data)=>{if(type==='window')display.window(data);}});const u=(n,...a)=>process.apis.lookup('user32.dll',n).fn(...a);
+      process=new GuestProcess({entries,exePath:'C:/app/HelloConsole.exe',emit:(type,data)=>{if(type==='window')display.window(data);else if(type==='draw')display.draw([data]);}});const u=(n,...a)=>process.apis.lookup('user32.dll',n).fn(...a);
       const parent=u('CreateWindowExA',0,process.heap.string('STATIC'),0,0x10000000,0,0,220,120,0,0,0,0),child=u('CreateWindowExA',0,process.heap.string('BUTTON'),process.heap.string('Automatic'),0x50010006,10,10,180,26,parent,42,0,0),node=display.windows.get(child).element,states=[];
       for(let i=0;i<3;i++){node.click();states.push([u('IsDlgButtonChecked',parent,42),node.getAttribute('aria-checked')]);}
       const radios=[0x20009,9,0x20009].map((style,i)=>u('CreateWindowExA',0,process.heap.string('BUTTON'),process.heap.string('Radio '+i),0x50010000|style,10,40+i*26,180,24,parent,50+i,0,0));
       const radioStates=[];for(const index of [0,1,2]){display.windows.get(radios[index]).element.click();radioStates.push(radios.map(h=>display.windows.get(h).element.getAttribute('aria-checked')));}
       const changing=display.windows.get(radios[0]).element;u('SendMessageA',radios[0],0xf4,0,0x10000);const deferredRole=changing.getAttribute('role');u('SendMessageW',radios[0],0xf4,0,1);const redrawnRole=changing.getAttribute('role');
       const edit=u('CreateWindowExA',0,process.heap.string('EDIT'),process.heap.string('Original'),0x50000800,10,10,100,20,parent,70,0,0),editNode=display.windows.get(edit).element;
-      const readOnlyStates=[editNode.readOnly];u('SendMessageA',edit,0xcf,0,0);readOnlyStates.push(editNode.readOnly);editNode.focus();u('SendMessageW',edit,0xcf,1,0);u('SetWindowTextA',edit,process.heap.string('Programmatic'));readOnlyStates.push(editNode.readOnly,editNode.value);
+      const readOnlyStates=[(editNode.getAttribute('aria-readonly')==='true')];u('SendMessageA',edit,0xcf,0,0);readOnlyStates.push((editNode.getAttribute('aria-readonly')==='true'));editNode.focus();u('SendMessageW',edit,0xcf,1,0);u('SetWindowTextA',edit,process.heap.string('Programmatic'));readOnlyStates.push((editNode.getAttribute('aria-readonly')==='true'),editNode.getAttribute('aria-label'));
       return {states,radioStates,deferredRole,redrawnRole,readOnlyStates,commands:process.messageQueue.filter(m=>m.message===0x111&&m.wParam===42).map(m=>[m.hwnd===parent,m.wParam,m.lParam===child])};
     }finally{display.reset();root.remove();}
   });
@@ -95,7 +95,7 @@ try{
   checks.push('Real runtime automatic checkbox clicks cycle visible state and enqueue parent commands');
   assert.deepEqual(automaticClicks.radioStates,[['true','false','false'],['false','true','false'],['false','true','true']]);
   checks.push('Automatic radio clicks enforce visible WS_GROUP selection boundaries');
-  assert.equal(automaticClicks.deferredRole,'radio');assert.equal(automaticClicks.redrawnRole,null);
+  assert.equal(automaticClicks.deferredRole,'radio');assert.equal(automaticClicks.redrawnRole,'button');
   checks.push('BM_SETSTYLE defers display changes until its low-word redraw flag is set');
   assert.deepEqual(automaticClicks.readOnlyStates,[true,false,true,'Programmatic']);
   checks.push('Edit read-only style follows guest messages and allows focused programmatic text updates');

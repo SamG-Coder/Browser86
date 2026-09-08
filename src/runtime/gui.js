@@ -1,5 +1,6 @@
 import {installCursors,defaultSetCursor} from './cursors.js';
 import {installMenus} from './menus.js';
+import {paintControl} from './control-paint.js';
 import {installWindowWord} from './window-word.js';
 import {installDialogIntegers} from './dialog-integers.js';
 import {dialogCode} from './dialog-code.js';
@@ -33,8 +34,8 @@ export class GUI {
   constructor(apis){this.api=apis;this.p=apis.p;this.m=apis.m;this.classes=new Map();this.windows=new Map();this.nextAtom=0xC000;this.stock=new Map();this.focus=0;this.keyChars=new Map();this.nextTimer=1;this.install();}
   window(h){return this.windows.get(h>>>0);}
   dialogItem(h,id){if(!this.window(h))return this.api.fail(1400);const child=[...this.windows.values()].find(w=>(w.style&0x40000000)&&w.parent===(h>>>0)&&(w.id|0)===(id|0));return child?child.hwnd:this.api.fail(1421);}
-  serialize(w){return {hwnd:w.hwnd,parent:w.parent,title:w.title,className:w.className,x:w.x,y:w.y,width:w.width,height:w.height,style:w.style,visible:w.visible,enabled:w.enabled,id:w.id,checkState:w.checkState||0,menu:this.serializeMenu?.(w.menu)||null};}
-  notify(w,op='update'){this.p.emit('window',{op,window:this.serialize(w)});}
+  serialize(w){return {hwnd:w.hwnd,parent:w.parent,title:w.title,className:w.className,x:w.x,y:w.y,width:w.width,height:w.height,style:w.style,visible:w.visible,enabled:w.enabled,id:w.id,checkState:w.checkState||0,menuHeight:w.menu?22:0};}
+  notify(w,op='update'){this.p.emit('window',{op,window:this.serialize(w)});if(op!=='destroy'){paintControl(this,w);this.paintMenu?.(w);}}
   dc(h){return this.p.object(h,'dc');}
   newDC(hwnd){return this.p.handle('dc',{hwnd,clipRegion:null,brushOrgX:0,brushOrgY:0,miterLimitBits:0x41200000,polyFillMode:1,dcPenColor:0,dcBrushColor:0xFFFFFF,textColor:0,background:0xFFFFFF,bkMode:2,x:0,y:0,pen:this.stockObject(7),brush:this.stockObject(0),font:this.stockObject(17),fontSize:16,align:0});}
   draw(hdc,command){const dc=this.dc(hdc);if(!dc)return 0;const output={hwnd:dc.hwnd,...command,...(dc.clipRegion?{clip:dc.clipRegion.rect?[[...dc.clipRegion.rect]]:[]}: {})};if(dc.bufferedCommands){requireThat(dc.bufferedCommands.length<100000,'BUFFERED_PAINT','Buffered drawing command limit exceeded.');dc.bufferedCommands.push(structuredClone(output));}else this.p.emit('draw',output);return 1;}
@@ -123,12 +124,13 @@ export class GUI {
     return descendants(false,()=>nonclientOnly?children():notify(WM_DESTROY,children));
   }
   input(event){const p=this.p,w=this.window(event.hwnd);if(!w)return;
+    if(event.kind==='mouse'&&w.menu&&this.menuMouse(w,event))return;
     if(event.kind==='menu'||event.kind==='menu-open'){this.menuInput(event);return;}
     if(event.kind==='close')p.postMessage(w.hwnd,WM_CLOSE);
     else if(event.kind==='click'){if(w.enabled&&w.parent&&w.className.toUpperCase()==='BUTTON'){if(w.builtin&&!w.proc)buttonClick(this,w,true);else p.postMessage(w.parent,WM_COMMAND,w.id&65535,w.hwnd);}}
-    else if(event.kind==='edit'){if(!w.enabled||(w.style&0x800))return;w.title=String(event.text).slice(0,65535);if(w.parent)p.postMessage(w.parent,WM_COMMAND,((0x300<<16)|(w.id&65535))>>>0,w.hwnd);}
+    else if(event.kind==='edit'){if(!w.enabled||(w.style&0x800))return;w.title=String(event.text).slice(0,65535);this.notify(w);if(w.parent)p.postMessage(w.parent,WM_COMMAND,((0x300<<16)|(w.id&65535))>>>0,w.hwnd);}
     else if(event.kind==='mouse'){const message=mouseMessage(event);if(!message)return;const target=this.window(this.capture)||w;let x=event.x,y=event.y;if(target!==w){const from=windowOrigin(this,w.hwnd),to=windowOrigin(this,target.hwnd);x+=from[0]-to[0];y+=from[1]-to[1];}const origin=windowOrigin(this,target.hwnd);classifyClick(this,event,target,message,x+origin[0],y+origin[1]);const xy=((x&65535)|((y&65535)<<16))>>>0;p.postMessage(target.hwnd,message.message,message.wParam,xy);}
-    else if(event.kind==='key'){const code=event.code>>>0;this.keyChars.set(code,event.char||'');p.postMessage(w.hwnd,event.down?0x100:0x101,code,event.down?1:0xC0000001);}
+    else if(event.kind==='key'){const code=event.code>>>0;if(w.builtin&&!w.proc&&w.enabled){const type=w.className.toUpperCase();if(type==='BUTTON'&&!event.down&&(code===32||code===13)){buttonClick(this,w,true);return;}if(type==='EDIT'&&event.down&&!(w.style&0x800)){if(event.ctrlKey&&code===65){w.editSelectAll=true;return;}let value=w.title;if(code===8)value=w.editSelectAll?'':value.slice(0,-1);else if(code===46&&w.editSelectAll)value='';else if(event.char&&!event.ctrlKey)value=(w.editSelectAll?'':value)+event.char;else return;w.editSelectAll=false;this.input({kind:'edit',hwnd:w.hwnd,text:value});return;}}this.keyChars.set(code,event.char||'');p.postMessage(w.hwnd,event.down?0x100:0x101,code,event.down?1:0xC0000001);}
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
     installMenus(this);

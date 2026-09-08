@@ -1,4 +1,3 @@
-import {updateGuestMenu} from './menus.js';
 const element=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
 const color=value=>`rgb(${value&255},${(value>>>8)&255},${(value>>>16)&255})`;
 export class GuestDisplay {
@@ -9,11 +8,11 @@ export class GuestDisplay {
     if(op==='destroy'){this.windows.get(w.hwnd)?.element.remove();this.windows.delete(w.hwnd);return;}
     let record=this.windows.get(w.hwnd);
     if(!record){
-      if((w.style&0x40000000)&&w.parent&&this.windows.has(w.parent)){const parent=this.windows.get(w.parent),type=w.className.toUpperCase(),node=element(type==='BUTTON'?'button':type==='EDIT'?'input':'div','guest-control '+(type==='BUTTON'?'button':type==='EDIT'?'edit':'static'));if(type==='BUTTON')node.addEventListener('click',()=>this.input({kind:'click',hwnd:w.hwnd}));if(type==='EDIT')node.addEventListener('input',()=>this.input({kind:'edit',hwnd:w.hwnd,text:node.value}));(parent.client||parent.element).append(node);record={element:node,control:true,type};}
+      if((w.style&0x40000000)&&w.parent&&this.windows.has(w.parent)){const parent=this.windows.get(w.parent),type=w.className.toUpperCase(),node=element('canvas','guest-control');node.tabIndex=0;node.addEventListener('click',()=>{if(node.getAttribute('aria-disabled')==='true')return;node.focus();if(type==='BUTTON')this.input({kind:'click',hwnd:w.hwnd});});for(const [dom,down]of [['keydown',true],['keyup',false]])node.addEventListener(dom,e=>{e.preventDefault();if(node.getAttribute('aria-disabled')==='true')return;this.input({kind:'key',hwnd:w.hwnd,down,code:e.keyCode,char:e.key.length===1?e.key:'',ctrlKey:e.ctrlKey,shiftKey:e.shiftKey});});(parent.client||parent.element).append(node);record={element:node,canvas:node,context:node.getContext('2d'),control:true,type};}
       else {const node=element('div','guest-window'),bar=element('div','guest-titlebar'),title=element('span','',w.title),close=element('button','','×'),client=element('div','guest-client'),canvas=element('canvas');close.title='Close guest window';close.addEventListener('click',()=>this.input({kind:'close',hwnd:w.hwnd}));bar.append(title,close);canvas.tabIndex=0;canvas.setAttribute('aria-label',w.title+' display');client.append(canvas);node.append(bar,client);this.root.append(node);const context=canvas.getContext('2d',{alpha:false});record={element:node,client,canvas,context,title};
         node.addEventListener('pointerdown',()=>node.style.zIndex=String(++this.z));
         let drag=null;bar.addEventListener('pointerdown',e=>{if(e.target===close)return;drag={x:e.clientX-node.offsetLeft,y:e.clientY-node.offsetTop};bar.setPointerCapture(e.pointerId);e.preventDefault();});bar.addEventListener('pointermove',e=>{if(drag){node.style.left=Math.max(0,e.clientX-drag.x)+'px';node.style.top=Math.max(0,e.clientY-drag.y)+'px';}});bar.addEventListener('pointerup',()=>drag=null);
-        for(const [dom,type]of [['mousedown','down'],['mouseup','up'],['mousemove','move']])canvas.addEventListener(dom,e=>{const rect=canvas.getBoundingClientRect();if(type==='down')canvas.focus();this.input({kind:'mouse',event:type,hwnd:w.hwnd,x:Math.floor((e.clientX-rect.left)*canvas.width/rect.width),y:Math.floor((e.clientY-rect.top)*canvas.height/rect.height),timeStamp:e.timeStamp,button:e.button,buttons:e.buttons,shiftKey:e.shiftKey,ctrlKey:e.ctrlKey});});
+        for(const [dom,type]of [['mousedown','down'],['mouseup','up'],['mousemove','move']])canvas.addEventListener(dom,e=>{const rect=canvas.getBoundingClientRect();if(type==='down')canvas.focus();this.input({kind:'mouse',event:type,hwnd:w.hwnd,x:Math.floor((e.clientX-rect.left)*canvas.width/rect.width),y:Math.floor((e.clientY-rect.top)*canvas.height/rect.height)-(record.menuHeight||0),timeStamp:e.timeStamp,button:e.button,buttons:e.buttons,shiftKey:e.shiftKey,ctrlKey:e.ctrlKey});});
         canvas.addEventListener('contextmenu',e=>e.preventDefault());
         for(const [dom,down]of [['keydown',true],['keyup',false]])canvas.addEventListener(dom,e=>{if(['F5','F11','F12'].includes(e.key)||e.ctrlKey&&['r','l'].includes(e.key.toLowerCase()))return;e.preventDefault();this.input({kind:'key',hwnd:w.hwnd,down,code:e.keyCode,char:e.key.length===1?e.key:e.key==='Enter'?'\r':e.key==='Backspace'?'\b':''});});
       }
@@ -21,17 +20,12 @@ export class GuestDisplay {
       this.windows.set(w.hwnd,record);
     }
     const node=record.element;node.hidden=!w.visible;node.style.left=w.x+'px';node.style.top=w.y+'px';node.style.width=w.width+'px';node.style.zIndex=String(++this.z);
-    if(record.control){node.style.height=w.height+'px';node.disabled=!w.enabled;if(record.type==='EDIT'){node.readOnly=!!(w.style&0x800);if(node!==document.activeElement||node.readOnly)node.value=w.title;}else if(record.type==='BUTTON'){
-      const type=w.style&15,checkable=[2,3,4,5,6,9].includes(type),radio=type===4||type===9,state=w.checkState||0;
-      node.classList.toggle('checkable',checkable);node.tabIndex=w.style&0x10000?0:-1;
-      if(checkable){node.setAttribute('role',radio?'radio':'checkbox');node.setAttribute('aria-checked',state===2&&!radio?'mixed':state?'true':'false');const mark=element('span','check-mark',radio?(state?'\u25c9':'\u25cb'):state===2?'\u25a3':state?'\u2611':'\u2610');mark.setAttribute('aria-hidden','true');node.replaceChildren(mark,element('span','check-label',w.title));}
-      else{node.removeAttribute('role');node.removeAttribute('aria-checked');node.textContent=w.title;}
-    }else node.textContent=w.title;}
-    else{record.title.textContent=w.title;record.client.style.width=w.width+'px';record.client.style.height=w.height+'px';if(record.canvas.width!==w.width||record.canvas.height!==w.height){record.canvas.width=w.width;record.canvas.height=w.height;record.context.fillStyle='#ffffff';record.context.fillRect(0,0,w.width,w.height);}}
-    if(!record.control)updateGuestMenu(record,w,this.input);
+    if(record.control){node.style.height=w.height+'px';node.width=w.width;node.height=w.height;node.tabIndex=w.enabled&&(w.style&0x10000)?0:-1;node.setAttribute('aria-label',w.title);node.setAttribute('aria-disabled',String(!w.enabled));if(record.type==='EDIT'){node.setAttribute('role','textbox');node.setAttribute('aria-readonly',String(!!(w.style&0x800)));}else if(record.type==='BUTTON'){const type=w.style&15,checkable=[2,3,4,5,6,9].includes(type),radio=type===4||type===9;node.setAttribute('role',checkable?radio?'radio':'checkbox':'button');if(checkable)node.setAttribute('aria-checked',w.checkState===2&&!radio?'mixed':String(!!w.checkState));else node.removeAttribute('aria-checked');}}
+    else{record.menuHeight=w.menuHeight||0;const height=w.height+record.menuHeight;record.title.textContent=w.title;record.client.style.width=w.width+'px';record.client.style.height=height+'px';if(record.canvas.width!==w.width||record.canvas.height!==height){record.canvas.width=w.width;record.canvas.height=height;record.context.fillStyle='#ffffff';record.context.fillRect(0,0,w.width,height);}}
     document.getElementById('desktop-empty').hidden=this.windows.size>0;
   }
   draw(commands){for(const c of commands){const record=this.windows.get(c.hwnd);if(!record?.context)continue;const ctx=record.context;ctx.save();try{
+      if(c.surface!=='nonclient'&&record.menuHeight){ctx.translate(0,record.menuHeight);ctx.beginPath();ctx.rect(0,0,ctx.canvas.width,ctx.canvas.height-record.menuHeight);ctx.clip();}
       if(c.clip){ctx.beginPath();for(const [l,t,r,b] of c.clip){const x=Math.max(0,l),y=Math.max(0,t),right=Math.min(ctx.canvas.width,r),bottom=Math.min(ctx.canvas.height,b);if(right>x&&bottom>y)ctx.rect(x,y,right-x,bottom-y);}ctx.clip();}
       if(c.pen?.geometric){ctx.lineCap=c.pen.lineCap;ctx.lineJoin=c.pen.lineJoin;ctx.miterLimit=c.pen.miterLimit;ctx.setLineDash(c.pen.dash||[]);}
       if(c.op==='fill'){ctx.fillStyle=color(c.color);ctx.fillRect(c.x,c.y,c.width,c.height);}
