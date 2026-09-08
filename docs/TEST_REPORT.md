@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Atom initialization and reference saturation - 2026-09-08
+
+**321 Node tests passed, 0 failed, 0 skipped.** Added InitAtomTable as a non-resetting sizing hint over the runtime's Map storage. Replaced the prior ATOM_LIMIT fault with native local-atom pinning on addition 65536. Tests run complete add/delete sequences at counts 65535 and 65536, verify the former disappears and the latter remains, and check subsequent add/delete/init behavior. Initialization tests cover explicit and implicit table creation, sizes 0/1/37/65535/0xffffffff, unchanged last error and preserved references. The rebuilt HandleObjects.exe imports InitAtomTable and verifies that repeated initialization retains its existing atom. Catalog: 565 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/atom-saturation-tests.tap), [browser report](test-artifacts/atom-saturation-browser-report.json).
+
+Native ctypes probes used process-local atom tables. Counts 65534 and 65535 disappeared after matching DeleteAtom calls, with FindAtom reporting error 2; count 65536 remained. A separate 65540-add probe remained present after 65541 deletions, all of which returned zero without changing sentinel error 1234. InitAtomTable calls succeeded and preserved last error before and after local atom use. Pinned atoms were confined to the probe process and ceased to exist when it exited; no guest executable ran on the host. Reference: [InitAtomTable](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-initatomtable). Global atom APIs, global/window-property interoperability and native hash-bucket allocation behavior remain unfinished; Map provides runtime storage independently of the bucket-count hint.
+
 ## Local atom tables - 2026-09-08
 
 **319 Node tests passed, 0 failed, 0 skipped.** Added AddAtomA/W, FindAtomA/W, GetAtomNameA/W and DeleteAtom. Tests cover process isolation, A/W identity, case-insensitive lookup with original spelling, matched reference deletion, numeric aliases, missing/empty/long names, capacity/error precedence, negative capacity bit patterns, truncated null-terminated output, complete output-buffer validation and CP1252 best-fit output. The rebuilt HandleObjects.exe imports all seven APIs and verifies shared reference lifetime, original spelling, bounded output and integer atoms. Catalog: 564 entries.

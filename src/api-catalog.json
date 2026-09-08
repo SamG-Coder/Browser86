@@ -1604,6 +1604,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "InitAtomTable",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "InitializeConditionVariable",
     "argc": 1,
     "cdecl": false,

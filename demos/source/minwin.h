@@ -297,4 +297,5 @@ API WORD WINAPI FindAtomW(const WORD*);
 API WORD WINAPI DeleteAtom(WORD);
 API DWORD WINAPI GetAtomNameA(WORD,char*,int);
 API DWORD WINAPI GetAtomNameW(WORD,WORD*,int);
+API BOOL WINAPI InitAtomTable(DWORD);
 #endif

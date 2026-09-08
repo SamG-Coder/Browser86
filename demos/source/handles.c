@@ -331,7 +331,9 @@ void mainCRTStartup(void){
   CHECK(GetParent(lifetimeWindows[2])==lifetimeWindows[1]&&GetParent(lifetimeWindows[3])==lifetimeWindows[0]);
   CHECK(IsChild(lifetimeWindows[0],lifetimeWindows[2])&&!IsChild(lifetimeWindows[0],lifetimeWindows[3])&&!IsChild(lifetimeWindows[0],lifetimeWindows[0]));
   WORD atomWide[]={ 'M','I','X','E','D',0 },atomOutput[16];char atomAnsi[16];
+  SetLastError(1234);CHECK(InitAtomTable(37)&&GetLastError()==1234);
   WORD localAtom=AddAtomA("MiXeD");CHECK(localAtom>=0xc000&&AddAtomW(atomWide)==localAtom&&FindAtomW(atomWide)==localAtom);
+  CHECK(InitAtomTable(0xffffffff)&&FindAtomA("mixed")==localAtom);
   CHECK(GetAtomNameA(localAtom,atomAnsi,3)==2&&atomAnsi[0]=='M'&&atomAnsi[1]=='i'&&!atomAnsi[2]);
   CHECK(GetAtomNameW(localAtom,atomOutput,16)==5&&atomOutput[0]=='M'&&atomOutput[1]=='i'&&atomOutput[2]=='X'&&atomOutput[3]=='e'&&atomOutput[4]=='D'&&!atomOutput[5]);
   CHECK(!DeleteAtom(localAtom)&&FindAtomA("mixed")==localAtom);CHECK(!DeleteAtom(localAtom));SetLastError(1234);CHECK(!FindAtomA("mixed")&&GetLastError()==2);

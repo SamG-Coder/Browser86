@@ -2,6 +2,21 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {guest} from './helpers.mjs';
 function setup(){const {p}=guest('HelloConsole.exe');return {p,m:p.memory,call:(n,...a)=>p.apis.lookup('kernel32.dll',n).fn(...a),str:(s,wide=false)=>{const a=p.heap.alloc((s.length+1)*2);p.memory.string(a,s,wide,s.length+1);return a;}};}
+test('InitAtomTable succeeds before and after implicit initialization without clearing names or references',()=>{
+ const {p,call,str}=setup();p.setError(1234);assert.equal(call('InitAtomTable',0),1);assert.equal(p.lastError,1234);const name=str('Initialized'),atom=call('AddAtomA',name);call('AddAtomA',name);
+ for(const size of [1,37,65535,0xffffffff]){assert.equal(call('InitAtomTable',size),1);assert.equal(p.lastError,1234);assert.equal(call('FindAtomA',name),atom);}
+ call('DeleteAtom',atom);assert.equal(call('FindAtomA',name),atom);call('DeleteAtom',atom);assert.equal(call('FindAtomA',name),0);
+ const other=setup(),otherName=other.str('Implicit'),otherAtom=other.call('AddAtomA',otherName);assert.equal(other.call('InitAtomTable',37),1);assert.equal(other.call('FindAtomA',otherName),otherAtom);
+});
+test('Local atom reference overflow pins on addition 65536, while count 65535 remains deletable',()=>{
+ for(const count of [65535,65536]){
+  const {p,call,str}=setup(),name=str('PinnedBoundary'),wide=str('PINNEDBOUNDARY',true);p.setError(1234);const atom=call('AddAtomA',name);
+  for(let i=1;i<count;i++)assert.equal(call('AddAtomW',wide),atom);assert.equal(p.lastError,1234);
+  for(let i=0;i<count;i++)assert.equal(call('DeleteAtom',atom),0);assert.equal(p.lastError,1234);
+  assert.equal(call('FindAtomA',name),count===65535?0:atom);assert.equal(p.lastError,count===65535?2:1234);
+  if(count===65536){assert.equal(call('InitAtomTable',0),1);for(let i=0;i<3;i++){assert.equal(call('AddAtomA',name),atom);assert.equal(call('DeleteAtom',atom),0);}assert.equal(call('FindAtomW',wide),atom);}
+ }
+});
 test('Local atoms share A/W names, preserve spelling and release only after matching deletes',()=>{
  const {p,m,call,str}=setup(),name=str('MiXéd'),wide=str('MIXÉD',true),out=p.heap.alloc(32);p.setError(1234);
  const atom=call('AddAtomA',name);assert.ok(atom>=0xc000&&atom<=0xffff);assert.equal(call('AddAtomW',wide),atom);assert.equal(call('FindAtomA',name),atom);assert.equal(call('FindAtomW',wide),atom);assert.equal(p.lastError,1234);

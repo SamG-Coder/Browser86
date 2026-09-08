@@ -2,10 +2,11 @@ import {ansiDecode} from './memory.js';
 import {ordinalUpper} from './ordinal-table.js';
 import {sbcsTables} from './sbcs-tables.js';
 import {checkBuffer} from './files.js';
-import {RuntimeFault} from './errors.js';
 const ansiBestFit=new Map(sbcsTables[1252].encode[0]);
 export function installLocalAtoms(api){
  const {m}=api,atoms=new Map(),names=new Map(),k=(n,c,f)=>api.add('kernel32.dll',n,c,f);
+ // JavaScript Map manages buckets; this Windows sizing hint never resets entries.
+ k('InitAtomTable',1,()=>1);
  const read=(pointer,wide,add)=>{
   pointer>>>=0;if(pointer<65536)return pointer<0xc000?{integer:pointer}:{error:87};
   const units=[];let ended=false;for(let i=0;i<=255;i++){const c=wide?m.u16(pointer+i*2):m.u8(pointer+i);if(!c){ended=true;break;}units.push(c);}
@@ -17,7 +18,7 @@ export function installLocalAtoms(api){
  for(const wide of [false,true]){
   for(const add of [false,true])k((add?'Add':'Find')+'Atom'+(wide?'W':'A'),1,pointer=>{
    const name=read(pointer,wide,add);if(name.error)return api.fail(name.error);if(name.integer!==undefined)return name.integer;
-   const existing=names.get(name.key);if(existing){if(add){if(existing.refs>=65535)throw new RuntimeFault('ATOM_LIMIT','Atom reference count limit reached.');existing.refs++;}return existing.id;}
+   const existing=names.get(name.key);if(existing){if(add&&!existing.pinned){if(existing.refs===65535)existing.pinned=true;else existing.refs++;}return existing.id;}
    if(!add)return api.fail(2);let id=0xc000;while(atoms.has(id)&&id<=0xffff)id++;if(id>0xffff)return api.fail(8);
    const atom={id,key:name.key,text:name.text,refs:1};atoms.set(id,atom);names.set(name.key,atom);return id;
   });
@@ -29,5 +30,5 @@ export function installLocalAtoms(api){
    if(wide)m.w16(out+count*2,0);else m.w8(out+count,0);return count;
   });
  }
- k('DeleteAtom',1,id=>{id&=65535;if(id<0xc000)return 0;const atom=atoms.get(id);if(!atom)return api.fail(6);if(--atom.refs===0){atoms.delete(id);names.delete(atom.key);}return 0;});
+ k('DeleteAtom',1,id=>{id&=65535;if(id<0xc000)return 0;const atom=atoms.get(id);if(!atom)return api.fail(6);if(!atom.pinned&&--atom.refs===0){atoms.delete(id);names.delete(atom.key);}return 0;});
 }
