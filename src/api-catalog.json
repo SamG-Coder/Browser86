@@ -2615,6 +2615,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "_configthreadlocale",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_configure_narrow_argv",
     "argc": 1,
     "cdecl": true,
@@ -2719,6 +2726,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "_query_new_mode",
+    "argc": 0,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_set_app_type",
     "argc": 1,
     "cdecl": true,
@@ -2727,6 +2741,13 @@
   {
     "dll": "msvcrt.dll",
     "name": "_set_fmode",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "_set_new_mode",
     "argc": 1,
     "cdecl": true,
     "data": false

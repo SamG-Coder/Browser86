@@ -4,6 +4,8 @@ export function splitCommandLine(text){const args=[];let i=0;while(i<text.length
 export function installCRT(api){const p=api.p,m=api.m,v=api.vfs;const c=(name,n,fn)=>api.add('msvcrt.dll',name,n,fn,true);const ptr=s=>p.heap.string(s);const errno=p.heap.alloc(4,true);const error=n=>{m.w32(errno,n);return -1;};
   // CRT startup writes this process-local default through a stable int pointer.
   const commode=p.heap.alloc(4,true);c('__p__commode',0,()=>commode);api.data('msvcrt.dll','_commode',commode);
+  let threadLocale=2;c('_configthreadlocale',1,mode=>{const previous=threadLocale;if(mode===1||mode===2)threadLocale=mode;else if(mode!==0)return error(22);return previous;});
+  c('_set_new_mode',1,mode=>{if(mode!==0&&mode!==1)return error(22);requireThat(mode===0,'CRT_NEW_MODE','malloc new-handler invocation is not implemented.');return 0;});c('_query_new_mode',0,()=>0);
   c('_controlfp_s',3,(out,value,mask)=>{
     const cpu=p.cpu,cw=cpu.fpuControl;
     let current=((cw&1)?16:0)|((cw&2)?0x80000:0)|((cw&4)?8:0)|((cw&8)?4:0)|((cw&16)?2:0)|((cw&32)?1:0)|((cw&0xc00)>>>2)|((cw&0x1000)?0x40000:0);
