@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Class module replacement and unregistration matching - 2026-09-08
+
+**446 Node tests passed, 0 failed, 0 skipped.** SetClassLongA/W supports GCL_HMODULE replacement, previous-value returns and raw zero/high-bit values. Tests cover shared class state, independent window instance handles, invalid HWNDs and unregistration by atom/name with null or explicit module arguments. The prior test expecting null unregistration to reject a non-main module was corrected using native evidence. The rebuilt HandleObjects.exe replaces the class module with zero, queries it and restores the main module. Catalog remains 588 entries.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-module-tests.tap), [browser report](test-artifacts/class-module-browser-report.json).
+
+Native private A/W class probes accepted zero and 0x1234 module replacements, returned previous values and preserved error 1234. After replacement, the original explicit module failed unregistration with error 1411, while null succeeded for both name and atom identifiers. A separate class registered under instance 456 also allowed null unregistration. Probe windows/classes were cleaned up. Full per-module namespaces and creation lookup remain unfinished. The Applications-key context-menu probe did not establish the required input-state conditions; that path was left unchanged rather than inferring behavior from incomplete evidence.
+
 ## Right-button context-menu messages - 2026-09-08
 
 **442 Node tests passed, 0 failed, 0 skipped.** Default WM_RBUTTONUP processing sends WM_CONTEXTMENU with virtual screen coordinates. Default child processing forwards to the parent and preserves the original HWND and position. Tests cover signed coordinates, A/W callbacks, the keyboard-position sentinel, owned popups, nested synchronous dispatch, ignored callback return values and custom-procedure overrides. The rebuilt HandleObjects.exe verifies the callback parameters and completion result. Catalog remains 588 entries.

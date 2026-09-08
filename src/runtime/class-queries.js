@@ -21,7 +21,7 @@ export function installClassQueries(gui){
   const cls=gui.classes.get(w.className.toLowerCase());if(!cls)throw new RuntimeFault('UNSUPPORTED_GUI','Built-in class metadata is not implemented.');
   index|=0;
   if(index>=0){if(index+4>cls.classExtra)return api.fail(1413);return extraLong(cls,index);}
-  if(fields.has(index)){const value=cls[fields.get(index)];return index===-16?(value||p.main.base):index===-26?(value&visibleClassStyles):value;}
+  if(fields.has(index)){const value=cls[fields.get(index)];return index===-26?(value&visibleClassStyles):value;}
   if(index===-24){if(wide!==cls.wide)throw new RuntimeFault('UNSUPPORTED_GUI','Cross-encoding class procedure thunks are not implemented.');return cls.proc;}
   if(index===-8)return menuPointer(gui,cls,wide);
   if(index===-7)return cls.atom;
@@ -32,6 +32,7 @@ export function installClassQueries(gui){
   const cls=gui.classes.get(w.className.toLowerCase());if(!cls)throw new RuntimeFault('UNSUPPORTED_GUI','Built-in class metadata is not implemented.');
   index|=0;value>>>=0;
   if(index>=0){if(index+4>cls.classExtra)return api.fail(1413);const old=extraLong(cls,index);cls.extraBytes??=new Map();for(let i=0;i<4;i++)cls.extraBytes.set(index+i,(value>>>(i*8))&255);return old;}
+  if(index===-16){const old=cls.instance;cls.instance=value;return old;}
   if(index===-12){const old=cls.cursor;cls.cursor=value&&p.object(value,'cursor')?value:0;if(value&&!cls.cursor)p.setError(1402);return old;}
   if(index===-10){const old=cls.background;cls.background=value;return old;}
   if(index===-26){if(value&0x10000)return api.fail(13);const old=cls.style;cls.style=value;return old;}

@@ -120,12 +120,12 @@ export class GUI {
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
     for(const wide of [false,true]){const suffix=wide?'W':'A',str=pointer=>a.str(pointer,wide);
-      for(const extended of [false,true])u('RegisterClass'+(extended?'Ex':'')+suffix,1,pointer=>{const o=extended?4:0;if(extended&&m.u32(pointer)!==48)return a.fail(87);checkBuffer(m,pointer,extended?48:40,'r');if(m.u32(pointer+o)&~0x0803feeb)return a.fail(87);if(m.i32(pointer+o+8)<0||m.i32(pointer+o+12)<0)return a.fail(87);const proc=m.u32(pointer+o+4),name=str(m.u32(pointer+o+36));if(!name)return a.fail(87);if(this.classes.has(name.toLowerCase()))return a.fail(1410);const menu=m.u32(pointer+o+32),menuName=menu>=65536?str(menu):null;const atom=this.nextAtom++;this.classes.set(name.toLowerCase(),{name,atom,proc,style:m.u32(pointer+o),classExtra:m.u32(pointer+o+8),windowExtra:m.u32(pointer+o+12),icon:m.u32(pointer+o+20),cursor:m.u32(pointer+o+24),menu,menuName,smallIcon:extended?m.u32(pointer+44):0,instance:m.u32(pointer+o+16),background:m.u32(pointer+o+28),wide});return atom;});
+      for(const extended of [false,true])u('RegisterClass'+(extended?'Ex':'')+suffix,1,pointer=>{const o=extended?4:0;if(extended&&m.u32(pointer)!==48)return a.fail(87);checkBuffer(m,pointer,extended?48:40,'r');if(m.u32(pointer+o)&~0x0803feeb)return a.fail(87);if(m.i32(pointer+o+8)<0||m.i32(pointer+o+12)<0)return a.fail(87);const proc=m.u32(pointer+o+4),name=str(m.u32(pointer+o+36));if(!name)return a.fail(87);if(this.classes.has(name.toLowerCase()))return a.fail(1410);const menu=m.u32(pointer+o+32),menuName=menu>=65536?str(menu):null;const atom=this.nextAtom++;this.classes.set(name.toLowerCase(),{name,atom,proc,style:m.u32(pointer+o),classExtra:m.u32(pointer+o+8),windowExtra:m.u32(pointer+o+12),icon:m.u32(pointer+o+20),cursor:m.u32(pointer+o+24),menu,menuName,smallIcon:extended?m.u32(pointer+44):0,instance:m.u32(pointer+o+16)||p.main.base,background:m.u32(pointer+o+28),wide});return atom;});
       u('UnregisterClass'+suffix,2,(name,instance)=>{
         name>>>=0;if(!name)return a.fail(87);
         const atom=name<65536,cls=atom?[...this.classes.values()].find(c=>c.atom===name):this.classes.get(str(name).toLowerCase());
         if(!cls)return a.fail(atom&&name>=0xC000?6:1411);
-        if((instance||p.main.base)!==(cls.instance||p.main.base))return a.fail(1411);
+        if(instance&&(instance>>>0)!==cls.instance)return a.fail(1411);
         const key=cls.name.toLowerCase();if([...this.windows.values()].some(w=>w.className.toLowerCase()===key))return a.fail(1412);
         this.classes.delete(key);
         for(const pointer of Object.values(cls.menuBuffers||{}))p.heap.free(pointer);

@@ -10,7 +10,7 @@ test('Class atoms remain registered while windows exist, and can be removed afte
 });
 test('UnregisterClass validates module instance before live-window state and accepts main-module aliases',()=>{
  const {p,call,atom}=setup(true),h=call('CreateWindowExW',0,atom,0,0,0,0,20,20,0,0,0,0);assert.equal(call('UnregisterClassA',atom,123),0);assert.equal(p.lastError,1411);call('DestroyWindow',h);assert.equal(call('UnregisterClassA',atom,p.main.base),1);
- const other=setup(false,false,456);assert.equal(other.call('UnregisterClassW',other.atom,0),0);assert.equal(other.p.lastError,1411);assert.equal(other.call('UnregisterClassW',other.atom,456),1);
+ const other=setup(false,false,456);assert.equal(other.call('UnregisterClassW',other.atom,123),0);assert.equal(other.p.lastError,1411);assert.equal(other.call('UnregisterClassW',other.atom,0),1);
 });
 test('UnregisterClass distinguishes null, integer, missing atom and string names without reading atoms',()=>{
  for(const wide of [false,true]){const {p,call,str,atom}=setup(wide),api='UnregisterClass'+(wide?'W':'A');for(const [key,error]of [[0,87],[1,1411],[0xbfff,1411],[0xffff,6],[str('Missing'),1411]]){assert.equal(call(api,key,0),0);assert.equal(p.lastError,error);}assert.throws(()=>call(api,0x60000000,0));assert.equal(call(api,str('cAFÉcLASS'),0),1);assert.equal(call(api,atom,0),0);}
