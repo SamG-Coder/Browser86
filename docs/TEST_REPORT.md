@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Class style registration and replacement - 2026-09-08
+
+**402 Node tests passed, 0 failed, 0 skipped.** SetClassLongA/W supports GCL_STYLE replacement, retaining raw prior bits while GetClassLongA/W exposes the native visible mask. Registration rejects invalid style bits before atom allocation. Tests exercise all 32 individual bits, high-bit combinations, A/W/Ex registration, shared existing/future windows, unchanged per-window styles, last-error preservation, rejected mutations and destroyed handles. The rebuilt HandleObjects.exe checks hidden-bit query masking, invalid-style rejection and raw prior-value returns. Catalog remains 580 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-style-tests.tap), [browser report](test-artifacts/class-style-browser-report.json).
+
+Native probes created private classes and hidden windows, then cleaned them up. All four registration variants accepted exactly the individual bits in 0x0803feeb; other individual bits failed with error 87. SetClassLongPtr accepted raw values without bit 0x10000, returned the previous raw value and preserved error 1234. Values containing that bit failed with error 13 without mutation. GetClassLong and GetClassLongPtr queries hid internal bits; the query mask is 0x37bff, including bit 0x10000 when supplied at registration. Reference: [Microsoft SetClassLongW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclasslongw). Full behavioral effects of class styles and icon/cursor replacement remain unfinished. Native icon/cursor probing identified handle-validation and field-clearing behavior that must be implemented with their object support, rather than treating those fields as arbitrary integers.
+
 ## Class menu-name pointer lifetime - 2026-09-08
 
 **397 Node tests passed, 0 failed, 0 skipped.** RegisterClass/ExA/W copies string menu names, and GetClassLongA/W returns stable class-owned pointers with CP1252 best-fit conversion. Tests cover all registration variants, caller-buffer modification/freeing, shared pointers across windows, failed unregistration, successful cleanup, integer/null identifiers and unreadable input without atom consumption. The rebuilt HandleObjects.exe checks ANSI and Unicode menu-name queries in the guest runtime. Catalog remains 580 entries.

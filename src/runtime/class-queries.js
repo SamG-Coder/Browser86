@@ -11,6 +11,8 @@ function menuPointer(gui,cls,wide){
  cls.menuBuffers[key]=pointer;return pointer;
 }
 const fields=new Map([[-32,'atom'],[-26,'style'],[-20,'classExtra'],[-18,'windowExtra'],[-16,'instance'],[-14,'icon'],[-12,'cursor'],[-10,'background'],[-34,'smallIcon']]);
+// Native queries hide internal style bits; setters still return the raw stored value.
+const visibleClassStyles=0x37bff;
 function extraLong(cls,index){let value=0;for(let i=0;i<4;i++)value|=(cls.extraBytes?.get(index+i)||0)<<(i*8);return value>>>0;}
 export function installClassQueries(gui){
  const {api,p}=gui;
@@ -19,7 +21,7 @@ export function installClassQueries(gui){
   const cls=gui.classes.get(w.className.toLowerCase());if(!cls)throw new RuntimeFault('UNSUPPORTED_GUI','Built-in class metadata is not implemented.');
   index|=0;
   if(index>=0){if(index+4>cls.classExtra)return api.fail(1413);return extraLong(cls,index);}
-  if(fields.has(index)){const value=cls[fields.get(index)];return index===-16?(value||p.main.base):value;}
+  if(fields.has(index)){const value=cls[fields.get(index)];return index===-16?(value||p.main.base):index===-26?(value&visibleClassStyles):value;}
   if(index===-24){if(wide!==cls.wide)throw new RuntimeFault('UNSUPPORTED_GUI','Cross-encoding class procedure thunks are not implemented.');return cls.proc;}
   if(index===-8)return menuPointer(gui,cls,wide);
   if(index===-7)return cls.atom;
@@ -31,6 +33,7 @@ export function installClassQueries(gui){
   index|=0;value>>>=0;
   if(index>=0){if(index+4>cls.classExtra)return api.fail(1413);const old=extraLong(cls,index);cls.extraBytes??=new Map();for(let i=0;i<4;i++)cls.extraBytes.set(index+i,(value>>>(i*8))&255);return old;}
   if(index===-10){const old=cls.background;cls.background=value;return old;}
+  if(index===-26){if(value&0x10000)return api.fail(13);const old=cls.style;cls.style=value;return old;}
   if(index===-24){if((suffix==='W')!==cls.wide)throw new RuntimeFault('UNSUPPORTED_GUI','Cross-encoding class procedure thunks are not implemented.');const old=cls.proc;cls.proc=value;return old;}
   if(fields.has(index)||index===-24||index===-8)throw new RuntimeFault('UNSUPPORTED_GUI','This class metadata mutation is not implemented.');
   return api.fail(1413);

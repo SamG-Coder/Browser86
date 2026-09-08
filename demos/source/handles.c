@@ -71,6 +71,7 @@ void mainCRTStartup(void){
   CHECK(!UnregisterClassW((const WORD*)(DWORD)encodingAtomA,NULL));CHECK(GetLastError()==1412);
   CHECK(GetObjectType(encodingA.brush)==2);
   CHECK(((const char*)GetClassLongA(encodingWindow,-8))[3]==(char)233);CHECK(((const WORD*)GetClassLongW(encodingWindow,-8))[3]==233);CHECK(GetClassLongA(encodingWindow,-8)==GetClassLongA(encodingWindow,-8));
+  CHECK(!SetClassLongW(encodingWindow,-26,0x80000403));CHECK(GetClassLongA(encodingWindow,-26)==3);SetLastError(1234);CHECK(!SetClassLongA(encodingWindow,-26,0x10000));CHECK(GetLastError()==13);CHECK(SetClassLongA(encodingWindow,-26,0)==0x80000403);
   CHECK(GetClassLongA(encodingWindow,-32)==encodingAtomA);CHECK(GetClassLongW(encodingWindow,-10)==(DWORD)encodingA.brush);CHECK(GetClassLongA(encodingWindow,-24)==(DWORD)encodingProc);
   SetLastError(1234);CHECK(!GetClassLongW(encodingWindow,8));CHECK(GetLastError()==1413);
   CHECK(!SetClassLongA(encodingWindow,0,0x12345678));CHECK(SetClassLongW(encodingWindow,1,0xaabbccdd)==0x123456);CHECK(GetClassLongA(encodingWindow,0)==0xbbccdd78);
