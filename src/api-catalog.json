@@ -267,6 +267,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "GetRegionData",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetRgnBox",
     "argc": 2,
     "cdecl": false,

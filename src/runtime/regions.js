@@ -8,6 +8,10 @@ export function installRegions(gui){
  g('CreateRectRgnIndirect',1,input=>{checkBuffer(m,input,16,'r');return create(...[0,4,8,12].map(i=>m.i32(input+i)));});
  g('SetRectRgn',5,(h,l,t,r,b)=>{const o=region(h);if(!o)return 0;o.rect=normalize(l|0,t|0,r|0,b|0);return 1;});
  g('GetRgnBox',2,(h,out)=>{const o=region(h);if(!o)return 0;checkBuffer(m,out,16);(o.rect||[0,0,0,0]).forEach((n,i)=>m.w32(out+4*i,n));return o.rect?2:1;});
+ g('GetRegionData',3,(h,count,out)=>{
+  const o=region(h);if(!o)return api.fail(6);const r=o.rect,size=r?48:32;if(!out)return size;if((count>>>0)<size)return api.fail(87);
+  checkBuffer(m,out,size);const data=r?[32,1,1,16,...r,...r]:[32,1,0,0,0,0,0,0];data.forEach((n,i)=>m.w32(out+4*i,n));return size;
+ });
  g('PtInRegion',3,(h,x,y)=>{const o=region(h);if(!o)return api.fail(6);x|=0;y|=0;const r=o.rect;return r&&x>=r[0]&&x<r[2]&&y>=r[1]&&y<r[3]?1:0;});
  g('RectInRegion',2,(h,input)=>{
   const o=region(h),r=o?.rect;if(!r)return 0;checkBuffer(m,input,16,'r');

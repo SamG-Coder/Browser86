@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Region data export - 2026-09-08
+
+**262 Node tests passed, 0 failed, 0 skipped.** GetRegionData now exports native-layout RGNDATA for empty and rectangular regions. Tests cover normalized and negative coordinates, null size queries, exact/oversized/short buffers, unchanged tails, unsigned counts, mutation visibility, invalid handles and complete output validation without partial writes. The rebuilt HandleObjects.exe imports the real symbol and checks size, header fields, rectangle data, short-buffer error and empty-region output. The catalog contains 531 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors**, including compiled fixture execution and persistence/backup. Evidence: [Node TAP](test-artifacts/region-data-tests.tap), [browser report](test-artifacts/region-data-browser-report.json).
+
+Native ctypes probes confirmed 32-byte empty and 48-byte rectangular outputs, header fields, no writes on short buffers, error 87 for insufficient capacity, error 6 for invalid handles and last-error preservation on success. Owned regions were deleted after inspection, with 512-byte scratch buffers used for bounded native calls. No guest executable ran on the host. References: [GetRegionData](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getregiondata), [RGNDATAHEADER](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-rgndataheader). Complex-region serialization remains dependent on complex-region support.
+
 ## Rectangle-in-region containment - 2026-09-08
 
 **260 Node tests passed, 0 failed, 0 skipped.** RectInRegion matches 2,508 native Windows reference cases spanning reversed/empty regions, positive and negative coordinates, degenerate query rectangles, boundaries and signed extremes. A second test covers invalid handles, empty-region pointer short-circuiting and full guest input validation for nonempty regions. The rebuilt HandleObjects.exe imports RectInRegion and checks reversed queries, a contained degenerate boundary point, excluded outside coverage and null input with an empty region. The catalog contains 530 entries.

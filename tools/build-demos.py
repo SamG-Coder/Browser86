@@ -37,7 +37,7 @@ G.update({'ExtCreatePen':5,'GetMiterLimit':2,'SetMiterLimit':3,'PolyDraw':4,'Pol
 G.update({'GetObjectA':3,'GetObjectW':3})
 G.update({'SaveDC':1,'RestoreDC':2,'GetCurrentPositionEx':2})
 U.update({'GetSysColor':1,'GetSysColorBrush':1})
-G.update({'RectInRegion':2,'CreateRectRgn':4,'CreateRectRgnIndirect':1,'SetRectRgn':5,'GetRgnBox':2,'PtInRegion':3,'EqualRgn':2,'OffsetRgn':3})
+G.update({'GetRegionData':3,'RectInRegion':2,'CreateRectRgn':4,'CreateRectRgnIndirect':1,'SetRectRgn':5,'GetRgnBox':2,'PtInRegion':3,'EqualRgn':2,'OffsetRgn':3})
 G.update({'GetBrushOrgEx':2,'SetBrushOrgEx':4})
 G.update({'GetTextColor':1,'GetBkColor':1,'GetBkMode':1,'GetTextAlign':1,'GetCurrentObject':2,'GetObjectType':1})
 U.update({'GetDC':1,'ReleaseDC':2})

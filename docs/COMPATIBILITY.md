@@ -144,6 +144,8 @@ Rectangular regions support CreateRectRgn, CreateRectRgnIndirect, SetRectRgn, Ge
 
 RectInRegion supports the current rectangular regions, normalizing reversed query corners and preserving native degenerate-query behavior. A query fully contained within the bounds succeeds even when it has zero area; otherwise strict bound overlap determines the result. Empty or invalid regions return zero without reading the query pointer. Native reference data covers 2,508 cases including positive/negative bounds, reversed and empty regions, degenerate rectangles and signed extremes. Complex-region containment remains outside the current region model.
 
+GetRegionData exports current rectangular regions as a 32-byte RGNDATAHEADER followed by zero or one 16-byte RECT. Null output requests return required size independently of the supplied count; short buffers fail with error 87 without writes. Empty regions export zero count/size/bounds, and invalid handles fail with error 6. Output reflects SetRectRgn/OffsetRgn mutations and leaves unused buffer bytes untouched. Complex-region export awaits support for complex region objects.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

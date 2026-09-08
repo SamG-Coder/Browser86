@@ -41,6 +41,7 @@ API BOOL WINAPI SetRectRgn(HANDLE,int,int,int,int);
 API int WINAPI GetRgnBox(HANDLE,void*);
 API BOOL WINAPI PtInRegion(HANDLE,int,int);
 API BOOL WINAPI RectInRegion(HANDLE,const void*);
+API DWORD WINAPI GetRegionData(HANDLE,DWORD,void*);
 API BOOL WINAPI EqualRgn(HANDLE,HANDLE);
 API int WINAPI OffsetRgn(HANDLE,int,int);
 API int WINAPI SaveDC(HDC);
