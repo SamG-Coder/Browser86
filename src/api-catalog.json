@@ -330,6 +330,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "InvertRgn",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "LineTo",
     "argc": 3,
     "cdecl": false,

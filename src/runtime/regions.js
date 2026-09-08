@@ -10,6 +10,10 @@ export function installRegions(gui){
   const [l,t,r,b]=o.rect;gui.draw(dcHandle,{op:'fill',x:l,y:t,width:r-l,height:b-t,color:brush.dcColor?dc[brush.dcColor]:brush.color});return 1;
  };
  g('FillRgn',3,fill);
+ g('InvertRgn',2,(dcHandle,regionHandle)=>{
+  const o=region(regionHandle);if(!o)return 0;if(!gui.dc(dcHandle))return api.fail(6);if(!o.rect)return 1;
+  const [l,t,r,b]=o.rect;gui.draw(dcHandle,{op:'invert',x:l,y:t,width:r-l,height:b-t});return 1;
+ });
  g('FrameRgn',5,(dcHandle,regionHandle,brushHandle,w,h)=>{
   w=Math.abs(w|0);h=Math.abs(h|0);if(!w||!h||w===0x80000000||h===0x80000000||!brushHandle)return 0;
   const dc=gui.dc(dcHandle);if(!dc)return api.fail(6);const o=region(regionHandle);if(!o)return 0;if(!o.rect)return 1;

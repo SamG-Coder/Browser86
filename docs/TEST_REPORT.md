@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Rectangular region inversion - 2026-09-08
+
+**268 Node tests passed, 0 failed, 0 skipped.** InvertRgn emits an inversion operation for current normalized region bounds, preserves DC state, ignores selected brushes and handles empty/invalid regions with native-observed validation order. The rebuilt HandleObjects.exe imports InvertRgn and exercises repeated and empty-region calls. The catalog contains 535 entries.
+
+**Fifteen inversion canvas checks and eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Five RGB colors each compare all 64 pixels against native inversion and restoration, then verify that subsequent fills retain normal compositing. Evidence: [Node TAP](test-artifacts/invert-region-tests.tap), [canvas report](test-artifacts/invert-region-canvas-report.json), [browser report](test-artifacts/invert-region-browser-report.json), [native vectors](../tests/invert-region-vectors.json).
+
+The [native generator](../tools/build-invert-region-vectors.py) uses owned bitmap/DC/region/brush resources and releases them after recording. No guest executable ran on the host. The implementation targets the current opaque RGB canvas; [InvertRgn documentation](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-invertrgn) notes device-dependent color behavior. Complex regions, clipping, transforms and other color/device models remain unfinished.
+
 ## Rectangular region framing - 2026-09-08
 
 **266 Node tests passed, 0 failed, 0 skipped.** FrameRgn now renders inward rectangular borders with independent stroke width/height, negative magnitudes and oversized border handling. A differential test compares emitted coverage with 196 native bitmap masks across reversed, thin and empty regions; another covers invalid/hollow brushes, empty-region validation, zero/INT_MIN widths and DC color resolution. The rebuilt HandleObjects.exe imports FrameRgn and checks negative thickness and zero-thickness failure. The catalog contains 534 entries.
