@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Failed window creation cleanup - 2026-09-08
+
+**293 Node tests passed, 0 failed, 0 skipped.** CreateWindowExA/W now distinguish WM_NCCREATE rejection from WM_CREATE rejection and send the corresponding cleanup messages through guest callbacks. Tests cover both string variants, rejected HWND/DC and timer cleanup, temporary CREATESTRUCT release, descendant destruction, no duplicate display destruction, and windows destroyed during creation returning null without pending paint. The rebuilt HandleObjects.exe registers a rejecting procedure and verifies both callback sequences and invalidated HWNDs. Catalog: 546 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-creation-failure-tests.tap), [browser report](test-artifacts/window-creation-failure-browser-report.json).
+
+Native ctypes probes registered a private class and attempted two hidden borderless windows. Returning FALSE to WM_NCCREATE produced [129,130]; returning -1 to WM_CREATE produced [129,1,2,130]. Both CreateWindowExW calls returned null. The class was unregistered; no guest executable ran on the host. References: [WM_NCCREATE](https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-nccreate), [WM_CREATE](https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-create). The native probe's final last error was zero; failure-path last-error parity, full creation/activation messages and arbitrary reentrant window-manager behavior remain unfinished.
+
 ## Recursive window destruction - 2026-09-08
 
 **289 Node tests passed, 0 failed, 0 skipped.** DestroyWindow now walks nested child and owned-window lifetimes using guest callback continuations, cleans up window handles, associated runtime DCs and timers, and clears stale focus. Tests verify the callback sequence, handle visibility during callbacks, unrelated-window survival, invalid handle error 1400, and sibling destruction from a callback without duplicate notifications. HandleObjects.exe now registers a custom window procedure, creates a parent, child, grandchild and owned popup, checks eight destruction callbacks in order, and verifies all four HWNDs are invalid afterward. Catalog: 546 entries.

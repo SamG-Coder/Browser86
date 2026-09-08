@@ -27,7 +27,7 @@ export class GUI {
   getMessage(out,hwnd,min,max,remove=true){const q=this.p.messageQueue;const i=q.findIndex(msg=>msg.message===WM_QUIT||((!hwnd||msg.hwnd===hwnd)&&(!min&&!max||msg.message>=min&&msg.message<=max)));if(i<0)return undefined;const msg=q[i];if(remove)q.splice(i,1);this.msgStruct(out,msg);return msg.message===WM_QUIT?0:1;}
   send(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(w.proc)return this.p.call(w.proc,[hwnd,msg,wp,lp]);return this.defWindow(hwnd,msg,wp,lp,wide);}
   defWindow(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(msg===0x81)return 1;if(msg===WM_CLOSE)return this.destroy(hwnd);if(msg===0x0C){w.title=this.api.str(lp,wide);this.notify(w);return 1;}if(msg===0x0D){this.m.string(lp,w.title,wide,wp);return Math.min(w.title.length,Math.max(0,wp-1));}if(msg===0x0E)return w.title.length;if(msg===0x14){this.draw(w.dc,{op:'fill',x:0,y:0,width:w.width,height:w.height,color:0xFFFFFF});return 1;}if(msg===0x84)return 1;if(msg===WM_PAINT){w.paintPending=false;return 0;}if(msg===0xF5&&w.className.toUpperCase()==='BUTTON'){this.p.postMessage(w.parent,WM_COMMAND,w.id&65535,hwnd);return 0;}if(msg===0x30){w.font=wp;return 0;}return 0;}
-  destroy(hwnd,done=value=>value){
+  destroy(hwnd,done=value=>value,nonclientOnly=false){
     const w=this.window(hwnd);if(!w)return done(this.api.fail(1400));if(w.destroying)return done(0);w.destroying=true;
     const notify=(message,next)=>w.proc?this.p.call(w.proc,[hwnd,message,0,0],next):next();
     const descendants=(child,next)=>{
@@ -40,7 +40,8 @@ export class GUI {
       if(this.focus===hwnd)this.focus=0;
       this.p.emit('window',{op:'destroy',window:this.serialize(w)});return done(1);
     };
-    return descendants(false,()=>notify(WM_DESTROY,()=>descendants(true,()=>notify(0x82,finish))));
+    const children=()=>descendants(true,()=>notify(0x82,finish));
+    return descendants(false,()=>nonclientOnly?children():notify(WM_DESTROY,children));
   }
   input(event){const p=this.p,w=this.window(event.hwnd);if(!w)return;
     if(event.kind==='close')p.postMessage(w.hwnd,WM_CLOSE);
@@ -57,8 +58,9 @@ export class GUI {
         if(parent&&!this.window(parent))return a.fail(1400);const text=str(title),hwnd=p.handle('window',{});const w={hwnd,className:name,title:text,parent,id:menu,proc:cls?.proc||0,wide,style,exStyle,x:x===0x80000000?40:x|0,y:y===0x80000000?40:y|0,width:width===0x80000000?640:Math.max(1,Math.min(1920,width|0)),height:height===0x80000000?420:Math.max(1,Math.min(1080,height|0)),visible:!!(style&0x10000000),enabled:!(style&0x08000000),paintPending:false,dc:0};
         w.dc=this.newDC(hwnd);this.windows.set(hwnd,w);this.notify(w,'create');
         const cs=p.heap.alloc(48,true);[param,instance,menu,parent,w.height,w.width,w.y,w.x,style,title,className,exStyle].forEach((v,i)=>m.w32(cs+i*4,v));
-        const finish=()=>{p.heap.free(cs);if(w.visible)this.queuePaint(w);return hwnd;};const reject=()=>{p.heap.free(cs);this.windows.delete(hwnd);p.releaseHandle(hwnd);p.emit('window',{op:'destroy',window:this.serialize(w)});return 0;};
-        if(!w.proc)return finish();return p.call(w.proc,[hwnd,0x81,0,cs],accepted=>accepted?p.call(w.proc,[hwnd,WM_CREATE,0,cs],result=>result===0xFFFFFFFF?reject():finish()):reject());});
+        const finish=()=>{p.heap.free(cs);if(!this.window(hwnd))return 0;if(w.visible)this.queuePaint(w);return hwnd;};
+        const reject=nonclientOnly=>{const done=()=>{p.heap.free(cs);return 0;};return this.window(hwnd)?this.destroy(hwnd,done,nonclientOnly):done();};
+        if(!w.proc)return finish();return p.call(w.proc,[hwnd,0x81,0,cs],accepted=>!this.window(hwnd)?reject(true):accepted?p.call(w.proc,[hwnd,WM_CREATE,0,cs],result=>(result>>>0)===0xFFFFFFFF?reject(false):finish()):reject(true));});
       u('DefWindowProc'+suffix,4,(h,msg,wp,lp)=>this.defWindow(h,msg,wp,lp,wide));
       u('CallWindowProc'+suffix,5,(proc,h,msg,wp,lp)=>p.call(proc,[h,msg,wp,lp]));
       u('GetMessage'+suffix,4,(out,hwnd,min,max)=>{if(hwnd&&hwnd!==0xFFFFFFFF&&!this.window(hwnd))return a.fail(1400,0xFFFFFFFF);const result=this.getMessage(out,hwnd,min,max,true);return result!==undefined?result:p.wait(()=>this.getMessage(out,hwnd,min,max,true),'Window messages');});

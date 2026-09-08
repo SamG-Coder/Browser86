@@ -9,6 +9,14 @@ static long WINAPI lifetimeProc(HWND h,DWORD msg,DWORD wp,long lp){
   if(msg==2||msg==130){for(int i=0;i<4;i++)if(h==lifetimeWindows[i]&&lifetimeCount<8)lifetimeLog[lifetimeCount++]=i*256+msg;}
   return DefWindowProcA(h,msg,wp,lp);
 }
+static DWORD rejectStage,rejectLog[4],rejectCount;
+static HWND rejectedWindow;
+static long WINAPI rejectProc(HWND h,DWORD msg,DWORD wp,long lp){
+  if(msg==129||msg==1||msg==2||msg==130){if(rejectCount<4)rejectLog[rejectCount++]=msg;rejectedWindow=h;}
+  if(msg==129)return rejectStage==129?0:1;
+  if(msg==1)return -1;
+  return DefWindowProcA(h,msg,wp,lp);
+}
 static DWORD initializationCalls;
 static BOOL WINAPI initializeOnce(DWORD *once,void *parameter,void **context){
   initializationCalls++;if(initializationCalls==1){SetLastError(123);return 0;}
@@ -296,6 +304,11 @@ void mainCRTStartup(void){
   CHECK(!GetRegionData(regionA,47,regionData)&&GetLastError()==87);
   CHECK(GetRegionData(regionB,48,regionData)==32&&regionData[2]==0&&regionData[3]==0);
   CHECK(!RectInRegion(regionB,NULL));CHECK(DeleteObject(regionA)&&DeleteObject(regionB));
+  WNDCLASSA rejectClass={0};rejectClass.proc=rejectProc;rejectClass.name="RejectFixture";CHECK(RegisterClassA(&rejectClass));
+  rejectStage=129;CHECK(!CreateWindowExA(0,"RejectFixture","",0x80000000,0,0,20,20,NULL,NULL,NULL,NULL));
+  CHECK(rejectCount==2&&rejectLog[0]==129&&rejectLog[1]==130&&!IsWindow(rejectedWindow));
+  rejectStage=1;rejectCount=0;CHECK(!CreateWindowExA(0,"RejectFixture","",0x80000000,0,0,20,20,NULL,NULL,NULL,NULL));
+  CHECK(rejectCount==4&&rejectLog[0]==129&&rejectLog[1]==1&&rejectLog[2]==2&&rejectLog[3]==130&&!IsWindow(rejectedWindow));
   WNDCLASSA lifetimeClass={0};lifetimeClass.proc=lifetimeProc;lifetimeClass.name="LifetimeFixture";CHECK(RegisterClassA(&lifetimeClass));
   lifetimeWindows[0]=CreateWindowExA(0,"LifetimeFixture","",0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);
   lifetimeWindows[1]=CreateWindowExA(0,"LifetimeFixture","",0x40000000,0,0,20,20,lifetimeWindows[0],NULL,NULL,NULL);
