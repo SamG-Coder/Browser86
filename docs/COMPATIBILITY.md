@@ -36,6 +36,8 @@ Named synchronization objects use a case-sensitive namespace inside each guest. 
 
 ## Import/storage limits
 
+`SetFilePointerEx` and the high/low `SetFilePointer` form track exact positions through `2^63-1` without allocating storage. Relative moves are signed; seeking beyond EOF is allowed, EOF reads return zero bytes, and zero-byte writes leave file size and position unchanged. Actual file growth remains bounded by virtual-disk capacity and reports `ERROR_DISK_FULL`. SetFilePointer without a high-word pointer rejects a resulting position above 32 bits. `FILE_FLAG_NO_BUFFERING` is explicitly unsupported; sector-alignment behavior is not implemented.
+
 Defaults: ZIP at most 256 MiB; expanded files at most 512 MiB; at most 20,000 entries; individual files at most 128 MiB. Stored and DEFLATE archives are supported. Encrypted ZIP, ZIP64, multi-disk archives and symlinks are rejected. Compression-ratio checks have a small-entry allowance; declared expanded bounds are still enforced during streaming decompression.
 
 The UI offers 128/256/512 MiB guest-memory caps. A single PE image is capped at 256 MiB. A single heap allocation is capped at 64 MiB. These are guest-accounting limits, not promises that total browser memory stays under the chosen number: imported archives, expanded disk data, snapshots, transfer copies, graphics buffers and IndexedDB may use additional memory.

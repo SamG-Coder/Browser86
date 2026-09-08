@@ -4,6 +4,7 @@ import {GUI} from './gui.js';
 import {installCRT} from './crt.js';
 import {installSynchronization} from './sync.js';
 import {installHandles} from './handles.js';
+import {installFileIO} from './files.js';
 const INVALID=0xFFFFFFFF;
 const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
 export class Win32 {
@@ -58,28 +59,20 @@ export class Win32 {
     k('SetStdHandle',2,()=>{throw new RuntimeFault('UNSUPPORTED_API','Redirecting process standard handles is not implemented.');});
     installHandles(this);
     k('GetFileType',1,h=>h>=10&&h<=12?2:p.object(h,'file')?1:0);
-    k('WriteFile',5,(h,buffer,count,written,overlap)=>{if(written)m.w32(written,0);if(overlap)throw new RuntimeFault('UNSUPPORTED_IO','Overlapped file I/O is not implemented.');if(count>128*1024*1024)return this.fail(8);const data=m.read(buffer,count);
-      if(h===11||h===12){p.emit('stdout',{text:ansiDecode(data),stream:h===12?'stderr':'stdout'});if(written)m.w32(written,count);return 1;}
-      const f=p.object(h,'file');if(!f)return this.fail(6);if(!f.write)return this.fail(5);return this.expected(()=>{v.writeAt(f.path,f.position,data);f.position+=count;if(written)m.w32(written,count);return 1;});});
-    k('ReadFile',5,(h,buffer,count,read,overlap)=>{if(read)m.w32(read,0);if(overlap)throw new RuntimeFault('UNSUPPORTED_IO','Overlapped file I/O is not implemented.');if(count>128*1024*1024)return this.fail(8);if(h===10){const consume=()=>{if(!p.input.length&&count)return undefined;const data=Uint8Array.from(p.input.splice(0,count));m.write(buffer,data);if(read)m.w32(read,data.length);return 1;};return consume()??p.wait(consume,'Console input');}
-      const f=p.object(h,'file');if(!f)return this.fail(6);if(!f.read)return this.fail(5);return this.expected(()=>{const data=v.readFile(f.path).subarray(f.position,f.position+count);m.write(buffer,data);f.position+=data.length;if(read)m.w32(read,data.length);return 1;});});
-    k('GetFileSize',2,(h,high)=>{const f=p.object(h,'file');if(!f)return this.fail(6,INVALID);if(high)m.w32(high,0);return v.readFile(f.path).length;});
-    k('GetFileSizeEx',2,(h,out)=>{const f=p.object(h,'file');if(!f)return this.fail(6);m.w32(out,v.readFile(f.path).length);m.w32(out+4,0);return 1;});
-    k('SetFilePointer',4,(h,distance,high,method)=>{const f=p.object(h,'file');if(!f)return this.fail(6,INVALID);let offset=high?(BigInt(m.i32(high))<<32n)|BigInt(distance):BigInt(distance|0);const base=method===0?0:method===1?f.position:method===2?v.readFile(f.path).length:-1;if(base<0)return this.fail(87,INVALID);offset+=BigInt(base);if(offset<0n||offset>BigInt(v.limit))return this.fail(131,INVALID);f.position=Number(offset);if(high)m.w32(high,0);p.setError(0);return f.position;});
-    k('SetEndOfFile',1,h=>{const f=p.object(h,'file');if(!f||!f.write)return this.fail(f?5:6);return this.expected(()=>{const old=v.readFile(f.path);requireThat(f.position<=v.limit,'VFS_QUOTA','File too large.');const next=new Uint8Array(f.position);next.set(old.subarray(0,f.position));v.writeFile(f.path,next);return 1;});});
-    k('FlushFileBuffers',1,h=>p.object(h,'file')?1:this.fail(6));
+    installFileIO(this);
     k('GetFileTime',4,(h,c,a,w)=>{const f=p.object(h,'file');if(!f)return this.fail(6);const time=v.get(f.path).mtime;for(const ptr of [c,a,w])if(ptr)this.filetime(ptr,time);return 1;});
     k('GetConsoleMode',2,(h,out)=>{if(h<10||h>12)return this.fail(6);m.w32(out,h===10?7:3);return 1;});k('SetConsoleMode',2,(h,mode)=>h>=10&&h<=12?1:this.fail(6));
     k('AllocConsole',0,()=>1);k('FreeConsole',0,()=>1);k('GetConsoleOutputCP',0,()=>1252);k('GetConsoleCP',0,()=>1252);k('SetConsoleOutputCP',1,cp=>cp===1252?1:this.fail(87));k('SetConsoleCP',1,cp=>cp===1252?1:this.fail(87));
     for(const wide of [false,true]){const suffix=wide?'W':'A',str=a=>this.str(a,wide),write=(a,s,n=Infinity)=>m.string(a,s,wide,n);
       k('CreateFile'+suffix,7,(name,access,share,security,creation,flags,template)=>this.expected(()=>{
         if(flags&0x40000000)throw new RuntimeFault('UNSUPPORTED_IO','FILE_FLAG_OVERLAPPED is not implemented.');
+        if(flags&0x20000000)throw new RuntimeFault('UNSUPPORTED_IO','Unbuffered I/O and sector alignment are not implemented.');
         const text=str(name);if(/^CONOUT\$$/i.test(text))return 11;if(/^CONIN\$$/i.test(text))return 10;
         const path=v.path(text),node=v.get(path),exists=!!node;let read=!!(access&0x80000000),writable=!!(access&0x40000000);if(node?.directory)return this.fail(5,INVALID);
         if(![1,2,3,4,5].includes(creation))return this.fail(87,INVALID);if(creation===1&&exists)return this.fail(80,INVALID);if((creation===3||creation===5)&&!exists)return this.fail(2,INVALID);if(creation===5&&!writable)return this.fail(5,INVALID);
         for(const f of p.handles.values())if(f.type==='file'&&f.path.toLowerCase()===path.toLowerCase()){if(read&&!(f.share&1)||writable&&!(f.share&2)||f.read&&!(share&1)||f.write&&!(share&2))return this.fail(32,INVALID);}
         const parent=path.slice(0,path.lastIndexOf('/'))||'C:/';if(!v.get(parent)?.directory)return this.fail(3,INVALID);
-        if(!exists||creation===2||creation===5)v.writeFile(path,new Uint8Array());p.setError(exists&&(creation===2||creation===4)?183:0);return p.handle('file',{path,position:0,read,write:writable,share});},INVALID));
+        if(!exists||creation===2||creation===5)v.writeFile(path,new Uint8Array());p.setError(exists&&(creation===2||creation===4)?183:0);return p.handle('file',{path,position:0n,read,write:writable,share});},INVALID));
       k('GetFileAttributes'+suffix,1,name=>this.expected(()=>{const node=v.get(str(name));return node?(node.directory?0x10:0x20):this.fail(2,INVALID);},INVALID));
       k('GetFileAttributesEx'+suffix,3,(name,level,out)=>this.expected(()=>{if(level)return this.fail(87);const node=v.get(str(name));if(!node)return this.fail(2);m.fill(out,36);m.w32(out,node.directory?16:32);for(const o of [4,12,20])this.filetime(out+o,node.mtime);m.w32(out+32,node.data?.length||0);return 1;}));
       k('CreateDirectory'+suffix,2,(name,security)=>this.expected(()=>{const path=v.path(str(name));if(v.exists(path))return this.fail(183);const parent=path.slice(0,path.lastIndexOf('/'))||'C:/';if(!v.get(parent)?.directory)return this.fail(3);v.mkdir(path);return 1;}));

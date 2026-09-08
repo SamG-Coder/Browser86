@@ -20,6 +20,8 @@ The current suite passes **65 tests, 0 failures, 0 skips** on Node.js 24.19.0. S
 
 ## Original baseline results
 
+Latest file I/O stage: **71 tests passed, 0 failed, 0 skipped** on Node.js 24.19.0. Six new tests cover exact 64-bit seeks, legacy high-word/sentinel behavior, EOF and zero-byte I/O, quota failure atomicity, gap zero-filling/truncation, invalid output pages, access checks and unsupported modes. `HandleObjects.exe` was rebuilt to import SetFilePointerEx (five x86 stack slots) and exercise a cursor above `2^53`, relative/end seeks and quota failures. Catalog: 432 entries. Browser checks were not rerun for this stage.
+
 | Check | Recorded result |
 |---|---|
 | Node test suite | **40 passed, 0 failed, 0 skipped.** |

@@ -4,6 +4,7 @@ void mainCRTStartup(void){
   HANDLE self=GetCurrentProcess(),file,copy,process,thread;
   DWORD flags,count,code;
   char bytes[4];
+  long long position;
   file=CreateFileA("handles.txt",GENERIC_READ|GENERIC_WRITE,0,NULL,2,0,NULL);
   CHECK(file!=INVALID_HANDLE);
   CHECK(DuplicateHandle(self,file,self,&copy,0,1,2));
@@ -17,6 +18,15 @@ void mainCRTStartup(void){
   CHECK(ReadFile(file,bytes,2,&count,NULL)&&count==2&&bytes[0]=='a'&&bytes[1]=='b');
   CHECK(SetHandleInformation(file,2,0)&&CloseHandle(file));
   CHECK(ReadFile(copy,bytes,2,&count,NULL)&&count==2&&bytes[0]=='c'&&bytes[1]=='d');
+  CHECK(SetFilePointerEx(copy,0x20000000000003LL,&position,0)&&position==0x20000000000003LL);
+  CHECK(WriteFile(copy,NULL,0,&count,NULL)&&count==0);
+  CHECK(ReadFile(copy,bytes,1,&count,NULL)&&count==0);
+  CHECK(GetFileSizeEx(copy,&position)&&position==4);
+  CHECK(!WriteFile(copy,"x",1,&count,NULL)&&GetLastError()==112);
+  CHECK(SetFilePointerEx(copy,-1,&position,1)&&position==0x20000000000002LL);
+  CHECK(SetFilePointerEx(copy,-2,&position,2)&&position==2);
+  CHECK(SetEndOfFile(copy));
+  CHECK(GetFileSizeEx(copy,&position)&&position==2);
   CHECK(CloseHandle(copy));
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));

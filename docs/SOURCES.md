@@ -11,6 +11,8 @@ These primary/platform documents informed the implementation. Referencing a spec
 
 The test artifacts record the local tools and browser actually exercised; they are not inferred from these references.
 
+- Microsoft, [SetFilePointer](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointer), [SetFilePointerEx](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointerex), and [WriteFile](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile): signed relative distances, high/low return values, EOF behavior and zero-byte writes.
+
 Synchronization contracts checked for the compatibility extension:
 
 - Microsoft, [WaitForMultipleObjects](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitformultipleobjects): wait-all atomicity, lowest-index wait-any, distinct handles and timeout results.
