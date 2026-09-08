@@ -1,3 +1,4 @@
+import {installCursors} from './cursors.js';
 import {installClassQueries} from './class-queries.js';
 import {installWindowIdentity} from './window-identity.js';
 import {installWindowProperties,releaseWindowProperties} from './window-properties.js';
@@ -160,7 +161,7 @@ export class GUI {
       u('GetWindowTextLength'+suffix,1,h=>this.window(h)?this.send(h,0x0E,0,0,wide):a.fail(1400));
       u('GetClassName'+suffix,3,(h,out,n)=>{const w=this.window(h);if(!w)return a.fail(1400);m.string(out,w.className,wide,n);return Math.min(w.className.length,Math.max(0,n-1));});
       u('MessageBox'+suffix,4,(hwnd,text,caption,type)=>{const groups={0:[['OK',1]],1:[['OK',1],['Cancel',2]],2:[['Abort',3],['Retry',4],['Ignore',5]],3:[['Yes',6],['No',7],['Cancel',2]],4:[['Yes',6],['No',7]],5:[['Retry',4],['Cancel',2]],6:[['Cancel',2],['Try again',10],['Continue',11]]};const buttons=groups[type&15];if(!buttons)throw new RuntimeFault('UNSUPPORTED_DIALOG','This MessageBox button type is not implemented.');const id=p.nextDialog++;p.emit('dialog',{id,hwnd,text:str(text),caption:str(caption),buttons,flags:type});return p.wait(()=>{if(!p.dialogResults.has(id))return undefined;const value=p.dialogResults.get(id);p.dialogResults.delete(id);return value;},'MessageBox response');});
-      u('LoadCursor'+suffix,2,(instance,name)=>name<65536?name:0);u('LoadIcon'+suffix,2,(instance,name)=>name<65536?name:0);
+      u('LoadIcon'+suffix,2,(instance,name)=>name<65536?name:0);
       u('LoadString'+suffix,4,(instance,id,out,capacity)=>{const module=a.module(instance);if(!module)return 0;const r=p.loader.resource(module,6,(id>>>4)+1);if(!r)return 0;let cursor=r.address;for(let i=0;i<(id&15);i++){const n=m.u16(cursor);cursor+=2+n*2;}const length=m.u16(cursor);requireThat(cursor+2+length*2<=r.address+r.size,'PE_RESOURCE','String resource exceeds resource size.');const text=Array.from({length},(_,i)=>String.fromCharCode(m.u16(cursor+2+i*2))).join('');if(!capacity&&wide){m.w32(out,cursor+2);return length;}m.string(out,text,wide,capacity);return Math.min(text.length,Math.max(0,capacity-1));});
       u('GetWindowLong'+suffix,2,(h,index)=>{const w=this.window(h);if(!w)return a.fail(1400);index|=0;if(index>=0)return this.windowExtra(w,index);return index===-4?w.proc:index===-6?w.instance:index===-12?w.id:index===-16?w.style:index===-20?w.exStyle:index===-21?w.userData||0:index===-8?w.parent:a.fail(1413);});
       u('SetWindowLong'+suffix,3,(h,index,value)=>{const w=this.window(h);if(!w)return a.fail(1400);index|=0;if(index>=0)return this.windowExtra(w,index,value);const field=index===-4?'proc':index===-6?'instance':index===-12?'id':index===-16?'style':index===-20?'exStyle':index===-21?'userData':null;if(!field){if(index===-8)return setWindowOwner(this,w,value);return a.fail(1413);}const old=w[field]||0;w[field]=value;if(field==='proc')w.wide=wide;if(field==='style'){w.visible=!!(value&0x10000000);w.enabled=!(value&0x08000000);this.notify(w);}return old;});
@@ -180,7 +181,7 @@ export class GUI {
     u('IsWindow',1,h=>this.window(h)?1:0);
     u('GetActiveWindow',0,()=>this.focus||[...this.windows.keys()][0]||0);u('SetActiveWindow',1,h=>{const old=this.focus;this.focus=h;return old;});
     u('GetDlgCtrlID',1,h=>this.window(h)?.id||0);u('GetDlgItem',2,(h,id)=>[...this.windows.values()].find(w=>w.parent===h&&w.id===id)?.hwnd||0);
-    u('SetCursor',1,cursor=>cursor);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));installClassQueries(this);installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
+    installCursors(this);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));installClassQueries(this);installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
     installRectangles(this.api);

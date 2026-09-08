@@ -23,6 +23,10 @@ try{
   await page.locator('#zip-input').setInputFiles(path.join(root,'demos/browser86-demo.zip'));
   await page.waitForFunction(()=>document.querySelectorAll('.exe-option').length===9);
   checks.push('HTTP module and ZIP import workers run under the deployed CSP');
+  await page.evaluate(()=>{
+    window.cursorStyles=[];
+    new MutationObserver(records=>{for(const record of records)if(record.target.tagName==='CANVAS')window.cursorStyles.push(record.oldValue||'',record.target.getAttribute('style')||'');}).observe(document.getElementById('desktop'),{subtree:true,attributes:true,attributeFilter:['style'],attributeOldValue:true});
+  });
   for(const [name,message]of [['SyncPrimitives.exe','Synchronization wait resumed.'],['HandleObjects.exe','Handle checks passed.']]){
     await page.locator('.exe-option').filter({hasText:name}).click();
     await page.locator('#run').click();
@@ -30,6 +34,10 @@ try{
     assert.ok((await page.locator('#terminal').innerText()).includes(message));
     checks.push(name+' executes in the real runtime module worker');
   }
+  const cursorStyles=await page.evaluate(()=>window.cursorStyles);
+  assert.ok(cursorStyles.some(style=>style.includes('cursor: default')));
+  assert.ok(cursorStyles.some(style=>style.includes('cursor: none')));
+  checks.push('Guest SetCursor updates browser canvas cursor styles through the worker bridge');
   // Read the actual database; no storage adapter or worker mock is used.
   const savedFile=async()=>{
     const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('browser86-packages',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});

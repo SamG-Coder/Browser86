@@ -3329,6 +3329,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "DestroyCursor",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "DestroyWindow",
     "argc": 1,
     "cdecl": false,
@@ -3464,6 +3471,13 @@
     "dll": "user32.dll",
     "name": "GetClientRect",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "GetCursor",
+    "argc": 0,
     "cdecl": false,
     "data": false
   },

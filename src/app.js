@@ -39,6 +39,7 @@ async function run(){if(!current||!selected?.runnable||active())return;await sav
     case 'loaded':status('running');renderExecutables();log('Entrypoint loaded. Working directory: '+msg.cwd);if(msg.missing.length)log(msg.missing.length+' unresolved import(s). Execution stops only if an unresolved import is called.','warning');break;
     case 'stdout':log(msg.text,msg.stream||'stdout');break;
     case 'log':log(msg.message,msg.level);break;
+    case 'cursor':display.cursor(msg.css);break;
     case 'window':display.window(msg);break;
     case 'drawBatch':display.draw(msg.commands);break;
     case 'dialog':display.dialog(msg);break;

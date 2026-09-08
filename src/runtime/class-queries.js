@@ -32,6 +32,7 @@ export function installClassQueries(gui){
   const cls=gui.classes.get(w.className.toLowerCase());if(!cls)throw new RuntimeFault('UNSUPPORTED_GUI','Built-in class metadata is not implemented.');
   index|=0;value>>>=0;
   if(index>=0){if(index+4>cls.classExtra)return api.fail(1413);const old=extraLong(cls,index);cls.extraBytes??=new Map();for(let i=0;i<4;i++)cls.extraBytes.set(index+i,(value>>>(i*8))&255);return old;}
+  if(index===-12){const old=cls.cursor;cls.cursor=value&&p.object(value,'cursor')?value:0;if(value&&!cls.cursor)p.setError(1402);return old;}
   if(index===-10){const old=cls.background;cls.background=value;return old;}
   if(index===-26){if(value&0x10000)return api.fail(13);const old=cls.style;cls.style=value;return old;}
   if(index===-24){if((suffix==='W')!==cls.wide)throw new RuntimeFault('UNSUPPORTED_GUI','Cross-encoding class procedure thunks are not implemented.');const old=cls.proc;cls.proc=value;return old;}

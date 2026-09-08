@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Shared cursor handles, selection and browser display - 2026-09-08
+
+**408 Node tests passed, 0 failed, 0 skipped.** LoadCursorA/W now provides shared typed system-cursor handles. SetCursor/GetCursor track selection and return prior state; shared DestroyCursor calls preserve the handle. SetClassLongA/W supports cursor replacement with native invalid-handle clearing behavior. Tests cover all supported IDs, A/W ordinal strings, errors, shared lifetime, kernel-handle rejection, class sharing, browser surface updates and reset. The rebuilt HandleObjects.exe loads both encodings, changes selection, replaces the class cursor and checks shared destruction. Catalog now contains 582 entries, without implying full API parity.
+
+**Nine real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** A new check observes real canvas style mutations from guest SetCursor calls through the worker bridge. Evidence: [Node TAP](test-artifacts/cursor-handles-tests.tap), [browser report](test-artifacts/cursor-handles-browser-report.json).
+
+Native probes confirmed stable A/W handles, #32512 equivalence, error 1814 for missing names, null/preserved error for obsolete IDs 32640/32641, previous-handle returns and unchanged current selection on SetCursor invalid-handle error 1402. The probe restored the initial host cursor in a finally block. DestroyCursor on the shared arrow succeeded without invalidating subsequent loads. Private-class probes confirmed invalid class cursor replacement returns the old handle, clears the field and sets error 1402. References: [Microsoft LoadCursorW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-loadcursorw), [Microsoft SetCursor](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcursor). Module resources, owned cursors, display counts, exact artwork and automatic class-cursor dispatch remain unfinished. Browser shapes use CSS approximations; initial guest selection is null.
+
 ## Class style registration and replacement - 2026-09-08
 
 **402 Node tests passed, 0 failed, 0 skipped.** SetClassLongA/W supports GCL_STYLE replacement, retaining raw prior bits while GetClassLongA/W exposes the native visible mask. Registration rejects invalid style bits before atom allocation. Tests exercise all 32 individual bits, high-bit combinations, A/W/Ex registration, shared existing/future windows, unchanged per-window styles, last-error preservation, rejected mutations and destroyed handles. The rebuilt HandleObjects.exe checks hidden-bit query masking, invalid-style rejection and raw prior-value returns. Catalog remains 580 entries.

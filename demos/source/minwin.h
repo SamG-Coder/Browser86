@@ -5,6 +5,11 @@
 #define WINAPI __stdcall
 #define NULL ((void*)0)
 typedef unsigned int DWORD;typedef int BOOL;typedef void* HANDLE;typedef HANDLE HWND;typedef HANDLE HDC;typedef unsigned short WORD;typedef unsigned char BYTE;
+API HANDLE WINAPI LoadCursorA(HANDLE,const char*);
+API HANDLE WINAPI LoadCursorW(HANDLE,const WORD*);
+API HANDLE WINAPI SetCursor(HANDLE);
+API HANDLE WINAPI GetCursor(void);
+API BOOL WINAPI DestroyCursor(HANDLE);
 typedef struct {DWORD low,high;} FILETIME;
 typedef struct {WORD year,month,weekday,day,hour,minute,second,millis;} SYSTEMTIME;
 API BOOL WINAPI FileTimeToSystemTime(const FILETIME*,SYSTEMTIME*);

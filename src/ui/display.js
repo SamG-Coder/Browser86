@@ -2,7 +2,8 @@ const element=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)nod
 const color=value=>`rgb(${value&255},${(value>>>8)&255},${(value>>>16)&255})`;
 export class GuestDisplay {
   constructor(root,input){this.root=root;this.input=input;this.windows=new Map();this.z=10;}
-  reset(){for(const w of this.windows.values())w.element.remove();this.windows.clear();for(const modal of this.root.querySelectorAll('.guest-modal-overlay'))modal.remove();}
+  cursor(css){this.cursorCSS=css;for(const w of this.windows.values())(w.canvas||w.element).style.cursor=css;}
+  reset(){this.cursorCSS=undefined;for(const w of this.windows.values())w.element.remove();this.windows.clear();for(const modal of this.root.querySelectorAll('.guest-modal-overlay'))modal.remove();}
   window({op,window:w}){
     if(op==='destroy'){this.windows.get(w.hwnd)?.element.remove();this.windows.delete(w.hwnd);return;}
     let record=this.windows.get(w.hwnd);
@@ -14,6 +15,7 @@ export class GuestDisplay {
         for(const [dom,type]of [['pointerdown','down'],['pointerup','up'],['pointermove','move']])canvas.addEventListener(dom,e=>{const rect=canvas.getBoundingClientRect();if(type==='down')canvas.focus();this.input({kind:'mouse',event:type,hwnd:w.hwnd,x:Math.floor((e.clientX-rect.left)*canvas.width/rect.width),y:Math.floor((e.clientY-rect.top)*canvas.height/rect.height),buttons:e.buttons});});
         for(const [dom,down]of [['keydown',true],['keyup',false]])canvas.addEventListener(dom,e=>{if(['F5','F11','F12'].includes(e.key)||e.ctrlKey&&['r','l'].includes(e.key.toLowerCase()))return;e.preventDefault();this.input({kind:'key',hwnd:w.hwnd,down,code:e.keyCode,char:e.key.length===1?e.key:e.key==='Enter'?'\r':e.key==='Backspace'?'\b':''});});
       }
+      if(this.cursorCSS!==undefined)(record.canvas||record.element).style.cursor=this.cursorCSS;
       this.windows.set(w.hwnd,record);
     }
     const node=record.element;node.hidden=!w.visible;node.style.left=w.x+'px';node.style.top=w.y+'px';node.style.width=w.width+'px';node.style.zIndex=String(++this.z);
