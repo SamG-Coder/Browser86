@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Code-page information extension — 2026-09-08
+
+**182 Node tests passed, 0 failed, 0 skipped.** Four new tests cover concrete IDs versus aliases, fixed ACP/OEM resolution, default characters, lead-byte ranges, ANSI/Unicode names, x86 field offsets, reserved flags, unsupported IDs and atomic output validation. The rebuilt HandleObjects.exe imports IsValidCodePage, GetCPInfo and GetCPInfoExA/W and verifies structure sizes 20/284/544 plus metadata and error results through the interpreter. The catalog contains 476 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The actual workers ran the updated fixture under the deployed CSP; IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/code-page-tests.tap) and [browser report](test-artifacts/code-page-browser-report.json).
+
+Native ctypes probes verified profiles for 1252/437/65001, alias resolution, validity results, fields/names and the differing reserved-flag behavior for SBCS versus UTF-8 queries. No guest executable ran on the host. Microsoft's [CPINFO](https://learn.microsoft.com/en-us/windows/win32/api/winnls/ns-winnls-cpinfo), [CPINFOEXW](https://learn.microsoft.com/en-us/windows/win32/api/winnls/ns-winnls-cpinfoexw) and [GetCPInfoExW](https://learn.microsoft.com/en-us/windows/win32/api/winnls/nf-winnls-getcpinfoexw) document the structures and query contract. Only the runtime's three profiles are exposed; OEM 437 general conversion and full Windows-1252 best-fit support remain gaps.
+
 ## UTF-8 conversion correction — 2026-09-08
 
 **178 Node tests passed, 0 failed, 0 skipped.** Four new tests cover BOM preservation, supplementary characters, UTF-16/byte count distinctions, terminated and counted inputs, embedded NULs, native malformed-prefix replacement vectors, strict rejection, unpaired surrogates, flags/default-pointer validation, insufficient buffers and atomic memory validation. HandleObjects.exe was rebuilt with both conversion imports and verifies BOM round-trip and strict surrogate rejection through x86 calls. The catalog remains at 472 entries; this stage corrects existing CP_UTF8 handlers.

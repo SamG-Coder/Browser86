@@ -190,6 +190,13 @@ void mainCRTStartup(void){
   CHECK(CompareFileTime(&epoch,&stamp)==-1&&CompareFileTime(&stamp,&epoch)==1&&CompareFileTime(&stamp,&stamp)==0);
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
+  CPINFO cpInfo;CPINFOEXA cpInfoA;CPINFOEXW cpInfoW;
+  CHECK(sizeof(CPINFO)==20&&sizeof(CPINFOEXA)==284&&sizeof(CPINFOEXW)==544);
+  CHECK(IsValidCodePage(65001)&&!IsValidCodePage(0));
+  CHECK(GetCPInfo(65001,&cpInfo)&&cpInfo.maxCharSize==4&&cpInfo.defaultChar[0]=='?');
+  CHECK(GetCPInfoExA(0,0,&cpInfoA)&&cpInfoA.codePage==1252&&cpInfoA.name[0]=='1');
+  CHECK(GetCPInfoExW(65001,0,&cpInfoW)&&cpInfoW.unicodeDefault==0xfffd&&cpInfoW.name[0]=='6');
+  CHECK(!GetCPInfoExA(1252,1,&cpInfoA)&&GetLastError()==1004);
   const char utf8Bom[]={ (char)0xef,(char)0xbb,(char)0xbf,'A',0 };WORD decoded[8];char encoded[16];
   CHECK(MultiByteToWideChar(65001,8,utf8Bom,-1,decoded,8)==3&&decoded[0]==0xfeff&&decoded[1]=='A');
   CHECK(WideCharToMultiByte(65001,0x80,decoded,3,encoded,16,NULL,NULL)==5&&encoded[0]==(char)0xef);

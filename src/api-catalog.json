@@ -652,6 +652,27 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GetCPInfo",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GetCPInfoExA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GetCPInfoExW",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GetCurrentDirectoryA",
     "argc": 2,
     "cdecl": false,
@@ -1255,6 +1276,13 @@
   {
     "dll": "kernel32.dll",
     "name": "IsProcessorFeaturePresent",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "IsValidCodePage",
     "argc": 1,
     "cdecl": false,
     "data": false
