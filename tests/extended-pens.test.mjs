@@ -2,6 +2,18 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {guest} from './helpers.mjs';
 function setup(){const {p,events}=guest('HelloConsole.exe');return {p,events,m:p.memory,call:(n,...a)=>p.apis.lookup('gdi32.dll',n).fn(...a)};}
+test('User-style geometric pens copy dash arrays into variable-sized descriptions',()=>{
+ const {p,m,call}=setup(),brush=p.heap.alloc(12),styles=p.heap.alloc(64),out=p.heap.alloc(88);
+ for(const entries of [[1],[0,3],[3,0],[3,2,1],Array(16).fill(1)]){entries.forEach((v,i)=>m.w32(styles+4*i,v));const pen=call('ExtCreatePen',0x12207,4,brush,entries.length,styles),size=24+entries.length*4;assert.ok(pen);m.w32(styles,99);
+  for(const name of ['GetObjectA','GetObjectW']){assert.equal(call(name,pen,0,0),size);assert.equal(call(name,pen,size-1,out),0);assert.equal(call(name,pen,size,out),size);assert.equal(m.u32(out+20),entries.length);assert.deepEqual(entries.map((_,i)=>m.u32(out+24+4*i)),entries);}
+  assert.deepEqual(p.object(pen,'gdi').dash,entries);call('DeleteObject',pen);
+ }
+});
+test('User-style geometric pens reject invalid arrays before allocating',()=>{
+ const {p,m,call}=setup(),brush=p.heap.alloc(12),styles=p.heap.alloc(8);p.setError(123);assert.equal(call('ExtCreatePen',0x12207,4,brush,0,styles),0);assert.equal(p.lastError,123);
+ for(const [n,ptr,first] of [[1,styles,0],[2,styles,0],[1,styles,0xffffffff],[17,styles,1],[2,0,1]]){m.w32(styles,first);assert.equal(call('ExtCreatePen',0x12207,4,brush,n,ptr),0);assert.equal(p.lastError,87);}
+ m.map(0x60000000,4096);const size=p.handles.size;assert.throws(()=>call('ExtCreatePen',0x12207,4,brush,2,0x60000ffc));assert.equal(p.handles.size,size);
+});
 test('Extended solid pens expose x86 descriptions and all geometric caps and joins',()=>{
  const {p,m,call}=setup(),brush=p.heap.alloc(12),out=p.heap.alloc(32);m.w32(brush+4,0x123456);m.w32(brush+8,99);
  for(let cap=0;cap<3;cap++)for(let join=0;join<3;join++){

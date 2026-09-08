@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Geometric user-style dash extension - 2026-09-08
+
+**245 Node tests passed, 0 failed, 0 skipped.** Two new tests cover copied style arrays, zero and odd-length entries, sixteen-entry patterns, variable-sized GetObjectA/W descriptions, short buffers, invalid/all-zero/high-bit patterns and input validation before allocation. HandleObjects.exe creates and inspects a three-entry geometric user-style pen through x86 imports. The catalog remains at 519 entries.
+
+**Sixteen real-canvas checks passed in Edge 152.0.4191.66**, including visible dash and gap samples from runtime-created user-style pens. Evidence: [canvas report](test-artifacts/user-style-canvas-report.json). **Eight existing real-origin browser checks passed with no page errors**, including the rebuilt fixture, persistence and backup. Evidence: [Node TAP](test-artifacts/user-style-tests.tap) and [browser report](test-artifacts/user-style-browser-report.json).
+
+Native ctypes probes created/deleted owned pens to verify zero/one/odd/sixteen/seventeen-entry patterns, all-zero rejection, high-bit rejection, null arrays and returned descriptions. No guest executable ran on the host. Microsoft [ExtCreatePen](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-extcreatepen) documents style-array lengths, logical units and odd-array repetition. Cosmetic user-style pens, built-in patterns and exact native dash rasterization remain unfinished.
+
 ## Extended solid pen creation and rendering - 2026-09-08
 
 **243 Node tests passed, 0 failed, 0 skipped.** Three new tests cover all nine geometric cap/join combinations, OBJ_EXTPEN, x86 descriptions, size/short-buffer queries, selected-object lifetime, saved miter-state resolution, invalid flag/width combinations and input validation. The rebuilt HandleObjects.exe imports ExtCreatePen and inspects its style, width, color and hatch fields through x86 calls. The catalog contains 519 entries.

@@ -128,7 +128,9 @@ PolyDraw supports PT_MOVETO, PT_LINETO, PT_BEZIERTO triples and PT_CLOSEFIGURE o
 
 GetMiterLimit and SetMiterLimit store a per-DC float32 value with default 10.0, previous-value output and SaveDC/RestoreDC support. Values below 1 fail; native-accepted NaN and positive infinity are preserved. Optional setter output, null getter output and invalid-handle errors follow native probes. Finite limits now affect supported geometric miter-join pens from ExtCreatePen; nonfinite miter rendering explicitly faults.
 
-ExtCreatePen supports solid cosmetic (width one) and geometric pens with solid brushes. Geometric pens carry round/square/flat caps and round/bevel/miter joins into canvas strokes, with per-DC finite miter limits. GetObjectType returns OBJ_EXTPEN and GetObjectA/W return the 24-byte x86 fixed EXTLOGPEN header for zero style entries. Unsupported dash, null, inside-frame, user-style and patterned modes explicitly fault; mapping, native rasterization and nonfinite miter rendering remain unfinished.
+ExtCreatePen supports solid cosmetic (width one) and geometric pens with solid brushes. Geometric pens carry round/square/flat caps and round/bevel/miter joins into canvas strokes, with per-DC finite miter limits. GetObjectType returns OBJ_EXTPEN and GetObjectA/W return the 24-byte x86 fixed EXTLOGPEN header for zero style entries. Unsupported built-in dash, null, inside-frame, cosmetic user-style and patterned modes explicitly fault; mapping, native rasterization and nonfinite miter rendering remain unfinished.
+
+ExtCreatePen now supports PS_USERSTYLE for geometric pens with solid brushes. One to sixteen independent DWORD dash/gap entries are stored, rendered in logical units and returned in variable-length EXTLOGPEN descriptions. Zero entries are allowed when the pattern is not entirely zero; high-bit lengths and oversized arrays fail. Canvas repeats odd-length arrays with alternating dash/gap roles. Cosmetic user-style pens, built-in dash patterns, coordinate transforms and pixel-exact native dash rasterization remain unfinished.
 
 ## Working with other programs
 

@@ -10,8 +10,9 @@ export function installGDIObjects(gui){
     if(pattern!==7&&(styleCount||styles))return gui.api.fail(87);
     if(!brush)return 0;checkBuffer(m,brush,12,'r');const brushStyle=m.u32(brush),color=m.u32(brush+4),hatch=m.u32(brush+8);
     if(type===0&&width!==1)return gui.api.fail(87);
-    if(pattern!==0||brushStyle!==0)throw new RuntimeFault('UNSUPPORTED_GDI','ExtCreatePen currently supports solid pens with solid brushes.');
-    return gui.p.handle('gdi',{kind:'pen',extended:true,style,logicalWidth:width>>>0,width:Math.max(1,width>>>0),color,hatch,geometric:type===0x10000,lineCap:['round','square','butt'][cap>>>8],lineJoin:['round','bevel','miter'][join>>>12]});
+    let dash=[];if(pattern===7){if(!styleCount)return 0;if(styleCount>16||!styles)return gui.api.fail(87);checkBuffer(m,styles,styleCount*4,'r');dash=Array.from({length:styleCount},(_,i)=>m.u32(styles+4*i));if(dash.some(n=>n>0x7fffffff)||!dash.some(n=>n))return gui.api.fail(87);if(type!==0x10000)throw new RuntimeFault('UNSUPPORTED_GDI','Cosmetic user-style pens are not implemented.');}
+    if(![0,7].includes(pattern)||brushStyle!==0)throw new RuntimeFault('UNSUPPORTED_GDI','ExtCreatePen currently supports solid pens with solid brushes.');
+    return gui.p.handle('gdi',{kind:'pen',extended:true,dash,style,logicalWidth:width>>>0,width:Math.max(1,width>>>0),color,hatch,geometric:type===0x10000,lineCap:['round','square','butt'][cap>>>8],lineJoin:['round','bevel','miter'][join>>>12]});
   });
   const createPen=(style,width,color)=>{
     // CreatePen normalizes unrecognized styles to PS_SOLID.
@@ -34,8 +35,8 @@ export function installGDIObjects(gui){
     const object=gui.p.object(handle,'gdi');if(!object)return 0;
     if(object.kind==='font')return getFontObject(gui,object,suffix==='W',count,out);
     if(object.extended){
-      if(!out)return 24;if((count>>>0)<24||(out&3))return 0;
-      checkBuffer(m,out,24);[object.style,object.logicalWidth,0,object.color,object.hatch,0].forEach((v,i)=>m.w32(out+i*4,v));return 24;
+      const dash=object.dash||[],size=24+4*dash.length;if(!out)return size;if((count>>>0)<size||(out&3))return 0;
+      checkBuffer(m,out,size);[object.style,object.logicalWidth,0,object.color,object.hatch,dash.length,...dash].forEach((v,i)=>m.w32(out+i*4,v));return size;
     }
     if(!['pen','brush'].includes(object.kind))throw new RuntimeFault('UNSUPPORTED_GDI','This GDI object description is not implemented.');
     const pen=object.kind==='pen',size=pen?16:12;
