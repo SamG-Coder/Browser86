@@ -191,6 +191,10 @@ void mainCRTStartup(void){
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
+  DWORD ansiFontData[23]={0},ansiFontCopy[15]={0};
+  WORD* ansiFace=(WORD*)((BYTE*)ansiFontData+28);ansiFace[0]=0xff21;ansiFace[1]=0x100;ansiFace[2]=0x2212;ansiFace[3]=0xd83d;ansiFace[4]=0xde00;
+  HANDLE ansiMappedFont=CreateFontIndirectW(ansiFontData);CHECK(ansiMappedFont&&GetObjectA(ansiMappedFont,60,ansiFontCopy)==60);
+  BYTE* ansiMappedFace=(BYTE*)ansiFontCopy+28;CHECK(ansiMappedFace[0]==65&&ansiMappedFace[1]==65&&ansiMappedFace[2]==45&&ansiMappedFace[3]==63&&ansiMappedFace[4]==63&&ansiMappedFace[5]==0&&DeleteObject(ansiMappedFont));
   DWORD logicalFont[23]={0},fontCopy[23]={0};logicalFont[0]=(DWORD)-17;logicalFont[4]=700;logicalFont[7]=65;
   HANDLE fontA=CreateFontIndirectA(logicalFont),fontW=CreateFontIndirectW(logicalFont);
   CHECK(fontA&&fontW&&GetObjectW(fontA,92,fontCopy)==92&&fontCopy[0]==(DWORD)-17&&fontCopy[4]==700&&fontCopy[7]==65);

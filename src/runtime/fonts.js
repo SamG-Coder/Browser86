@@ -1,6 +1,10 @@
-import {ansiDecode,ansiEncode} from './memory.js';
+import {ansiDecode} from './memory.js';
+import {sbcsTables} from './sbcs-tables.js';
 import {checkBuffer} from './files.js';
 import {RuntimeFault} from './errors.js';
+const ansiBestFit=new Map(sbcsTables['1252'].encode[0]);
+// Windows converts each UTF-16 unit independently, including surrogate pairs.
+function ansiFontName(face){return Uint8Array.from({length:face.length},(_,i)=>ansiBestFit.get(face.charCodeAt(i))??63);}
 
 function faceOf(bytes){const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);let face='';for(let i=28;i<92;i+=2){const c=view.getUint16(i,true);if(!c)break;face+=String.fromCharCode(c);}return face;}
 function putFace(bytes,face){const view=new DataView(bytes.buffer);for(let i=0;i<Math.min(32,face.length);i++)view.setUint16(28+i*2,face.charCodeAt(i),true);}
@@ -13,7 +17,7 @@ export function getFontObject(gui,object,wide,count,out){
   if(!count||(wide&&(out&1)))return 0;
   if(count>size)throw new RuntimeFault('UNSUPPORTED_GDI','Extended logical font descriptions are not implemented.');
   const source=fontDescription(object);let bytes=source,copied=count;
-  if(!wide){bytes=new Uint8Array(60);bytes.set(source.subarray(0,28));const name=ansiEncode(faceOf(source));bytes.set(name.subarray(0,32),28);if(count===60)copied=28+Math.min(32,name.length+1);}
+  if(!wide){bytes=new Uint8Array(60);bytes.set(source.subarray(0,28));const name=ansiFontName(faceOf(source));bytes.set(name.subarray(0,32),28);if(count===60)copied=28+Math.min(32,name.length+1);}
   checkBuffer(gui.m,out,copied);gui.m.write(out,bytes.subarray(0,copied));return count;
 }
 export function installFonts(gui){

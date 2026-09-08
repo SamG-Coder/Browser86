@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## ANSI font-name fidelity correction - 2026-09-08
+
+**224 Node tests passed, 0 failed, 0 skipped.** Two new tests compare GetObjectA font-name conversion with all 65,535 nonzero native UTF-16 code-unit results and verify best-fit mappings, separate surrogate replacements, partial-output boundaries and ANSI tail preservation. The rebuilt HandleObjects.exe checks full-width/diacritic/minus best-fit mapping and two-byte surrogate fallback through real imported APIs. The catalog remains at 506 entries: this stage corrects existing behavior.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The updated fixture ran in the actual worker; persistence/reload/deletion/backup checks passed. Evidence: [Node TAP](test-artifacts/font-ansi-tests.tap) and [browser report](test-artifacts/font-ansi-browser-report.json).
+
+The reproducible tools/build-font-ansi-vectors.py requires native ACP 1252, creates owned logical fonts in batches of 31 code units and captures GetObjectA results into a 512-byte scratch buffer with a fixed 60-byte requested size. It deletes each font in finally and records tests/font-ansi-vectors.bin. No guest executable ran on the host. Microsoft [GetObjectA](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getobjecta) specifies logical-font inspection; the exhaustive native capture establishes this profile's conversion details. Other ANSI code pages, extended font structures and full font-rendering parity remain separate work.
+
 ## Logical font creation and inspection extension - 2026-09-08
 
 **222 Node tests passed, 0 failed, 0 skipped.** Three new tests cover preservation of all LOGFONT scalar fields, independent input storage, Unicode face-name array preservation, bounded ANSI conversion, direct and indirect constructors, selected/saved font lifetime, partial queries, A/W alignment, ANSI tail preservation, null input and atomic memory validation. HandleObjects.exe imports CreateFontIndirectA/W and inspects both through GetObjectA/W using actual x86 calls. The catalog contains 506 entries.
