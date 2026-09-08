@@ -708,6 +708,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GetFileInformationByHandle",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GetFileSize",
     "argc": 2,
     "cdecl": false,
@@ -1520,6 +1527,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "SetFileAttributesA",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "SetFileAttributesW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "SetFilePointer",
     "argc": 4,
     "cdecl": false,
@@ -1529,6 +1550,13 @@
     "dll": "kernel32.dll",
     "name": "SetFilePointerEx",
     "argc": 5,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "SetFileTime",
+    "argc": 4,
     "cdecl": false,
     "data": false
   },

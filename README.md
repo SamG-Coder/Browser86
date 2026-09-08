@@ -26,7 +26,7 @@ python -m http.server 8080 --bind 127.0.0.1
 
 On macOS/Linux, `./run.sh` chooses Node or Python. Do not double-click `index.html`: module workers need a served origin, not `file://`.
 
-A browser with ES modules, Web Workers, BigInt, IndexedDB, Web Crypto and `DecompressionStream('deflate-raw')` is required. The rendering/worker harness was exercised with Chromium 144.0.7559.96. That is the recorded test engine, not a claim about the latest browser version. Real HTTP-origin browser testing remains on the release checklist.
+A browser with ES modules, Web Workers, BigInt, IndexedDB, Web Crypto and `DecompressionStream('deflate-raw')` is required. The rendering/worker harness was exercised with Chromium 144.0.7559.96. That is the recorded test engine, not a claim about the latest browser version. Focused HTTP-origin worker/storage checks now pass in Edge 152.0.4191.66; full GUI release testing remains on the checklist.
 
 ## Use it
 
@@ -63,7 +63,7 @@ Importing the exact same original ZIP again restores that package's saved disk; 
 | Windows compatibility | Original kernel/file/heap/path/console handlers, portions of CRT, basic registry storage, window callbacks/messages, timers, basic controls and GDI drawing. |
 | Diagnostics | Pause/resume/step, breakpoint, register and memory-map display, recent API/EIP traces, exact unsupported import/opcode reports and JSON export. |
 
-`src/api-catalog.json` contains **432 registered import entries**, including A/W variants, CRT functions and data entries. **That count is not 432 fully compatible Windows APIs.** Many handlers implement a restricted argument/behavior subset; others explicitly reject unsupported modes. See the source and compatibility notes before assuming parity.
+`src/api-catalog.json` contains **436 registered import entries**, including A/W variants, CRT functions and data entries. **That count is not 436 fully compatible Windows APIs.** Many handlers implement a restricted argument/behavior subset; others explicitly reject unsupported modes. See the source and compatibility notes before assuming parity.
 
 ## Included compiled programs
 
@@ -89,7 +89,7 @@ npm test
 node --test tests/*.test.mjs
 ```
 
-The recorded run passes **71 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks and static-server delivery.
+The recorded run passes **79 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks and static-server delivery.
 
 The optional browser harness is:
 
@@ -105,7 +105,7 @@ For a normal browser on your own machine, run the server, then:
 python tools/browser-smoke.py --url http://127.0.0.1:8080
 ```
 
-That origin-based smoke test is included but was **not executed successfully in the restricted build environment**. Full details and raw results are in [TEST_REPORT.md](docs/TEST_REPORT.md).
+That origin-based smoke test is included but was **not executed successfully in the restricted build environment**. A separate Node Playwright test, `node tools/browser-win32.mjs [url] [browser-binary]`, now passes real-origin Win32 workers, exact metadata in IndexedDB, reload and backup reimport. It requires the optional `playwright` package (or `PLAYWRIGHT_MODULE` pointing to an installed copy). Full details and raw results are in [TEST_REPORT.md](docs/TEST_REPORT.md).
 
 ## Rebuild the demo binaries
 
@@ -130,6 +130,7 @@ src/runtime/memory.js      Sparse protected pages and allocation
 src/runtime/pe.js          PE images, linking, relocation and DLL initialization
 src/runtime/process.js     Guest process, stack/TEB/PEB, imports and callbacks
 src/runtime/win32.js        Original kernel/file/path/heap/registry compatibility
+src/runtime/file-info.js    File IDs, attributes and exact persistent FILETIMEs
 src/runtime/files.js        Exact 64-bit file cursors and synchronous disk I/O
 src/runtime/handles.js      Shared kernel objects, handle flags and duplication
 src/runtime/sync.js         Named event/mutex/semaphore objects, rights and waits

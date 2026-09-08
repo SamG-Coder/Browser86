@@ -18,9 +18,19 @@ The suite passes **58 tests, 0 failures, 0 skips** on Node.js 24.19.0. Seven add
 
 The current suite passes **65 tests, 0 failures, 0 skips** on Node.js 24.19.0. Seven new tests exercise named create/open behavior and existing-state preservation, A/W Unicode names, case sensitivity, Local/Global namespaces and guest isolation, type collisions, final-close lifetime including duplicates, access rights and generic masks, basic SECURITY_ATTRIBUTES and unsupported descriptors, and invalid names/flags/pointers. `SyncPrimitives.exe` now imports and exercises all 12 new Open/Ex functions in addition to its original synchronization checks. Both signal and timeout paths still exit successfully through the guest ABI. The rebuilt catalog contains 431 entries. The full run is saved in `test-artifacts/win32-compat-tests.tap`; browser results below remain the historical baseline.
 
-## Original baseline results
+## File seek extension — 2026-09-08
 
 Latest file I/O stage: **71 tests passed, 0 failed, 0 skipped** on Node.js 24.19.0. Six new tests cover exact 64-bit seeks, legacy high-word/sentinel behavior, EOF and zero-byte I/O, quota failure atomicity, gap zero-filling/truncation, invalid output pages, access checks and unsupported modes. `HandleObjects.exe` was rebuilt to import SetFilePointerEx (five x86 stack slots) and exercise a cursor above `2^53`, relative/end seeks and quota failures. Catalog: 432 entries. Browser checks were not rerun for this stage.
+
+## File metadata extension — 2026-09-08
+
+**79 Node tests passed, 0 failed, 0 skipped.** Eight new tests cover independent exact FILETIMEs, x86 structure layout, agreement between handle/path/find queries, timestamp suppression and duplicate handles, read-only and directory attributes, stable IDs across write/rename/copy, access and buffer validation, snapshot/backup persistence, legacy backups, and malformed metadata rejection. `HandleObjects.exe` imports all four new APIs (`GetFileInformationByHandle`, `SetFileTime`, `SetFileAttributesA/W`) and verifies IDs and timestamps through the x86 interpreter. The catalog contains 436 entries.
+
+**Seven real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** `tools/browser-win32.mjs` ran against the actual static server and deployed CSP, with real import/runtime module workers and real IndexedDB. SyncPrimitives and HandleObjects executed successfully. Exact metadata survived a page reload, download to a backup ZIP and reimport as a new package. No origin adapters, CSP overrides, mocked workers or host guest-executable execution were used. The result is recorded in `test-artifacts/file-metadata-browser-report.json`. This focused Win32/storage test does not replace the broader GUI origin smoke test or storage-denial testing.
+
+Run `node tools/serve.mjs`, then `node tools/browser-win32.mjs http://127.0.0.1:8080 [browser-binary]`. The optional Node `playwright` package is needed; `PLAYWRIGHT_MODULE` can select an existing installed package.
+
+## Original baseline results (historical)
 
 | Check | Recorded result |
 |---|---|

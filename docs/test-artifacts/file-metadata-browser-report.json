@@ -1,0 +1,15 @@
+{
+  "result": "PASS",
+  "url": "http://127.0.0.1:8096",
+  "browser": "152.0.4191.66",
+  "checks": [
+    "HTTP module and ZIP import workers run under the deployed CSP",
+    "SyncPrimitives.exe executes in the real runtime module worker",
+    "HandleObjects.exe executes in the real runtime module worker",
+    "Guest file ID, attributes and exact FILETIMEs reach real IndexedDB",
+    "Metadata and package survive a real page reload",
+    "Downloaded ZIP preserves file ID, attributes and 100-nanosecond FILETIMEs",
+    "Backup reimport mounts a new package with the same file metadata"
+  ],
+  "pageErrors": []
+}

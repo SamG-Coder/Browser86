@@ -5,6 +5,7 @@ import {installCRT} from './crt.js';
 import {installSynchronization} from './sync.js';
 import {installHandles} from './handles.js';
 import {installFileIO} from './files.js';
+import {installFileInformation,writeFileTime} from './file-info.js';
 const INVALID=0xFFFFFFFF;
 const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
 export class Win32 {
@@ -60,7 +61,7 @@ export class Win32 {
     installHandles(this);
     k('GetFileType',1,h=>h>=10&&h<=12?2:p.object(h,'file')?1:0);
     installFileIO(this);
-    k('GetFileTime',4,(h,c,a,w)=>{const f=p.object(h,'file');if(!f)return this.fail(6);const time=v.get(f.path).mtime;for(const ptr of [c,a,w])if(ptr)this.filetime(ptr,time);return 1;});
+    installFileInformation(this);
     k('GetConsoleMode',2,(h,out)=>{if(h<10||h>12)return this.fail(6);m.w32(out,h===10?7:3);return 1;});k('SetConsoleMode',2,(h,mode)=>h>=10&&h<=12?1:this.fail(6));
     k('AllocConsole',0,()=>1);k('FreeConsole',0,()=>1);k('GetConsoleOutputCP',0,()=>1252);k('GetConsoleCP',0,()=>1252);k('SetConsoleOutputCP',1,cp=>cp===1252?1:this.fail(87));k('SetConsoleCP',1,cp=>cp===1252?1:this.fail(87));
     for(const wide of [false,true]){const suffix=wide?'W':'A',str=a=>this.str(a,wide),write=(a,s,n=Infinity)=>m.string(a,s,wide,n);
@@ -68,18 +69,16 @@ export class Win32 {
         if(flags&0x40000000)throw new RuntimeFault('UNSUPPORTED_IO','FILE_FLAG_OVERLAPPED is not implemented.');
         if(flags&0x20000000)throw new RuntimeFault('UNSUPPORTED_IO','Unbuffered I/O and sector alignment are not implemented.');
         const text=str(name);if(/^CONOUT\$$/i.test(text))return 11;if(/^CONIN\$$/i.test(text))return 10;
-        const path=v.path(text),node=v.get(path),exists=!!node;let read=!!(access&0x80000000),writable=!!(access&0x40000000);if(node?.directory)return this.fail(5,INVALID);
+        const path=v.path(text),node=v.get(path),exists=!!node;let read=!!(access&0x80000000),writable=!!(access&0x40000000);if(node?.directory&&(!(flags&0x02000000)||creation!==3))return this.fail(5,INVALID);if(node&&!node.directory&&(node.attributes&1)&&(writable||creation===2||creation===5))return this.fail(5,INVALID);
         if(![1,2,3,4,5].includes(creation))return this.fail(87,INVALID);if(creation===1&&exists)return this.fail(80,INVALID);if((creation===3||creation===5)&&!exists)return this.fail(2,INVALID);if(creation===5&&!writable)return this.fail(5,INVALID);
         for(const f of p.handles.values())if(f.type==='file'&&f.path.toLowerCase()===path.toLowerCase()){if(read&&!(f.share&1)||writable&&!(f.share&2)||f.read&&!(share&1)||f.write&&!(share&2))return this.fail(32,INVALID);}
         const parent=path.slice(0,path.lastIndexOf('/'))||'C:/';if(!v.get(parent)?.directory)return this.fail(3,INVALID);
-        if(!exists||creation===2||creation===5)v.writeFile(path,new Uint8Array());p.setError(exists&&(creation===2||creation===4)?183:0);return p.handle('file',{path,position:0n,read,write:writable,share});},INVALID));
-      k('GetFileAttributes'+suffix,1,name=>this.expected(()=>{const node=v.get(str(name));return node?(node.directory?0x10:0x20):this.fail(2,INVALID);},INVALID));
-      k('GetFileAttributesEx'+suffix,3,(name,level,out)=>this.expected(()=>{if(level)return this.fail(87);const node=v.get(str(name));if(!node)return this.fail(2);m.fill(out,36);m.w32(out,node.directory?16:32);for(const o of [4,12,20])this.filetime(out+o,node.mtime);m.w32(out+32,node.data?.length||0);return 1;}));
+        if(!exists||creation===2||creation===5)v.writeFile(path,new Uint8Array());p.setError(exists&&(creation===2||creation===4)?183:0);return p.handle('file',{path,position:0n,read,write:writable,share,directory:!!node?.directory,readAttributes:read||!!(access&0x80),writeAttributes:writable||!!(access&0x100)});},INVALID));
       k('CreateDirectory'+suffix,2,(name,security)=>this.expected(()=>{const path=v.path(str(name));if(v.exists(path))return this.fail(183);const parent=path.slice(0,path.lastIndexOf('/'))||'C:/';if(!v.get(parent)?.directory)return this.fail(3);v.mkdir(path);return 1;}));
       k('RemoveDirectory'+suffix,1,name=>this.expected(()=>{const node=v.get(str(name));if(!node?.directory)return this.fail(3);return v.remove(node.path)?1:0;}));
-      k('DeleteFile'+suffix,1,name=>this.expected(()=>{const node=v.get(str(name));if(!node||node.directory)return this.fail(2);for(const f of p.handles.values())if(f.type==='file'&&f.path===node.path&&!(f.share&4))return this.fail(32);return v.remove(node.path)?1:0;}));
-      k('MoveFile'+suffix,2,(from,to)=>this.expected(()=>v.rename(str(from),str(to))?1:0));
-      k('CopyFile'+suffix,3,(from,to,fail)=>this.expected(()=>{if(fail&&v.exists(str(to)))return this.fail(80);v.writeFile(str(to),v.readFile(str(from)));return 1;}));
+      k('DeleteFile'+suffix,1,name=>this.expected(()=>{const node=v.get(str(name));if(!node||node.directory)return this.fail(2);if(node.attributes&1)return this.fail(5);for(const f of p.handles.values())if(f.type==='file'&&f.path.toLowerCase()===node.path.toLowerCase()&&!(f.share&4))return this.fail(32);return v.remove(node.path)?1:0;}));
+      k('MoveFile'+suffix,2,(from,to)=>this.expected(()=>{const source=v.path(str(from)),target=v.path(str(to)),files=[...new Set(p.handles.values())].filter(f=>f.type==='file'&&f.path.toLowerCase()===source.toLowerCase());if(files.some(f=>!(f.share&4)))return this.fail(32);v.rename(source,target);for(const f of files)f.path=target;return 1;}));
+      k('CopyFile'+suffix,3,(from,to,fail)=>this.expected(()=>{if(fail&&v.exists(str(to)))return this.fail(80);if(v.get(str(to))?.attributes&1)return this.fail(5);const source=v.get(str(from));v.writeFile(str(to),v.readFile(str(from)));v.setMetadata(str(to),{attributes:source.attributes,times:{write:source.times.write}});return 1;}));
       k('GetCurrentDirectory'+suffix,2,(size,out)=>this.copyString(out,size,v.cwd.replaceAll('/','\\'),wide));
       k('SetCurrentDirectory'+suffix,1,name=>this.expected(()=>{const node=v.get(str(name));if(!node?.directory)return this.fail(3);v.cwd=node.path;return 1;}));
       k('GetFullPathName'+suffix,4,(name,size,out,last)=>this.expected(()=>{const path=v.path(str(name)).replaceAll('/','\\');if(size>path.length&&last)m.w32(last,out+(path.lastIndexOf('\\')+1)*(wide?2:1));return this.copyString(out,size,path,wide);}));
@@ -130,7 +129,7 @@ export class Win32 {
     k('RtlMoveMemory',3,(dst,src,n)=>{m.write(dst,m.read(src,n));return 0;});k('RtlZeroMemory',2,(dst,n)=>{m.fill(dst,n);return 0;});
     for(const wide of [false,true]){const s=wide?'W':'A',read=a=>this.str(a,wide);k('lstrlen'+s,1,a=>read(a).length);k('lstrcpy'+s,2,(dst,src)=>{m.string(dst,read(src),wide);return dst;});k('lstrcpyn'+s,3,(dst,src,n)=>{m.string(dst,read(src),wide,n);return dst;});k('lstrcat'+s,2,(dst,src)=>{m.string(dst,read(dst)+read(src),wide);return dst;});k('lstrcmp'+s,2,(a,b)=>{const x=read(a),y=read(b);return x===y?0:x<y?-1:1;});k('lstrcmpi'+s,2,(a,b)=>{const x=read(a).toLowerCase(),y=read(b).toLowerCase();return x===y?0:x<y?-1:1;});}
   }
-  findData(node,out,wide){const m=this.m;m.fill(out,wide?592:320);m.w32(out,node.directory?16:32);for(const offset of [4,12,20])this.filetime(out+offset,node.mtime);m.w32(out+32,node.data?.length||0);m.string(out+44,node.path.split('/').at(-1),wide,260);}
+  findData(node,out,wide){const m=this.m;m.fill(out,wide?592:320);m.w32(out,node.attributes);for(const [offset,key]of [[4,'creation'],[12,'access'],[20,'write']])writeFileTime(m,out+offset,node.times[key]);m.w32(out+32,node.data?.length||0);m.string(out+44,node.path.split('/').at(-1),wide,260);}
   loadLibrary(name){const p=this.p;if(this.isSystemModule(name.toLowerCase()))return this.systemHandle(name);let path;if(/[\\/]/.test(name))path=this.vfs.path(name);else path=p.loader.findDll(name.toLowerCase().endsWith('.dll')?name:name+'.dll',p.exePath);if(!path||!this.vfs.exists(path))return this.fail(126);const before=p.loader.initializers.length,module=p.loader.load(path),calls=p.loader.initializers.splice(before);const run=i=>i===calls.length?module.base:p.call(calls[i].address,calls[i].args,value=>{if(calls[i].dll&&!value)return this.fail(1114);return run(i+1);});return run(0);}
   installRegistry(){
     // A per-package HKCU/HKLM dictionary, persisted as a virtual file. No host registry.

@@ -5,8 +5,13 @@ void mainCRTStartup(void){
   DWORD flags,count,code;
   char bytes[4];
   long long position;
+  FILETIME creation={123,30000000},access={456,30000001},write={789,30000002},returned;
+  BY_HANDLE_FILE_INFORMATION info;
+  DWORD originalId;
+  const WORD wideFile[]={'h','a','n','d','l','e','s','.','t','x','t',0};
   file=CreateFileA("handles.txt",GENERIC_READ|GENERIC_WRITE,0,NULL,2,0,NULL);
   CHECK(file!=INVALID_HANDLE);
+  CHECK(GetFileInformationByHandle(file,&info));originalId=info.idLow;
   CHECK(DuplicateHandle(self,file,self,&copy,0,1,2));
   CHECK(copy!=file);
   CHECK(GetHandleInformation(copy,&flags)&&flags==1);
@@ -27,6 +32,12 @@ void mainCRTStartup(void){
   CHECK(SetFilePointerEx(copy,-2,&position,2)&&position==2);
   CHECK(SetEndOfFile(copy));
   CHECK(GetFileSizeEx(copy,&position)&&position==2);
+  CHECK(SetFileTime(copy,&creation,&access,&write));
+  CHECK(GetFileTime(copy,NULL,NULL,&returned)&&returned.low==789&&returned.high==30000002);
+  CHECK(GetFileInformationByHandle(copy,&info)&&info.idLow==originalId&&info.sizeLow==2&&info.links==1);
+  CHECK(info.creation.low==123&&info.access.low==456&&info.write.low==789);
+  CHECK(SetFileAttributesA("handles.txt",3)&&GetFileAttributesA("handles.txt")==3);
+  CHECK(SetFileAttributesW(wideFile,128)&&GetFileAttributesA("handles.txt")==128);
   CHECK(CloseHandle(copy));
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));

@@ -1,5 +1,6 @@
 import {RuntimeFault} from './errors.js';
 import {ansiDecode} from './memory.js';
+import {fileTimeFromMs} from './vfs.js';
 
 const INVALID=0xFFFFFFFF,MAX_POSITION=0x7FFFFFFFFFFFFFFFn;
 export function checkBuffer(memory,address,length,access='w'){
@@ -10,7 +11,7 @@ function write64(m,out,value){m.w32(out,Number(value&0xFFFFFFFFn));m.w32(out+4,N
 
 export function installFileIO(api){
   const p=api.p,m=api.m,v=api.vfs,k=(name,n,fn)=>api.add('kernel32.dll',name,n,fn);
-  const diskFile=h=>p.object(h,'file');
+  const diskFile=h=>{const f=p.object(h,'file');return f&&!f.directory?f:null;};
   const seek=(f,distance,method,limited=false)=>{
     if(method>2){api.fail(87);return null;}
     if(!f.read&&!f.write){api.fail(5);return null;}
@@ -65,6 +66,7 @@ export function installFileIO(api){
       const start=position>=BigInt(file.length)?file.length:Number(position);
       const data=file.subarray(start,start+count);
       checkBuffer(m,buffer,data.length);m.write(buffer,data);if(read)m.w32(read,data.length);
+      if(data.length&&!f.suppressAccess)v.setMetadata(f.path,{times:{access:fileTimeFromMs(Date.now())}});
       f.position=position+BigInt(data.length);return 1;
     });
   });
@@ -82,7 +84,7 @@ export function installFileIO(api){
     return api.expected(()=>{
       const old=v.readFile(f.path),position=BigInt(f.position),end=position+BigInt(count);
       if(end>BigInt(v.limit)||BigInt(v.bytes-old.length)+ (end>BigInt(old.length)?end:BigInt(old.length))>BigInt(v.limit))return api.fail(112);
-      const data=m.read(buffer,count);v.writeAt(f.path,Number(position),data);
+      const data=m.read(buffer,count);v.writeAt(f.path,Number(position),data,{preserveWriteTime:!!f.suppressWrite,preserveAccessTime:!!f.suppressAccess});
       f.position=end;if(written)m.w32(written,count);return 1;
     });
   });
@@ -91,7 +93,7 @@ export function installFileIO(api){
     return api.expected(()=>{
       const old=v.readFile(f.path),position=BigInt(f.position);
       if(position>BigInt(v.limit)||BigInt(v.bytes-old.length)+position>BigInt(v.limit))return api.fail(112);
-      const data=new Uint8Array(Number(position));data.set(old.subarray(0,data.length));v.writeFile(f.path,data);return 1;
+      const data=new Uint8Array(Number(position));data.set(old.subarray(0,data.length));v.writeFile(f.path,data,{preserveWriteTime:!!f.suppressWrite,preserveAccessTime:!!f.suppressAccess});return 1;
     });
   });
   k('FlushFileBuffers',1,h=>{const f=diskFile(h);return !f?api.fail(6):!f.write?api.fail(5):1;});

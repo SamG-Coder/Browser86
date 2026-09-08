@@ -12,6 +12,7 @@ These primary/platform documents informed the implementation. Referencing a spec
 The test artifacts record the local tools and browser actually exercised; they are not inferred from these references.
 
 - Microsoft, [SetFilePointer](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointer), [SetFilePointerEx](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointerex), and [WriteFile](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile): signed relative distances, high/low return values, EOF behavior and zero-byte writes.
+- Microsoft, [GetFileInformationByHandle](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfileinformationbyhandle), [GetFileTime](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfiletime), [SetFileTime](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfiletime), and [SetFileAttributesW](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfileattributesw): file metadata queries, timestamp access rights and suppression sentinels, and supported file attributes.
 
 Synchronization contracts checked for the compatibility extension:
 
