@@ -1,0 +1,25 @@
+{
+  "url": "http://127.0.0.1:8096",
+  "archive": ".build/free42/Free42Windows-32bit.zip",
+  "archiveSHA256": "6a2d009f40c2bf6670956d5ee5ce9e8a899d1be86927b15bdad9ae332d7c5726",
+  "results": [
+    {
+      "name": "Free42Binary.exe",
+      "initial": "3099c398f2c97117941a7197706f597e723fa9340d98c4a368b15d8396f3ce30",
+      "calculation": "d3a0e9571b7f800bedf06bca81767ccc1f8d3f45269f8c605ebf16a254b7ce0c",
+      "cleared": "b146075c47d88510193977c076341c1dc2d407ad6dcb4eeb020aa7086e512810",
+      "status": "exited",
+      "detail": "Exit code 0",
+      "terminal": "Launching C:/app/Free42Windows-32bit/Free42Binary.exe\nRuntime: original IA-32 interpreter / custom Win32 handlers.\nMapped C:/app/Free42Windows-32bit/Free42Binary.exe at 0x00400000 (2.3 MiB)\nEntrypoint loaded. Working directory: C:/app/Free42Windows-32bit\n87 unresolved import(s). Execution stops only if an unresolved import is called.\nAn exception filter was registered, but guest SEH dispatch is not implemented. Faults stop with diagnostics.\n\nProcess exited with code 0. 21,081,521 x86 instructions executed."
+    },
+    {
+      "name": "Free42Decimal.exe",
+      "initial": "3099c398f2c97117941a7197706f597e723fa9340d98c4a368b15d8396f3ce30",
+      "calculation": "d3a0e9571b7f800bedf06bca81767ccc1f8d3f45269f8c605ebf16a254b7ce0c",
+      "cleared": "b146075c47d88510193977c076341c1dc2d407ad6dcb4eeb020aa7086e512810",
+      "status": "exited",
+      "detail": "Exit code 0",
+      "terminal": "Launching C:/app/Free42Windows-32bit/Free42Decimal.exe\nRuntime: original IA-32 interpreter / custom Win32 handlers.\nMapped C:/app/Free42Windows-32bit/Free42Decimal.exe at 0x00400000 (4.8 MiB)\nEntrypoint loaded. Working directory: C:/app/Free42Windows-32bit\n60 unresolved import(s). Execution stops only if an unresolved import is called.\nAn exception filter was registered, but guest SEH dispatch is not implemented. Faults stop with diagnostics.\n\nProcess exited with code 0. 21,153,880 x86 instructions executed."
+    }
+  ]
+}

@@ -10,7 +10,7 @@ Browser86 is an original JavaScript IA-32 interpreter, PE32 loader, and **partia
 
 Try the hosted app at **[samg-coder.github.io/Browser86](https://samg-coder.github.io/Browser86/)**. GitHub Pages runs the same client-side runtime; guest packages execute in your browser. Pushes to `main` run the Node tests and publish the static app through [the Pages workflow](.github/workflows/pages.yml).
 
-For a real prebuilt application test, see the [Free42 compatibility report](docs/FREE42.md). Its 32-bit executables currently stop during CRT startup before opening a window.
+For a real prebuilt application test, see the [Free42 compatibility report](docs/FREE42.md). Both official 32-bit executables now pass mouse-driven addition, clear, and clean close; keyboard and broader application compatibility remain unfinished.
 
 Extract the project ZIP and double-click **`run.cmd`**. With Node.js available, it starts a static server and opens the browser after the server is listening. With Python available instead, it prints the address to open.
 
@@ -67,7 +67,7 @@ Importing the exact same original ZIP again restores that package's saved disk; 
 | Windows compatibility | Original kernel/file/heap/path/console handlers, portions of CRT, basic registry storage, window callbacks/messages, timers, basic controls and GDI drawing. |
 | Diagnostics | Pause/resume/step, breakpoint, register and memory-map display, recent API/EIP traces, exact unsupported import/opcode reports and JSON export. |
 
-`src/api-catalog.json` contains **604 registered import entries**, including A/W variants, CRT functions and data entries. **That count is not 604 fully compatible Windows APIs.** Many handlers implement a restricted argument/behavior subset; others explicitly reject unsupported modes. See the source and compatibility notes before assuming parity.
+`src/api-catalog.json` contains **712 registered import entries**, including A/W variants, CRT functions and data entries. **That count is not 712 fully compatible Windows APIs.** Many handlers implement a restricted argument/behavior subset; others explicitly reject unsupported modes. See the source and compatibility notes before assuming parity.
 
 ## Included compiled programs
 
@@ -93,7 +93,7 @@ npm test
 node --test tests/*.test.mjs
 ```
 
-The recorded run passes **504 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks, environment buffers and blocks, open-file deletion lifetime, extended file-information queries and static-server delivery.
+The recorded run passes **552 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks, environment buffers and blocks, open-file deletion lifetime, extended file-information queries and static-server delivery.
 
 The optional browser harness is:
 

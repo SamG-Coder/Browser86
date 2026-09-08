@@ -1,28 +1,44 @@
 # Free42 compatibility target
 
-Tested on 2026-09-08 using the publisher's prebuilt [Free42 Windows 32-bit ZIP](https://thomasokken.com/free42/download/Free42Windows-32bit.zip), linked from the [official download page](https://thomasokken.com/free42/index.html). No application rebuild or host execution was used.
+Tested on 2026-09-08 using the publisher's prebuilt [Free42 Windows 32-bit ZIP](https://thomasokken.com/free42/download/Free42Windows-32bit.zip). No application rebuild or host execution was used.
 
 Package SHA-256: `6A2D009F40C2BF6670956D5EE5CE9E8A899D1BE86927B15BDAD9AE332D7C5726`.
 
-**Neither executable reaches a calculator window yet.** Both are native PE32 x86 applications. The main Windows download is x64; use the separately linked 32-bit package for Browser86.
+**Both executables pass the first interactive mouse baseline:** launch, display the calculator, click `2`, `Enter`, `3`, `+`, display `5.0000`, clear to `0.0000`, and close with exit code zero. Both produce identical calculator images for calculation and clear.
 
-| Executable | Current first failure | Unresolved imports | Guest windows |
-|---|---|---:|---:|
-| Free42Binary.exe | `msvcrt.dll!__p__commode`, caller `0x004c026c` | 175 | 0 |
-| Free42Decimal.exe | `msvcrt.dll!__p__commode`, caller `0x00654a87` | 147 | 0 |
+| Executable | Addition | Clear | Close | Remaining unresolved imports |
+|---|---|---|---|---:|
+| Free42Binary.exe | 5.0000 | 0.0000 | Exit 0 | 87 |
+| Free42Decimal.exe | 5.0000 | 0.0000 | Exit 0 | 60 |
 
-Unresolved import counts do not mean every import is required for startup. Dependencies include the Microsoft C/C++ runtime, GDI+, buffered painting, menus and dialogs; a simple calculator interface still relies on substantial Windows behavior.
+The actual EXE executes in Browser86's IA-32 interpreter. Its skin decoding, calculator arithmetic, resources, and LCD bitmap remain guest code/data. The runtime implements reusable Windows/CRT and CPU behavior; it contains no Free42 source, skin asset, hardcoded answer, or application-specific compatibility branch. Guest menus and built-in controls now draw through the graphics command path instead of HTML controls and appearance CSS. USER32 supplies generic control rendering, as Windows does; these are approximate implementations, not Microsoft's own USER32/GDI binaries. Existing host window chrome and the legacy MessageBox presentation still use browser UI.
 
-This attempt fixed two observed blockers: the `66 0F 13 /r` MOVLPD memory store instruction and the `_set_app_type` CRT export alias. MOVLPD tests cover the exact eight-byte write, unaligned memory, preserved registers/flags and rejected register destinations. The resulting Node suite passes 504 tests.
+The exercised additions include CRT startup and file operations, binary64 decimal formatting, x87 extended storage, packed SSE conversions, menu resources and accelerators, GDI+ indexed/RGB bitmap storage, clipping/transforms/image drawing, buffered painting, and synchronous initial size notification before painting.
 
-Reproduce after downloading the official package:
+This is a narrow baseline, not complete Free42 compatibility. A keyboard sequence produced an incorrect operation and needs further input-translation investigation; use mouse input for this baseline. Scientific functions, programming, printing, file dialogs, persisted-state reload, alternate skins, and extended sessions have not passed acceptance testing. Unsupported imports still stop execution if reached. x87 arithmetic remains binary64 despite support for reading/writing 80-bit storage; GDI+ text uses approximate browser font metrics.
+
+## Reproduction
+
+Serve Browser86, import the official 32-bit ZIP, select either EXE, and press Run. Scroll within the guest desktop to reach the calculator's lower rows. The main Windows download is x64 and is not this test target.
+
+The standalone runtime probe reaches the message loop:
 
 ```sh
 node tools/probe-application.mjs path/to/Free42Windows-32bit.zip
 ```
 
-For the actual browser path, serve Browser86, import that ZIP, select each executable and press Run. Both were exercised in Edge 152.0.4191.66, including the ZIP worker and runtime worker.
+For the browser acceptance test, configure `PLAYWRIGHT_MODULE` and optionally `BROWSER_EXE`, then run:
 
-Evidence: [browser report](test-artifacts/free42-browser-report.json), [runtime report](test-artifacts/free42-runtime-report.json), [tests](test-artifacts/free42-startup-tests.tap), [Binary screenshot](test-artifacts/Free42Binary-first-run.png), [Decimal screenshot](test-artifacts/Free42Decimal-first-run.png).
+```sh
+node tools/browser-free42.mjs http://127.0.0.1:8096 path/to/Free42Windows-32bit.zip
+```
 
-The next milestone is completing the exercised CRT startup path, then reaching window creation and identifying the next actual API failure. Successful imports alone will not count as calculator compatibility: the acceptance check is an interactive window with a correct calculation, clear operation and clean close.
+The test compares complete canvas PNG hashes against visually verified addition/clear images. Those hashes were recorded with Edge 152.0.4191.66; font/rasterization differences in other browsers can change menu pixels even when the guest LCD agrees. The test does not download, rebuild, or execute the EXE on the host.
+
+## Evidence
+
+- [Interactive browser report](test-artifacts/free42-interactive-report.json)
+- [Addition: guest canvas showing 5.0000](test-artifacts/free42-addition.png)
+- [Clear: guest canvas showing 0.0000](test-artifacts/free42-clear.png)
+- [552-test runtime suite](test-artifacts/free42-interactive-tests.txt)
+- Earlier startup-failure evidence is retained: [browser report](test-artifacts/free42-browser-report.json), [runtime report](test-artifacts/free42-runtime-report.json), [Binary screenshot](test-artifacts/Free42Binary-first-run.png), [Decimal screenshot](test-artifacts/Free42Decimal-first-run.png).
