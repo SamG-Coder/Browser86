@@ -1,3 +1,4 @@
+import {installRegisteredMessages} from './registered-messages.js';
 import {installCursors,defaultSetCursor} from './cursors.js';
 import {installMenus} from './menus.js';
 import {paintControl} from './control-paint.js';
@@ -137,7 +138,7 @@ export class GUI {
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
     installMenus(this);
-    installAccelerators(this);
+    installAccelerators(this);installRegisteredMessages(this.api);
     installDialogIntegers(this);
     installRadioChecks(this);
     u('CheckDlgButton',3,(h,id,state)=>{const child=this.dialogItem(h,id);return child?this.send(child,0xf1,state,0,true,()=>1):0;});

@@ -4595,6 +4595,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "RegisterWindowMessageA",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "RegisterWindowMessageW",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "ReleaseCapture",
     "argc": 0,
     "cdecl": false,
