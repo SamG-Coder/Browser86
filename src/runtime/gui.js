@@ -156,6 +156,8 @@ export class GUI {
       u('DispatchMessage'+suffix,1,address=>{const msg=this.readMsg(address);if(msg.message===0x113&&msg.lParam)return p.call(msg.lParam,[msg.hwnd,msg.message,msg.wParam,msg.time]);return this.send(msg.hwnd,msg.message,msg.wParam,msg.lParam,wide);});
       u('SendMessage'+suffix,4,(h,msg,wp,lp)=>this.send(h,msg,wp,lp,wide));
       u('SendDlgItemMessage'+suffix,5,(h,id,msg,wp,lp)=>{const child=this.dialogItem(h,id);return child?this.send(child,msg,wp,lp,wide):0;});
+      u('SetDlgItemText'+suffix,3,(h,id,text)=>{const child=this.dialogItem(h,id);return child?this.send(child,12,0,text,wide,result=>result?1:0):0;});
+      u('GetDlgItemText'+suffix,4,(h,id,out,capacity)=>{capacity|=0;if(capacity<0)throw new RuntimeFault('UNSUPPORTED_GUI','Negative dialog-text capacity is not implemented.');if(capacity){checkBuffer(m,out,wide?2:1);if(wide)m.w16(out,0);else m.w8(out,0);}const child=this.dialogItem(h,id);return child&&capacity?this.send(child,13,capacity,out,wide):0;});
       u('PostMessage'+suffix,4,(h,msg,wp,lp)=>{if(h&&!this.window(h))return a.fail(1400);p.postMessage(h,msg,wp,lp);return 1;});
       u('SetWindowText'+suffix,2,(h,text)=>{if(!this.window(h))return a.fail(1400);return this.send(h,0x0C,0,text,wide,result=>result?1:0);});
       u('GetWindowText'+suffix,3,(h,out,n)=>{

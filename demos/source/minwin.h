@@ -356,3 +356,8 @@ API DWORD WINAPI GetCurrentProcessId(void);
 
 API long WINAPI SendDlgItemMessageA(HWND,int,DWORD,DWORD,long);
 API long WINAPI SendDlgItemMessageW(HWND,int,DWORD,DWORD,long);
+
+API BOOL WINAPI SetDlgItemTextA(HWND,int,const char*);
+API BOOL WINAPI SetDlgItemTextW(HWND,int,const WORD*);
+API DWORD WINAPI GetDlgItemTextA(HWND,int,char*,int);
+API DWORD WINAPI GetDlgItemTextW(HWND,int,WORD*,int);

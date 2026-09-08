@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Dialog-control text APIs - 2026-09-08
+
+**473 Node tests passed, 0 failed, 0 skipped.** Added GetDlgItemTextA/W and SetDlgItemTextA/W. Coverage includes text replacement/clearing, truncation, terminators and neighboring bytes, lookup errors, output initialization before callbacks, zero-capacity callback suppression, Boolean setter results and invalid guest output ranges. Catalog now contains 598 entries, without implying full API parity.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Rebuilt HandleObjects.exe imports all four APIs and checks A/W text round trips and truncation inside the browser worker. Evidence: [Node TAP](test-artifacts/dlg-text-tests.tap), [browser report](test-artifacts/dlg-text-browser-report.json).
+
+Native private A/W window probes confirmed positive-capacity initialization even for missing controls/invalid parents, zero-capacity output preservation and callback suppression, errors 1421/1400 and nonzero WM_SETTEXT results normalized to 1. Successful calls preserved error 1234. Probe windows/classes were cleaned up. Reference: [Microsoft GetDlgItemTextW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdlgitemtextw). Negative capacities remain explicitly unsupported; invalid guest pointers remain memory faults. Dialog-manager and control-specific behavior remain incomplete.
+
 ## Dialog-control message dispatch - 2026-09-08
 
 **469 Node tests passed, 0 failed, 0 skipped.** Added SendDlgItemMessageA/W with shared control lookup, synchronous callback dispatch, preserved message arguments/results and existing ANSI/Unicode text conversion. Tests cover high-bit IDs, invalid targets before pointer access, direct default processing, custom callbacks and no asynchronous queue insertion. Catalog now contains 594 entries, without implying full API parity.

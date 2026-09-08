@@ -3518,6 +3518,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetDlgItemTextA",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "GetDlgItemTextW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetDoubleClickTime",
     "argc": 0,
     "cdecl": false,
@@ -3989,6 +4003,20 @@
     "dll": "user32.dll",
     "name": "SetCursor",
     "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetDlgItemTextA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetDlgItemTextW",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },
