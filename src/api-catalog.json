@@ -372,6 +372,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "OffsetClipRgn",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "OffsetRgn",
     "argc": 3,
     "cdecl": false,

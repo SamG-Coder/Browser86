@@ -1,0 +1,15 @@
+{
+  "result": "PASS",
+  "browser": "152.0.4191.66",
+  "checks": [
+    "solid fill",
+    "line",
+    "polygon",
+    "inversion",
+    "text",
+    "bitmap transport",
+    "empty clip",
+    "restored clip",
+    "removed clip"
+  ]
+}

@@ -27,6 +27,10 @@ export function installRegions(gui){
   const dc=gui.dc(h);if(!dc)return api.fail(r?87:6,-1);const o=region(r);if(!o)return -1;if(!dc.clipRegion)return 0;
   o.rect=dc.clipRegion.rect?[...dc.clipRegion.rect]:null;return 1;
  });
+ g('OffsetClipRgn',3,(h,x,y)=>{
+  const dc=gui.dc(h);if(!dc)return api.fail(6);if(!dc.clipRegion)return 2;const old=dc.clipRegion.rect;if(!old)return 1;
+  x|=0;y|=0;const rect=old.map((n,i)=>n+(i%2?y:x));if(!inRange(rect))return api.fail(1003);dc.clipRegion={rect};return 2;
+ });
  const fill=(dcHandle,regionHandle,brushHandle)=>{
   if(!brushHandle)return 0;const dc=gui.dc(dcHandle);if(!dc)return api.fail(6);const o=region(regionHandle);if(!o)return 0;if(!o.rect)return 1;
   const brush=p.object(brushHandle,'gdi');if(!brush||!['brush','pen'].includes(brush.kind)||brush.null)return 0;

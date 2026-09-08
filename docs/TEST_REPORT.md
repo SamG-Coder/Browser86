@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Moving application clips - 2026-09-08
+
+**281 Node tests passed, 0 failed, 0 skipped.** OffsetClipRgn now moves rectangular application clips with copied state, preserves source regions and earlier draw snapshots, and participates in SaveDC/RestoreDC. Tests cover absent/empty clips, signed extreme offsets, unchanged last error on success and atomic range failures with error 1003. The rebuilt HandleObjects.exe imports the API and verifies moved bounds and restoration. The catalog contains 543 entries.
+
+**Nine moved-clip canvas checks and eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** The canvas clip is selected at (0,1,4,5), moved by (2,1), and checked against all existing drawing paths plus empty/restored/removed clips. Evidence: [Node TAP](test-artifacts/offset-clip-tests.tap), [canvas report](test-artifacts/offset-clip-canvas-report.json), [browser report](test-artifacts/offset-clip-browser-report.json).
+
+Native probes verified no-clip return 2 without creating a clip, empty-clip return 1, moved queried bounds, overflow error 1003 with unchanged bounds, and invalid DC error 6. Owned DC/region handles were released. No guest executable ran on the host. Reference: [OffsetClipRgn](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-offsetcliprgn). Complex-region offsets and coordinate transforms remain unfinished.
+
 ## Rectangle clip intersection - 2026-09-08
 
 **279 Node tests passed, 0 failed, 0 skipped.** IntersectClipRect creates a copied application clip when none exists and intersects subsequent rectangles, preserving normalized coordinates outside the surface. Tests cover progressive narrowing, disjoint/empty intersections, saved-state restoration, invalid DCs and atomic coordinate-range failures. The rebuilt HandleObjects.exe imports the API and verifies queried bounds after intersection and restoration. The catalog contains 542 entries.

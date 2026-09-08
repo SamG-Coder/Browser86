@@ -42,6 +42,7 @@ API int WINAPI GetRgnBox(HANDLE,void*);
 API BOOL WINAPI PtInRegion(HANDLE,int,int);
 API BOOL WINAPI RectInRegion(HANDLE,const void*);
 API DWORD WINAPI GetRegionData(HANDLE,DWORD,void*);
+API int WINAPI OffsetClipRgn(HDC,int,int);
 API int WINAPI IntersectClipRect(HDC,int,int,int,int);
 API int WINAPI GetClipBox(HDC,void*);
 API BOOL WINAPI PtVisible(HDC,int,int);

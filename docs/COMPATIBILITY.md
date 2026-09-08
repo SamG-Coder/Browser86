@@ -162,6 +162,8 @@ GetClipBox, PtVisible and RectVisible query the intersection of the rectangular 
 
 IntersectClipRect creates or narrows a rectangular application clip, normalizes reversed corners and keeps the application coordinates independent of surface bounds. Empty intersections remain empty, and SaveDC/RestoreDC preserve earlier clips. Out-of-range coordinates fail without mutation. Browser86 returns the resulting application rectangle complexity (1 or 2); exact native return-code parity remains unfinished because Windows probes frequently returned 3 even when subsequent queries showed simple or empty results. Complex clips, transforms and visibility/meta-region integration remain unfinished.
 
+OffsetClipRgn moves a copied rectangular application clip without changing source regions, earlier draw snapshots or saved DC states. No selected clip remains absent and returns SIMPLEREGION; an empty clip remains empty and returns NULLREGION. Result coordinates outside the supported region interval fail with error 1003 without mutation, while invalid DCs fail with error 6. Transformed offsets and complex-region movement remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
