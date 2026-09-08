@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Inversion at extreme coordinates - 2026-09-08
+
+**271 Node tests passed, 0 failed, 0 skipped.** A new reference test checks full endpoint spans for fifty native rectangles using INT_MIN, INT_MAX, negative and visible coordinates on both axes. The rebuilt C fixture exercises repeated INT_MIN-origin inversion. The catalog remains at 536 entries.
+
+The real browser initially failed four native pixel comparisons: rectangles beginning at INT_MIN and ending within the visible canvas painted nothing. The renderer now intersects inversion geometry with canvas bounds before passing it to Canvas, preserving visible endpoints. **All fifty extreme-coordinate canvas cases pass**, along with thirty existing region/rectangle RGB inversion checks and eight real-origin browser checks in Edge 152.0.4191.66. Evidence: [before report](test-artifacts/invert-extremes-before-report.json), [after report](test-artifacts/invert-extremes-canvas-report.json), [Node TAP](test-artifacts/invert-extremes-tests.tap), [browser report](test-artifacts/invert-extremes-browser-report.json).
+
+The [native vectors](../tests/invert-rect-extreme-vectors.json) come from the [owned-bitmap generator](../tools/build-invert-rect-extreme-vectors.py). The runtime arithmetic already retained the endpoint span; the correction is in rendering. No guest executable ran on the host. GDI clipping regions, transforms and non-RGB surfaces remain unfinished; canvas-bound intersection is not general GDI clipping support.
+
 ## USER32 rectangle inversion - 2026-09-08
 
 **270 Node tests passed, 0 failed, 0 skipped.** InvertRect now validates a complete input RECT, normalizes ordinary reversed corners, skips zero-area drawing and reports invalid DC error 6 after input validation. Tests cover both reversal axes, unchanged input snapshots/DC state, empty rectangles and invalid pointers/handles. The rebuilt HandleObjects.exe imports InvertRect and calls it twice. The catalog contains 536 entries.

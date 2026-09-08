@@ -152,7 +152,9 @@ FrameRgn draws inward borders for rectangular regions, with independent horizont
 
 InvertRgn inverts existing RGB pixels inside rectangular regions without using the selected brush or changing DC state. Empty regions succeed without emitting drawing commands; invalid region handles return zero before DC validation. Canvas difference compositing with white implements the current opaque RGB surface behavior and is restored after each command. Native offscreen bitmap comparisons cover five colors, full region boundaries, double inversion and subsequent drawing. Complex regions, mapping, clipping and other device/color models remain unfinished.
 
-InvertRect reads a complete RECT, normalizes ordinary reversed bounds and uses the opaque RGB inversion renderer. Zero-area rectangles succeed without drawing; invalid DCs fail with error 6 after input validation. DC state and guest input remain unchanged. Native bitmap checks cover reversed bounds with five colors and double inversion. Mapping, clipping, coordinate-overflow parity and non-RGB device behavior remain unfinished.
+InvertRect reads a complete RECT, normalizes ordinary reversed bounds and uses the opaque RGB inversion renderer. Zero-area rectangles succeed without drawing; invalid DCs fail with error 6 after input validation. DC state and guest input remain unchanged. Native bitmap checks cover reversed bounds with five colors and double inversion. Mapping, GDI clipping and non-RGB device behavior remain unfinished. Signed-extreme rectangle endpoint coverage is checked below.
+
+The inversion renderer intersects coordinates with the canvas bounds before issuing Canvas drawing calls, avoiding loss of visible endpoints when INT_MIN-origin rectangles pass through a narrow visible area. Fifty native endpoint combinations across both axes verify the resulting pixel coverage. This canvas-bound intersection does not implement GDI clipping regions or coordinate transforms.
 
 ## Working with other programs
 
