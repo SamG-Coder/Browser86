@@ -4070,6 +4070,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetDialogBaseUnits",
+    "argc": 0,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetDlgCtrlID",
     "argc": 1,
     "cdecl": false,

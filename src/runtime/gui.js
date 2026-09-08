@@ -224,6 +224,7 @@ export class GUI {
     u('IsWindow',1,h=>this.window(h)?1:0);
     u('GetActiveWindow',0,()=>this.focus||[...this.windows.keys()][0]||0);u('SetActiveWindow',1,h=>{const old=this.focus;this.focus=h;return old;});
     u('GetDlgCtrlID',1,h=>{const w=this.window(h);return w?w.id|0:a.fail(1400);});
+    u('GetDialogBaseUnits',0,()=>{const font=p.object(this.stockObject(13),'gdi'),height=Math.abs(font.height||16),alphabetWidth=Math.ceil(52*height*0.6),width=Math.floor((Math.floor(alphabetWidth/26)+1)/2);p.note('Dialog base units use the virtual system font metrics; native Windows font rasterization is approximate.');return ((height<<16)|width)>>>0;});
     u('GetDlgItem',2,(h,id)=>this.dialogItem(h,id));
     installCursors(this);installMouseCapture(this);installDoubleClick(this);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,36:4,37:4,61:1,80:1}[index]??0));installClassQueries(this);installWindowWord(this);installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
