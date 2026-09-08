@@ -4,6 +4,18 @@ export function splitCommandLine(text){const args=[];let i=0;while(i<text.length
 export function installCRT(api){const p=api.p,m=api.m,v=api.vfs;const c=(name,n,fn)=>api.add('msvcrt.dll',name,n,fn,true);const ptr=s=>p.heap.string(s);const errno=p.heap.alloc(4,true);const error=n=>{m.w32(errno,n);return -1;};
   // CRT startup writes this process-local default through a stable int pointer.
   const commode=p.heap.alloc(4,true);c('__p__commode',0,()=>commode);api.data('msvcrt.dll','_commode',commode);
+  c('_controlfp_s',3,(out,value,mask)=>{
+    const cpu=p.cpu,cw=cpu.fpuControl;
+    let current=((cw&1)?16:0)|((cw&2)?0x80000:0)|((cw&4)?8:0)|((cw&8)?4:0)|((cw&16)?2:0)|((cw&32)?1:0)|((cw&0xc00)>>>2)|((cw&0x1000)?0x40000:0);
+    current|=(cw&0x300)===0?0x20000:(cw&0x300)===0x200?0x10000:0;
+    if((value&mask&~0x030f031f)!==0){if(out)m.w32(out,current);m.w32(errno,22);return 22;}
+    // _controlfp_s deliberately leaves the denormal exception mask unchanged.
+    mask&=~0x80000;const next=(current&~mask)|(value&mask);
+    if(mask){requireThat((next&0x307031f)===0x1001f,'CRT_FLOAT_CONTROL','Only masked exceptions, 53-bit precision and round-to-nearest are currently supported.');
+      cpu.fpuControl=(cw&~0x1f3d)|0x23d;cpu.mxcsr=(cpu.mxcsr&~0xe040)|0x1e80;
+    }
+    if(out)m.w32(out,next);return 0;
+  });
   c('malloc',1,n=>p.heap.alloc(n));c('calloc',2,(n,size)=>{requireThat(n*size<=64*1024*1024,'HEAP_LIMIT','calloc size overflow or limit.');return p.heap.alloc(n*size,true);});c('realloc',2,(a,n)=>p.heap.realloc(a,n));c('free',1,a=>{if(!p.heap.free(a))throw new RuntimeFault('HEAP_POINTER','free received an invalid pointer.');return 0;});c('_msize',1,a=>p.heap.blocks.get(a)??0xFFFFFFFF);c('_errno',0,()=>errno);
   c('memcpy',3,(dst,src,n)=>{m.write(dst,m.read(src,n));return dst;});c('memmove',3,(dst,src,n)=>{m.write(dst,m.read(src,n));return dst;});c('memset',3,(dst,value,n)=>{m.fill(dst,n,value);return dst;});c('memcmp',3,(a,b,n)=>{requireThat(n<=m.limit,'MEMORY_LIMIT','memcmp length is excessive.');for(let i=0;i<n;i++){const d=m.u8(a+i)-m.u8(b+i);if(d)return d;}return 0;});c('memchr',3,(src,value,n)=>{for(let i=0;i<n;i++)if(m.u8(src+i)===(value&255))return src+i;return 0;});
   for(const wide of [false,true]){const read=a=>api.str(a,wide),prefix=wide?'wcs':'str',step=wide?2:1;

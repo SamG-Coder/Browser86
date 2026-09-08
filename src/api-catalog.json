@@ -2622,6 +2622,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "_controlfp_s",
+    "argc": 3,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_crt_atexit",
     "argc": 1,
     "cdecl": true,
