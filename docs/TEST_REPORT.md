@@ -76,6 +76,12 @@ Native Windows probes verified ordinary directory rename, open-descendant denial
 
 Native Windows probes verified rename tracking in both name modes, invalid flag combinations, and unchanged output for insufficient buffers. The observed A short-buffer count excludes the terminator, unlike W and unlike the general wording in [Microsoft's return-value documentation](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlew); this distinction is covered explicitly. The W short-buffer probe set last error 8, while A set 0. No host paths are exposed by the guest implementation. Results: `test-artifacts/final-path-tests.tap` and `test-artifacts/final-path-browser-report.json`.
 
+## Append-only file access — 2026-09-08
+
+**120 Node tests passed with no failures or skips; eight real-origin Edge checks passed without page errors.** Four new tests cover independent/duplicate append handles, seeks followed by appends, mixed read/append and write/append permissions, flush/EOF rights, mutual sharing, read-only checks, creation dispositions, zero writes, invalid buffers, quota failure and pending deletion. HandleObjects.exe verifies append-after-seek, retained original bytes and denied truncation. The catalog remains at 440 entries.
+
+Native Windows probes verified append-only seeking and flushing, EOF resize denial (5), positional writes when FILE_WRITE_DATA is also granted, CREATE_ALWAYS truncation, TRUNCATE_EXISTING rejection (87) and unchanged cursors on zero writes. Contract: [File Access Rights Constants](https://learn.microsoft.com/en-us/windows/win32/fileio/file-access-rights-constants). Results: `test-artifacts/file-append-tests.tap` and `test-artifacts/file-append-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

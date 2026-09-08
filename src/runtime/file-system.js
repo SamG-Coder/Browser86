@@ -16,16 +16,16 @@ export function installFileSystem(api){
       if(share&~7||![1,2,3,4,5].includes(creation))return api.fail(87,INVALID);
       const text=str(name);if(/^CONOUT\$$/i.test(text))return 11;if(/^CONIN\$$/i.test(text))return 10;
       const path=v.path(text),existing=v.get(path),exists=!!existing,deleteOnClose=!!(flags&0x04000000);
-      const read=!!(access&0x90000001),write=!!(access&0x50000002),deleteAccess=deleteOnClose||!!(access&0x10010000);
+      const read=!!(access&0x90000001),write=!!(access&0x50000002),append=!!(access&4),deleteAccess=deleteOnClose||!!(access&0x10010000);
       if(existing?.deletePending)return api.fail(5,INVALID);
       if(existing?.directory&&(!(flags&0x02000000)||creation!==3))return api.fail(5,INVALID);
       if(existing?.directory&&deleteOnClose)throw new RuntimeFault('UNSUPPORTED_IO','Delete-on-close directory handles are not implemented.');
-      if(existing&&!existing.directory&&(existing.attributes&1)&&(write||deleteOnClose||creation===2||creation===5))return api.fail(5,INVALID);
+      if(existing&&!existing.directory&&(existing.attributes&1)&&(write||append||deleteOnClose||creation===2||creation===5))return api.fail(5,INVALID);
       if(creation===1&&exists)return api.fail(80,INVALID);
       if((creation===3||creation===5)&&!exists)return api.fail(2,INVALID);
-      if(creation===5&&!write)return api.fail(5,INVALID);
+      if(creation===5&&!write)return api.fail(append?87:5,INVALID);
       if(deleteOnClose&&(flags&1))return api.fail(5,INVALID);
-      for(const f of opens(existing))if(read&&!(f.share&1)||write&&!(f.share&2)||deleteAccess&&!(f.share&4)||f.read&&!(share&1)||f.write&&!(share&2)||f.deleteAccess&&!(share&4))return api.fail(32,INVALID);
+      for(const f of opens(existing))if(read&&!(f.share&1)||(write||append)&&!(f.share&2)||deleteAccess&&!(f.share&4)||f.read&&!(share&1)||(f.write||f.append)&&!(share&2)||f.deleteAccess&&!(share&4))return api.fail(32,INVALID);
       const parent=path.slice(0,path.lastIndexOf('/'))||'C:/';if(!v.get(parent)?.directory)return api.fail(3,INVALID);
       if(v.get(parent).deletePending)return api.fail(5,INVALID);
       let inherit=0;
@@ -37,7 +37,7 @@ export function installFileSystem(api){
       if(!exists||creation===2||creation===5)v.writeFile(path,new Uint8Array());
       const node=v.get(path);
       if(!exists&&(flags&FILE_ATTRIBUTE_MASK)){const attributes=flags&FILE_ATTRIBUTE_MASK&~(16|128);v.setMetadata(path,{attributes:attributes||128});}
-      const object={type:'file',node,position:0n,read,write,share,deleteAccess,deleteOnClose,directory:node.directory,
+      const object={type:'file',node,position:0n,read,write,append,share,deleteAccess,deleteOnClose,directory:node.directory,
         readAttributes:read||!!(access&0x80),writeAttributes:write||!!(access&0x100)};
       Object.defineProperty(object,'path',{get:()=>node.path});
       object.onClose=()=>{

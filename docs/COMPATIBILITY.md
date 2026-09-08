@@ -60,6 +60,8 @@ Directory renames through FileRenameInfo and MoveFileA/W move the complete subtr
 
 GetFinalPathNameByHandleA/W support DOS (`\\?\C:\...`) and volume-relative output for files and directories. FILE_NAME_OPENED and FILE_NAME_NORMALIZED agree in this filesystem, which has no symbolic links or short-name aliases; both follow renames. Returned extended DOS paths can be reopened within virtual C:. UNC, device and GLOBALROOT namespaces remain rejected. GUID and NT-device output are explicit unsupported modes. W returns required capacity including the terminator for a short buffer. A follows the observed modern Windows behavior of returning the path length without the terminator even for a short buffer; callers need one extra byte. Neither short-buffer path writes partial output. ANSI uses the runtime's Windows-1252 mapping.
 
+FILE_APPEND_DATA is tracked separately from FILE_WRITE_DATA. Append-only handles can seek, read if separately permitted, and flush; nonempty writes always select the current EOF and update their shared cursor to the end of the appended data. Zero-byte writes leave the cursor unchanged. Append access participates in mutual write sharing and read-only checks, but does not grant EOF resizing. Adding FILE_WRITE_DATA restores ordinary positioned writes. These operations remain synchronous within the single guest thread.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

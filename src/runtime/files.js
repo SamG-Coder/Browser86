@@ -24,7 +24,7 @@ export function installFileIO(api){
   const diskFile=h=>{const f=p.object(h,'file');return f&&!f.directory?f:null;};
   const seek=(f,distance,method,limited=false)=>{
     if(method>2){api.fail(87);return null;}
-    if(!f.read&&!f.write){api.fail(5);return null;}
+    if(!f.read&&!f.write&&!f.append){api.fail(5);return null;}
     const base=method===0?0n:method===1?BigInt(f.position):BigInt(f.node.data.length),next=base+distance;
     if(next<0n){api.fail(131);return null;}
     if(next>MAX_POSITION||limited&&next>0xFFFFFFFFn){api.fail(87);return null;}
@@ -88,11 +88,11 @@ export function installFileIO(api){
       const data=m.read(buffer,count);p.emit('stdout',{text:ansiDecode(data),stream:h===12?'stderr':'stdout'});
       if(written)m.w32(written,count);return 1;
     }
-    const f=diskFile(h);if(!f)return api.fail(6);if(!f.write)return api.fail(5);
+    const f=diskFile(h);if(!f)return api.fail(6);if(!f.write&&!f.append)return api.fail(5);
     // A null write does not allocate, extend, or move the file cursor.
     if(!count)return 1;
     return api.expected(()=>{
-      const old=f.node.data,position=BigInt(f.position),end=position+BigInt(count);
+      const old=f.node.data,position=f.append&&!f.write?BigInt(old.length):BigInt(f.position),end=position+BigInt(count);
       if(end>BigInt(v.limit)||BigInt(v.bytes-old.length)+ (end>BigInt(old.length)?end:BigInt(old.length))>BigInt(v.limit))return api.fail(112);
       const data=m.read(buffer,count);v.writeAt(f.path,Number(position),data,{node:f.node,preserveWriteTime:!!f.suppressWrite,preserveAccessTime:!!f.suppressAccess});
       f.position=end;if(written)m.w32(written,count);return 1;
@@ -102,5 +102,5 @@ export function installFileIO(api){
     const f=diskFile(h);if(!f)return api.fail(6);
     return api.expected(()=>resizeFile(api,f,BigInt(f.position)));
   });
-  k('FlushFileBuffers',1,h=>{const f=diskFile(h);return !f?api.fail(6):!f.write?api.fail(5):1;});
+  k('FlushFileBuffers',1,h=>{const f=diskFile(h);return !f?api.fail(6):!f.write&&!f.append?api.fail(5):1;});
 }
