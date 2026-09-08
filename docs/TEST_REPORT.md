@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Rectangle-in-region containment - 2026-09-08
+
+**260 Node tests passed, 0 failed, 0 skipped.** RectInRegion matches 2,508 native Windows reference cases spanning reversed/empty regions, positive and negative coordinates, degenerate query rectangles, boundaries and signed extremes. A second test covers invalid handles, empty-region pointer short-circuiting and full guest input validation for nonempty regions. The rebuilt HandleObjects.exe imports RectInRegion and checks reversed queries, a contained degenerate boundary point, excluded outside coverage and null input with an empty region. The catalog contains 530 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors**, including the rebuilt fixture, persistence and backup. Evidence: [Node TAP](test-artifacts/rect-in-region-tests.tap), [browser report](test-artifacts/rect-in-region-browser-report.json), [native vectors](../tests/rect-in-region-vectors.json). The [native generator](../tools/build-rect-in-region-vectors.py) releases all owned region handles and can reproduce the matrix on Windows.
+
+Native probes establish that a fully contained zero-area rectangle can succeed, including on the right/bottom boundary, while ordinary rectangles merely touching outside those boundaries fail. Empty regions do not dereference the input pointer. The implementation preserves these observed details alongside the [documented containment API](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-rectinregion). Complex-region containment awaits complex-region support. No guest executable ran on the host.
+
 ## Rectangular GDI regions - 2026-09-08
 
 **258 Node tests passed, 0 failed, 0 skipped.** Three new tests exercise seven region APIs: CreateRectRgn, CreateRectRgnIndirect, SetRectRgn, GetRgnBox, PtInRegion, EqualRgn and OffsetRgn. Coverage includes reversed corners, canonical empty regions, point boundaries, copied inputs, coordinate limits, atomic offset failures, object types/deletion, invalid handles and complete buffer validation. The rebuilt HandleObjects.exe imports all seven functions and verifies their behavior in the x86 interpreter. The catalog contains 529 entries.

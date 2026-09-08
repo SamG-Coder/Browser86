@@ -400,6 +400,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "RectInRegion",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "RestoreDC",
     "argc": 2,
     "cdecl": false,

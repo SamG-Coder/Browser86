@@ -269,9 +269,11 @@ void mainCRTStartup(void){
   RECT regionInput={10,20,1,2},regionBox;HANDLE regionA=CreateRectRgn(1,2,10,20),regionB=CreateRectRgnIndirect(&regionInput);
   CHECK(regionA&&regionB&&EqualRgn(regionA,regionB)&&GetObjectType(regionA)==8);
   CHECK(GetRgnBox(regionA,&regionBox)==2&&regionBox.left==1&&regionBox.bottom==20&&PtInRegion(regionA,1,2)&&!PtInRegion(regionA,10,20));
+  CHECK(RectInRegion(regionA,&regionInput));regionInput.left=10;regionInput.right=10;regionInput.top=20;regionInput.bottom=20;CHECK(RectInRegion(regionA,&regionInput));
+  regionInput.left=10;regionInput.right=11;regionInput.top=2;regionInput.bottom=20;CHECK(!RectInRegion(regionA,&regionInput));
   CHECK(OffsetRgn(regionB,2,-1)==2&&!EqualRgn(regionA,regionB));
   CHECK(SetRectRgn(regionB,3,4,3,8)&&GetRgnBox(regionB,&regionBox)==1&&regionBox.left==0&&regionBox.bottom==0);
-  CHECK(DeleteObject(regionA)&&DeleteObject(regionB));
+  CHECK(!RectInRegion(regionB,NULL));CHECK(DeleteObject(regionA)&&DeleteObject(regionB));
   RECT rectA,rectB,rectOut;POINT rectPoint={0,0};
   CHECK(SetRect(&rectA,0,0,10,10)&&SetRect(&rectB,0,0,5,10));
   CHECK(PtInRect(&rectA,rectPoint));rectPoint.x=10;CHECK(!PtInRect(&rectA,rectPoint));
