@@ -98,6 +98,8 @@ CommandLineToArgvW is available from shell32.dll and returns a contiguous guest 
 
 MulDiv uses exact integer multiplication/division for signed 32-bit inputs and rounds half-integers away from zero. Zero divisors and results whose magnitude exceeds INT_MAX return -1 without changing last error. Nonzero products involving an INT_MIN multiplicand also return -1, matching the observed native implementation even when a mathematical quotient would fit. A legitimate result of -1 is therefore indistinguishable from failure through the return value alone.
 
+The user32 rectangle helpers support SetRect/SetRectEmpty, CopyRect, EqualRect, IsRectEmpty, OffsetRect, InflateRect, PtInRect, IntersectRect, UnionRect and SubtractRect with signed 32-bit coordinates. PtInRect includes left/top edges and excludes right/bottom edges; POINT occupies two x86 argument slots. Union ignores empty inputs, intersection clears nonoverlap to a zero rectangle, and subtraction returns the bounding box of the remaining area rather than a region. Source snapshots permit destination aliasing. Output ranges are validated before writes, and arithmetic wraps at 32 bits. These geometry helpers do not add GDI regions, clipping or additional drawing behavior.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

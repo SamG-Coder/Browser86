@@ -190,6 +190,14 @@ void mainCRTStartup(void){
   CHECK(CompareFileTime(&epoch,&stamp)==-1&&CompareFileTime(&stamp,&epoch)==1&&CompareFileTime(&stamp,&stamp)==0);
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
+  RECT rectA,rectB,rectOut;POINT rectPoint={0,0};
+  CHECK(SetRect(&rectA,0,0,10,10)&&SetRect(&rectB,0,0,5,10));
+  CHECK(PtInRect(&rectA,rectPoint));rectPoint.x=10;CHECK(!PtInRect(&rectA,rectPoint));
+  CHECK(SubtractRect(&rectOut,&rectA,&rectB)&&rectOut.left==5);
+  CHECK(IntersectRect(&rectOut,&rectA,&rectB)&&EqualRect(&rectOut,&rectB));
+  CHECK(UnionRect(&rectOut,&rectA,&rectB)&&EqualRect(&rectOut,&rectA));
+  CHECK(CopyRect(&rectOut,&rectB)&&OffsetRect(&rectOut,1,2)&&InflateRect(&rectOut,1,2)&&rectOut.left==0&&rectOut.right==7);
+  CHECK(SetRectEmpty(&rectOut)&&IsRectEmpty(&rectOut));
   CHECK(MulDiv(5,3,2)==8&&MulDiv(-5,3,2)==-8&&MulDiv(5,3,-2)==-8);
   CHECK(MulDiv(2147483647,2147483647,2147483647)==2147483647);
   CHECK(MulDiv(1,1,0)==-1&&MulDiv(2147483647,2,1)==-1&&MulDiv((int)0x80000000,1,2)==-1);

@@ -2790,6 +2790,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "CopyRect",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "CreateWindowExA",
     "argc": 12,
     "cdecl": false,
@@ -2861,6 +2868,13 @@
   {
     "dll": "user32.dll",
     "name": "EndPaint",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "EqualRect",
     "argc": 2,
     "cdecl": false,
     "data": false
@@ -3028,6 +3042,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "InflateRect",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "IntersectRect",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "InvalidateRect",
     "argc": 3,
     "cdecl": false,
@@ -3175,6 +3203,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "PtInRect",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "RegisterClassA",
     "argc": 1,
     "cdecl": false,
@@ -3301,8 +3336,22 @@
   },
   {
     "dll": "user32.dll",
+    "name": "SubtractRect",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "TranslateMessage",
     "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "UnionRect",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },

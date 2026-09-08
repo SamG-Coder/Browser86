@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Rectangle helper extension — 2026-09-08
+
+**202 Node tests passed, 0 failed, 0 skipped.** Four new tests check 3,072 recorded native intersection/union/subtraction results with separate and aliased destinations (9,216 comparisons), point boundaries, inverted/empty rectangles, copying/equality, signed inflate/offset arithmetic, last-error preservation and atomic buffer validation. HandleObjects.exe imports all eleven rectangle helpers, including the three-stack-slot PtInRect signature for a by-value POINT. Seven imports are new; four existing handlers now share complete buffer validation. The catalog contains 486 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** Actual workers executed the updated fixture under the deployed CSP; IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/rectangle-tests.tap) and [browser report](test-artifacts/rectangle-browser-report.json). This focused fixture does not certify broader GUI rendering or clipping behavior.
+
+tools/build-rectangle-vectors.py records native user32 operations on owned RECT structures without creating windows. Additional probes verified empty/inverted inputs and bounding subtraction behavior. No guest executable ran on the host. Microsoft's [rectangle functions overview](https://learn.microsoft.com/en-us/windows/win32/gdi/rectangle-functions), [IntersectRect](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-intersectrect) and [SubtractRect](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-subtractrect) establish the geometry contracts. GDI regions and clipping remain separate work.
+
 ## MulDiv integer scaling extension — 2026-09-08
 
 **198 Node tests passed, 0 failed, 0 skipped.** Three new tests cover 4,245 recorded native results (all combinations of thirteen boundary inputs plus 2,048 seeded full-width triples), signed half rounding, products above JavaScript Number precision, overflow, zero divisors, INT_MIN behavior and last-error preservation. HandleObjects.exe was rebuilt with the three-stack-slot MulDiv import and checks representative success/failure paths through x86 calls. The catalog contains 479 entries.

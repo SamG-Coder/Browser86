@@ -38,6 +38,18 @@ typedef struct {DWORD style;WNDPROC proc;int classExtra,windowExtra;HANDLE insta
 typedef struct {HWND hwnd;DWORD message,wParam;long lParam;DWORD time;long x,y;} MSG;
 typedef struct {HDC dc;BOOL erase;long left,top,right,bottom;BOOL restore,update;BYTE reserved[32];} PAINTSTRUCT;
 typedef struct {long left,top,right,bottom;} RECT;
+typedef struct {long x,y;} POINT;
+API BOOL WINAPI SetRect(RECT*,int,int,int,int);
+API BOOL WINAPI SetRectEmpty(RECT*);
+API BOOL WINAPI CopyRect(RECT*,const RECT*);
+API BOOL WINAPI EqualRect(const RECT*,const RECT*);
+API BOOL WINAPI IsRectEmpty(const RECT*);
+API BOOL WINAPI PtInRect(const RECT*,POINT);
+API BOOL WINAPI OffsetRect(RECT*,int,int);
+API BOOL WINAPI InflateRect(RECT*,int,int);
+API BOOL WINAPI IntersectRect(RECT*,const RECT*,const RECT*);
+API BOOL WINAPI UnionRect(RECT*,const RECT*,const RECT*);
+API BOOL WINAPI SubtractRect(RECT*,const RECT*,const RECT*);
 typedef struct {DWORD size;long width,height;WORD planes,bits;DWORD compression,imageSize;long xppm,yppm;DWORD colorsUsed,important;} BITMAPINFOHEADER;
 API HANDLE WINAPI GetStdHandle(DWORD);
 API BOOL WINAPI WriteFile(HANDLE,const void*,DWORD,DWORD*,void*);

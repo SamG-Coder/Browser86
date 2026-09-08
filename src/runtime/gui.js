@@ -1,4 +1,5 @@
 import {ansiDecode} from './memory.js';
+import {installRectangles} from './rectangles.js';
 import {RuntimeFault,requireThat} from './errors.js';
 const WM_CREATE=1,WM_DESTROY=2,WM_SIZE=5,WM_PAINT=15,WM_CLOSE=16,WM_QUIT=18,WM_COMMAND=0x111;
 export class GUI {
@@ -72,7 +73,7 @@ export class GUI {
     u('SetCursor',1,cursor=>cursor);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));u('GetSysColor',1,index=>({5:0xFFFFFF,8:0,15:0xF0F0F0,18:0}[index]??0xF0F0F0));
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
-    u('SetRect',5,(r,l,t,right,bottom)=>{[l,t,right,bottom].forEach((v,i)=>m.w32(r+i*4,v));return 1;});u('SetRectEmpty',1,r=>{m.fill(r,16);return 1;});u('IsRectEmpty',1,r=>m.i32(r)>=m.i32(r+8)||m.i32(r+4)>=m.i32(r+12)?1:0);u('OffsetRect',3,(r,x,y)=>{for(const i of [0,2])m.w32(r+i*4,m.u32(r+i*4)+x);for(const i of [1,3])m.w32(r+i*4,m.u32(r+i*4)+y);return 1;});
+    installRectangles(this.api);
     g('GetStockObject',1,i=>this.stockObject(i));g('CreateSolidBrush',1,color=>p.handle('gdi',{kind:'brush',color}));g('CreatePen',3,(style,width,color)=>{if(style!==0&&style!==5)throw new RuntimeFault('UNSUPPORTED_GDI','Only solid or null pens are implemented.');return p.handle('gdi',{kind:'pen',color,width:Math.max(1,width|0),null:style===5});});
     g('SelectObject',2,(hdc,obj)=>{const dc=this.dc(hdc),object=p.object(obj,'gdi');if(!dc||!object)return 0;const old=dc[object.kind];dc[object.kind]=obj;return old||0;});
     g('DeleteObject',1,h=>{const obj=p.object(h,'gdi');if(!obj||obj.stock)return 0;if([...p.handles.values()].some(dc=>dc.type==='dc'&&[dc.pen,dc.brush,dc.font].includes(h)))return 0;p.releaseHandle(h);return 1;});
