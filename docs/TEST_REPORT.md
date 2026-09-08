@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Double-click timing and message generation - 2026-09-08
+
+**438 Node tests passed, 0 failed, 0 skipped.** GetDoubleClickTime/SetDoubleClickTime provide default/reset/clamped guest-local timing. CS_DBLCLKS classification supports five buttons, correct down-up-double-up sequences, capture, screen-space distance checks, class opt-in, release requirements and target/button/time separation. The rebuilt HandleObjects.exe checks timing reset and clamping. Catalog now contains 588 entries, without implying full API parity.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** A new DOM-event check feeds browser timestamps through GuestDisplay and the production classifier and verifies the four-message sequence. Evidence: [Node TAP](test-artifacts/double-click-tests.tap), [browser report](test-artifacts/double-click-browser-report.json).
+
+Native timing probes confirmed values 1, 0, 5001, 0xffffffff and 250 become 1, 500, 5000, 5000 and 250 ms, with success and error 1234 preserved. The original host timing was restored in a finally block. Host double-click rectangle metrics were 4 by 4. References: [Microsoft SetDoubleClickTime](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setdoubleclicktime), [Microsoft WM_LBUTTONDBLCLK](https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-lbuttondblclk). The virtual classifier uses a centered half-open 4-by-4 rectangle; exhaustive native spatial/movement boundary behavior was not probed. Built-in controls, queue timing parity, configurable distances and shared cross-process settings remain unfinished.
+
 ## Mouse button and modifier translation - 2026-09-08
 
 **433 Node tests passed, 0 failed, 0 skipped.** Guest mouse input now translates all five DOM buttons into Win32 button messages and held-button flags, including Shift/Control and X-button high-word identifiers. Tests cover all 32 held-button combinations with every modifier combination, releases with other buttons held, unsupported actions, captured routing and signed coordinates. Canvas listeners use mouse events to receive chorded button transitions, and suppress the browser context menu over guest canvases. Catalog remains 586 entries; demonstration sources/binaries are unchanged in this stage.

@@ -3511,6 +3511,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetDoubleClickTime",
+    "argc": 0,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetFocus",
     "argc": 0,
     "cdecl": false,
@@ -3946,6 +3953,13 @@
   {
     "dll": "user32.dll",
     "name": "SetCursor",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetDoubleClickTime",
     "argc": 1,
     "cdecl": false,
     "data": false

@@ -39,20 +39,25 @@ try{
   assert.ok(cursorStyles.some(style=>style.includes('cursor: none')));
   checks.push('Guest SetCursor updates browser canvas cursor styles through the worker bridge');
   const mouseResult=await page.evaluate(async()=>{
-    const {GuestDisplay}=await import('/src/ui/display.js'),{mouseMessage}=await import('/src/runtime/mouse-messages.js');
-    const root=document.createElement('div');document.body.append(root);const messages=[],display=new GuestDisplay(root,event=>messages.push(mouseMessage(event)));
+    const {GuestDisplay}=await import('/src/ui/display.js'),{mouseMessage}=await import('/src/runtime/mouse-messages.js'),{classifyClick}=await import('/src/runtime/double-click.js');
+    const state={classes:new Map([['inputcheck',{style:8}]]),doubleClickTime:500,lastClick:null};
+    const root=document.createElement('div');document.body.append(root);const messages=[],display=new GuestDisplay(root,event=>{const message=mouseMessage(event);classifyClick(state,event,{hwnd:123,className:'InputCheck'},message,event.x,event.y);messages.push(message);});
     try{
       display.window({op:'create',window:{hwnd:123,title:'Input check',className:'InputCheck',style:0x10000000,x:0,y:0,width:100,height:100,visible:true,enabled:true}});
       const canvas=root.querySelector('canvas');
       for(const [button,buttons]of [[0,1],[1,5],[2,7],[3,15],[4,31]])canvas.dispatchEvent(new MouseEvent('mousedown',{button,buttons,shiftKey:true,ctrlKey:true,bubbles:true}));
       canvas.dispatchEvent(new MouseEvent('mouseup',{button:2,buttons:29,bubbles:true}));
       const context=new MouseEvent('contextmenu',{cancelable:true});canvas.dispatchEvent(context);
-      return {messages,contextPrevented:context.defaultPrevented};
+      const buttonMessages=messages.slice();messages.length=0;state.lastClick=null;
+      for(const type of ['mousedown','mouseup','mousedown','mouseup'])canvas.dispatchEvent(new MouseEvent(type,{button:0,buttons:type==='mousedown'?1:0,bubbles:true}));
+      return {messages:buttonMessages,doubleMessages:messages,contextPrevented:context.defaultPrevented};
     }finally{display.reset();root.remove();}
   });
   assert.deepEqual(mouseResult.messages,[{message:0x201,wParam:13},{message:0x207,wParam:29},{message:0x204,wParam:31},{message:0x20b,wParam:0x1003f},{message:0x20b,wParam:0x2007f},{message:0x205,wParam:113}]);
   assert.equal(mouseResult.contextPrevented,true);
   checks.push('Browser mouse chords, modifiers and extra buttons translate to Win32 messages');
+  assert.deepEqual(mouseResult.doubleMessages.map(message=>message.message),[0x201,0x202,0x203,0x202]);
+  checks.push('Browser click timestamps drive CS_DBLCLKS down-up-double-up classification');
   // Read the actual database; no storage adapter or worker mock is used.
   const savedFile=async()=>{
     const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('browser86-packages',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});

@@ -10,6 +10,8 @@ API HANDLE WINAPI LoadCursorW(HANDLE,const WORD*);
 API HANDLE WINAPI SetCursor(HANDLE);
 API HANDLE WINAPI GetCursor(void);
 API int WINAPI ShowCursor(BOOL);
+API DWORD WINAPI GetDoubleClickTime(void);
+API BOOL WINAPI SetDoubleClickTime(DWORD);
 API HWND WINAPI SetCapture(HWND);
 API HWND WINAPI GetCapture(void);
 API BOOL WINAPI ReleaseCapture(void);
