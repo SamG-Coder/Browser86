@@ -3376,6 +3376,34 @@
     "data": false
   },
   {
+    "dll": "shell32.dll",
+    "name": "SHGetMalloc",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "shell32.dll",
+    "name": "SHGetPathFromIDListA",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "shell32.dll",
+    "name": "SHGetPathFromIDListW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "shell32.dll",
+    "name": "SHGetSpecialFolderLocation",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
     "dll": "user32.dll",
     "name": "AdjustWindowRect",
     "argc": 3,
