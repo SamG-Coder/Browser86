@@ -3406,6 +3406,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "InvertRect",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "IsRectEmpty",
     "argc": 1,
     "cdecl": false,

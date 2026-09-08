@@ -273,6 +273,7 @@ void mainCRTStartup(void){
   regionInput.left=10;regionInput.right=11;regionInput.top=2;regionInput.bottom=20;CHECK(!RectInRegion(regionA,&regionInput));
   CHECK(OffsetRgn(regionB,2,-1)==2&&!EqualRgn(regionA,regionB));
   CHECK(SetRectRgn(regionB,3,4,3,8)&&GetRgnBox(regionB,&regionBox)==1&&regionBox.left==0&&regionBox.bottom==0);
+  CHECK(InvertRect(savedDC,&regionInput)&&InvertRect(savedDC,&regionInput));
   CHECK(InvertRgn(savedDC,regionA)&&InvertRgn(savedDC,regionA)&&InvertRgn(savedDC,regionB));
   CHECK(FrameRgn(savedDC,regionA,GetStockObject(4),-2,1)&&!FrameRgn(savedDC,regionA,GetStockObject(4),0,1));
   CHECK(FillRgn(savedDC,regionA,GetStockObject(4))&&PaintRgn(savedDC,regionA));

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## USER32 rectangle inversion - 2026-09-08
+
+**270 Node tests passed, 0 failed, 0 skipped.** InvertRect now validates a complete input RECT, normalizes ordinary reversed corners, skips zero-area drawing and reports invalid DC error 6 after input validation. Tests cover both reversal axes, unchanged input snapshots/DC state, empty rectangles and invalid pointers/handles. The rebuilt HandleObjects.exe imports InvertRect and calls it twice. The catalog contains 536 entries.
+
+**Fifteen rectangle inversion canvas checks and eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Five colors are checked across all 64 pixels against native reversed-rectangle inversion and restoration, followed by ordinary fills to verify compositing restoration. Evidence: [Node TAP](test-artifacts/invert-rect-tests.tap), [canvas report](test-artifacts/invert-rect-canvas-report.json), [browser report](test-artifacts/invert-rect-browser-report.json), [native vectors](../tests/invert-rect-vectors.json).
+
+The [native probe](../tools/build-invert-rect-vectors.py) uses owned offscreen GDI resources and releases them. Separate native calls establish input-before-DC validation and successful empty rectangles. No guest executable ran on the host. Reference: [InvertRect](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-invertrect). Mapping, clipping, arithmetic-overflow parity and non-RGB device behavior remain unfinished.
+
 ## Rectangular region inversion - 2026-09-08
 
 **268 Node tests passed, 0 failed, 0 skipped.** InvertRgn emits an inversion operation for current normalized region bounds, preserves DC state, ignores selected brushes and handles empty/invalid regions with native-observed validation order. The rebuilt HandleObjects.exe imports InvertRgn and exercises repeated and empty-region calls. The catalog contains 535 entries.

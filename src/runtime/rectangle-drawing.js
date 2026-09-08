@@ -1,6 +1,10 @@
 import {checkBuffer} from './files.js';
 
 export function installRectangleDrawing(gui){
+  gui.api.add('user32.dll','InvertRect',2,(handle,rect)=>{
+    checkBuffer(gui.m,rect,16,'r');const [l,t,r,b]=[0,4,8,12].map(i=>gui.m.i32(rect+i));
+    if(!gui.dc(handle))return gui.api.fail(6);if(l!==r&&t!==b)gui.draw(handle,{op:'invert',x:Math.min(l,r),y:Math.min(t,b),width:Math.abs(r-l),height:Math.abs(b-t)});return 1;
+  });
   for(const frame of [false,true])gui.api.add('user32.dll',frame?'FrameRect':'FillRect',3,(handle,rect,brush)=>{
     checkBuffer(gui.m,rect,16,'r');const [left,top,right,bottom]=[0,4,8,12].map(i=>gui.m.i32(rect+i));
     if(frame&&(right<left||bottom<top))return 0;
