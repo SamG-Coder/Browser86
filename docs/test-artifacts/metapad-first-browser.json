@@ -1,0 +1,9 @@
+{
+  "url": "https://samg-coder.github.io/Browser86/",
+  "browser": "152.0.4191.66",
+  "status": "fault",
+  "detail": "UNSUPPORTED_API",
+  "terminal": "Launching C:/app/metapad.exe\nRuntime: original IA-32 interpreter / custom Win32 handlers.\nMapped C:/app/metapad.exe at 0x00400000 (216.0 KiB)\nEntrypoint loaded. Working directory: C:/app\n60 unresolved import(s). Execution stops only if an unresolved import is called.\n\nUNSUPPORTED_API\nNot implemented: user32.dll!GetDialogBaseUnits. This Windows API has no implementation in this build.\n{\n  \"dll\": \"user32.dll\",\n  \"symbol\": \"GetDialogBaseUnits\",\n  \"caller\": \"0x0040bdef\"\n}",
+  "guestWindows": 0,
+  "pageErrors": []
+}
