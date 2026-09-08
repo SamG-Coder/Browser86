@@ -204,6 +204,8 @@ UnregisterClassA/W now accepts class atoms from RegisterClass/ExA/W without dere
 
 Successful UnregisterClassA/W now releases an ordinary owned class-background brush handle, including one selected in a DC. Failed registration or unregistration does not release application brushes. Stock brushes, system brushes and color-index pseudo-handles are preserved. This covers handle invalidation; retained-object drawing through DCs that selected the deleted brush, shared-brush ownership across classes and class-brush replacement remain unfinished.
 
+DefWindowProcA/W now handles WM_ERASEBKGND using the registered class background brush and the DC supplied in wParam. Erasing fills the DC clipping bounds through GetClipBox/FillRect and respects rectangular clipping, system-color brush values and hollow brushes. A null class brush returns zero without drawing or validating the DC. With a brush, invalid DCs return one/error 6, matching native probes. Automatic BeginPaint erase scheduling, nonrectangular clipping, pattern-brush origin rules and built-in control-specific erasing remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

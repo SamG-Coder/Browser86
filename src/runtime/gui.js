@@ -76,7 +76,13 @@ export class GUI {
       return this.p.call(w.proc,[hwnd,msg,wp,lp],result=>{for(const address of temporary)this.p.heap.free(address);return done(result);});}
     return done(this.defWindow(hwnd,msg,wp,lp,wide));
   }
-  defWindow(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(msg===0x81)return 1;if(msg===WM_CLOSE)return this.destroy(hwnd);if(msg===0x0C){w.title=this.api.str(lp,wide);this.notify(w);return 1;}if(msg===0x0D){this.m.string(lp,w.title,wide,wp);return Math.min(w.title.length,Math.max(0,wp-1));}if(msg===0x0E)return w.title.length;if(msg===0x14){this.draw(w.dc,{op:'fill',x:0,y:0,width:w.width,height:w.height,color:0xFFFFFF});return 1;}if(msg===0x84)return 1;if(msg===WM_PAINT){w.paintPending=false;return 0;}if(msg===0xF5&&w.className.toUpperCase()==='BUTTON'){this.p.postMessage(w.parent,WM_COMMAND,w.id&65535,hwnd);return 0;}if(msg===0x30){w.font=wp;return 0;}return 0;}
+  defWindow(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(msg===0x81)return 1;if(msg===WM_CLOSE)return this.destroy(hwnd);if(msg===0x0C){w.title=this.api.str(lp,wide);this.notify(w);return 1;}if(msg===0x0D){this.m.string(lp,w.title,wide,wp);return Math.min(w.title.length,Math.max(0,wp-1));}if(msg===0x0E)return w.title.length;if(msg===0x14)return this.eraseBackground(w,wp);if(msg===0x84)return 1;if(msg===WM_PAINT){w.paintPending=false;return 0;}if(msg===0xF5&&w.className.toUpperCase()==='BUTTON'){this.p.postMessage(w.parent,WM_COMMAND,w.id&65535,hwnd);return 0;}if(msg===0x30){w.font=wp;return 0;}return 0;}
+  eraseBackground(w,dc){
+    const brush=this.classes.get(w.className.toLowerCase())?.background||0;if(!brush)return 0;
+    const rect=this.p.heap.alloc(16,true);
+    try {if(this.api.lookup('gdi32.dll','GetClipBox').fn(dc,rect))this.api.lookup('user32.dll','FillRect').fn(dc,rect,brush);return 1;}
+    finally {this.p.heap.free(rect);}
+  }
   destroy(hwnd,done=value=>value,nonclientOnly=false){
     const w=this.window(hwnd);if(!w)return done(this.api.fail(1400));if(w.destroying)return done(0);w.destroying=true;
     const notify=(message,next)=>w.proc?this.p.call(w.proc,[hwnd,message,0,0],next):next();

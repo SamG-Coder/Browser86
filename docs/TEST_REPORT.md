@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Class background erasing - 2026-09-08
+
+**365 Node tests passed, 0 failed, 0 skipped.** Default WM_ERASEBKGND processing now uses the registered brush, supplied DC and its clipping bounds. Tests cover A/W default procedures, color and drawing destination, rectangular clips extending beyond the window client area, null and hollow brushes, system-color values, invalid/empty DC paths and temporary rectangle cleanup. The rebuilt HandleObjects.exe checks successful class erasing and invalid-DC return/error behavior. Catalog remains 576 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-erase-tests.tap), [browser report](test-artifacts/window-erase-browser-report.json).
+
+Native probes created private hidden 20x20 windows with a solid class brush and supplied an owned 40x40 bitmap DC. Pixels at both (5,5) and (30,30) became the brush color, confirming use of DC bounds. Invalid DCs returned one/error 6 with a class brush; null-background classes returned zero and preserved last error without drawing. Owned windows, classes, bitmaps and DCs were cleaned up. Reference: [Microsoft WM_ERASEBKGND](https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-erasebkgnd). Automatic BeginPaint erase scheduling, complex clipping, pattern alignment and built-in control-specific erasing remain unfinished.
+
 ## Class background brush lifetime - 2026-09-08
 
 **361 Node tests passed, 0 failed, 0 skipped.** Successful UnregisterClassA/W releases ordinary background brush handles. Tests cover RegisterClass/Ex A/W variants, failed registration, live windows, instance mismatch, stock/system/color pseudo-handles, and brush invalidation while selected in a DC. The rebuilt HandleObjects.exe assigns a real brush to its ANSI class, confirms validity after rejected unregistration, and checks that GetObjectType returns zero after successful removal. Catalog remains 576 entries.
