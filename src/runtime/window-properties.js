@@ -12,28 +12,33 @@ export function installWindowProperties(gui){
   if(/^#[0-9]+$/.test(text)){const n=Number(text.slice(1));return n>0&&n<0xc000?{value:n}:{error:87};}
   return {text,value:Array.from({length:text.length},(_,i)=>String.fromCharCode(ordinalUpper.get(text.charCodeAt(i))??text.charCodeAt(i))).join('')};
  };
+ const table=api.globalAtoms;
  for(const wide of [false,true])for(const op of ['Set','Get','Remove'])u(op+'Prop'+(wide?'W':'A'),op==='Set'?3:2,(h,name,data)=>{
-  const w=gui.window(h);if(!w)return api.fail(1400);const k=key(name,wide);if(k.error)return api.fail(k.error);
-  if(k.value===0)return op==='Set'?api.fail(87):0;
+  const w=gui.window(h);if(!w)return api.fail(1400);const parsed=key(name,wide);if(parsed.error)return api.fail(parsed.error);
+  if(parsed.value===0)return op==='Set'?api.fail(87):0;
+  const string=typeof parsed.value==='string';let id=string?table.names.get(parsed.value)?.id:parsed.value;
   if(op==='Set'){
-   w.properties??=new Map();if(!w.properties.has(k.value)&&w.properties.size>=4096)throw new RuntimeFault('GUI_LIMIT','Too many window properties.');
-   if(typeof k.value==='string'){
-    w.propertyNames??=new Map();if(!w.propertyNames.has(k.value)){const existing=[...gui.windows.values()].find(other=>other.propertyNames?.has(k.value));w.propertyNames.set(k.value,existing?.propertyNames.get(k.value)??k.text);}
-   }
-   w.properties.set(k.value,data>>>0);return 1;
+   w.properties??=new Map();if(!w.properties.has(id)&&w.properties.size>=4096)throw new RuntimeFault('GUI_LIMIT','Too many window properties.');
+   if(string){id=table.add({key:parsed.value,text:parsed.text});if(!id)return 0;w.propertyStringRefs??=new Set();w.propertyStringRefs.add(id);}
+   w.properties.set(id,data>>>0);return 1;
   }
-  if(typeof k.value==='string'&&![...gui.windows.values()].some(other=>other.properties?.has(k.value)))return api.fail(2);
-  const value=w.properties?.get(k.value)??0;if(op==='Remove'){w.properties?.delete(k.value);w.propertyNames?.delete(k.value);}return value;
+  if(id===undefined)return api.fail(2);
+  const value=w.properties?.get(id)??0;if(op==='Remove'&&w.properties?.has(id)){w.properties.delete(id);if(w.propertyStringRefs?.delete(id)&&table.atoms.has(id))table.drop(id);}return value;
  });
  for(const wide of [false,true])for(const extended of [false,true])u('EnumProps'+(extended?'Ex':'')+(wide?'W':'A'),extended?3:2,(h,callback,param)=>{
   const w=gui.window(h);if(!w)return api.fail(1400,-1);
-  const entries=[...(w.properties||[])].map(([key,data])=>({key,data,name:w.propertyNames?.get(key)??key}));
+  const entries=[...(w.properties||[])].map(([key,data])=>({key,data,name:table.atoms.get(key)?.text??key}));
   if(!entries.length)return -1;if(!callback)throw new RuntimeFault('CALLBACK_POINTER','Window property enumeration requires a callback.');
   let i=0;const next=last=>{
    if(i===entries.length)return last;const entry=entries[i++];let name=entry.key,allocated=0;
-   if(typeof name==='string'){allocated=api.p.heap.alloc((entry.name.length+1)*(wide?2:1));name=allocated;m.string(name,entry.name,wide,entry.name.length+1);}
+   if(typeof entry.name==='string'){allocated=api.p.heap.alloc((entry.name.length+1)*(wide?2:1));name=allocated;m.string(name,entry.name,wide,entry.name.length+1);}
    const args=[h,name,entry.data];if(extended)args.push(param>>>0);
    return api.p.call(callback,args,result=>{if(allocated)api.p.heap.free(allocated);return (result>>>0)===0?0:next(result|0);});
   };return next(-1);
  });
+}
+
+export function releaseWindowProperties(gui,w){
+ for(const id of w.propertyStringRefs||[])if(gui.api.globalAtoms.atoms.has(id))gui.api.globalAtoms.drop(id);
+ w.properties?.clear();w.propertyStringRefs?.clear();
 }

@@ -338,6 +338,13 @@ void mainCRTStartup(void){
   CHECK(GetAtomNameW(localAtom,atomOutput,16)==5&&atomOutput[0]=='M'&&atomOutput[1]=='i'&&atomOutput[2]=='X'&&atomOutput[3]=='e'&&atomOutput[4]=='D'&&!atomOutput[5]);
   CHECK(!DeleteAtom(localAtom)&&FindAtomA("mixed")==localAtom);CHECK(!DeleteAtom(localAtom));SetLastError(1234);CHECK(!FindAtomA("mixed")&&GetLastError()==2);
   CHECK(AddAtomA("#0001")==1&&FindAtomW((const WORD*)1)==1&&GetAtomNameA(1,atomAnsi,16)==2&&atomAnsi[0]=='#'&&atomAnsi[1]=='1');
+  WORD globalWide[]={ 'G','l','o','b','a','l','C','o','n','t','e','x','t',0 };
+  WORD globalAtom=GlobalAddAtomA("GlobalContext");CHECK(globalAtom>=0xc000&&GlobalAddAtomW(globalWide)==globalAtom&&GlobalFindAtomW(globalWide)==globalAtom);
+  CHECK(SetPropA(lifetimeWindows[0],(const char*)(DWORD)globalAtom,(HANDLE)789)&&GetPropW(lifetimeWindows[0],globalWide)==(HANDLE)789);
+  CHECK(GlobalGetAtomNameW(globalAtom,atomOutput,3)==3&&atomOutput[0]=='G'&&atomOutput[1]=='l'&&atomOutput[2]=='o');
+  SetLastError(1234);CHECK(!GlobalGetAtomNameA(globalAtom,atomAnsi,3)&&GetLastError()==234&&atomAnsi[0]=='G'&&atomAnsi[1]=='l'&&!atomAnsi[2]);
+  CHECK(RemovePropW(lifetimeWindows[0],globalWide)==(HANDLE)789);CHECK(!GlobalDeleteAtom(globalAtom)&&GlobalFindAtomA("GlobalContext")==globalAtom);CHECK(!GlobalDeleteAtom(globalAtom));
+  CHECK(!GlobalFindAtomA("GlobalContext"));
   WORD propertyName[]={ 'C','o','n','t','e','x','t',0 };
   CHECK(SetPropA(lifetimeWindows[0],"context",(HANDLE)0x12345678));CHECK(GetPropW(lifetimeWindows[0],propertyName)==(HANDLE)0x12345678);
   CHECK(SetPropW(lifetimeWindows[0],propertyName,(HANDLE)0xffffffff));CHECK(RemovePropA(lifetimeWindows[0],"CONTEXT")== (HANDLE)0xffffffff);

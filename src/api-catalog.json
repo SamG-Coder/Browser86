@@ -1513,6 +1513,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GlobalAddAtomA",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GlobalAddAtomW",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GlobalAlloc",
     "argc": 2,
     "cdecl": false,
@@ -1520,8 +1534,43 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GlobalDeleteAtom",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GlobalFindAtomA",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GlobalFindAtomW",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GlobalFree",
     "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GlobalGetAtomNameA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GlobalGetAtomNameW",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },

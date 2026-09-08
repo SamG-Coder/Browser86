@@ -298,4 +298,11 @@ API WORD WINAPI DeleteAtom(WORD);
 API DWORD WINAPI GetAtomNameA(WORD,char*,int);
 API DWORD WINAPI GetAtomNameW(WORD,WORD*,int);
 API BOOL WINAPI InitAtomTable(DWORD);
+API WORD WINAPI GlobalAddAtomA(const char*);
+API WORD WINAPI GlobalAddAtomW(const WORD*);
+API WORD WINAPI GlobalFindAtomA(const char*);
+API WORD WINAPI GlobalFindAtomW(const WORD*);
+API WORD WINAPI GlobalDeleteAtom(WORD);
+API DWORD WINAPI GlobalGetAtomNameA(WORD,char*,int);
+API DWORD WINAPI GlobalGetAtomNameW(WORD,WORD*,int);
 #endif

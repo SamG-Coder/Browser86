@@ -1,4 +1,4 @@
-import {installWindowProperties} from './window-properties.js';
+import {installWindowProperties,releaseWindowProperties} from './window-properties.js';
 import {installWindowFocus} from './window-focus.js';
 import {installWindowState} from './window-state.js';
 import {childRoot,installWindowHierarchy} from './window-hierarchy.js';
@@ -39,7 +39,7 @@ export class GUI {
       let i=0;const advance=()=>{while(i<pending.length){const c=pending[i++];if(this.window(c.hwnd)&&!c.destroying)return this.destroy(c.hwnd,advance);}return next();};return advance();
     };
     const finish=()=>{
-      this.windows.delete(hwnd);this.p.releaseHandle(hwnd);if(w.dc)this.p.releaseHandle(w.dc);
+      releaseWindowProperties(this,w);this.windows.delete(hwnd);this.p.releaseHandle(hwnd);if(w.dc)this.p.releaseHandle(w.dc);
       for(const [key,t]of this.p.timers)if(t.hwnd===hwnd)this.p.timers.delete(key);
       if(this.focus===hwnd)this.focus=0;
       this.p.emit('window',{op:'destroy',window:this.serialize(w)});return done(1);

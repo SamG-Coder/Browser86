@@ -6,7 +6,7 @@ test('Window properties share case-insensitive ANSI and Unicode names and replac
  const {p,call,str}=setup(),a=str('Café'),w=str('CAFÉ',true);p.setError(1234);
  assert.equal(call('SetPropA',1,a,0xffffffff),1);assert.equal(call('GetPropW',1,w),0xffffffff);assert.equal(p.lastError,1234);
  assert.equal(call('SetPropW',1,w,0),1);assert.equal(call('GetPropA',1,a),0);assert.equal(p.lastError,1234);
- assert.equal(call('RemovePropW',1,w),0);assert.equal(p.lastError,1234);assert.equal(call('GetPropA',1,a),0);assert.equal(p.lastError,2);
+ assert.equal(call('RemovePropW',1,w),0);assert.equal(p.lastError,1234);assert.equal(call('GetPropA',1,a),0);assert.equal(p.lastError,1234); // Replacing by string acquired another global atom reference.
 });
 test('Integer and decimal-string property keys alias without dereferencing low addresses',()=>{
  const {p,call,str}=setup();for(const key of [1,0xbfff,0xcfff]){p.setError(1234);assert.equal(call('SetPropW',1,key,123),1);assert.equal(call('GetPropA',1,key),123);assert.equal(call('RemovePropA',1,key),123);assert.equal(p.lastError,1234);}

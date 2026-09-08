@@ -1,4 +1,4 @@
-import {installLocalAtoms} from './local-atoms.js';
+import {installLocalAtoms,installGlobalAtoms} from './local-atoms.js';
 import {RuntimeFault,requireThat,hex} from './errors.js';
 import {alignUp,ansiEncode,ansiDecode} from './memory.js';
 import {GUI} from './gui.js';
@@ -126,7 +126,7 @@ export class Win32 {
     installSRWLocks(this);
     installConditionVariables(this);
     installTimeConversions(this);
-    installLocalAtoms(this);
+    installLocalAtoms(this);installGlobalAtoms(this);
     installOrdinalComparison(this);
     installCodePageInfo(this);
     installCodePageConversions(this);
