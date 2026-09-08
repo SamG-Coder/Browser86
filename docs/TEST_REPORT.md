@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Mouse button and modifier translation - 2026-09-08
+
+**433 Node tests passed, 0 failed, 0 skipped.** Guest mouse input now translates all five DOM buttons into Win32 button messages and held-button flags, including Shift/Control and X-button high-word identifiers. Tests cover all 32 held-button combinations with every modifier combination, releases with other buttons held, unsupported actions, captured routing and signed coordinates. Canvas listeners use mouse events to receive chorded button transitions, and suppress the browser context menu over guest canvases. Catalog remains 586 entries; demonstration sources/binaries are unchanged in this stage.
+
+**Ten real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** The added check dispatches DOM MouseEvents through GuestDisplay and the production message translator, checking chorded presses, extra buttons, modifiers, release flags and context-menu suppression. Existing guest-worker checks also pass. Evidence: [Node TAP](test-artifacts/mouse-buttons-tests.tap), [browser report](test-artifacts/mouse-buttons-browser-report.json).
+
+References: [Microsoft WM_XBUTTONDOWN](https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-xbuttondown), [Microsoft WM_MOUSEMOVE](https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-mousemove). These define the Win32 message fields and capture routing used by this change. This stage uses browser DOM and runtime tests rather than host mouse injection. Double-clicks, wheel input, native button swapping, pen-specific handling and context-menu message generation remain unfinished.
+
 ## Default cancellation and capture release - 2026-09-08
 
 **429 Node tests passed, 0 failed, 0 skipped.** DefWindowProcA/W handles WM_CANCELMODE capture release. Tests cover receiver-only release, ignored parameters, synchronous notification, state changes during callbacks, custom-procedure overrides, invalid HWNDs and default EnableWindow(FALSE) cancellation. The rebuilt HandleObjects.exe verifies explicit default cancellation clears capture. Catalog remains 586 entries.

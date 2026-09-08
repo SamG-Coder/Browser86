@@ -5,6 +5,7 @@ import {installWindowProperties,releaseWindowProperties} from './window-properti
 import {installWindowFocus} from './window-focus.js';
 import {installWindowState} from './window-state.js';
 import {childRoot,setWindowOwner,installWindowHierarchy} from './window-hierarchy.js';
+import {mouseMessage} from './mouse-messages.js';
 import {installMouseCapture,cancelCapture} from './mouse-capture.js';
 import {installWindowCoordinates,windowOrigin} from './window-coordinates.js';
 import {installRegions} from './regions.js';
@@ -113,7 +114,7 @@ export class GUI {
     if(event.kind==='close')p.postMessage(w.hwnd,WM_CLOSE);
     else if(event.kind==='click'){if(w.parent&&w.className.toUpperCase()==='BUTTON')p.postMessage(w.parent,WM_COMMAND,w.id&65535,w.hwnd);}
     else if(event.kind==='edit'){w.title=String(event.text).slice(0,65535);if(w.parent)p.postMessage(w.parent,WM_COMMAND,((0x300<<16)|(w.id&65535))>>>0,w.hwnd);}
-    else if(event.kind==='mouse'){const target=this.window(this.capture)||w,id=event.event==='down'?0x201:event.event==='up'?0x202:0x200;let x=event.x,y=event.y;if(target!==w){const from=windowOrigin(this,w.hwnd),to=windowOrigin(this,target.hwnd);x+=from[0]-to[0];y+=from[1]-to[1];}const xy=((x&65535)|((y&65535)<<16))>>>0;p.postMessage(target.hwnd,id,event.buttons||0,xy);}
+    else if(event.kind==='mouse'){const message=mouseMessage(event);if(!message)return;const target=this.window(this.capture)||w;let x=event.x,y=event.y;if(target!==w){const from=windowOrigin(this,w.hwnd),to=windowOrigin(this,target.hwnd);x+=from[0]-to[0];y+=from[1]-to[1];}const xy=((x&65535)|((y&65535)<<16))>>>0;p.postMessage(target.hwnd,message.message,message.wParam,xy);}
     else if(event.kind==='key'){const code=event.code>>>0;this.keyChars.set(code,event.char||'');p.postMessage(w.hwnd,event.down?0x100:0x101,code,event.down?1:0xC0000001);}
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
