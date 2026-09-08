@@ -345,6 +345,9 @@ void mainCRTStartup(void){
   SetLastError(1234);CHECK(!GlobalGetAtomNameA(globalAtom,atomAnsi,3)&&GetLastError()==234&&atomAnsi[0]=='G'&&atomAnsi[1]=='l'&&!atomAnsi[2]);
   CHECK(RemovePropW(lifetimeWindows[0],globalWide)==(HANDLE)789);CHECK(!GlobalDeleteAtom(globalAtom)&&GlobalFindAtomA("GlobalContext")==globalAtom);CHECK(!GlobalDeleteAtom(globalAtom));
   CHECK(!GlobalFindAtomA("GlobalContext"));
+  WORD extendedAtom=GlobalAddAtomExA("GlobalContext",0);CHECK(extendedAtom&&GlobalAddAtomExW(globalWide,2)==extendedAtom);
+  SetLastError(1234);CHECK(!GlobalAddAtomExA("GlobalContext",4)&&GetLastError()==87);CHECK(GlobalAddAtomExW((const WORD*)1,0xffffffff)==1);
+  CHECK(!GlobalDeleteAtom(extendedAtom)&&GlobalFindAtomA("GlobalContext")==extendedAtom);CHECK(!GlobalDeleteAtom(extendedAtom)&&!GlobalFindAtomA("GlobalContext"));
   WORD propertyName[]={ 'C','o','n','t','e','x','t',0 };
   CHECK(SetPropA(lifetimeWindows[0],"context",(HANDLE)0x12345678));CHECK(GetPropW(lifetimeWindows[0],propertyName)==(HANDLE)0x12345678);
   CHECK(SetPropW(lifetimeWindows[0],propertyName,(HANDLE)0xffffffff));CHECK(RemovePropA(lifetimeWindows[0],"CONTEXT")== (HANDLE)0xffffffff);

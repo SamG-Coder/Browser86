@@ -305,4 +305,6 @@ API WORD WINAPI GlobalFindAtomW(const WORD*);
 API WORD WINAPI GlobalDeleteAtom(WORD);
 API DWORD WINAPI GlobalGetAtomNameA(WORD,char*,int);
 API DWORD WINAPI GlobalGetAtomNameW(WORD,WORD*,int);
+API WORD WINAPI GlobalAddAtomExA(const char*,DWORD);
+API WORD WINAPI GlobalAddAtomExW(const WORD*,DWORD);
 #endif

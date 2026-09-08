@@ -1520,6 +1520,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GlobalAddAtomExA",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GlobalAddAtomExW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GlobalAddAtomW",
     "argc": 1,
     "cdecl": false,

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Extended global atom flags - 2026-09-08
+
+**328 Node tests passed, 0 failed, 0 skipped.** Added GlobalAddAtomExA/W for flags 0 and ATOM_FLAG_GLOBAL (2). Tests verify A/W identity, ordinary reference lifetime, property interoperability, invalid string flags returning error 87, integer/null inputs ignoring flags, invalid name memory and no reference changes on failure. The rebuilt HandleObjects.exe imports both functions and checks accepted flags, invalid flags and balanced deletion. Catalog: 574 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/extended-atom-tests.tap), [browser report](test-artifacts/extended-atom-browser-report.json).
+
+Native ctypes probes accepted flags 0/2 for unique string atoms and rejected 4/0x80000000 with error 87. Integer inputs 0/1/0xc000 were tested with flags 0/1/2/0xffffffff: valid integer/null forms ignored the flags and preserved error 1234; invalid integer atoms returned error 87. Successful string additions were matched by GlobalDeleteAtom. No string atom was intentionally pinned in the host table and no guest executable ran on the host. The initial assumption that the Ex API documentation supplied a pinning contract was corrected: the API page does not describe flag semantics, and Microsoft's header defines ATOM_FLAG_GLOBAL as 0x2. References: [GlobalAddAtomExW](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-globaladdatomexw), [Microsoft WinBase.h](https://github.com/microsoft/win32metadata/blob/main/generation/WinSDK/RecompiledIdlHeaders/um/WinBase.h). String flag 1 remains an explicit UNSUPPORTED_ATOM fault; pinning semantics and cross-process global state remain unfinished.
+
 ## Global atoms and window properties - 2026-09-08
 
 **326 Node tests passed, 0 failed, 0 skipped.** Added GlobalAddAtomA/W, GlobalFindAtomA/W, GlobalGetAtomNameA/W and GlobalDeleteAtom using a separate table from local atoms. Window properties now use global atom IDs, acquire references for string setters, preserve numeric setters without an added reference, resolve atom-keyed enumeration names and release property-held references on removal/destruction. The earlier test expecting a replaced string's name to disappear after one removal was corrected: native string replacement acquires another atom reference. Tests cover A/W identity, table separation, lifecycle, short-buffer semantics, invalid output memory and long-name error 87. HandleObjects.exe imports all seven functions and verifies name/ID property interoperability and A/W truncation. Catalog: 572 entries.

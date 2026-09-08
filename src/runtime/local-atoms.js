@@ -2,6 +2,7 @@ import {ansiDecode} from './memory.js';
 import {ordinalUpper} from './ordinal-table.js';
 import {sbcsTables} from './sbcs-tables.js';
 import {checkBuffer} from './files.js';
+import {RuntimeFault} from './errors.js';
 const ansiBestFit=new Map(sbcsTables[1252].encode[0]);
 export function installLocalAtoms(api){installAtomTable(api,false);}
 export function installGlobalAtoms(api){installAtomTable(api,true);}
@@ -26,6 +27,11 @@ function installAtomTable(api,global){
  const drop=id=>{id&=65535;if(id<0xc000)return 0;const atom=atoms.get(id);if(!atom)return api.fail(6);if(!atom.pinned&&--atom.refs===0){atoms.delete(id);names.delete(atom.key);}return 0;};
  if(global)api.globalAtoms={atoms,names,read,add:addName,drop};
  for(const wide of [false,true]){
+  if(global)k('AddAtomEx'+(wide?'W':'A'),2,(pointer,flags)=>{
+   const name=read(pointer,wide,true);if(name.error)return api.fail(name.error);if(name.integer!==undefined)return name.integer;
+   flags>>>=0;if(flags&~3)return api.fail(87);if(flags&1)throw new RuntimeFault('UNSUPPORTED_ATOM','GlobalAddAtomEx flag 1 is not implemented.');
+   return addName(name);
+  });
   for(const add of [false,true])k((add?'Add':'Find')+'Atom'+(wide?'W':'A'),1,pointer=>{
    const name=read(pointer,wide,add);if(name.error)return api.fail(name.error);if(name.integer!==undefined)return name.integer;
    return add?addName(name):names.get(name.key)?.id??api.fail(2);
