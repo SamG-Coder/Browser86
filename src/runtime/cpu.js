@@ -144,6 +144,7 @@ export class CPU {
   extended(w){const op=this.next8();
     if(op===0x13&&this.op16&&!this.rep){const o=this.operand(32);if(o.isReg)this.unsupported('MOVLPD store requires a memory operand.');this.m.write(o.a,this.xmm[o.reg].subarray(0,8));return;}
     if(op===0xd6&&this.op16&&!this.rep){const o=this.operand(32),low=this.xmm[o.reg].slice(0,8);if(o.isReg){this.xmm[o.rm].fill(0);this.xmm[o.rm].set(low);}else this.m.write(o.a,low);return;}
+    if(op===0xe6&&this.rep===0xf3&&!this.op16){const o=this.operand(32),bytes=o.isReg?this.xmm[o.rm].slice(0,8):this.m.read(o.a,8),source=new DataView(bytes.buffer,bytes.byteOffset,8),dest=new DataView(this.xmm[o.reg].buffer);const lo=source.getInt32(0,true),hi=source.getInt32(4,true);dest.setFloat64(0,lo,true);dest.setFloat64(8,hi,true);return;}
     if(op>=0x80&&op<=0x8F){const d=signed(this.imm(w),w);if(this.condition(op&15))this.eip=trunc(this.eip+d,w);return;}
     if(op>=0x90&&op<=0x9F){const o=this.operand(8);o.set(this.condition(op&15)?1:0);return;}
     if(op>=0x40&&op<=0x4F){const o=this.operand(w),v=o.get();if(this.condition(op&15))this.set(o.reg,v,w);return;}
