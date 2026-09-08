@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Class-name buffers and encoding - 2026-09-08
+
+**462 Node tests passed, 0 failed, 0 skipped.** GetClassNameA/W now handles native zero/one-capacity differences, ANSI best-fit conversion, invalid-HWND precedence and full actual-write validation. Tests cover truncated and full output, terminators, untouched neighboring bytes, preserved buffers on errors, destroyed windows and explicit negative-capacity rejection. The rebuilt HandleObjects.exe checks Unicode class-name output and one-character buffer failure. Catalog remains 592 entries.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-name-tests.tap), [browser report](test-artifacts/class-name-browser-report.json).
+
+Native private A/W class probes confirmed ANSI zero capacity preserves output/error, ANSI one capacity writes a terminator, and Unicode zero/one capacities fail with error 122 without writes. Invalid HWNDs failed with 1400 before capacity handling. Successful truncation preserved error 1234. Normal probe windows/classes were cleaned up. A negative-capacity probe terminated its separate native process without a usable result; this path remains explicitly unsupported in the guest. Reference: [Microsoft GetClassNameW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getclassnamew). Invalid guest pointers remain memory faults rather than emulated native access-exception handling.
+
 ## WORD window storage accessors - 2026-09-08
 
 **458 Node tests passed, 0 failed, 0 skipped.** GetWindowWord/SetWindowWord share backing bytes with DWORD per-window accessors. Tests cover overlapping unaligned writes, truncation, per-window isolation, allocation bounds after class defaults change, low-half user-data mutation and invalid/destroyed HWNDs. The rebuilt HandleObjects.exe imports both APIs and checks last-slot WORD storage. Catalog now contains 592 entries, without implying full API parity.
