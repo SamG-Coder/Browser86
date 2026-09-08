@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Window text length callbacks - 2026-09-08
+
+**353 Node tests passed, 0 failed, 0 skipped.** GetWindowTextLengthA/W now invokes the guest procedure. Cross-encoding WM_GETTEXTLENGTH follows a positive reported length with WM_GETTEXT and returns the retrieved count for CP1252/UTF-16. Tests cover four encoding combinations, zero-length early completion, message parameters, invalid HWNDs, callback errors, allocation limits, invalid callback counts and destruction cleanup. The rebuilt HandleObjects.exe imports both APIs and checks same-encoding length 7 versus actual cross-encoding counts 4 and 6. Catalog remains 576 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-text-length-tests.tap), [browser report](test-artifacts/window-text-length-browser-report.json).
+
+Native probes registered private hidden ANSI/Unicode windows and recorded both length APIs and direct messages. Same-encoding queries returned the reported length. Cross-encoding queries cleared lParam and, for positive length, issued WM_GETTEXT with capacity length + 1; a reported length of 7 with four returned characters yielded 4. A zero length skipped retrieval. Invalid API HWNDs returned zero/error 1400. All windows and classes were cleaned up. Reference: [Microsoft GetWindowTextLengthW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextlengthw). Multibyte code pages, conversion-specific last-error details and arbitrary procedure changes during callbacks remain unfinished.
+
 ## GetWindowText API callback dispatch - 2026-09-08
 
 **349 Node tests passed, 0 failed, 0 skipped.** GetWindowTextA/W now sends WM_GETTEXT through the guest procedure and conversion path. Tests cover all four encodings, custom output, zero capacity and null pointers before HWND validation, invalid HWND and negative count behavior, initial terminator width, short Unicode output, callback-set errors, the ANSI-to-Unicode capacity-one error path and truncated output memory. The rebuilt HandleObjects.exe imports both APIs and verifies converted custom output and invalidated HWND failure. Catalog remains 576 entries.

@@ -227,6 +227,8 @@ API BOOL WINAPI SetWindowTextA(HWND,const char*);
 API BOOL WINAPI SetWindowTextW(HWND,const WORD*);
 API int WINAPI GetWindowTextA(HWND,char*,int);
 API int WINAPI GetWindowTextW(HWND,WORD*,int);
+API int WINAPI GetWindowTextLengthA(HWND);
+API int WINAPI GetWindowTextLengthW(HWND);
 API long WINAPI SendMessageA(HWND,DWORD,DWORD,long);
 API long WINAPI SendMessageW(HWND,DWORD,DWORD,long);
 API int WINAPI MessageBoxA(HWND,const char*,const char*,DWORD);

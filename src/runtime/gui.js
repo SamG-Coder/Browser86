@@ -42,6 +42,20 @@ export class GUI {
   }
   send(hwnd,msg,wp,lp,wide=false,done=value=>value){
     const w=this.window(hwnd);if(!w)return done(0);
+    if(w.proc&&msg===0x0E&&wide!==w.wide){
+      const procedureWide=w.wide;
+      return this.p.call(w.proc,[hwnd,msg,wp,0],length=>{
+        length>>>=0;if(!length||!this.window(hwnd))return done(0);
+        requireThat(length<1048576,'STRING_LIMIT','Window text length exceeds the conversion limit.');
+        const buffer=this.p.heap.alloc((length+1)*(procedureWide?2:1),true);
+        return this.p.call(w.proc,[hwnd,0x0D,length+1,buffer],count=>{
+          try {count>>>=0;requireThat(count<=length,'CALLBACK_RESULT','WM_GETTEXT returned a count outside its buffer.');
+            // CP1252 and UTF-16 conversion emits one destination unit per source unit.
+            return done(count);
+          } finally {this.p.heap.free(buffer);}
+        });
+      });
+    }
     if(w.proc&&msg===0x0D&&wide!==w.wide&&lp){
       const capacity=wp>>>0;requireThat(capacity<=1048576,'STRING_LIMIT','Window text buffer exceeds the conversion limit.');
       if(capacity)checkBuffer(this.m,lp,capacity*(wide?2:1));
@@ -119,7 +133,7 @@ export class GUI {
         if(!wide&&w.wide&&n===1)p.setError(0);
         return this.send(h,0x0D,n,out,wide);
       });
-      u('GetWindowTextLength'+suffix,1,h=>this.window(h)?.title.length||0);
+      u('GetWindowTextLength'+suffix,1,h=>this.window(h)?this.send(h,0x0E,0,0,wide):a.fail(1400));
       u('GetClassName'+suffix,3,(h,out,n)=>{const w=this.window(h);if(!w)return a.fail(1400);m.string(out,w.className,wide,n);return Math.min(w.className.length,Math.max(0,n-1));});
       u('MessageBox'+suffix,4,(hwnd,text,caption,type)=>{const groups={0:[['OK',1]],1:[['OK',1],['Cancel',2]],2:[['Abort',3],['Retry',4],['Ignore',5]],3:[['Yes',6],['No',7],['Cancel',2]],4:[['Yes',6],['No',7]],5:[['Retry',4],['Cancel',2]],6:[['Cancel',2],['Try again',10],['Continue',11]]};const buttons=groups[type&15];if(!buttons)throw new RuntimeFault('UNSUPPORTED_DIALOG','This MessageBox button type is not implemented.');const id=p.nextDialog++;p.emit('dialog',{id,hwnd,text:str(text),caption:str(caption),buttons,flags:type});return p.wait(()=>{if(!p.dialogResults.has(id))return undefined;const value=p.dialogResults.get(id);p.dialogResults.delete(id);return value;},'MessageBox response');});
       u('LoadCursor'+suffix,2,(instance,name)=>name<65536?name:0);u('LoadIcon'+suffix,2,(instance,name)=>name<65536?name:0);
