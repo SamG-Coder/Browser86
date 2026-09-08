@@ -442,6 +442,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "DosDateTimeToFileTime",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "DuplicateHandle",
     "argc": 7,
     "cdecl": false,
@@ -471,6 +478,13 @@
   {
     "dll": "kernel32.dll",
     "name": "ExpandEnvironmentStringsW",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "FileTimeToDosDateTime",
     "argc": 3,
     "cdecl": false,
     "data": false

@@ -189,6 +189,11 @@ void mainCRTStartup(void){
   CHECK(converted.year==2000&&converted.month==2&&converted.day==29&&converted.weekday==2&&converted.millis==999);
   CHECK(CompareFileTime(&epoch,&stamp)==-1&&CompareFileTime(&stamp,&epoch)==1&&CompareFileTime(&stamp,&stamp)==0);
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
+  WORD fatDate,fatTime;
+  CHECK(DosDateTimeToFileTime(0x21,0,&stamp));CHECK(FileTimeToDosDateTime(&stamp,&fatDate,&fatTime));
+  CHECK(fatDate==0x21&&fatTime==0);stamp.low++;
+  CHECK(FileTimeToDosDateTime(&stamp,&fatDate,&fatTime)&&fatTime==1);
+  CHECK(!DosDateTimeToFileTime(0,0,&stamp)&&GetLastError()==87);
   InitializeConditionVariable(&condition);WakeConditionVariable(&condition);WakeAllConditionVariable(&condition);
   AcquireSRWLockExclusive(&srw);CHECK(!SleepConditionVariableSRW(&condition,&srw,0,0)&&GetLastError()==1460);ReleaseSRWLockExclusive(&srw);
   AcquireSRWLockShared(&srw);CHECK(!SleepConditionVariableSRW(&condition,&srw,0,1)&&GetLastError()==1460);ReleaseSRWLockShared(&srw);

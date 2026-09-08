@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## DOS packed timestamp extension — 2026-09-08
+
+**166 Node tests passed, 0 failed, 0 skipped.** Four new tests cover native rounding vectors, exact 100ns boundary behavior, month/year rollover, exhaustive validation of all 65,536 packed date words (46,751 valid dates), invalid time fields, WORD argument truncation, range failures, unchanged failure output, overlapping buffers and complete output validation. HandleObjects.exe was rebuilt with both real DOS conversion imports and checks the 1980 epoch, one-tick upward rounding and invalid-date failure through the x86 interpreter. The catalog contains 470 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The updated fixture executed in the actual runtime worker; CSP/module delivery, IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/dos-time-tests.tap) and [browser report](test-artifacts/dos-time-browser-report.json).
+
+Native ctypes probes on scratch structures verified upward two-second rounding before year-range checks, leap-day rollover, upper-limit rejection, invalid packed fields and last-error preservation. Guest executables ran only in Browser86. Microsoft's [DosDateTimeToFileTime](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-dosdatetimetofiletime) and [FileTimeToDosDateTime](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-filetimetodosdatetime) documentation establishes the bit layouts and representable years. These conversions do not add time-zone/DST adjustment APIs.
+
 ## UTC time conversion extension — 2026-09-08
 
 **162 Node tests passed, 0 failed, 0 skipped.** Four new tests cover native known-value vectors, 1601/1970 epochs, Gregorian leap dates, ignored input weekday, last-error preservation, asymmetric upper year limits, invalid fields, unchanged failure output, fractional-millisecond truncation, exact unsigned comparisons beyond 2^53, overlapping buffers and complete memory validation. HandleObjects.exe was rebuilt with FileTimeToSystemTime, SystemTimeToFileTime and CompareFileTime imports; the guest checks a leap-day round trip, signed comparison results and invalid-date rejection. The catalog contains 468 entries.
