@@ -1702,6 +1702,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "InitializeSListHead",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "InitializeSRWLock",
     "argc": 1,
     "cdecl": false,

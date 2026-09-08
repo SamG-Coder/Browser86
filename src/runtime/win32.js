@@ -43,6 +43,7 @@ export class Win32 {
   sleep(ms){if(!ms)return 0;const end=performance.now()+ms;return this.p.wait(()=>performance.now()>=end?0:undefined,'Sleep');}
   filetime(address,date=Date.now()){const t=(BigInt(Math.trunc(date))+11644473600000n)*10000n;this.m.w32(address,Number(t&0xFFFFFFFFn));this.m.w32(address+4,Number(t>>32n));}
   installKernel(){const p=this.p,m=this.m,v=this.vfs;const k=(name,n,fn)=>this.add('kernel32.dll',name,n,fn);
+    k('InitializeSListHead',1,address=>{m.fill(address,8,0);return 0;});
     k('ExitProcess',1,code=>{p.exit(code);return 0;});k('TerminateProcess',2,(h,c)=>{if(!p.isCurrentProcess(h))return this.fail(5);p.exit(c);return 1;});
     k('GetLastError',0,()=>m.u32(p.teb+0x34));k('SetLastError',1,e=>{p.setError(e);return 0;});
     k('GetCurrentProcess',0,()=>INVALID);k('GetCurrentThread',0,()=>0xFFFFFFFE);k('GetCurrentProcessId',0,()=>4);k('GetCurrentThreadId',0,()=>8);
