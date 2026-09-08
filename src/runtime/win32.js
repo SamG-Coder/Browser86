@@ -10,10 +10,11 @@ import {installFileSystem} from './file-system.js';
 import {installTLS} from './tls.js';
 import {installInitOnce} from './init-once.js';
 import {installAddressWait} from './address-wait.js';
+import {installCriticalSections} from './critical-section.js';
 const INVALID=0xFFFFFFFF;
 const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
 export class Win32 {
-  constructor(process){this.p=process;this.m=process.memory;this.vfs=process.vfs;this.functions=new Map();this.traps=new Map();this.nextTrap=0xF0000000;this.moduleHandles=new Map();this.missingMap=new Map();this.allocations=new Map();this.critical=new Map();this.resources=new Map();this.installKernel();this.gui=new GUI(this);installCRT(this);this.installRegistry();}
+  constructor(process){this.p=process;this.m=process.memory;this.vfs=process.vfs;this.functions=new Map();this.traps=new Map();this.nextTrap=0xF0000000;this.moduleHandles=new Map();this.missingMap=new Map();this.allocations=new Map();this.resources=new Map();this.installKernel();this.gui=new GUI(this);installCRT(this);this.installRegistry();}
   canonical(dll){dll=dll.toLowerCase();if(!dll.endsWith('.dll'))dll+='.dll';if(dll==='kernelbase.dll'||dll.startsWith('api-ms-win-core-')||dll.startsWith('ext-ms-win-kernel'))return 'kernel32.dll';if(dll==='ucrtbase.dll'||dll.startsWith('api-ms-win-crt-'))return 'msvcrt.dll';return dll;}
   isSystemModule(dll){return SYSTEM.has(dll.toLowerCase())||/^api-ms-win-(core|crt)-/.test(dll.toLowerCase());}
   add(dll,name,argc,fn,cdecl=false,description=''){dll=this.canonical(dll);const key=dll+'!'+name;const address=this.nextTrap;this.nextTrap+=16;const record={dll,name,argc,fn,cdecl,address,description};this.functions.set(key,record);this.traps.set(address,record);return address;}
@@ -115,7 +116,7 @@ export class Win32 {
     installTLS(this);
     installInitOnce(this);
     installAddressWait(this);
-    k('InitializeCriticalSection',1,a=>{this.critical.set(a,0);m.fill(a,24);return 0;});k('InitializeCriticalSectionAndSpinCount',2,(a,spin)=>{this.critical.set(a,0);m.fill(a,24);return 1;});k('EnterCriticalSection',1,a=>{if(!this.critical.has(a))throw new RuntimeFault('CRITICAL_SECTION','Critical section was not initialized.');this.critical.set(a,this.critical.get(a)+1);return 0;});k('TryEnterCriticalSection',1,a=>{if(!this.critical.has(a))return 0;this.critical.set(a,this.critical.get(a)+1);return 1;});k('LeaveCriticalSection',1,a=>{const n=this.critical.get(a);if(!n)throw new RuntimeFault('CRITICAL_SECTION','Unbalanced LeaveCriticalSection.');this.critical.set(a,n-1);return 0;});k('DeleteCriticalSection',1,a=>{this.critical.delete(a);return 0;});
+    installCriticalSections(this);
     k('InterlockedIncrement',1,a=>{const n=(m.u32(a)+1)>>>0;m.w32(a,n);return n;});k('InterlockedDecrement',1,a=>{const n=(m.u32(a)-1)>>>0;m.w32(a,n);return n;});k('InterlockedExchange',2,(a,value)=>{const old=m.u32(a);m.w32(a,value);return old;});k('InterlockedExchangeAdd',2,(a,value)=>{const old=m.u32(a);m.w32(a,old+value);return old;});k('InterlockedCompareExchange',3,(a,value,compare)=>{const old=m.u32(a);if(old===compare)m.w32(a,value);return old;});
     installSynchronization(this);
     k('SetUnhandledExceptionFilter',1,callback=>{const old=this.exceptionFilter||0;this.exceptionFilter=callback;p.note('An exception filter was registered, but guest SEH dispatch is not implemented. Faults stop with diagnostics.');return old;});

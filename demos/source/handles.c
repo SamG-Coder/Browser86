@@ -25,6 +25,7 @@ void mainCRTStartup(void){
   DWORD originalId;
   DWORD tls[65],index;
   DWORD once=0,manual=0;BOOL pending;void *onceContext=NULL;
+  CRITICAL_SECTION critical;
   BYTE disposition;
   const WORD wideFile[]={'h','a','n','d','l','e','s','.','t','x','t',0};
   file=CreateFileA("handles.txt",GENERIC_READ|GENERIC_WRITE,0,NULL,2,0,NULL);
@@ -167,6 +168,15 @@ void mainCRTStartup(void){
   flags=0;CHECK(!WaitOnAddress(&index,&flags,4,0)&&GetLastError()==1460);
   CHECK(!WaitOnAddress(&index,&flags,3,0)&&GetLastError()==87);
   WakeByAddressSingle(&index);WakeByAddressAll(&index);
+  CHECK(sizeof(critical)==24&&InitializeCriticalSectionEx(&critical,4000,0x01000000));
+  CHECK(critical.lockCount==-1&&critical.recursion==0&&critical.spin==0);
+  EnterCriticalSection(&critical);CHECK(TryEnterCriticalSection(&critical));
+  CHECK(critical.recursion==2&&critical.owner==(HANDLE)8&&critical.lockCount==-2);
+  CHECK(SetCriticalSectionSpinCount(&critical,200)==0);
+  LeaveCriticalSection(&critical);LeaveCriticalSection(&critical);
+  CHECK(critical.recursion==0&&critical.owner==NULL&&critical.lockCount==-1);
+  DeleteCriticalSection(&critical);InitializeCriticalSection(&critical);DeleteCriticalSection(&critical);
+  CHECK(InitializeCriticalSectionAndSpinCount(&critical,100));DeleteCriticalSection(&critical);
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
   CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);

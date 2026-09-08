@@ -106,6 +106,12 @@ Native probes verified uninitialized check-only and duplicate-complete error 31,
 
 Native probes verified unchanged-value timeout error 1460, different-value success with last-error preservation, and invalid-size error 87. Contracts: [WaitOnAddress](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitonaddress), [WakeByAddressSingle](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-wakebyaddresssingle). Results: `test-artifacts/address-wait-tests.tap` and `test-artifacts/address-wait-browser-report.json`.
 
+## Critical-section state — 2026-09-08
+
+**143 Node tests passed without failures or skips; eight real-origin Edge checks passed without page errors.** Four tests cover recursive enter/try/leave and guest structure updates, all constructors and Ex flags, single-processor spin behavior, lifecycle diagnostics, failed-memory atomicity and process isolation. HandleObjects.exe imports all eight critical-section APIs and inspects the x86 structure during acquisition and release. Catalog: 452 entries.
+
+Native probes verified unlocked LockCount -1, uncontended owned LockCount -2, recursion changes and ownership clearing. Spin handling follows the documented single-processor behavior of [SetCriticalSectionSpinCount](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-setcriticalsectionspincount); recursive ownership follows [EnterCriticalSection](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-entercriticalsection). Results: `test-artifacts/critical-section-tests.tap` and `test-artifacts/critical-section-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

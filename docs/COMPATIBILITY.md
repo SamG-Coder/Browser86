@@ -70,6 +70,8 @@ InitOnceInitialize, InitOnceBeginInitialize, InitOnceComplete and InitOnceExecut
 
 WaitOnAddress compares exactly 1, 2, 4 or 8 bytes and returns immediately if they differ. Equal values suspend through the guest wait mechanism until an address-specific wake or timeout (ERROR_TIMEOUT, 1460). WakeByAddressSingle releases the first queued waiter; WakeByAddressAll releases the matching queue. Wakes are process-local, do not store a future signal, and may release a waiter even if the value has not changed, so callers must recheck their condition. These APIs do not create another guest thread; an infinite wait without a possible wake stays suspended until stopped.
 
+Critical-section constructors, Enter/TryEnter/Leave/Delete, InitializeCriticalSectionEx and SetCriticalSectionSpinCount maintain the 24-byte x86 structure's recursion and ownership fields. The sole emulated thread may acquire recursively and must release each acquisition. Spin counts are zero because GetSystemInfo reports one processor. Debug information/list allocation and multi-thread contention are not implemented. Uninitialized use, double initialization, unbalanced release and deletion while owned produce runtime diagnostics rather than claiming defined Windows behavior for these invalid operations.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

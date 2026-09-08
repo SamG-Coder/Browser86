@@ -1100,6 +1100,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "InitializeCriticalSectionEx",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "InitOnceBeginInitialize",
     "argc": 4,
     "cdecl": false,
@@ -1543,6 +1550,13 @@
     "dll": "kernel32.dll",
     "name": "SetConsoleTitleW",
     "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "SetCriticalSectionSpinCount",
+    "argc": 2,
     "cdecl": false,
     "data": false
   },
