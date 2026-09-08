@@ -190,6 +190,10 @@ void mainCRTStartup(void){
   CHECK(CompareFileTime(&epoch,&stamp)==-1&&CompareFileTime(&stamp,&epoch)==1&&CompareFileTime(&stamp,&stamp)==0);
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
+  WORD shellLine[]={'p',' ','"','a',' ','b','"',' ','c',0};int shellCount=0;
+  WORD** shellArgs=CommandLineToArgvW(shellLine,&shellCount);
+  CHECK(shellArgs&&shellCount==3&&shellArgs[1][0]=='a'&&shellArgs[1][1]==' '&&shellArgs[1][2]=='b'&&shellArgs[2][0]=='c');
+  CHECK(LocalFree(shellArgs)==NULL);
   WORD typedText[]={'A','0',' ',0},charTypes[4];
   CHECK(GetStringTypeW(1,typedText,-1,charTypes)&&(charTypes[0]&0x101)==0x101&&(charTypes[1]&4)&&(charTypes[2]&8)&&(charTypes[3]&0x20));
   CHECK(GetStringTypeW(2,typedText,3,charTypes)&&charTypes[0]==1&&charTypes[1]==3&&charTypes[2]==10);

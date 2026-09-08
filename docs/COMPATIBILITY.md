@@ -94,6 +94,8 @@ The general conversion APIs now support CP_OEMCP/437 as well as CP_ACP/CP_THREAD
 
 GetStringTypeW supports CT_CTYPE1, CT_CTYPE2 and CT_CTYPE3 with pinned Windows 10.0.26200 results for every UTF-16 code unit. Negative counts include the terminating NUL's classification; explicit counts preserve embedded NULs. Surrogate halves retain native per-unit classifications instead of receiving supplementary Unicode scalar properties. Invalid modes return error 1004; null pointers, zero counts and identical input/output pointers return error 87. Complete input/output ranges are checked before writing. The generated range tables and native-output hashes can be recreated with tools/build-character-types.py. This does not add GetStringTypeA/Ex variants, locale conversion or Unicode-version-independent classification.
 
+CommandLineToArgvW is available from shell32.dll and returns a contiguous guest allocation containing x86 pointers and UTF-16 strings, released with one LocalFree call. Parsing preserves the shell API's distinct executable-name rules, leading empty argument, backslash/quote handling and consecutive-quote behavior. Empty input returns the guest executable path. It does not execute the parsed command or add process creation. The separate CRT argv parser retains its existing behavior; shell and CRT parsing must not be assumed identical.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

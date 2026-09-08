@@ -2747,6 +2747,13 @@
     "data": false
   },
   {
+    "dll": "shell32.dll",
+    "name": "CommandLineToArgvW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
     "dll": "user32.dll",
     "name": "AdjustWindowRect",
     "argc": 3,

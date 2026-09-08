@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Shell command-line parsing extension — 2026-09-08
+
+**195 Node tests passed, 0 failed, 0 skipped.** Four new tests cover 1,031 recorded native parser cases, contiguous x86 pointer/string allocation, single-call LocalFree, empty-input guest executable paths, leading empty arguments, last-error preservation and invalid-buffer allocation safety. The rebuilt HandleObjects.exe imports CommandLineToArgvW from shell32.dll and LocalFree from kernel32.dll, parses a quoted argument and frees the result through the interpreter. The catalog contains 478 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** Actual module workers executed the updated fixture under the deployed CSP; IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/command-line-tests.tap) and [browser report](test-artifacts/command-line-browser-report.json).
+
+tools/build-command-line-vectors.py records deterministic native reference cases covering quotes, backslashes, tabs, spaces, newlines, executable-name handling and unclosed quotes. Native allocations are freed immediately; input strings are never executed. Microsoft's [CommandLineToArgvW documentation](https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw) establishes the allocation/freeing contract, empty-input behavior and quote/backslash rules. This adds parsing only; guest process creation remains unimplemented and CRT argv parsing is unchanged.
+
 ## Unicode character classification extension — 2026-09-08
 
 **191 Node tests passed, 0 failed, 0 skipped.** Four new tests verify all 196,608 results (65,536 UTF-16 units across three modes) against SHA-256 hashes of native Windows output. Additional assertions cover letters/digits/whitespace, bidirectional classes, combining marks, ideographs, surrogate halves, negative counts including NUL, last-error preservation, invalid flags/parameters and atomic memory validation. HandleObjects.exe was rebuilt with the four-stack-slot GetStringTypeW import and exercises all modes plus invalid flags through the x86 interpreter. The catalog contains 477 entries.
