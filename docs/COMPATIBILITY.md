@@ -138,6 +138,8 @@ CreatePen and CreatePenIndirect support PS_DASH, PS_DOT, PS_DASHDOT and PS_DASHD
 
 GetBrushOrgEx and SetBrushOrgEx maintain a per-DC signed device-coordinate brush origin, initially (0,0), with optional previous-value output from the setter. Coordinates are retained without modulo reduction, including signed extremes, matching native queries. SaveDC/RestoreDC preserve the origin; invalid handles and null getter output use native-observed errors. Guest output ranges are validated before writes or state changes. Patterned brush realization and automatic alignment for window-managed DCs remain unfinished.
 
+GetSysColorBrush returns cached solid-brush handles for indices 0 through 30, using the same fixed color profile as GetSysColor. Brushes support selection, saved DC state, LOGBRUSH queries and drawing; DeleteObject succeeds without releasing system-owned brushes. Unsupported indices return zero without changing last error, and GetSysColor now also returns zero outside the supported range. The profile is synthetic and does not follow host themes; SetSysColors and dynamic color notifications are not implemented.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

@@ -33,6 +33,8 @@ API int WINAPI GetPolyFillMode(HDC);
 API int WINAPI SetPolyFillMode(HDC,int);
 API BOOL WINAPI GetMiterLimit(HDC,float*);
 API BOOL WINAPI SetMiterLimit(HDC,float,float*);
+API DWORD WINAPI GetSysColor(int);
+API HANDLE WINAPI GetSysColorBrush(int);
 API int WINAPI SaveDC(HDC);
 API DWORD WINAPI GetTextColor(HDC);
 API DWORD WINAPI GetBkColor(HDC);

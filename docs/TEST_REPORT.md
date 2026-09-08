@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Cached system-color brushes - 2026-09-08
+
+**255 Node tests passed, 0 failed, 0 skipped.** Three new tests cover cached brushes for all 31 supported indices, solid LOGBRUSH descriptions matching GetSysColor, handle survival after DeleteObject, saved selections, FillRect/FrameRect/Rectangle commands and invalid indices without allocation or last-error changes. The rebuilt HandleObjects.exe imports GetSysColorBrush and GetSysColor and checks object type, descriptions, caching, deletion and invalid indices. The catalog contains 522 entries.
+
+**Twenty-two real-canvas checks and eight real-origin browser checks passed in Edge 152.0.4191.66**, with no page errors. The added canvas case paints a rectangle with COLOR_WINDOWTEXT obtained through GetSysColorBrush. Evidence: [Node TAP](test-artifacts/system-brush-tests.tap), [canvas report](test-artifacts/system-brush-canvas-report.json), [browser report](test-artifacts/system-brush-browser-report.json).
+
+Native Windows probes verified cached handles, solid descriptions, support through index 30, invalid-index zero results with unchanged last error, and harmless successful DeleteObject with the original brush still usable. These lifetime semantics agree with [GetSysColorBrush documentation](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getsyscolorbrush). GetSysColor now returns zero for out-of-range indices. Browser86 retains its fixed synthetic color profile; host theme tracking, SetSysColors and color-change notifications are separate unfinished work. No guest executable ran on the host.
+
 ## Brush origin API compatibility - 2026-09-08
 
 **252 Node tests passed, 0 failed, 0 skipped.** Three new tests cover default and previous origins, full signed coordinates, optional setter output, nested saved states, independent DCs, invalid/wrong-type handles, null getter output and cross-page buffers without partial writes or state changes. The rebuilt HandleObjects.exe imports GetBrushOrgEx and SetBrushOrgEx, checks previous/current coordinates and saved-state restoration, and verifies the null-output error. The catalog now contains 521 entries.

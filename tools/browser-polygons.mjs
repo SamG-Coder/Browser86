@@ -23,6 +23,7 @@ const penBrush=p.heap.alloc(12),geometric=call('ExtCreatePen',0x12200,8,penBrush
 const dashArray=p.heap.alloc(8);[[3,15],[27,15]].flat().forEach((n,i)=>p.memory.w32(input+4*i,n));for(const dash of [[4,4],[20,4]]){dash.forEach((n,i)=>p.memory.w32(dashArray+4*i,n));call('SelectObject',dc,call('ExtCreatePen',0x12207,4,penBrush,2,dashArray));call('Polyline',dc,input,2);commands.push(events.filter(e=>e.type==='draw').at(-1));}
 call('SelectObject',dc,call('ExtCreatePen',0x10005,99,penBrush,0,0));call('Polyline',dc,input,2);commands.push(events.filter(e=>e.type==='draw').at(-1));
 for(const style of [1,2,3,4]){call('SelectObject',dc,call('CreatePen',style,3,0));call('Polyline',dc,input,2);commands.push(events.filter(e=>e.type==='draw').at(-1));}
+[3,3,27,27].forEach((n,i)=>p.memory.w32(input+4*i,n));const systemBrush=p.apis.lookup('user32.dll','GetSysColorBrush').fn(8);p.apis.lookup('user32.dll','FillRect').fn(dc,input,systemBrush);commands.push(events.filter(e=>e.type==='draw').at(-1));
 const browser=await chromium.launch({headless:true,executablePath:process.argv[3]});
 try{
  const page=await browser.newPage();await page.goto(process.argv[2]);
@@ -30,7 +31,7 @@ try{
   const {GuestDisplay}=await import('/src/ui/display.js');const display=new GuestDisplay(null,()=>{}),canvas=document.createElement('canvas');canvas.width=32;canvas.height=32;const context=canvas.getContext('2d',{alpha:false});display.windows.set(1,{context});
   return commands.map((command,index)=>{context.fillStyle='#ffffff';context.fillRect(0,0,32,32);display.draw([command]);if(index>=17){const span=context.getImageData(4,15,22,1).data;for(let i=0;i<span.length;i+=4)if(span[i]||span[i+1]||span[i+2])throw Error('Wide pen has an unexpected gap at '+i/4);}return Array.from(context.getImageData(15,15,1,1).data);});
  },commands);
- const expected=[255,0,255,255,0,255,0,255,0,0,0,0,0,255,255,0,255,0,0,0,0];results.forEach((pixel,i)=>{if(pixel[0]!==expected[i]||pixel[1]!==expected[i]||pixel[2]!==expected[i])throw Error('Polygon canvas case '+i+' failed: '+pixel);});
+ const expected=[255,0,255,255,0,255,0,255,0,0,0,0,0,255,255,0,255,0,0,0,0,0];results.forEach((pixel,i)=>{if(pixel[0]!==expected[i]||pixel[1]!==expected[i]||pixel[2]!==expected[i])throw Error('Polygon canvas case '+i+' failed: '+pixel);});
  const report={result:'PASS',browser:browser.version(),checks:['alternate leaves double-wound interior empty','winding fills double-wound interior','raw mode 3 uses alternate coverage','polyline remains open','polygon closes its outline','alternate nested contours leave a hole','winding nested contours with same direction fill','winding nested contours with opposite directions leave a hole'],pixels:results};
  report.checks.push('PolyBezier draws cubic curve through its midpoint','PolyBezierTo draws from current position through its midpoint');
  report.checks.push('PolyDraw renders cubic segments','PolyDraw closes a line figure');
@@ -38,5 +39,6 @@ try{
  report.checks.push('user-style gap remains empty','user-style dash paints its span');
  report.checks.push('extended null pen leaves canvas unchanged');
  for(const style of ['dash','dot','dash-dot','dash-dot-dot'])report.checks.push('wide '+style+' pen renders solid');
- fs.writeFileSync('docs/test-artifacts/wide-pen-canvas-report.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
+ report.checks.push('system color brush fills with COLOR_WINDOWTEXT');
+ fs.writeFileSync('docs/test-artifacts/system-brush-canvas-report.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 }finally{await browser.close();}

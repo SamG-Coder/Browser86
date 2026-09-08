@@ -3224,6 +3224,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetSysColorBrush",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetSystemMetrics",
     "argc": 1,
     "cdecl": false,

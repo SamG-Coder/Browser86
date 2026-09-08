@@ -234,6 +234,10 @@ void mainCRTStartup(void){
   CHECK(SaveDC(savedDC)==1&&SetDCPenColor(savedDC,7)==0x123456&&SetDCBrushColor(savedDC,8)==0xabcdef);
   CHECK(RestoreDC(savedDC,-1)&&GetDCPenColor(savedDC)==0x123456&&GetDCBrushColor(savedDC)==0xabcdef);
   DWORD penDescription[4],brushDescription[3];
+  HANDLE systemBrush=GetSysColorBrush(8);CHECK(systemBrush&&systemBrush==GetSysColorBrush(8)&&GetObjectType(systemBrush)==2);
+  CHECK(GetObjectW(systemBrush,12,brushDescription)==12&&brushDescription[0]==0&&brushDescription[1]==GetSysColor(8));
+  CHECK(DeleteObject(systemBrush)&&GetSysColorBrush(8)==systemBrush&&GetObjectType(systemBrush)==2);
+  CHECK(!GetSysColorBrush(-1)&&!GetSysColorBrush(31)&&!GetSysColor(-1));
   POINT brushOrigin;CHECK(GetBrushOrgEx(savedDC,&brushOrigin)&&brushOrigin.x==0&&brushOrigin.y==0);
   CHECK(SetBrushOrgEx(savedDC,19,-12,&brushOrigin)&&brushOrigin.x==0&&brushOrigin.y==0);
   CHECK(SaveDC(savedDC)==1&&SetBrushOrgEx(savedDC,8,9,NULL)&&RestoreDC(savedDC,-1));
