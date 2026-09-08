@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Window text message dispatch - 2026-09-08
+
+**340 Node tests passed, 0 failed, 0 skipped.** WM_SETTEXT now converts caller text to the current procedure encoding. SetWindowTextA/W invokes the procedure and normalizes its result to Boolean, allowing application handling or rejection without overwriting the stored title. Tests cover all four encoding combinations, CP1252 best-fit conversion, null input, return values, default processing, nested conversion buffers, callback destruction, invalid HWNDs and malformed guest text. The rebuilt HandleObjects.exe imports SendMessageA/W and SetWindowTextA/W and verifies both cross-encoding directions and return conventions. Catalog remains 576 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-settext-tests.tap), [browser report](test-artifacts/window-settext-browser-report.json).
+
+A native ctypes probe created private hidden ANSI and Unicode windows and sent text through the opposite API variant. Procedures received converted strings and unchanged null pointers. SendMessage preserved wParam 99 and callback result 7; SetWindowText passed wParam zero and returned 1. All owned windows and classes were cleaned up. Reference: [Microsoft automatic message translation](https://learn.microsoft.com/en-us/windows/win32/intl/automatic-message-translation). General text retrieval, other string messages and subclass thunk translation remain unfinished.
+
 ## Cross-encoding window creation - 2026-09-08
 
 **335 Node tests passed, 0 failed, 0 skipped.** CreateWindowExA/W converts CREATESTRUCT strings to the registered procedure encoding. Tests inspect both creation callbacks, CP1252 best-fit output, original input preservation, numeric class atoms, null titles, invalid class/parent failures, and temporary allocation cleanup after success, either rejection stage and callback self-destruction. The rebuilt HandleObjects.exe imports RegisterClassW and CreateWindowExW and checks both conversion directions inside its guest procedure. Catalog remains 576 entries.

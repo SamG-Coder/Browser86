@@ -27,7 +27,7 @@ K.update({'GetFileTime':4,'SetFileTime':4,'GetFileInformationByHandle':2,'SetFil
 for suffix in ['A','W']:
     for name,count in [('OpenEvent',3),('OpenMutex',3),('OpenSemaphore',3),('CreateEventEx',4),('CreateMutexEx',4),('CreateSemaphoreEx',6)]:
         K[name+suffix]=count
-U={'RegisterClassW':1,'CreateWindowExW':12,'FrameRect':3,'RegisterClassA':1,'CreateWindowExA':12,'ShowWindow':2,'UpdateWindow':1,'GetMessageA':4,'TranslateMessage':1,'DispatchMessageA':1,'DefWindowProcA':4,'PostQuitMessage':1,'DestroyWindow':1,'BeginPaint':2,'EndPaint':2,'SetWindowTextA':2,'MessageBoxA':4,'InvalidateRect':3,'SetTimer':4,'KillTimer':2,'FillRect':3}
+U={'SetWindowTextW':2,'SendMessageA':4,'SendMessageW':4,'RegisterClassW':1,'CreateWindowExW':12,'FrameRect':3,'RegisterClassA':1,'CreateWindowExA':12,'ShowWindow':2,'UpdateWindow':1,'GetMessageA':4,'TranslateMessage':1,'DispatchMessageA':1,'DefWindowProcA':4,'PostQuitMessage':1,'DestroyWindow':1,'BeginPaint':2,'EndPaint':2,'SetWindowTextA':2,'MessageBoxA':4,'InvalidateRect':3,'SetTimer':4,'KillTimer':2,'FillRect':3}
 G={'TextOutA':5,'SetTextColor':2,'SetBkMode':2,'SetBkColor':2,'CreateSolidBrush':1,'CreatePen':3,'SelectObject':2,'DeleteObject':1,'GetStockObject':1,'Rectangle':5,'Ellipse':5,'MoveToEx':4,'LineTo':3,'StretchDIBits':13}
 C={'printf':1,'sprintf':2,'puts':1,'memset':3,'memcpy':3}
 S={'WaitOnAddress':4,'WakeByAddressSingle':1,'WakeByAddressAll':1}

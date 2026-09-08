@@ -4,8 +4,14 @@ unsigned long __readfsdword(unsigned long);
 #pragma intrinsic(__readfsdword)
 #define CHECK(expression) do { if(!(expression)) { printf("Handle failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
 static HWND lifetimeWindows[4];
-static DWORD creationWide,creationCount;
+static DWORD creationWide,creationCount,textMessageCount;
 static long WINAPI encodingProc(HWND h,DWORD msg,DWORD wp,long lp){
+  if(msg==12){
+    textMessageCount++;
+    if(creationWide){WORD *text=(WORD*)lp;CHECK(text[0]=='C'&&text[3]==233&&text[4]==0);}
+    else {char *text=(char*)lp;CHECK(text[0]=='C'&&(unsigned char)text[3]==233&&text[4]==' '&&text[5]=='A'&&text[6]==0);}
+    return 7;
+  }
   if(msg==129||msg==1){
     DWORD *cs=(DWORD*)lp;creationCount++;
     if(creationWide){WORD *title=(WORD*)cs[9],*name=(WORD*)cs[10];CHECK(title[0]=='C'&&title[3]==233&&title[4]==0);CHECK(name[0]=='W'&&name[1]==233&&name[2]==0);}
@@ -43,9 +49,11 @@ static BOOL WINAPI initializeOnce(DWORD *once,void *parameter,void **context){
 void mainCRTStartup(void){
   WNDCLASSA encodingA={0};encodingA.proc=encodingProc;encodingA.name="A\xe9";CHECK(RegisterClassA(&encodingA));
   WORD aName[]={'A',233,0},wTitle[]={'C','a','f',233,' ',256,0};
-  HWND encodingWindow=CreateWindowExW(0,aName,wTitle,0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);CHECK(DestroyWindow(encodingWindow));
+  HWND encodingWindow=CreateWindowExW(0,aName,wTitle,0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);
+  CHECK(SendMessageW(encodingWindow,12,99,(long)wTitle)==7);CHECK(SetWindowTextW(encodingWindow,wTitle)==1);CHECK(textMessageCount==2);CHECK(DestroyWindow(encodingWindow));
   WORD wName[]={'W',233,0};WNDCLASSW encodingW={0};encodingW.proc=encodingProc;encodingW.name=wName;CHECK(RegisterClassW(&encodingW));creationWide=1;creationCount=0;
-  encodingWindow=CreateWindowExA(0,"W\xe9","Caf\xe9",0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);CHECK(DestroyWindow(encodingWindow));
+  encodingWindow=CreateWindowExA(0,"W\xe9","Caf\xe9",0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);
+  CHECK(SendMessageA(encodingWindow,12,99,(long)"Caf\xe9")==7);CHECK(SetWindowTextA(encodingWindow,"Caf\xe9")==1);CHECK(textMessageCount==4);CHECK(DestroyWindow(encodingWindow));
   HANDLE self=GetCurrentProcess(),file,copy,process,thread;
   DWORD flags,count,code;
   char bytes[4];

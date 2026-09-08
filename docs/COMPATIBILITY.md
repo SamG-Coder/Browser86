@@ -192,6 +192,8 @@ IsWindowUnicode now reports a registered class's encoding independently of the C
 
 CreateWindowExA/W now converts CREATESTRUCT title and string class-name pointers into the registered procedure encoding for WM_NCCREATE and WM_CREATE. ANSI output uses the Windows CP1252 best-fit table; null titles and integer class atoms are preserved. Temporary strings remain alive through the creation sequence and are freed on success, rejection or callback self-destruction. General A/W message translation and procedure-encoding changes during creation remain unfinished.
 
+WM_SETTEXT now translates CP1252/UTF-16 input to the current custom procedure encoding, preserving null pointers and callback results. SetWindowTextA/W sends WM_SETTEXT through the procedure and returns Boolean success; a procedure that does not call default processing no longer has its stored title overwritten. Conversion buffers survive nested calls and are freed after callback return, including callback destruction. WM_GETTEXT, WM_GETTEXTLENGTH, other string-bearing messages and CallWindowProc thunk translation remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

@@ -17,7 +17,7 @@ import {installGDIObjects} from './gdi-objects.js';
 import {installDCState,dcSelectsObject} from './dc-state.js';
 import {RuntimeFault,requireThat} from './errors.js';
 const WM_CREATE=1,WM_DESTROY=2,WM_SIZE=5,WM_PAINT=15,WM_CLOSE=16,WM_QUIT=18,WM_COMMAND=0x111;
-const creationAnsiBestFit=new Map(sbcsTables[1252].encode[0]);
+const windowAnsiBestFit=new Map(sbcsTables[1252].encode[0]);
 export class GUI {
   constructor(apis){this.api=apis;this.p=apis.p;this.m=apis.m;this.classes=new Map();this.windows=new Map();this.nextAtom=0xC000;this.stock=new Map();this.focus=0;this.keyChars=new Map();this.nextTimer=1;this.install();}
   window(h){return this.windows.get(h>>>0);}
@@ -32,7 +32,19 @@ export class GUI {
   msgStruct(address,message){const m=this.m;for(const [i,n]of [message.hwnd,message.message,message.wParam,message.lParam,message.time||0,message.x||0,message.y||0].entries())m.w32(address+i*4,n);}
   readMsg(a){const m=this.m;return {hwnd:m.u32(a),message:m.u32(a+4),wParam:m.u32(a+8),lParam:m.u32(a+12),time:m.u32(a+16)};}
   getMessage(out,hwnd,min,max,remove=true){const q=this.p.messageQueue;const i=q.findIndex(msg=>msg.message===WM_QUIT||((!hwnd||msg.hwnd===hwnd)&&(!min&&!max||msg.message>=min&&msg.message<=max)));if(i<0)return undefined;const msg=q[i];if(remove)q.splice(i,1);this.msgStruct(out,msg);return msg.message===WM_QUIT?0:1;}
-  send(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(w.proc)return this.p.call(w.proc,[hwnd,msg,wp,lp]);return this.defWindow(hwnd,msg,wp,lp,wide);}
+  convertString(pointer,fromWide,toWide,temporary){
+    if(!pointer||fromWide===toWide)return pointer;
+    const value=this.api.str(pointer,fromWide),out=this.p.heap.alloc((value.length+1)*(toWide?2:1));temporary.push(out);
+    if(toWide)this.m.string(out,value,true,value.length+1);
+    else {for(let i=0;i<value.length;i++)this.m.w8(out+i,windowAnsiBestFit.get(value.charCodeAt(i))??63);this.m.w8(out+value.length,0);}
+    return out;
+  }
+  send(hwnd,msg,wp,lp,wide=false,done=value=>value){
+    const w=this.window(hwnd);if(!w)return done(0);
+    if(w.proc){const temporary=[];if(msg===0x0C)lp=this.convertString(lp,wide,w.wide,temporary);
+      return this.p.call(w.proc,[hwnd,msg,wp,lp],result=>{for(const address of temporary)this.p.heap.free(address);return done(result);});}
+    return done(this.defWindow(hwnd,msg,wp,lp,wide));
+  }
   defWindow(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(msg===0x81)return 1;if(msg===WM_CLOSE)return this.destroy(hwnd);if(msg===0x0C){w.title=this.api.str(lp,wide);this.notify(w);return 1;}if(msg===0x0D){this.m.string(lp,w.title,wide,wp);return Math.min(w.title.length,Math.max(0,wp-1));}if(msg===0x0E)return w.title.length;if(msg===0x14){this.draw(w.dc,{op:'fill',x:0,y:0,width:w.width,height:w.height,color:0xFFFFFF});return 1;}if(msg===0x84)return 1;if(msg===WM_PAINT){w.paintPending=false;return 0;}if(msg===0xF5&&w.className.toUpperCase()==='BUTTON'){this.p.postMessage(w.parent,WM_COMMAND,w.id&65535,hwnd);return 0;}if(msg===0x30){w.font=wp;return 0;}return 0;}
   destroy(hwnd,done=value=>value,nonclientOnly=false){
     const w=this.window(hwnd);if(!w)return done(this.api.fail(1400));if(w.destroying)return done(0);w.destroying=true;
@@ -67,10 +79,7 @@ export class GUI {
         const temporary=[];
         const creationString=(pointer,atom=false)=>{
           if(!pointer||wide===w.wide||(atom&&pointer<65536))return pointer;
-          const value=str(pointer),out=p.heap.alloc((value.length+1)*(w.wide?2:1));temporary.push(out);
-          if(w.wide)m.string(out,value,true,value.length+1);
-          else {for(let i=0;i<value.length;i++)m.w8(out+i,creationAnsiBestFit.get(value.charCodeAt(i))??63);m.w8(out+value.length,0);}
-          return out;
+          return this.convertString(pointer,wide,w.wide,temporary);
         };
         const creationTitle=creationString(title),creationClass=creationString(className,true),cs=p.heap.alloc(48,true);temporary.push(cs);
         [param,instance,menu,requestedParent,w.height,w.width,w.y,w.x,style,creationTitle,creationClass,exStyle].forEach((v,i)=>m.w32(cs+i*4,v));
@@ -85,7 +94,7 @@ export class GUI {
       u('DispatchMessage'+suffix,1,address=>{const msg=this.readMsg(address);if(msg.message===0x113&&msg.lParam)return p.call(msg.lParam,[msg.hwnd,msg.message,msg.wParam,msg.time]);return this.send(msg.hwnd,msg.message,msg.wParam,msg.lParam,wide);});
       u('SendMessage'+suffix,4,(h,msg,wp,lp)=>this.send(h,msg,wp,lp,wide));
       u('PostMessage'+suffix,4,(h,msg,wp,lp)=>{if(h&&!this.window(h))return a.fail(1400);p.postMessage(h,msg,wp,lp);return 1;});
-      u('SetWindowText'+suffix,2,(h,text)=>{const w=this.window(h);if(!w)return a.fail(1400);w.title=str(text);this.notify(w);return 1;});
+      u('SetWindowText'+suffix,2,(h,text)=>{if(!this.window(h))return a.fail(1400);return this.send(h,0x0C,0,text,wide,result=>result?1:0);});
       u('GetWindowText'+suffix,3,(h,out,n)=>{const w=this.window(h);if(!w)return a.fail(1400);m.string(out,w.title,wide,n);return Math.min(w.title.length,Math.max(0,n-1));});
       u('GetWindowTextLength'+suffix,1,h=>this.window(h)?.title.length||0);
       u('GetClassName'+suffix,3,(h,out,n)=>{const w=this.window(h);if(!w)return a.fail(1400);m.string(out,w.className,wide,n);return Math.min(w.className.length,Math.max(0,n-1));});
