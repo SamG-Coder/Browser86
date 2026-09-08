@@ -1366,6 +1366,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GetLocaleInfoA",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GetLocaleInfoW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GetLocalTime",
     "argc": 1,
     "cdecl": false,
@@ -2727,6 +2741,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "_dclass",
+    "argc": 2,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_environ",
     "cdecl": false,
     "data": true
@@ -3204,6 +3225,13 @@
     "dll": "msvcrt.dll",
     "name": "memset",
     "argc": 3,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "nan",
+    "argc": 1,
     "cdecl": true,
     "data": false
   },

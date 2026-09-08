@@ -60,6 +60,8 @@ export function installCRT(api){const p=api.p,m=api.m,v=api.vfs;const c=(name,n,
   c('_initterm_e',2,(first,last)=>{requireThat(last>=first&&last-first<=1024*1024,'CRT_INIT','Invalid initializer array.');let cursor=first;const next=()=>{while(cursor<last){const fn=m.u32(cursor);cursor+=4;if(fn)return p.call(fn,[],value=>value||next());}return 0;};return next();});
   for(const name of ['__set_app_type','_set_app_type'])c(name,1,type=>{p.applicationType=type;return 0;});let fmode=0x4000;c('_set_fmode',1,mode=>{fmode=mode;return 0;});c('_get_fmode',1,out=>{m.w32(out,fmode);return 0;});
   const readDouble=address=>new DataView(m.read(address,8).buffer).getFloat64(0,true);
+  c('nan',1,()=>{p.cpu.fpush(NaN);return 0;});
+  c('_dclass',2,()=>{const value=readDouble(p.apiStack+4);return Number.isNaN(value)?2:!Number.isFinite(value)?1:value===0?0:Math.abs(value)<2**-1022?-2:-1;});
   for(const [name,fn]of [['sin',Math.sin],['cos',Math.cos],['tan',Math.tan],['sqrt',Math.sqrt],['floor',Math.floor],['ceil',Math.ceil],['fabs',Math.abs],['exp',Math.exp],['log',Math.log],['log10',Math.log10],['atan',Math.atan]])c(name,2,()=>{p.cpu.fpush(fn(readDouble(p.apiStack+4)));return 0;});
   for(const [name,fn]of [['pow',Math.pow],['atan2',Math.atan2],['fmod',(a,b)=>a%b]])c(name,4,()=>{p.cpu.fpush(fn(readDouble(p.apiStack+4),readDouble(p.apiStack+12)));return 0;});
   c('_ftol',0,()=>{const n=BigInt(Math.trunc(p.cpu.fpop()));p.cpu.r[2]=Number(BigInt.asUintN(32,n>>32n));return Number(BigInt.asUintN(32,n));});
