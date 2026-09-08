@@ -361,3 +361,5 @@ API BOOL WINAPI SetDlgItemTextA(HWND,int,const char*);
 API BOOL WINAPI SetDlgItemTextW(HWND,int,const WORD*);
 API DWORD WINAPI GetDlgItemTextA(HWND,int,char*,int);
 API DWORD WINAPI GetDlgItemTextW(HWND,int,WORD*,int);
+
+API BOOL WINAPI SetDlgItemInt(HWND,int,DWORD,BOOL);

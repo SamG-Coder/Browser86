@@ -121,6 +121,12 @@ export class GUI {
     else if(event.kind==='key'){const code=event.code>>>0;this.keyChars.set(code,event.char||'');p.postMessage(w.hwnd,event.down?0x100:0x101,code,event.down?1:0xC0000001);}
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
+    u('SetDlgItemInt',4,(h,id,value,signed)=>{
+      const child=this.dialogItem(h,id);if(!child)return 0;
+      const wide=this.window(child).wide,text=signed&&value>>>0===0x80000000?'-0':String(signed?value|0:value>>>0),buffer=p.heap.alloc((text.length+1)*(wide?2:1));
+      try {m.string(buffer,text,wide,text.length+1);return this.send(child,12,0,buffer,wide,result=>{p.heap.free(buffer);return result?1:0;});}
+      catch(error){p.heap.free(buffer);throw error;}
+    });
     for(const wide of [false,true]){const suffix=wide?'W':'A',str=pointer=>a.str(pointer,wide);
       for(const extended of [false,true])u('RegisterClass'+(extended?'Ex':'')+suffix,1,pointer=>{const o=extended?4:0;if(extended&&m.u32(pointer)!==48)return a.fail(87);checkBuffer(m,pointer,extended?48:40,'r');if(m.u32(pointer+o)&~0x0803feeb)return a.fail(87);if(m.i32(pointer+o+8)<0||m.i32(pointer+o+12)<0)return a.fail(87);const proc=m.u32(pointer+o+4),name=str(m.u32(pointer+o+36));if(!name)return a.fail(87);if(this.classes.has(name.toLowerCase()))return a.fail(1410);const menu=m.u32(pointer+o+32),menuName=menu>=65536?str(menu):null;const atom=this.nextAtom++;this.classes.set(name.toLowerCase(),{name,atom,proc,style:m.u32(pointer+o),classExtra:m.u32(pointer+o+8),windowExtra:m.u32(pointer+o+12),icon:m.u32(pointer+o+20),cursor:m.u32(pointer+o+24),menu,menuName,smallIcon:extended?m.u32(pointer+44):0,instance:m.u32(pointer+o+16)||p.main.base,background:m.u32(pointer+o+28),wide});return atom;});
       u('UnregisterClass'+suffix,2,(name,instance)=>{

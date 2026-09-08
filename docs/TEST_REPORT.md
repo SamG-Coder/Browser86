@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Dialog integer text formatting - 2026-09-08
+
+**476 Node tests passed, 0 failed, 0 skipped.** Added SetDlgItemInt with signed/unsigned 32-bit formatting, synchronous WM_SETTEXT dispatch, Boolean callback results and temporary storage retained until callback completion. Tests cover zero, maximum signed/unsigned values, high-bit values, noncanonical BOOL flags, A/W callback strings, allocation release and invalid/missing/destroyed targets. Catalog now contains 599 entries, without implying full API parity.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Rebuilt HandleObjects.exe imports SetDlgItemInt and checks signed -1 text through GetDlgItemTextA inside the browser worker. Evidence: [Node TAP](test-artifacts/set-dlg-int-tests.tap), [browser report](test-artifacts/set-dlg-int-browser-report.json).
+
+Native private A/W control probes confirmed formatting, preserved error 1234 on success, Boolean callback normalization and lookup errors 1421/1400. Signed 0x80000000 produced "-0" on the 64-bit Windows host; implementation preserves this observed quirk, pending independent native x86 verification. Probe windows/classes were cleaned up. Reference: [Microsoft SetDlgItemInt](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setdlgitemint). GetDlgItemInt parsing and dialog-manager behavior remain unfinished.
+
 ## Dialog-control text APIs - 2026-09-08
 
 **473 Node tests passed, 0 failed, 0 skipped.** Added GetDlgItemTextA/W and SetDlgItemTextA/W. Coverage includes text replacement/clearing, truncation, terminators and neighboring bytes, lookup errors, output initialization before callbacks, zero-capacity callback suppression, Boolean setter results and invalid guest output ranges. Catalog now contains 598 entries, without implying full API parity.

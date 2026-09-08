@@ -38,3 +38,13 @@ test('Dialog text callbacks see initialized buffers and setters normalize callba
 test('Dialog text rejects invalid guest output ranges and leaves unsupported negative capacity explicit',()=>{
  const {u,parent}=setup();assert.throws(()=>u('GetDlgItemTextW',parent,99,0xffffffff,1));assert.throws(()=>u('GetDlgItemTextA',parent,99,0,-1),/Negative dialog-text/);assert.equal(u('SetDlgItemTextW',parent,99,0xffffffff),0);
 });
+
+test('SetDlgItemInt formats unsigned and signed values including the native minimum-value quirk',()=>{
+ const {p,u,create,parent}=setup(),child=create(parent,7);for(const [value,signed,expected] of [[0,0,'0'],[2147483647,1,'2147483647'],[2147483648,0,'2147483648'],[2147483648,1,'-0'],[0xffffffff,0,'4294967295'],[0xffffffff,2,'-1']]){p.setError(1234);assert.equal(u('SetDlgItemInt',parent,7,value,signed),1);assert.equal(p.apis.gui.window(child).title,expected);assert.equal(p.lastError,1234);}
+});
+test('SetDlgItemInt supplies correctly encoded callback text and normalizes results',()=>{
+ const {p,u,create,parent}=setup(),child=create(parent,7);for(const suffix of ['A','W']){u('SetWindowLong'+suffix,child,-4,12345);for(const result of [0,7,-1]){const call=u('SetDlgItemInt',parent,7,0xffffffff,0);assert.deepEqual(call.call.args.slice(0,3),[child,12,0]);assert.equal(p.apis.str(call.call.args[3],suffix==='W'),'4294967295');assert.ok(p.heap.blocks.has(call.call.args[3]));assert.equal(call.then(result),result?1:0);assert.equal(p.heap.blocks.has(call.call.args[3]),false);}}
+});
+test('SetDlgItemInt rejects missing controls and invalid or destroyed parents',()=>{
+ const {p,u,parent}=setup();assert.equal(u('SetDlgItemInt',parent,99,1,1),0);assert.equal(p.lastError,1421);u('DestroyWindow',parent);for(const h of [0,123,parent]){assert.equal(u('SetDlgItemInt',h,99,1,1),0);assert.equal(p.lastError,1400);}
+});

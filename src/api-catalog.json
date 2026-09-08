@@ -4008,6 +4008,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "SetDlgItemInt",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "SetDlgItemTextA",
     "argc": 3,
     "cdecl": false,
