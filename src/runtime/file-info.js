@@ -2,6 +2,7 @@ import {FILE_ATTRIBUTE_MASK} from './vfs.js';
 import {checkBuffer,resizeFile} from './files.js';
 import {RuntimeFault} from './errors.js';
 import {renameFileByHandle} from './file-rename.js';
+import {ansiEncode} from './memory.js';
 
 export function writeFileTime(memory,out,value){const time=BigInt(value);memory.w32(out,Number(time&0xFFFFFFFFn));memory.w32(out+4,Number(time>>32n));}
 export function installFileInformation(api){
@@ -88,6 +89,20 @@ export function installFileInformation(api){
   });
   for(const wide of [false,true]){
     const suffix=wide?'W':'A',str=ptr=>api.str(ptr,wide);
+    k('GetFinalPathNameByHandle'+suffix,4,(h,out,capacity,flags)=>{
+      const f=p.object(h,'file');if(!f)return api.fail(6);
+      const volume=flags&7;if(flags&~15||![0,1,2,4].includes(volume))return api.fail(87);
+      if(volume===1||volume===2)throw new RuntimeFault('UNSUPPORTED_FILE_INFO','Volume GUID and NT device paths are not implemented.');
+      // Without links or short-name aliases, opened and normalized paths agree.
+      const path=(volume===4?f.path.slice(2):'\\\\?\\'+f.path).replaceAll('/','\\');
+      const bytes=wide?null:ansiEncode(path),length=wide?path.length:bytes.length;
+      if(capacity<=length){p.setError(wide?8:0);return length+(wide?1:0);}
+      if(!out)return api.fail(87);
+      checkBuffer(m,out,(length+1)*(wide?2:1));
+      if(wide){for(let i=0;i<length;i++)m.w16(out+i*2,path.charCodeAt(i));m.w16(out+length*2,0);}
+      else {m.write(out,bytes);m.w8(out+length,0);}
+      return length;
+    });
     k('GetFileAttributes'+suffix,1,name=>api.expected(()=>{const node=v.get(str(name));return node?node.attributes:api.fail(2,0xFFFFFFFF);},0xFFFFFFFF));
     k('SetFileAttributes'+suffix,2,(name,attributes)=>api.expected(()=>{
       if(attributes&~FILE_ATTRIBUTE_MASK)return api.fail(87);

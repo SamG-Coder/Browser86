@@ -4,6 +4,8 @@ void mainCRTStartup(void){
   HANDLE self=GetCurrentProcess(),file,copy,process,thread;
   DWORD flags,count,code;
   char bytes[4];
+  char finalPath[256];
+  WORD finalWide[256];
   long long position;
   long long endOfFile;
   FILETIME creation={123,30000000},access={456,30000001},write={789,30000002},returned;
@@ -62,6 +64,14 @@ void mainCRTStartup(void){
   CHECK(GetFileInformationByHandleEx(copy,2,&filename,sizeof(filename))&&filename.name[0]=='\\');
   CHECK(!GetFileInformationByHandleEx(copy,2,&filename,8)&&GetLastError()==234&&filename.length>4);
   CHECK(CloseHandle(copy));
+  file=CreateFileA("handles.txt",GENERIC_READ,7,NULL,3,0,NULL);
+  CHECK(file!=INVALID_HANDLE);
+  count=GetFinalPathNameByHandleW(file,NULL,0,0);
+  CHECK(count>5&&count<256&&GetFinalPathNameByHandleW(file,finalWide,256,0)==count-1);
+  CHECK(finalWide[0]=='\\'&&finalWide[1]=='\\'&&finalWide[2]=='?'&&finalWide[3]=='\\');
+  CHECK(GetFinalPathNameByHandleA(file,finalPath,256,8)>0);
+  copy=CreateFileA(finalPath,GENERIC_READ,7,NULL,3,0,NULL);
+  CHECK(copy!=INVALID_HANDLE&&CloseHandle(copy)&&CloseHandle(file));
   /* A deleted name stays reserved until the last open file object closes. */
   file=CreateFileA("pending.txt",GENERIC_READ|GENERIC_WRITE,7,NULL,2,0,NULL);
   CHECK(file!=INVALID_HANDLE);

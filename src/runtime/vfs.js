@@ -11,6 +11,7 @@ export function validateFileMetadata(info){
 export function normalizePath(input,cwd='C:/app') {
   requireThat(typeof input==='string' && input.length<=32767 && !/[\x00-\x1F]/.test(input),'VFS_PATH','Invalid virtual filename.');
   let p=input.replace(/\\/g,'/');
+  if(/^\/\/\?\/[a-z]:\//i.test(p))p=p.slice(4);
   requireThat(!p.startsWith('//'),'VFS_PATH','UNC paths and host devices are not exposed.');
   if(/^[a-z]:/i.test(p)){requireThat(/^c:(\/|$)/i.test(p),'VFS_DRIVE','Only absolute paths on virtual C: are supported.');p=p.slice(2);}
   else if(!p.startsWith('/'))p=cwd.replace(/^[a-z]:/i,'')+'/'+p;

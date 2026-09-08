@@ -58,6 +58,8 @@ FileRenameInfo supports ordinary file and directory renames with the x86 FILE_RE
 
 Directory renames through FileRenameInfo and MoveFileA/W move the complete subtree while preserving node identity and metadata. Open descendants block the operation, including duplicate references; so do the current directory or its ancestors. Moving a directory inside itself is rejected. Explicit FileRenameInfo replacement can replace a closed writable file with a directory, but cannot replace another directory. Missing destination parents are not created.
 
+GetFinalPathNameByHandleA/W support DOS (`\\?\C:\...`) and volume-relative output for files and directories. FILE_NAME_OPENED and FILE_NAME_NORMALIZED agree in this filesystem, which has no symbolic links or short-name aliases; both follow renames. Returned extended DOS paths can be reopened within virtual C:. UNC, device and GLOBALROOT namespaces remain rejected. GUID and NT-device output are explicit unsupported modes. W returns required capacity including the terminator for a short buffer. A follows the observed modern Windows behavior of returning the path length without the terminator even for a short buffer; callers need one extra byte. Neither short-buffer path writes partial output. ANSI uses the runtime's Windows-1252 mapping.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

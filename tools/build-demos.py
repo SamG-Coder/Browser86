@@ -16,6 +16,7 @@ K.update({'SetFilePointerEx':5,'GetFileSizeEx':2,'SetEndOfFile':1})
 K.update({'DeleteFileA':1})
 K.update({'GetFileInformationByHandleEx':4})
 K.update({'SetFileInformationByHandle':4})
+K.update({'GetFinalPathNameByHandleA':4,'GetFinalPathNameByHandleW':4})
 K.update({'CreateDirectoryA':2,'RemoveDirectoryA':1,'MoveFileA':2})
 K.update({'GetFileTime':4,'SetFileTime':4,'GetFileInformationByHandle':2,'SetFileAttributesA':2,'SetFileAttributesW':2,'GetFileAttributesA':1})
 for suffix in ['A','W']:

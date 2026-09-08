@@ -70,6 +70,12 @@ Native Windows probes verified existing-target error 183, successful explicit re
 
 Native Windows probes verified ordinary directory rename, open-descendant denial (5), self-descendant rejection (87), directory-target replacement denial (5), and successful explicit replacement of a closed file with a directory. The earlier [FILE_RENAME_INFO contract](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_rename_info) applies. Results: `test-artifacts/directory-rename-tests.tap` and `test-artifacts/directory-rename-browser-report.json`.
 
+## Final paths from handles — 2026-09-08
+
+**116 Node tests passed without failures or skips; eight real-origin Edge checks passed without page errors.** Five new tests cover DOS/volume-relative A/W paths, opened/normalized flags, rename and pending deletion, short buffers and terminators, extended DOS reopen identity, Unicode surrogate pairs and ANSI conversion, root handles, invalid flags, unsupported namespaces and atomic output validation. HandleObjects.exe imports both four-stack-slot APIs and reopens the path returned by the ANSI query. The catalog contains 440 entries.
+
+Native Windows probes verified rename tracking in both name modes, invalid flag combinations, and unchanged output for insufficient buffers. The observed A short-buffer count excludes the terminator, unlike W and unlike the general wording in [Microsoft's return-value documentation](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlew); this distinction is covered explicitly. The W short-buffer probe set last error 8, while A set 0. No host paths are exposed by the guest implementation. Results: `test-artifacts/final-path-tests.tap` and `test-artifacts/final-path-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |
