@@ -1,6 +1,7 @@
 import {FILE_ATTRIBUTE_MASK} from './vfs.js';
 import {checkBuffer,resizeFile} from './files.js';
 import {RuntimeFault} from './errors.js';
+import {renameFileByHandle} from './file-rename.js';
 
 export function writeFileTime(memory,out,value){const time=BigInt(value);memory.w32(out,Number(time&0xFFFFFFFFn));memory.w32(out+4,Number(time>>32n));}
 export function installFileInformation(api){
@@ -8,6 +9,7 @@ export function installFileInformation(api){
   k('SetFileInformationByHandle',4,(h,infoClass,input,size)=>{
     const f=p.object(h,'file');if(!f)return api.fail(6);
     if(![0,3,4,5,6,12,21,22,23].includes(infoClass))return api.fail(87);
+    if(infoClass===3)return api.expected(()=>renameFileByHandle(api,f,input,size));
     if(infoClass===4){
       if(size<1)return api.fail(24);if(!input)return api.fail(87);
       if(!f.deleteAccess)return api.fail(5);

@@ -53,7 +53,7 @@ test('Win32 set info: invalid handles, denied rights, directories, short structu
   assert.equal(call('SetFileInformationByHandle',h,6,out,7),0);assert.equal(call('GetLastError'),24);
   assert.equal(call('SetFileInformationByHandle',h,6,0,8),0);assert.equal(call('GetLastError'),87);
   for(const cls of [1,2,7,9,18,25,0xffffffff]){assert.equal(call('SetFileInformationByHandle',h,cls,out,64),0);assert.equal(call('GetLastError'),87);}
-  for(const cls of [0,3,5,12,21,22,23])assert.throws(()=>call('SetFileInformationByHandle',h,cls,out,64),e=>e.code==='UNSUPPORTED_FILE_INFO');
+  for(const cls of [0,5,12,21,22,23])assert.throws(()=>call('SetFileInformationByHandle',h,cls,out,64),e=>e.code==='UNSUPPORTED_FILE_INFO');
   assert.deepEqual([...p.object(h).node.data],[1,2,3,4]);
 });
 

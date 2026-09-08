@@ -58,6 +58,12 @@ Native Windows probes on disposable data files verified that EOF changes leave a
 
 Native Windows probes verified cross-handle cancellation and restored link counts, delete-on-close precedence, DELETE access for both marking and cancellation, short-buffer error 24, read-only marking error 5 and nonempty-directory error 145. Contract: [FILE_DISPOSITION_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_disposition_info). **Eight real-origin Edge checks passed without page errors**, including absence of the disposition fixture file from the persisted backup. Results: `test-artifacts/file-disposition-tests.tap` and `test-artifacts/file-disposition-browser-report.json`.
 
+## Handle-based file rename — 2026-09-08
+
+**107 Node tests passed, no failures or skips; eight real-origin Edge checks passed with no page errors.** Five new tests cover Unicode/case-only names, identity and shared cursor retention, timestamps and quota, directory-handle roots, absolute/current-directory paths, replacement restrictions, permissions, pending deletion, invalid names and x86 input validation. The rebuilt HandleObjects.exe verifies the 12-byte filename offset and renames a file through SetFileInformationByHandle before writing through its retained handle. The catalog remains at 438 entries.
+
+Native Windows probes verified existing-target error 183, successful explicit replacement, open-target error 5, missing-parent error 3 and same-name success. Contract: [FILE_RENAME_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_rename_info). Directory and stream renames remain unsupported. Results: `test-artifacts/file-rename-tests.tap` and `test-artifacts/file-rename-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

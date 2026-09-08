@@ -54,6 +54,8 @@ SetFileInformationByHandle supports FileEndOfFileInfo with its 8-byte signed LAR
 
 FileDispositionInfo supports marking and canceling deletion through a handle with DELETE access. Cancellation through another existing handle restores the name, link count and saved-disk entry, including after the requesting handle closes. FILE_FLAG_DELETE_ON_CLOSE still takes effect when its final alias closes. Empty directories can be marked; nonempty directories report ERROR_DIR_NOT_EMPTY, and pending directories reject child creation. The virtual drive root cannot be marked. FileDispositionInfoEx/POSIX flags remain unsupported.
 
+FileRenameInfo supports ordinary file renames with the x86 FILE_RENAME_INFO structure: counted UTF-16 names, relative/absolute virtual C: paths, directory-handle roots, case-only changes and optional replacement. Renames preserve identity, data, timestamps and open-handle positions. Replacement rejects open, read-only and directory targets; missing parents are not created. DELETE access is required. Directory rename, alternate streams, cross-volume moves and FileRenameInfoEx flags remain unsupported.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

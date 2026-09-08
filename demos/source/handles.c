@@ -12,6 +12,7 @@ void mainCRTStartup(void){
   FILE_ID_INFO identity;
   FILE_ATTRIBUTE_TAG_INFO tag;
   FILE_NAME_BUFFER filename;
+  FILE_RENAME_BUFFER rename;
   DWORD originalId;
   BYTE disposition;
   const WORD wideFile[]={'h','a','n','d','l','e','s','.','t','x','t',0};
@@ -90,6 +91,17 @@ void mainCRTStartup(void){
   disposition=1;CHECK(SetFileInformationByHandle(copy,4,&disposition,1));
   CHECK(CloseHandle(file)&&CloseHandle(copy));
   CHECK(CreateFileA("disposition.txt",GENERIC_READ,7,NULL,3,0,NULL)==INVALID_HANDLE&&GetLastError()==2);
+  file=CreateFileA("rename-source.txt",GENERIC_READ|GENERIC_WRITE|0x10000,7,NULL,2,0,NULL);
+  CHECK(file!=INVALID_HANDLE);
+  CHECK(GetFileInformationByHandle(file,&info));originalId=info.idLow;
+  memset(&rename,0,sizeof(rename));rename.length=10;
+  rename.name[0]='r';rename.name[1]='.';rename.name[2]='t';rename.name[3]='x';rename.name[4]='t';
+  CHECK((char*)rename.name-(char*)&rename==12);
+  CHECK(SetFileInformationByHandle(file,3,&rename,sizeof(rename)));
+  CHECK(GetFileInformationByHandle(file,&info)&&info.idLow==originalId);
+  CHECK(CreateFileA("rename-source.txt",GENERIC_READ,7,NULL,3,0,NULL)==INVALID_HANDLE&&GetLastError()==2);
+  CHECK(WriteFile(file,"r",1,&count,NULL)&&count==1);
+  CHECK(CloseHandle(file)&&DeleteFileA("r.txt"));
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
   CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);
