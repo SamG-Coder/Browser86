@@ -85,13 +85,16 @@ try{
       for(let i=0;i<3;i++){node.click();states.push([u('IsDlgButtonChecked',parent,42),node.getAttribute('aria-checked')]);}
       const radios=[0x20009,9,0x20009].map((style,i)=>u('CreateWindowExA',0,process.heap.string('BUTTON'),process.heap.string('Radio '+i),0x50010000|style,10,40+i*26,180,24,parent,50+i,0,0));
       const radioStates=[];for(const index of [0,1,2]){display.windows.get(radios[index]).element.click();radioStates.push(radios.map(h=>display.windows.get(h).element.getAttribute('aria-checked')));}
-      return {states,radioStates,commands:process.messageQueue.filter(m=>m.message===0x111&&m.wParam===42).map(m=>[m.hwnd===parent,m.wParam,m.lParam===child])};
+      const changing=display.windows.get(radios[0]).element;u('SendMessageA',radios[0],0xf4,0,0x10000);const deferredRole=changing.getAttribute('role');u('SendMessageW',radios[0],0xf4,0,1);const redrawnRole=changing.getAttribute('role');
+      return {states,radioStates,deferredRole,redrawnRole,commands:process.messageQueue.filter(m=>m.message===0x111&&m.wParam===42).map(m=>[m.hwnd===parent,m.wParam,m.lParam===child])};
     }finally{display.reset();root.remove();}
   });
   assert.deepEqual(automaticClicks.states,[[1,'true'],[2,'mixed'],[0,'false']]);assert.deepEqual(automaticClicks.commands,Array(3).fill([true,42,true]));
   checks.push('Real runtime automatic checkbox clicks cycle visible state and enqueue parent commands');
   assert.deepEqual(automaticClicks.radioStates,[['true','false','false'],['false','true','false'],['false','true','true']]);
   checks.push('Automatic radio clicks enforce visible WS_GROUP selection boundaries');
+  assert.equal(automaticClicks.deferredRole,'radio');assert.equal(automaticClicks.redrawnRole,null);
+  checks.push('BM_SETSTYLE defers display changes until its low-word redraw flag is set');
   // Read the actual database; no storage adapter or worker mock is used.
   const savedFile=async()=>{
     const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('browser86-packages',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});

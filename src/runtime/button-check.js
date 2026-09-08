@@ -7,6 +7,12 @@ export function buttonCheck(gui,w,message,value){
   w.checkState=state;if(changed)gui.notify(w);return 0;
 }
 
+export function buttonStyle(gui,w,value,redraw){
+  w.style=((w.style&~15)|(value&15))>>>0;
+  if(redraw&65535)gui.notify(w);
+  return 0;
+}
+
 export function buttonClick(gui,w,queued=false){
   const type=w.style&15;
   if(type===3||type===6)buttonCheck(gui,w,0xf1,((w.checkState||0)+1)%(type===6?3:2));

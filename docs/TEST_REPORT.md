@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Button type changes with BM_SETSTYLE - 2026-09-08
+
+**496 Node tests passed, 0 failed, 0 skipped.** Built-in buttons now implement BM_SETSTYLE, replacing only type bits while preserving other styles and stored check state. Tests cover high-bit inputs, transitions through checkbox/push/radio types, low-word redraw semantics, unchanged-type redraw, future activation behavior and custom procedure overrides. Catalog remains 603 entries.
+
+**Fifteen real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Production runtime/display checks verify deferred radio-to-push presentation and explicit redraw. Rebuilt HandleObjects.exe changes a three-state button to automatic mode using BM_SETSTYLE before exercising BM_CLICK. Evidence: [Node TAP](test-artifacts/button-style-tests.tap), [browser report](test-artifacts/button-style-browser-report.json).
+
+Native private A/W button probes confirmed low-four-bit replacement, preserved check state 2 across type changes and zero return. The hidden-window probe produced incidental error 6; this is not emulated. Probe windows/classes were cleaned up. Reference: [Microsoft BM_SETSTYLE](https://learn.microsoft.com/en-us/windows/win32/controls/bm-setstyle). Native paint scheduling, uncommon button types and full style-specific rendering remain incomplete.
+
 ## Automatic radio group activation - 2026-09-08
 
 **493 Node tests passed, 0 failed, 0 skipped.** Built-in automatic radio clicks now select the clicked control and clear visible, enabled manual/automatic radio siblings within WS_GROUP boundaries. Tests cover repeated selection, two independent groups, checkbox preservation, manual-radio clearing and hidden/disabled peer preservation. Catalog remains 603 entries.

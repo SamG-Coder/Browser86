@@ -39,3 +39,13 @@ test('Automatic radio activation respects group boundaries and clears manual rad
 test('Automatic radio activation skips hidden and disabled peers and updates browser-click state',()=>{
  const {p,u,create}=setup(),parent=create(0),buttons=[0x20009,4,9].map(type=>{const h=create(type),w=p.apis.gui.window(h);w.parent=parent;w.style|=0x50000000;w.visible=true;u('SendMessageA',h,0xf1,1,0);return h;});p.apis.gui.window(buttons[0]).visible=false;p.apis.gui.window(buttons[1]).enabled=false;p.inputEvent({kind:'click',hwnd:buttons[2]});assert.deepEqual(buttons.map(h=>u('SendMessageA',h,0xf0,0,0)),[1,1,1]);assert.equal(p.messageQueue.at(-1).lParam,buttons[2]);
 });
+
+test('BM_SETSTYLE replaces only type bits and retains check state across button types',()=>{
+ const {p,u,create}=setup(),h=create(0xc05);u('SendMessageA',h,0xf1,2,0);const original=u('GetWindowLongA',h,-16);for(const style of [3,0,9,5,0x4000,0xffff,0xffffffff]){assert.equal(u('SendMessageW',h,0xf4,style,0),0);assert.equal(u('GetWindowLongA',h,-16),((original&~15)|(style&15))>>>0);assert.equal(u('SendMessageA',h,0xf0,0,0),2);}assert.equal(p.apis.gui.window(h).enabled,true);
+});
+test('BM_SETSTYLE redraw uses only the low word and publishes even an unchanged type',()=>{
+ const {p,u,create}=setup(),h=create(5),gui=p.apis.gui,updates=[],notify=gui.notify;gui.notify=w=>updates.push(gui.serialize(w));try{for(const redraw of [0,0x10000,1,0x10001])u('SendMessageA',h,0xf4,3,redraw);assert.equal(updates.length,2);assert.ok(updates.every(w=>(w.style&15)===3));}finally{gui.notify=notify;}
+});
+test('BM_SETSTYLE changes future activation behavior and custom procedures can override it',()=>{
+ const {p,u,create}=setup(),h=create(2);u('SendMessageA',h,0xf5,0,0);assert.equal(u('SendMessageA',h,0xf0,0,0),0);u('SendMessageA',h,0xf4,3,1);u('SendMessageA',h,0xf5,0,0);assert.equal(u('SendMessageA',h,0xf0,0,0),1);u('SetWindowLongW',h,-4,12345);const result=u('SendMessageW',h,0xf4,0,1);assert.deepEqual(result.call.args,[h,0xf4,0,1]);assert.equal(result.then(7),7);assert.equal(p.apis.gui.window(h).style&15,3);
+});
