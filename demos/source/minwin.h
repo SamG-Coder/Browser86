@@ -353,3 +353,6 @@ API DWORD WINAPI GetWindowThreadProcessId(HWND,DWORD*);
 API DWORD WINAPI GetCurrentThreadId(void);
 API DWORD WINAPI GetCurrentProcessId(void);
 #endif
+
+API long WINAPI SendDlgItemMessageA(HWND,int,DWORD,DWORD,long);
+API long WINAPI SendDlgItemMessageW(HWND,int,DWORD,DWORD,long);

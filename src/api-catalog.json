@@ -3924,6 +3924,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "SendDlgItemMessageA",
+    "argc": 5,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SendDlgItemMessageW",
+    "argc": 5,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "SendMessageA",
     "argc": 4,
     "cdecl": false,

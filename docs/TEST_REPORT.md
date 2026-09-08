@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Dialog-control message dispatch - 2026-09-08
+
+**469 Node tests passed, 0 failed, 0 skipped.** Added SendDlgItemMessageA/W with shared control lookup, synchronous callback dispatch, preserved message arguments/results and existing ANSI/Unicode text conversion. Tests cover high-bit IDs, invalid targets before pointer access, direct default processing, custom callbacks and no asynchronous queue insertion. Catalog now contains 594 entries, without implying full API parity.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Rebuilt HandleObjects.exe imports both variants and checks successful WM_GETTEXTLENGTH dispatch plus missing-control failure inside the real browser worker. Evidence: [Node TAP](test-artifacts/send-dlg-item-tests.tap), [browser report](test-artifacts/send-dlg-item-browser-report.json).
+
+Native private A/W window probes confirmed successful dispatch preserving error 1234, missing controls failing with 1421 and invalid/null parent handles failing with 1400. Probe windows/classes were cleaned up. Reference: [Microsoft SendDlgItemMessageW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-senddlgitemmessagew). Dialog templates, the dialog manager and unsupported control messages remain unfinished.
+
 ## Control ID lookup - 2026-09-08
 
 **466 Node tests passed, 0 failed, 0 skipped.** GetDlgCtrlID/GetDlgItem now validate handles, preserve signed 32-bit IDs, report missing controls with error 1421 and restrict lookup to immediate child windows. Tests cover ID replacement, destruction, zero/high-bit IDs, successful last-error preservation and exclusion of grandchildren/owned popups. Catalog remains 592 entries.

@@ -28,6 +28,7 @@ const windowAnsiBestFit=new Map(sbcsTables[1252].encode[0]);
 export class GUI {
   constructor(apis){this.api=apis;this.p=apis.p;this.m=apis.m;this.classes=new Map();this.windows=new Map();this.nextAtom=0xC000;this.stock=new Map();this.focus=0;this.keyChars=new Map();this.nextTimer=1;this.install();}
   window(h){return this.windows.get(h>>>0);}
+  dialogItem(h,id){if(!this.window(h))return this.api.fail(1400);const child=[...this.windows.values()].find(w=>(w.style&0x40000000)&&w.parent===(h>>>0)&&(w.id|0)===(id|0));return child?child.hwnd:this.api.fail(1421);}
   serialize(w){return {hwnd:w.hwnd,parent:w.parent,title:w.title,className:w.className,x:w.x,y:w.y,width:w.width,height:w.height,style:w.style,visible:w.visible,enabled:w.enabled,id:w.id};}
   notify(w,op='update'){this.p.emit('window',{op,window:this.serialize(w)});}
   dc(h){return this.p.object(h,'dc');}
@@ -154,6 +155,7 @@ export class GUI {
       u('PeekMessage'+suffix,5,(out,hwnd,min,max,flags)=>{const r=this.getMessage(out,hwnd,min,max,!!(flags&1));return r===undefined?0:1;});
       u('DispatchMessage'+suffix,1,address=>{const msg=this.readMsg(address);if(msg.message===0x113&&msg.lParam)return p.call(msg.lParam,[msg.hwnd,msg.message,msg.wParam,msg.time]);return this.send(msg.hwnd,msg.message,msg.wParam,msg.lParam,wide);});
       u('SendMessage'+suffix,4,(h,msg,wp,lp)=>this.send(h,msg,wp,lp,wide));
+      u('SendDlgItemMessage'+suffix,5,(h,id,msg,wp,lp)=>{const child=this.dialogItem(h,id);return child?this.send(child,msg,wp,lp,wide):0;});
       u('PostMessage'+suffix,4,(h,msg,wp,lp)=>{if(h&&!this.window(h))return a.fail(1400);p.postMessage(h,msg,wp,lp);return 1;});
       u('SetWindowText'+suffix,2,(h,text)=>{if(!this.window(h))return a.fail(1400);return this.send(h,0x0C,0,text,wide,result=>result?1:0);});
       u('GetWindowText'+suffix,3,(h,out,n)=>{
@@ -186,7 +188,7 @@ export class GUI {
     u('IsWindow',1,h=>this.window(h)?1:0);
     u('GetActiveWindow',0,()=>this.focus||[...this.windows.keys()][0]||0);u('SetActiveWindow',1,h=>{const old=this.focus;this.focus=h;return old;});
     u('GetDlgCtrlID',1,h=>{const w=this.window(h);return w?w.id|0:a.fail(1400);});
-    u('GetDlgItem',2,(h,id)=>{if(!this.window(h))return a.fail(1400);const child=[...this.windows.values()].find(w=>(w.style&0x40000000)&&w.parent===(h>>>0)&&(w.id|0)===(id|0));return child?child.hwnd:a.fail(1421);});
+    u('GetDlgItem',2,(h,id)=>this.dialogItem(h,id));
     installCursors(this);installMouseCapture(this);installDoubleClick(this);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,36:4,37:4,61:1,80:1}[index]??0));installClassQueries(this);installWindowWord(this);installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
