@@ -136,6 +136,8 @@ ExtCreatePen PS_NULL returns the shared NULL_PEN stock handle, reports OBJ_PEN a
 
 CreatePen and CreatePenIndirect support PS_DASH, PS_DOT, PS_DASHDOT and PS_DASHDOTDOT when the absolute logical width exceeds one. Native Windows realizes these as solid strokes while GetObjectA/W retains the requested style and absolute width. Twenty owned-bitmap native cases verify descriptions and solid centerline coverage; compiled guest imports and browser canvas checks cover the implementation. Thin built-in dash patterns and their background-mode behavior remain unsupported. ExtCreatePen built-in patterns are a separate unfinished surface.
 
+GetBrushOrgEx and SetBrushOrgEx maintain a per-DC signed device-coordinate brush origin, initially (0,0), with optional previous-value output from the setter. Coordinates are retained without modulo reduction, including signed extremes, matching native queries. SaveDC/RestoreDC preserve the origin; invalid handles and null getter output use native-observed errors. Guest output ranges are validated before writes or state changes. Patterned brush realization and automatic alignment for window-managed DCs remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

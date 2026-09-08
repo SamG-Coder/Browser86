@@ -169,6 +169,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "GetBrushOrgEx",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetCurrentObject",
     "argc": 2,
     "cdecl": false,
@@ -388,6 +395,13 @@
     "dll": "gdi32.dll",
     "name": "SetBkMode",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "SetBrushOrgEx",
+    "argc": 4,
     "cdecl": false,
     "data": false
   },

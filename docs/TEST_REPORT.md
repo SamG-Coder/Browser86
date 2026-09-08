@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Brush origin API compatibility - 2026-09-08
+
+**252 Node tests passed, 0 failed, 0 skipped.** Three new tests cover default and previous origins, full signed coordinates, optional setter output, nested saved states, independent DCs, invalid/wrong-type handles, null getter output and cross-page buffers without partial writes or state changes. The rebuilt HandleObjects.exe imports GetBrushOrgEx and SetBrushOrgEx, checks previous/current coordinates and saved-state restoration, and verifies the null-output error. The catalog now contains 521 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors**, including compiled fixture execution and persistence/backup checks. Evidence: [Node TAP](test-artifacts/brush-origin-tests.tap) and [browser report](test-artifacts/brush-origin-browser-report.json).
+
+Native ctypes probes on an owned compatible DC confirmed default (0,0), unreduced (19,-12), signed INT_MIN/INT_MAX coordinates, restoration through SaveDC/RestoreDC, and last-error preservation on success. Invalid getter handles and null getter output returned error 87; invalid setter handles returned error 6. The native DC was released. No guest executable ran on the host. API references: [GetBrushOrgEx](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getbrushorgex), [SetBrushOrgEx](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-setbrushorgex). Patterned brush rendering and automatic window-DC alignment remain unfinished; this stage implements the origin state and ABI.
+
 ## Wide built-in dash pen compatibility - 2026-09-08
 
 **249 Node tests passed, 0 failed, 0 skipped.** Twenty native reference cases cover four built-in dash styles across five signed widths. Both CreatePen and CreatePenIndirect preserve the requested LOGPEN style, normalize width, realize solid strokes, retain last error and support object selection, querying and deletion. Tests also cover short output buffers and explicit unsupported thin/inside-frame cases. The rebuilt HandleObjects.exe exercises both imported constructors and GetObjectA/W. The catalog remains at 519 entries.

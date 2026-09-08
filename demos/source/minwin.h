@@ -42,6 +42,8 @@ API HANDLE WINAPI GetCurrentObject(HDC,DWORD);
 API DWORD WINAPI GetObjectType(HANDLE);
 API BOOL WINAPI RestoreDC(HDC,int);
 API BOOL WINAPI GetCurrentPositionEx(HDC,void*);
+API BOOL WINAPI GetBrushOrgEx(HDC,void*);
+API BOOL WINAPI SetBrushOrgEx(HDC,int,int,void*);
 API HDC WINAPI GetDC(HWND);
 API int WINAPI ReleaseDC(HWND,HDC);
 API WORD** WINAPI CommandLineToArgvW(const WORD*,int*);

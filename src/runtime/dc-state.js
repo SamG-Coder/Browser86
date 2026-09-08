@@ -1,8 +1,17 @@
 import {checkBuffer} from './files.js';
 import {RuntimeFault} from './errors.js';
-const fields=['miterLimitBits','polyFillMode','textColor','background','bkMode','x','y','pen','brush','font','fontSize','align','dcPenColor','dcBrushColor'];
+const fields=['brushOrgX','brushOrgY','miterLimitBits','polyFillMode','textColor','background','bkMode','x','y','pen','brush','font','fontSize','align','dcPenColor','dcBrushColor'];
 export function installDCState(gui){
   const api=gui.api,m=gui.m,g=(name,n,fn)=>api.add('gdi32.dll',name,n,fn);
+  g('GetBrushOrgEx',2,(handle,out)=>{
+    const dc=gui.dc(handle);if(!dc||!out)return api.fail(87);
+    checkBuffer(m,out,8);m.w32(out,dc.brushOrgX);m.w32(out+4,dc.brushOrgY);return 1;
+  });
+  g('SetBrushOrgEx',4,(handle,x,y,out)=>{
+    const dc=gui.dc(handle);if(!dc)return api.fail(6);
+    if(out){checkBuffer(m,out,8);m.w32(out,dc.brushOrgX);m.w32(out+4,dc.brushOrgY);}
+    dc.brushOrgX=x|0;dc.brushOrgY=y|0;return 1;
+  });
   g('GetMiterLimit',2,(handle,out)=>{
     const dc=gui.dc(handle);if(!dc)return api.fail(87);if(!out)return 0;
     checkBuffer(m,out,4);m.w32(out,dc.miterLimitBits);return 1;
