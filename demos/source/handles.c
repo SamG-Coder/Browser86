@@ -313,8 +313,10 @@ void mainCRTStartup(void){
   lifetimeWindows[0]=CreateWindowExA(0,"LifetimeFixture","",0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);
   lifetimeWindows[1]=CreateWindowExA(0,"LifetimeFixture","",0x40000000,0,0,20,20,lifetimeWindows[0],NULL,NULL,NULL);
   lifetimeWindows[2]=CreateWindowExA(0,"LifetimeFixture","",0x40000000,0,0,20,20,lifetimeWindows[1],NULL,NULL,NULL);
-  lifetimeWindows[3]=CreateWindowExA(0,"LifetimeFixture","",0x80000000,0,0,20,20,lifetimeWindows[0],NULL,NULL,NULL);
+  lifetimeWindows[3]=CreateWindowExA(0,"LifetimeFixture","",0x80000000,0,0,20,20,lifetimeWindows[1],NULL,NULL,NULL);
   for(int i=0;i<4;i++)CHECK(lifetimeWindows[i]&&IsWindow(lifetimeWindows[i]));
+  CHECK(GetParent(lifetimeWindows[2])==lifetimeWindows[1]&&GetParent(lifetimeWindows[3])==lifetimeWindows[0]);
+  CHECK(IsChild(lifetimeWindows[0],lifetimeWindows[2])&&!IsChild(lifetimeWindows[0],lifetimeWindows[3])&&!IsChild(lifetimeWindows[0],lifetimeWindows[0]));
   CHECK(DestroyWindow(lifetimeWindows[0]));CHECK(lifetimeCount==8);
   DWORD expectedLifetime[8]={770,898,2,258,514,642,386,130};
   for(int i=0;i<8;i++)CHECK(lifetimeLog[i]==expectedLifetime[i]);

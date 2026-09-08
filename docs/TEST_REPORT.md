@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Child and owner hierarchy - 2026-09-08
+
+**297 Node tests passed, 0 failed, 0 skipped.** IsChild now follows child ancestry and excludes self/ownership relationships. GetParent distinguishes child parents from popup and overlapped ownership, and both APIs return error 1400 for invalid handles. CreateWindowExA/W resolves a nonchild window's owner to the requested child's top-level ancestor; CREATESTRUCT retains the caller's original hwndParent. Tests cover both creation variants and inspect the original argument during both creation callbacks. HandleObjects.exe imports GetParent and IsChild, creates its owned popup through a child handle, verifies normalized ownership and nested child queries, then runs the existing destruction sequence. Catalog: 547 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-hierarchy-tests.tap), [browser report](test-artifacts/window-hierarchy-browser-report.json).
+
+Native ctypes probes used hidden STATIC root/child/grandchild/popup/overlapped windows, verified the corresponding queries, error 1400 for invalid handles and unchanged sentinel error 1234 on valid queries. A registered private window class confirmed that both WM_NCCREATE and WM_CREATE receive the original child handle in CREATESTRUCT even though popup ownership is normalized to the root. All owned probe windows were destroyed and the class unregistered; no guest executable ran on the host. References: [GetParent](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getparent), [IsChild](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-ischild), [GetAncestor](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getancestor). GetAncestor was investigated but remains unimplemented: GA_PARENT for top-level windows requires a desktop-window handle, which this runtime does not yet model.
+
 ## Failed window creation cleanup - 2026-09-08
 
 **293 Node tests passed, 0 failed, 0 skipped.** CreateWindowExA/W now distinguish WM_NCCREATE rejection from WM_CREATE rejection and send the corresponding cleanup messages through guest callbacks. Tests cover both string variants, rejected HWND/DC and timer cleanup, temporary CREATESTRUCT release, descendant destruction, no duplicate display destruction, and windows destroyed during creation returning null without pending paint. The rebuilt HandleObjects.exe registers a rejecting procedure and verifies both callback sequences and invalidated HWNDs. Catalog: 546 entries.

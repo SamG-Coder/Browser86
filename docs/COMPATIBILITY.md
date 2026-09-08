@@ -172,6 +172,8 @@ DestroyWindow now recursively destroys nested children and owned windows, invoke
 
 CreateWindowExA/W rejection now sends WM_NCDESTROY after a false WM_NCCREATE result, and WM_DESTROY followed by WM_NCDESTROY after a WM_CREATE result of -1. Cleanup releases runtime window/DC handles, timers, descendants and the temporary CREATESTRUCT. Windows destroyed by creation callbacks return null and are not queued for painting. Failure-path last-error parity and the full set of native creation messages remain unfinished.
 
+IsChild now follows nested WS_CHILD ancestry, excludes self and popup ownership, and reports error 1400 for invalid handles. GetParent distinguishes child parents, popup owners and overlapped windows. CreateWindowExA/W normalizes nonchild ownership to the requested child's top-level window while preserving the original hwndParent in CREATESTRUCT. GetAncestor and a guest desktop-window handle remain unimplemented.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

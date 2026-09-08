@@ -273,4 +273,6 @@ API void WINAPI ReleaseSRWLockExclusive(void*);
 API BOOL WINAPI GetClientRect(HWND,RECT*);
 API BOOL WINAPI GetWindowRect(HWND,RECT*);
 API BOOL WINAPI IsWindow(HWND);
+API HWND WINAPI GetParent(HWND);
+API BOOL WINAPI IsChild(HWND,HWND);
 #endif

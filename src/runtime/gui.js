@@ -1,3 +1,4 @@
+import {childRoot,installWindowHierarchy} from './window-hierarchy.js';
 import {installWindowCoordinates} from './window-coordinates.js';
 import {installRegions} from './regions.js';
 import {installSystemColors} from './system-colors.js';
@@ -55,9 +56,9 @@ export class GUI {
       for(const extended of [false,true])u('RegisterClass'+(extended?'Ex':'')+suffix,1,pointer=>{const o=extended?4:0;if(extended&&m.u32(pointer)<48)return a.fail(87);const proc=m.u32(pointer+o+4),name=str(m.u32(pointer+o+36));if(!name)return a.fail(87);if(this.classes.has(name.toLowerCase()))return a.fail(1410);const atom=this.nextAtom++;this.classes.set(name.toLowerCase(),{name,atom,proc,instance:m.u32(pointer+o+16),background:m.u32(pointer+o+28),wide});return atom;});
       u('UnregisterClass'+suffix,2,(name,instance)=>{const key=str(name).toLowerCase();if([...this.windows.values()].some(w=>w.className.toLowerCase()===key))return a.fail(1412);return this.classes.delete(key)?1:a.fail(1411);});
       u('CreateWindowEx'+suffix,12,(exStyle,className,title,style,x,y,width,height,parent,menu,instance,param)=>{const cls=className<65536?[...this.classes.values()].find(c=>c.atom===className):this.classes.get(str(className).toLowerCase());const name=cls?.name||(className>=65536?str(className):'');if(!cls&&!['BUTTON','STATIC','EDIT'].includes(name.toUpperCase()))return a.fail(1407);
-        if(parent&&!this.window(parent))return a.fail(1400);const text=str(title),hwnd=p.handle('window',{});const w={hwnd,className:name,title:text,parent,id:menu,proc:cls?.proc||0,wide,style,exStyle,x:x===0x80000000?40:x|0,y:y===0x80000000?40:y|0,width:width===0x80000000?640:Math.max(1,Math.min(1920,width|0)),height:height===0x80000000?420:Math.max(1,Math.min(1080,height|0)),visible:!!(style&0x10000000),enabled:!(style&0x08000000),paintPending:false,dc:0};
+        if(parent&&!this.window(parent))return a.fail(1400);const requestedParent=parent;if(parent&&!(style&0x40000000))parent=childRoot(this,parent);const text=str(title),hwnd=p.handle('window',{});const w={hwnd,className:name,title:text,parent,id:menu,proc:cls?.proc||0,wide,style,exStyle,x:x===0x80000000?40:x|0,y:y===0x80000000?40:y|0,width:width===0x80000000?640:Math.max(1,Math.min(1920,width|0)),height:height===0x80000000?420:Math.max(1,Math.min(1080,height|0)),visible:!!(style&0x10000000),enabled:!(style&0x08000000),paintPending:false,dc:0};
         w.dc=this.newDC(hwnd);this.windows.set(hwnd,w);this.notify(w,'create');
-        const cs=p.heap.alloc(48,true);[param,instance,menu,parent,w.height,w.width,w.y,w.x,style,title,className,exStyle].forEach((v,i)=>m.w32(cs+i*4,v));
+        const cs=p.heap.alloc(48,true);[param,instance,menu,requestedParent,w.height,w.width,w.y,w.x,style,title,className,exStyle].forEach((v,i)=>m.w32(cs+i*4,v));
         const finish=()=>{p.heap.free(cs);if(!this.window(hwnd))return 0;if(w.visible)this.queuePaint(w);return hwnd;};
         const reject=nonclientOnly=>{const done=()=>{p.heap.free(cs);return 0;};return this.window(hwnd)?this.destroy(hwnd,done,nonclientOnly):done();};
         if(!w.proc)return finish();return p.call(w.proc,[hwnd,0x81,0,cs],accepted=>!this.window(hwnd)?reject(true):accepted?p.call(w.proc,[hwnd,WM_CREATE,0,cs],result=>(result>>>0)===0xFFFFFFFF?reject(false):finish()):reject(true));});
@@ -92,8 +93,8 @@ export class GUI {
     u('MoveWindow',6,(h,x,y,width,height,repaint)=>{const w=this.window(h);if(!w)return 0;w.x=x|0;w.y=y|0;w.width=Math.max(1,Math.min(1920,width|0));w.height=Math.max(1,Math.min(1080,height|0));this.notify(w);if(repaint)this.queuePaint(w);return 1;});
     u('IsWindow',1,h=>this.window(h)?1:0);u('IsWindowVisible',1,h=>this.window(h)?.visible?1:0);u('IsWindowEnabled',1,h=>this.window(h)?.enabled?1:0);u('EnableWindow',2,(h,enabled)=>{const w=this.window(h);if(!w)return 0;const wasDisabled=!w.enabled;w.enabled=!!enabled;this.notify(w);return wasDisabled?1:0;});
     u('SetFocus',1,h=>{const old=this.focus;if(h&&!this.window(h))return 0;this.focus=h;return old;});u('GetFocus',0,()=>this.focus);u('GetActiveWindow',0,()=>this.focus||[...this.windows.keys()][0]||0);u('SetActiveWindow',1,h=>{const old=this.focus;this.focus=h;return old;});
-    u('GetParent',1,h=>this.window(h)?.parent||0);u('GetDlgCtrlID',1,h=>this.window(h)?.id||0);u('GetDlgItem',2,(h,id)=>[...this.windows.values()].find(w=>w.parent===h&&w.id===id)?.hwnd||0);
-    u('SetCursor',1,cursor=>cursor);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));installWindowCoordinates(this);installSystemColors(this);installRegions(this);
+    u('GetDlgCtrlID',1,h=>this.window(h)?.id||0);u('GetDlgItem',2,(h,id)=>[...this.windows.values()].find(w=>w.parent===h&&w.id===id)?.hwnd||0);
+    u('SetCursor',1,cursor=>cursor);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
     installRectangles(this.api);
