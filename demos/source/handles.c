@@ -190,6 +190,11 @@ void mainCRTStartup(void){
   CHECK(CompareFileTime(&epoch,&stamp)==-1&&CompareFileTime(&stamp,&epoch)==1&&CompareFileTime(&stamp,&stamp)==0);
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
+  WORD ordinalA[]={'A',0,'x',0},ordinalB[]={'a',0,'y',0};
+  CHECK(CompareStringOrdinal(ordinalA,-1,ordinalB,-1,1)==2);
+  CHECK(CompareStringOrdinal(ordinalA,3,ordinalB,3,1)==1);
+  CHECK(CompareStringOrdinal(ordinalA,1,ordinalB,1,0)==1);
+  CHECK(!CompareStringOrdinal(ordinalA,1,ordinalB,1,2)&&GetLastError()==87);
   CHECK(DosDateTimeToFileTime(0x21,0,&stamp));CHECK(FileTimeToDosDateTime(&stamp,&fatDate,&fatTime));
   CHECK(fatDate==0x21&&fatTime==0);stamp.low++;
   CHECK(FileTimeToDosDateTime(&stamp,&fatDate,&fatTime)&&fatTime==1);

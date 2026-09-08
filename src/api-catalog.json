@@ -288,6 +288,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "CompareStringOrdinal",
+    "argc": 5,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "CopyFileA",
     "argc": 3,
     "cdecl": false,

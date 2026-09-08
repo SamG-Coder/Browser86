@@ -10,6 +10,7 @@ typedef struct {WORD year,month,weekday,day,hour,minute,second,millis;} SYSTEMTI
 API BOOL WINAPI FileTimeToSystemTime(const FILETIME*,SYSTEMTIME*);
 API BOOL WINAPI SystemTimeToFileTime(const SYSTEMTIME*,FILETIME*);
 API long WINAPI CompareFileTime(const FILETIME*,const FILETIME*);
+API int WINAPI CompareStringOrdinal(const WORD*,int,const WORD*,int,BOOL);
 API BOOL WINAPI DosDateTimeToFileTime(WORD,WORD,FILETIME*);
 API BOOL WINAPI FileTimeToDosDateTime(const FILETIME*,WORD*,WORD*);
 typedef struct {DWORD attributes;FILETIME creation,access,write;DWORD volume,sizeHigh,sizeLow,links,idHigh,idLow;} BY_HANDLE_FILE_INFORMATION;

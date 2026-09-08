@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Ordinal Unicode comparison extension — 2026-09-08
+
+**170 Node tests passed, 0 failed, 0 skipped.** Four new tests cover UTF-16 lengths, embedded NULs, terminated strings, CSTR result codes, last-error preservation, nonlinguistic case behavior, surrogates, invalid arguments and counted-buffer validation. The suite checks 512 deterministic native reference comparisons recorded in tests/ordinal-native-vectors.json. HandleObjects.exe now imports CompareStringOrdinal and checks case-sensitive/insensitive results, embedded NUL handling and invalid boolean failure through the x86 interpreter. The catalog contains 471 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The updated fixture and actual workers ran under the deployed CSP; IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/ordinal-tests.tap) and [browser report](test-artifacts/ordinal-browser-report.json).
+
+tools/build-ordinal-table.py inspected all 65,536 UTF-16 code units using native RtlUpcaseUnicodeChar and verified all 973 nonidentity mappings with CompareStringOrdinal on Windows 10.0.26200. The generated table is pinned for deterministic browser behavior. Native probes confirmed distinctions from JavaScript casing, including dotless i, long s, Kelvin sign, Greek sigma variants and supplementary characters. Calls used owned strings/scalars; no guest executable ran on the host. Microsoft's [CompareStringOrdinal documentation](https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-comparestringordinal) establishes the length, return-value and strict boolean contracts. This test scope does not certify every Windows NLS version or linguistic collation.
+
 ## DOS packed timestamp extension — 2026-09-08
 
 **166 Node tests passed, 0 failed, 0 skipped.** Four new tests cover native rounding vectors, exact 100ns boundary behavior, month/year rollover, exhaustive validation of all 65,536 packed date words (46,751 valid dates), invalid time fields, WORD argument truncation, range failures, unchanged failure output, overlapping buffers and complete output validation. HandleObjects.exe was rebuilt with both real DOS conversion imports and checks the 1980 epoch, one-tick upward rounding and invalid-date failure through the x86 interpreter. The catalog contains 470 entries.
