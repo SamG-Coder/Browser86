@@ -1,6 +1,7 @@
 import {installCursors,defaultSetCursor} from './cursors.js';
 import {installWindowWord} from './window-word.js';
 import {installDialogIntegers} from './dialog-integers.js';
+import {buttonCheck} from './button-check.js';
 import {installClassQueries} from './class-queries.js';
 import {installWindowIdentity} from './window-identity.js';
 import {installWindowProperties,releaseWindowProperties} from './window-properties.js';
@@ -30,7 +31,7 @@ export class GUI {
   constructor(apis){this.api=apis;this.p=apis.p;this.m=apis.m;this.classes=new Map();this.windows=new Map();this.nextAtom=0xC000;this.stock=new Map();this.focus=0;this.keyChars=new Map();this.nextTimer=1;this.install();}
   window(h){return this.windows.get(h>>>0);}
   dialogItem(h,id){if(!this.window(h))return this.api.fail(1400);const child=[...this.windows.values()].find(w=>(w.style&0x40000000)&&w.parent===(h>>>0)&&(w.id|0)===(id|0));return child?child.hwnd:this.api.fail(1421);}
-  serialize(w){return {hwnd:w.hwnd,parent:w.parent,title:w.title,className:w.className,x:w.x,y:w.y,width:w.width,height:w.height,style:w.style,visible:w.visible,enabled:w.enabled,id:w.id};}
+  serialize(w){return {hwnd:w.hwnd,parent:w.parent,title:w.title,className:w.className,x:w.x,y:w.y,width:w.width,height:w.height,style:w.style,visible:w.visible,enabled:w.enabled,id:w.id,checkState:w.checkState||0};}
   notify(w,op='update'){this.p.emit('window',{op,window:this.serialize(w)});}
   dc(h){return this.p.object(h,'dc');}
   newDC(hwnd){return this.p.handle('dc',{hwnd,clipRegion:null,brushOrgX:0,brushOrgY:0,miterLimitBits:0x41200000,polyFillMode:1,dcPenColor:0,dcBrushColor:0xFFFFFF,textColor:0,background:0xFFFFFF,bkMode:2,x:0,y:0,pen:this.stockObject(7),brush:this.stockObject(0),font:this.stockObject(17),fontSize:16,align:0});}
@@ -50,6 +51,7 @@ export class GUI {
   }
   send(hwnd,msg,wp,lp,wide=false,done=value=>value){
     const w=this.window(hwnd);if(!w)return done(0);
+    if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&(msg===0xf0||msg===0xf1))return done(buttonCheck(this,w,msg,wp));
     if(w.proc&&msg===0x0E&&wide!==w.wide){
       const procedureWide=w.wide;
       return this.p.call(w.proc,[hwnd,msg,wp,0],length=>{
@@ -146,7 +148,7 @@ export class GUI {
         return 1;
       });
       u('CreateWindowEx'+suffix,12,(exStyle,className,title,style,x,y,width,height,parent,menu,instance,param)=>{const cls=className<65536?[...this.classes.values()].find(c=>c.atom===className):this.classes.get(str(className).toLowerCase());const name=cls?.name||(className>=65536?str(className):'');if(!cls&&!['BUTTON','STATIC','EDIT'].includes(name.toUpperCase()))return a.fail(1407);
-        if(cls?.windowExtra>0x7fffffff)throw new RuntimeFault('UNSUPPORTED_GUI','Window creation with a negative class extra-storage size is not implemented.');if(parent&&!this.window(parent))return a.fail(1400);const requestedParent=parent;if(parent&&!(style&0x40000000))parent=childRoot(this,parent);const text=str(title),hwnd=p.handle('window',{});const w={hwnd,instance:instance>>>0,className:name,title:text,parent,id:menu,proc:cls?.proc||0,wide:cls?.wide??wide,style,exStyle,x:x===0x80000000?40:x|0,y:y===0x80000000?40:y|0,width:width===0x80000000?640:Math.max(1,Math.min(1920,width|0)),height:height===0x80000000?420:Math.max(1,Math.min(1080,height|0)),visible:!!(style&0x10000000),enabled:!(style&0x08000000),paintPending:false,extraSize:cls?.windowExtra||0,dc:0};
+        if(cls?.windowExtra>0x7fffffff)throw new RuntimeFault('UNSUPPORTED_GUI','Window creation with a negative class extra-storage size is not implemented.');if(parent&&!this.window(parent))return a.fail(1400);const requestedParent=parent;if(parent&&!(style&0x40000000))parent=childRoot(this,parent);const text=str(title),hwnd=p.handle('window',{});const w={hwnd,instance:instance>>>0,className:name,builtin:!cls,title:text,parent,id:menu,proc:cls?.proc||0,wide:cls?.wide??wide,style,exStyle,x:x===0x80000000?40:x|0,y:y===0x80000000?40:y|0,width:width===0x80000000?640:Math.max(1,Math.min(1920,width|0)),height:height===0x80000000?420:Math.max(1,Math.min(1080,height|0)),visible:!!(style&0x10000000),enabled:!(style&0x08000000),paintPending:false,extraSize:cls?.windowExtra||0,dc:0};
         w.dc=this.newDC(hwnd);this.windows.set(hwnd,w);this.notify(w,'create');
         const temporary=[];
         const creationString=(pointer,atom=false)=>{

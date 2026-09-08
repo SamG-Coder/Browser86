@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Built-in button check-state storage - 2026-09-08
+
+**485 Node tests passed, 0 failed, 0 skipped.** Built-in BUTTON controls now handle BM_GETCHECK/BM_SETCHECK independently of DefWindowProc. Tests cover styles 0-11, unsigned clamping, default/per-window state, radio WS_TABSTOP changes, unaffected siblings, serialization and custom-procedure overrides. Catalog remains 602 entries.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Rebuilt HandleObjects.exe creates a standard three-state button, sets state 2 and verifies clamping of 99 through CheckDlgButton/IsDlgButtonChecked inside the browser worker. Evidence: [Node TAP](test-artifacts/button-check-tests.tap), [browser report](test-artifacts/button-check-browser-report.json).
+
+Native hidden A/W button probes confirmed clamping to 1 for checkbox/radio styles and 2 for three-state styles, ignored states for other tested styles, zero BM_SETCHECK return and radio tab-stop changes. Non-radio calls preserved error 1234; radio calls produced error 6 in the probe, which remains an unresolved incidental last-error difference. Probe windows/classes were cleaned up. Reference: [Microsoft BM_SETCHECK](https://learn.microsoft.com/en-us/windows/win32/controls/bm-setcheck). Automatic toggling, radio grouping and visual checkbox rendering remain unfinished; serialized check-state metadata is available to the display bridge.
+
 ## Dialog check-message dispatch - 2026-09-08
 
 **482 Node tests passed, 0 failed, 0 skipped.** Added CheckDlgButton and IsDlgButtonChecked. Tests cover raw check-state forwarding, synchronous callback arguments, setter success independent of callback result, unsigned query results, last-error preservation, non-button custom controls and lookup failures. Catalog now contains 602 entries, without implying full API parity.
