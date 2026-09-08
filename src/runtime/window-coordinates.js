@@ -8,6 +8,7 @@ export function windowOrigin(gui,h){
 export function installWindowCoordinates(gui){
  const {api,m}=gui,u=(n,c,f)=>api.add('user32.dll',n,c,f);
  const origin=h=>windowOrigin(gui,h);
+ u('GetWindowPlacement',2,(h,out)=>{const w=gui.window(h);if(!w)return api.fail(1400);if(!out||m.u32(out)!==44)return api.fail(87);checkBuffer(m,out,44);m.fill(out,44,0);m.w32(out,44);m.w32(out+8,w.visible?1:0);m.w32(out+12,0xffffffff);m.w32(out+16,0xffffffff);m.w32(out+20,0xffffffff);m.w32(out+24,0xffffffff);[w.x,w.y,w.x+w.width,w.y+w.height].forEach((v,i)=>m.w32(out+28+i*4,v));return 1;});
  for(const screen of [false,true])u(screen?'GetWindowRect':'GetClientRect',2,(h,out)=>{
   const w=gui.window(h);if(!w||!out)return api.fail(1400);
   const [x,y]=screen?origin(h):[0,0];checkBuffer(m,out,16);

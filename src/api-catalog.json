@@ -3104,6 +3104,20 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "_wremove",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "_wrename",
+    "argc": 2,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_write",
     "argc": 3,
     "cdecl": true,
@@ -4232,6 +4246,13 @@
   {
     "dll": "user32.dll",
     "name": "GetWindowLongW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "GetWindowPlacement",
     "argc": 2,
     "cdecl": false,
     "data": false

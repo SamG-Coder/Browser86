@@ -107,7 +107,10 @@ export function installCRT(api){const p=api.p,m=api.m,v=api.vfs;const c=(name,n,
   c('fgets',3,(out,count,h)=>{const f=streams.get(h);count|=0;if(!f?.read||count<=0)return 0;const data=v.readFile(f.path);let n=0;while(n<count-1&&f.position<data.length){let ch=data[f.position++];if(!f.binary&&ch===13&&data[f.position]===10){f.position++;ch=10;}if(!f.binary&&ch===26){f.eof=true;break;}m.w8(out+n++,ch);if(ch===10)break;}if(!n&&count>1){f.eof=true;return 0;}m.w8(out+n,0);if(f.position>=data.length&&n<count-1&&(!n||m.u8(out+n-1)!==10))f.eof=true;return out;});
   c('ferror',1,h=>streams.get(h)?.error?1:0);
   c('fprintf',2,(h,fmt)=>{const f=streams.get(h);if(!f?.write)return -1;const text=format(m.cstr(fmt),2),data=ansiEncode(text);v.writeAt(f.path,f.position,data);f.position+=data.length;return data.length;});
-  c('remove',1,name=>api.expected(()=>v.remove(m.cstr(name))?0:-1,-1));c('rename',2,(from,to)=>api.expected(()=>v.rename(m.cstr(from),m.cstr(to))?0:-1,-1));
+  for(const wide of [false,true]){
+    c(wide?'_wremove':'remove',1,name=>{const path=api.str(name,wide),node=v.get(path);if(!node)return error(2);if(node.directory||node.openObjects)return error(13);return api.expected(()=>v.remove(path)?0:error(2),-1);});
+    c(wide?'_wrename':'rename',2,(from,to)=>{const source=api.str(from,wide),target=api.str(to,wide);if(!v.exists(source))return error(2);if(v.exists(target))return error(13);return api.expected(()=>v.rename(source,target)?0:error(2),-1);});
+  }
   c('time',1,out=>{const seconds=Math.floor(Date.now()/1000);if(out)m.w32(out,seconds);return seconds;});c('clock',0,()=>Math.floor(performance.now()-p.started));
   for(const name of ['memcpy','memmove','memset','memcmp','memchr','strchr','strrchr','strcmp','strlen','wcschr','wcsrchr']){
     const entry=api.lookup('msvcrt.dll',name);api.add('vcruntime140.dll',name,entry.argc,entry.fn,true);
