@@ -246,6 +246,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "AcquireSRWLockExclusive",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "AcquireSRWLockShared",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "AllocConsole",
     "argc": 0,
     "cdecl": false,
@@ -1114,6 +1128,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "InitializeSRWLock",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "InitOnceBeginInitialize",
     "argc": 4,
     "cdecl": false,
@@ -1492,6 +1513,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "ReleaseSRWLockExclusive",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "ReleaseSRWLockShared",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "RemoveDirectoryA",
     "argc": 1,
     "cdecl": false,
@@ -1739,6 +1774,20 @@
     "dll": "kernel32.dll",
     "name": "TlsSetValue",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "TryAcquireSRWLockExclusive",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "TryAcquireSRWLockShared",
+    "argc": 1,
     "cdecl": false,
     "data": false
   },

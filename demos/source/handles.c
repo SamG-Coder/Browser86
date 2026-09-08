@@ -178,6 +178,11 @@ void mainCRTStartup(void){
   DeleteCriticalSection(&critical);InitializeCriticalSection(&critical);DeleteCriticalSection(&critical);
   CHECK(InitializeCriticalSectionAndSpinCount(&critical,100));DeleteCriticalSection(&critical);
   CHECK(SetEnvironmentVariableA("B86_TEST","value"));
+  DWORD srw=0;
+  AcquireSRWLockShared(&srw);CHECK(!TryAcquireSRWLockExclusive(&srw));ReleaseSRWLockShared(&srw);
+  AcquireSRWLockExclusive(&srw);CHECK(!TryAcquireSRWLockShared(&srw));CHECK(!TryAcquireSRWLockExclusive(&srw));ReleaseSRWLockExclusive(&srw);
+  InitializeSRWLock(&srw);CHECK(TryAcquireSRWLockShared(&srw));ReleaseSRWLockShared(&srw);
+  CHECK(TryAcquireSRWLockExclusive(&srw));ReleaseSRWLockExclusive(&srw);
   CHECK(GetEnvironmentVariableA("b86_test",finalPath,256)==5&&finalPath[0]=='v');
   CHECK(ExpandEnvironmentStringsA("[%B86_TEST%]",finalPath,256)==8&&finalPath[0]=='['&&finalPath[6]==']');
   CHECK(SetEnvironmentVariableA("B86_TEST",""));

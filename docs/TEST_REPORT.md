@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## SRW lock extension — 2026-09-08
+
+**153 Node tests passed, 0 failed, 0 skipped.** Five new tests cover static/dynamic initialization, both ownership modes, failed try-acquisition, last-error preservation, suspended CPU execution and resumption, invalid memory/state/releases, and lock/process isolation. The rebuilt HandleObjects.exe imports and exercises all seven SRW functions through the x86 interpreter. The catalog contains 460 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The updated fixture ran in an actual runtime worker; CSP/module delivery, IndexedDB, reload and backup checks passed. Raw evidence: [Node TAP](test-artifacts/srw-lock-tests.tap) and [browser report](test-artifacts/srw-lock-browser-report.json).
+
+Microsoft's [SRW lock documentation](https://learn.microsoft.com/en-us/windows/win32/sync/slim-reader-writer--srw--locks) establishes pointer-sized initialization, shared/exclusive modes and nonrecursive exclusive behavior. Native ctypes probes on an owned host lock confirmed zero initialization, basic shared/exclusive state values and failed try-acquisitions. These probes used the host pointer width; the compiled guest fixture verifies Browser86's four-byte x86 storage and calling convention. Unit-level release while suspended tests the scheduler continuation; it does not demonstrate multiple guest threads. No guest executable ran on the host.
+
 ## Process environment correction — 2026-09-08
 
 **148 Node tests passed, 0 failed, 0 skipped.** Five new tests cover case-insensitive lookup, empty versus missing variables, last-error preservation, short buffers, ACP byte versus UTF-16 size counts, single-pass expansion, atomic output validation, OEM/Unicode blocks, allocation ownership, independent snapshots, process isolation and CRT getenv consistency. HandleObjects.exe was rebuilt with seven environment imports and executes set/get/expand/empty/delete and both block allocation/free variants through the x86 interpreter. The catalog contains 453 entries.

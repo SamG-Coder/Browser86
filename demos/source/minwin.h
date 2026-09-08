@@ -162,4 +162,11 @@ API void* __cdecl memset(void*,int,unsigned int);
 #define WM_TIMER 0x113
 #define WS_OVERLAPPEDWINDOW 0x00CF0000U
 #define WS_CHILD_VISIBLE 0x50000000U
+API void WINAPI InitializeSRWLock(void*);
+API void WINAPI AcquireSRWLockShared(void*);
+API void WINAPI AcquireSRWLockExclusive(void*);
+API BYTE WINAPI TryAcquireSRWLockShared(void*);
+API BYTE WINAPI TryAcquireSRWLockExclusive(void*);
+API void WINAPI ReleaseSRWLockShared(void*);
+API void WINAPI ReleaseSRWLockExclusive(void*);
 #endif
