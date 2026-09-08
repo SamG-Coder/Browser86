@@ -68,6 +68,8 @@ Dynamic TLS supports 1,088 process-local indices for the single emulated thread.
 
 InitOnceInitialize, InitOnceBeginInitialize, InitOnceComplete and InitOnceExecuteOnce use the guest's x86 initialization word for pending/completed state and DWORD-aligned context. Failed callbacks permit retry and retain the callback's last error. Completed calls return the stored context without rerunning initialization. Synchronous pending calls suspend through the runtime's wait mechanism; ASYNC supports multiple begin attempts and a single winning completion within the existing single-thread process. These flags do not create background execution or additional threads. Recursive synchronous initialization of the same object can remain waiting until the guest is stopped.
 
+WaitOnAddress compares exactly 1, 2, 4 or 8 bytes and returns immediately if they differ. Equal values suspend through the guest wait mechanism until an address-specific wake or timeout (ERROR_TIMEOUT, 1460). WakeByAddressSingle releases the first queued waiter; WakeByAddressAll releases the matching queue. Wakes are process-local, do not store a future signal, and may release a waiter even if the value has not changed, so callers must recheck their condition. These APIs do not create another guest thread; an infinite wait without a possible wake stays suspended until stopped.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

@@ -100,6 +100,12 @@ Native probes verified reused indices with zero values, double-free error 87, va
 
 Native probes verified uninitialized check-only and duplicate-complete error 31, invalid context/mode error 87, pending/context output preservation, callback-error preservation, null callback context forwarding and encoded completion context. Contracts: [InitOnceExecuteOnce](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-initonceexecuteonce), [InitOnceBeginInitialize](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-initoncebegininitialize), [InitOnceComplete](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-initoncecomplete). Results: `test-artifacts/init-once-tests.tap` and `test-artifacts/init-once-browser-report.json`.
 
+## Address-based synchronization — 2026-09-08
+
+**139 Node tests passed without failures or skips; eight real-origin Edge checks passed without page errors.** Five new tests cover exact-width comparison, zero/finite/infinite timeouts, wake-one order, wake-all matching, no saved signals, expiration cleanup, process isolation, polling without guest instruction execution and invalid ranges. HandleObjects.exe imports WaitOnAddress and both WakeByAddress functions from api-ms-win-core-synch-l1-2-0.dll and exercises immediate/timeout/error paths through the x86 ABI. Catalog: 450 entries.
+
+Native probes verified unchanged-value timeout error 1460, different-value success with last-error preservation, and invalid-size error 87. Contracts: [WaitOnAddress](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitonaddress), [WakeByAddressSingle](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-wakebyaddresssingle). Results: `test-artifacts/address-wait-tests.tap` and `test-artifacts/address-wait-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

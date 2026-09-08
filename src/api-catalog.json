@@ -1786,6 +1786,27 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "WaitOnAddress",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "WakeByAddressAll",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "WakeByAddressSingle",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "WideCharToMultiByte",
     "argc": 8,
     "cdecl": false,

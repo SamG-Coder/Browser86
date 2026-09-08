@@ -163,6 +163,10 @@ void mainCRTStartup(void){
   CHECK(InitOnceBeginInitialize(&manual,0,&pending,&onceContext)&&pending);
   CHECK(InitOnceComplete(&manual,0,(void*)0x567800));
   CHECK(InitOnceBeginInitialize(&manual,1,&pending,&onceContext)&&!pending&&onceContext==(void*)0x567800);
+  index=0;flags=1;CHECK(WaitOnAddress(&index,&flags,4,0));
+  flags=0;CHECK(!WaitOnAddress(&index,&flags,4,0)&&GetLastError()==1460);
+  CHECK(!WaitOnAddress(&index,&flags,3,0)&&GetLastError()==87);
+  WakeByAddressSingle(&index);WakeByAddressAll(&index);
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
   CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);

@@ -28,9 +28,10 @@ for suffix in ['A','W']:
 U={'RegisterClassA':1,'CreateWindowExA':12,'ShowWindow':2,'UpdateWindow':1,'GetMessageA':4,'TranslateMessage':1,'DispatchMessageA':1,'DefWindowProcA':4,'PostQuitMessage':1,'DestroyWindow':1,'BeginPaint':2,'EndPaint':2,'SetWindowTextA':2,'MessageBoxA':4,'InvalidateRect':3,'SetTimer':4,'KillTimer':2,'FillRect':3}
 G={'TextOutA':5,'SetTextColor':2,'SetBkMode':2,'SetBkColor':2,'CreateSolidBrush':1,'CreatePen':3,'SelectObject':2,'DeleteObject':1,'GetStockObject':1,'Rectangle':5,'Ellipse':5,'MoveToEx':4,'LineTo':3,'StretchDIBits':13}
 C={'printf':1,'sprintf':2,'puts':1,'memset':3,'memcpy':3}
+S={'WaitOnAddress':4,'WakeByAddressSingle':1,'WakeByAddressAll':1}
 def run(*args): subprocess.run([str(x) for x in args],check=True)
 libs=[];aliases=[]
-for dll,items,stdcall in [('kernel32',K,True),('user32',U,True),('gdi32',G,True),('msvcrt',C,False)]:
+for dll,items,stdcall in [('kernel32',K,True),('user32',U,True),('gdi32',G,True),('msvcrt',C,False),('api-ms-win-core-synch-l1-2-0',S,True)]:
     definition=BUILD/f'{dll}.def'; definition.write_text('LIBRARY '+dll+'.dll\nEXPORTS\n'+'\n'.join(items)+'\n')
     lib=BUILD/f'{dll}.lib';run('lld-link','/lib',f'/def:{definition}','/machine:x86',f'/out:{lib}');libs.append(lib)
     if stdcall: aliases.extend(f'/alternatename:__imp__{name}@{n*4}=__imp__{name}' for name,n in items.items())
