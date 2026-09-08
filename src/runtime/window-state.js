@@ -18,6 +18,6 @@ export function installWindowState(gui){
    return wasDisabled?1:0;
   };
   const cancelled=()=>!enabled&&gui.focus===h?setKeyboardFocus(gui,0,change):change();
-  return !enabled&&w.proc?p.call(w.proc,[h,31,0,0],cancelled):cancelled();
+  return !enabled?gui.send(h,31,0,0,false,cancelled):cancelled();
  });
 }

@@ -1,3 +1,8 @@
+export function cancelCapture(gui,hwnd){
+ if(gui.capture!==hwnd)return 0;
+ gui.capture=0;
+ return gui.send(hwnd,0x215,0,0,false,()=>0);
+}
 export function installMouseCapture(gui){
  const {api}=gui;gui.capture=0;
  const change=(target,done)=>{

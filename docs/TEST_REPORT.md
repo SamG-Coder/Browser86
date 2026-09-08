@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Default cancellation and capture release - 2026-09-08
+
+**429 Node tests passed, 0 failed, 0 skipped.** DefWindowProcA/W handles WM_CANCELMODE capture release. Tests cover receiver-only release, ignored parameters, synchronous notification, state changes during callbacks, custom-procedure overrides, invalid HWNDs and default EnableWindow(FALSE) cancellation. The rebuilt HandleObjects.exe verifies explicit default cancellation clears capture. Catalog remains 586 entries.
+
+**Nine real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/cancel-mode-tests.tap), [browser report](test-artifacts/cancel-mode-browser-report.json).
+
+Native private hidden A/W window probes confirmed that cancelling another window preserves the capture owner, cancelling the owner clears capture before WM_CAPTURECHANGED, and default processing returns zero while preserving error 1234. Windows/classes were cleaned up. Reference: [Microsoft WM_CANCELMODE](https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-cancelmode). Menu/scrollbar modes and automatic modal-dialog cancellation remain unfinished.
+
 ## Mouse capture state, notifications and guest input routing - 2026-09-08
 
 **424 Node tests passed, 0 failed, 0 skipped.** SetCapture/GetCapture/ReleaseCapture now implement guest capture state and synchronous WM_CAPTURECHANGED callbacks. Tests cover same-window reassignment, prior-value returns, null/release behavior, invalid targets, state visible during callbacks, callback reentrancy, destruction ordering and mapped input between nested guest windows. Coordinate origin calculation is shared with existing mapping APIs. The rebuilt HandleObjects.exe imports and exercises capture, repeated capture, invalid handles and release. Catalog now contains 586 entries, without implying full API parity.
