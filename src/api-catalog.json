@@ -1681,6 +1681,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "TlsGetValue2",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "TlsSetValue",
     "argc": 2,
     "cdecl": false,

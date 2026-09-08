@@ -64,6 +64,8 @@ FILE_APPEND_DATA is tracked separately from FILE_WRITE_DATA. Append-only handles
 
 GetTempFileNameA/W implement the three-character prefix, 16-bit hexadecimal suffix and .tmp naming scheme. A zero low word reserves an empty file under an unused name; a nonzero low word only generates a name and does not overwrite or verify uniqueness. Collision search wraps over the nonzero 16-bit range. Directory existence/pending state, MAX_PATH limits and output memory are checked before creating a file. Temporary files remain on the virtual disk until explicitly deleted. ANSI uses the runtime's Windows-1252 mapping rather than emulating arbitrary OEM code pages.
 
+Dynamic TLS supports 1,088 process-local indices for the single emulated thread. TlsAlloc reuses freed slots and initializes them to zero; exhaustion returns TLS_OUT_OF_INDEXES and error 8. Values live in the x86 TEB's 64 inline slots and lazily allocated expansion slots, separately from PE static TLS. TlsGetValue clears last error on valid-range reads; TlsGetValue2 leaves it unchanged. TlsSetValue follows the native bounds-based model, while TlsFree requires an allocated index and does not free application data pointed to by a value. This does not add thread creation, fiber-local storage or additional thread scheduling.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

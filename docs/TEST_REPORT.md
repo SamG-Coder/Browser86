@@ -88,6 +88,12 @@ Native Windows probes verified append-only seeking and flushing, EOF resize deni
 
 Native Windows probes confirmed uppercase hexadecimal without zero padding, lowercase .tmp, three-character truncation, directory validation (267), low-word return values and automatic creation when the supplied low word is zero. Contract: [GetTempFileNameW](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-gettempfilenamew). Results: `test-artifacts/temp-file-tests.tap` and `test-artifacts/temp-file-browser-report.json`.
 
+## Dynamic TLS correctness — 2026-09-08
+
+**129 Node tests passed without failures or skips; eight real-origin Edge checks passed without page errors.** Five tests cover slot reuse/zeroing, application-data ownership, x86 TEB and expansion memory coherence, separation from static PE TLS, all 1,088 slots, exhaustion/recovery, last-error behavior, invalid indices and process isolation. HandleObjects.exe imports all five TLS functions, allocates 65 slots, reads values directly through compiled FS-segment intrinsics and verifies TlsGetValue2 plus freed-slot reuse. Catalog: 443 entries.
+
+Native probes verified reused indices with zero values, double-free error 87, valid-range zero reads, GetValue2 preserving last error even on out-of-range reads, and allocation-exhaustion error 8. Contracts: [TlsAlloc](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsalloc), [TlsGetValue](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsgetvalue). Results: `test-artifacts/tls-tests.tap` and `test-artifacts/tls-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

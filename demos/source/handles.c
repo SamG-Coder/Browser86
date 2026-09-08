@@ -1,4 +1,6 @@
 #include "minwin.h"
+unsigned long __readfsdword(unsigned long);
+#pragma intrinsic(__readfsdword)
 #define CHECK(expression) do { if(!(expression)) { printf("Handle failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
 void mainCRTStartup(void){
   HANDLE self=GetCurrentProcess(),file,copy,process,thread;
@@ -16,6 +18,7 @@ void mainCRTStartup(void){
   FILE_NAME_BUFFER filename;
   FILE_RENAME_BUFFER rename;
   DWORD originalId;
+  DWORD tls[65],index;
   BYTE disposition;
   const WORD wideFile[]={'h','a','n','d','l','e','s','.','t','x','t',0};
   file=CreateFileA("handles.txt",GENERIC_READ|GENERIC_WRITE,0,NULL,2,0,NULL);
@@ -138,6 +141,15 @@ void mainCRTStartup(void){
   CHECK(CloseHandle(file)&&DeleteFileA(finalPath));
   finalWide[0]='.';finalWide[1]=0;rename.name[0]='t';rename.name[1]='m';rename.name[2]='p';rename.name[3]=0;
   CHECK(GetTempFileNameW(finalWide,rename.name,0x12345,filename.name)==0x2345);
+  for(index=0;index<65;index++){tls[index]=TlsAlloc();CHECK(tls[index]!=0xFFFFFFFF);CHECK(TlsGetValue(tls[index])==NULL);}
+  CHECK(TlsSetValue(tls[64],(void*)0xFEDCBA98));
+  CHECK(*(DWORD*)(__readfsdword(0xF94)+(tls[64]-64)*4)==0xFEDCBA98);
+  CHECK(TlsSetValue(tls[0],(void*)0x12345678));
+  CHECK(*(DWORD*)(__readfsdword(0x18)+0xE10+tls[0]*4)==0x12345678);
+  SetLastError(123);CHECK(TlsGetValue2(tls[64])==(void*)0xFEDCBA98&&GetLastError()==123);
+  CHECK(TlsGetValue(tls[64])==(void*)0xFEDCBA98&&GetLastError()==0);
+  CHECK(TlsFree(tls[12]));index=TlsAlloc();CHECK(index==tls[12]&&TlsGetValue(index)==NULL);
+  for(index=0;index<65;index++)CHECK(TlsFree(tls[index]));
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
   CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);
