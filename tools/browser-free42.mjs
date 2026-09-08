@@ -16,6 +16,11 @@ try{
   await page.waitForFunction(()=>document.querySelector('#status').dataset.state==='fault'||document.querySelector('#metric-detail').textContent==='Window messages'&&Number(document.querySelector('#metric-instructions').textContent.replaceAll(',',''))>20000000,null,{timeout:60000});
   const canvas=page.locator('.guest-client > canvas'),pixels=async()=>Buffer.from((await canvas.evaluate(c=>c.toDataURL())).split(',')[1],'base64');
   const result={name,initial:hash(await pixels())};
+  assert.equal(await page.locator('#tab-application').isVisible(),true);assert.equal(await page.locator('#tab-terminal').isVisible(),false);
+  await page.screenshot({path:out+'/'+name+'-application-tab.png',fullPage:true});
+  await page.getByRole('tab',{name:'Logs',exact:true}).click();assert.equal(await canvas.isVisible(),false);assert.equal(await page.locator('#tab-terminal').isVisible(),true);assert.match(await page.locator('#terminal').innerText(),/Launching/);
+  await page.screenshot({path:out+'/'+name+'-logs-tab.png',fullPage:true});
+  await page.getByRole('tab',{name:'Application',exact:true}).click();assert.equal(hash(await pixels()),result.initial,'Switching tabs must retain the guest pixels');
   for(const [x,y] of [[170,536],[75,389],[229,536],[288,583]]){await canvas.click({position:{x,y},delay:100});await page.waitForTimeout(300);}
   await page.waitForTimeout(300);const calculation=await pixels();result.calculation=hash(calculation);await fs.writeFile(`${out}/${name}-addition.png`,calculation);assert.notEqual(result.initial,result.calculation);
   assert.equal(result.calculation,'d3a0e9571b7f800bedf06bca81767ccc1f8d3f45269f8c605ebf16a254b7ce0c','Visually verified 5.0000 calculator image changed');

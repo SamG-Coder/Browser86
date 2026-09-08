@@ -15,7 +15,7 @@ The actual EXE executes in Browser86's IA-32 interpreter. Its skin decoding, cal
 
 The exercised additions include CRT startup and file operations, binary64 decimal formatting, x87 extended storage, packed SSE conversions, menu resources and accelerators, GDI+ indexed/RGB bitmap storage, clipping/transforms/image drawing, buffered painting, and synchronous initial size notification before painting.
 
-This is a narrow baseline, not complete Free42 compatibility. A keyboard sequence produced an incorrect operation and needs further input-translation investigation; use mouse input for this baseline. Scientific functions, programming, printing, file dialogs, persisted-state reload, alternate skins, and extended sessions have not passed acceptance testing. Unsupported imports still stop execution if reached. x87 arithmetic remains binary64 despite support for reading/writing 80-bit storage; GDI+ text uses approximate browser font metrics.
+This is a narrow baseline, not complete Free42 compatibility. A keyboard sequence produced an incorrect operation and needs further input-translation investigation; use mouse input for this baseline. Scientific functions, programming, printing, file dialogs, alternate skins, and extended sessions have not passed acceptance testing. Unsupported imports still stop execution if reached. x87 arithmetic remains binary64 despite support for reading/writing 80-bit storage; GDI+ text uses approximate browser font metrics.
 
 ## Reproduction
 
@@ -40,5 +40,7 @@ The test compares complete canvas PNG hashes against visually verified addition/
 - [Interactive browser report](test-artifacts/free42-interactive-report.json)
 - [Addition: guest canvas showing 5.0000](test-artifacts/free42-addition.png)
 - [Clear: guest canvas showing 0.0000](test-artifacts/free42-clear.png)
-- [552-test runtime suite](test-artifacts/free42-interactive-tests.txt)
+- [553-test runtime suite](test-artifacts/free42-interactive-tests.txt)
 - Earlier startup-failure evidence is retained: [browser report](test-artifacts/free42-browser-report.json), [runtime report](test-artifacts/free42-runtime-report.json), [Binary screenshot](test-artifacts/Free42Binary-first-run.png), [Decimal screenshot](test-artifacts/Free42Decimal-first-run.png).
+
+Saved-state reload now passes for both EXEs: close normally, wait for the virtual disk save, reload the page, and run the restored package. SetWindowPlacement restores normal saved bounds and delivers WM_SIZE before painting. Minimized/maximized placement and placement flags remain explicitly unsupported. The Application and Logs views are separate tabs; switching them preserves guest execution and pixels.
