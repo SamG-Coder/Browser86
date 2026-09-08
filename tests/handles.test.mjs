@@ -73,7 +73,7 @@ test('Win32 handles: invalid types, buffers and unsupported modes do not allocat
   const {p,call,out}=setup(),h=call('CreateEventA',0,0,1,0),size=p.handles.size;
   assert.equal(call('DuplicateHandle',123,h,SELF,out,0,0,2),0);assert.equal(call('GetLastError'),6);
   assert.equal(call('DuplicateHandle',SELF,h,SELF,out,0,0,4),0);assert.equal(call('GetLastError'),87);
-  assert.throws(()=>call('DuplicateHandle',SELF,h,SELF,out,0,0,0),e=>e.code==='UNSUPPORTED_HANDLE');
+  assert.throws(()=>call('DuplicateHandle',SELF,SELF,SELF,out,0,0,0),e=>e.code==='UNSUPPORTED_HANDLE');
   assert.throws(()=>call('DuplicateHandle',SELF,11,SELF,out,0,0,2),e=>e.code==='UNSUPPORTED_HANDLE');
   assert.throws(()=>call('DuplicateHandle',SELF,h,SELF,1,0,0,2),e=>e.code==='ACCESS_VIOLATION');
   assert.equal(p.handles.size,size);

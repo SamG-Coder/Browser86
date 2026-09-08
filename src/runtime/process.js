@@ -21,8 +21,20 @@ export class GuestProcess {
     this.emit('loaded',{exe:this.main.image.summary(),modules:this.loader.order.map(m=>({path:m.path,base:hex(m.base)})),missing:this.apis.missingImports(),cwd:this.vfs.cwd,notes:['Original interpreter and partial Win32 runtime. Compatibility is not guaranteed.']});
   }
   handle(type,value){return this.referenceHandle({type,...value});}
-  referenceHandle(object,flags=0){const h=this.nextHandle++;requireThat(this.handles.size<65536,'HANDLE_LIMIT','Guest handle limit reached.');this.handles.set(h,object);if(flags)(this.handleFlags??=new Map()).set(h,flags);return h;}
-  releaseHandle(h){this.handleFlags?.delete(h);return this.handles.delete(h);}
+  referenceHandle(object,flags=0,access=0xFFFFFFFF){
+    const h=this.nextHandle++;requireThat(this.handles.size<65536,'HANDLE_LIMIT','Guest handle limit reached.');
+    this.handles.set(h,object);if(flags)(this.handleFlags??=new Map()).set(h,flags);
+    (this.handleAccess??=new Map()).set(h,access);
+    if(object.nameKey){object.references=(object.references||0)+1;this.namedObjects.set(object.nameKey,object);}
+    return h;
+  }
+  releaseHandle(h){
+    const object=this.object(h);this.handleFlags?.delete(h);this.handleAccess?.delete(h);
+    if(!this.handles.delete(h))return false;
+    if(object.nameKey&&!--object.references)this.namedObjects.delete(object.nameKey);
+    return true;
+  }
+  hasHandleAccess(h,access){return ((this.handleAccess?.get(h)??0xFFFFFFFF)&access)===access;}
   isCurrentProcess(h){return h===0xFFFFFFFF||this.object(h,'process')?.id===4;}
   object(handle,type=null){const o=this.handles.get(handle>>>0);return o&&(!type||o.type===type)?o:null;}
   setError(value){this.lastError=value>>>0;this.memory.w32(this.teb+0x34,this.lastError);return 0;}

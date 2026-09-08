@@ -34,16 +34,20 @@ export function installHandles(api){
     }
     // DUPLICATE_CLOSE_SOURCE closes even when creating the target fails.
     // Keep the object reference alive locally while removing the source entry.
-    const validTarget=p.isCurrentProcess(targetProcess);
+    const validTarget=p.isCurrentProcess(targetProcess),sourceAccess=p.handleAccess?.get(source)??0xFFFFFFFF;
     if(options&1)p.releaseHandle(source);
     if(options&~3)return api.fail(87);
     if(!targetProcess)return options&1?1:api.fail(87);
     if(!validTarget)return api.fail(6);
-    if(!(options&2))throw new RuntimeFault('UNSUPPORTED_HANDLE','DuplicateHandle with changed access rights is not implemented; use DUPLICATE_SAME_ACCESS.');
+    let granted=sourceAccess;
+    if(!(options&2)){
+      if(!['event','mutex','semaphore'].includes(object.type))throw new RuntimeFault('UNSUPPORTED_HANDLE','Changing access rights while duplicating this object type is not implemented.');
+      granted=api.syncAccess(object.type,access);if(granted===null)return api.fail(5);
+    }
     // Check the entire output range before allocating a handle, without
     // corrupting an existing output value on failure.
     if(out){m.checkRange(out,4);for(let i=0;i<4;i++)m.page(out+i,'w');}
-    const duplicate=p.referenceHandle(object,inherit?1:0);
+    const duplicate=p.referenceHandle(object,inherit?1:0,granted);
     if(out)m.w32(out,duplicate);
     return 1;
   });

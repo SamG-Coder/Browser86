@@ -2,10 +2,35 @@
 
 /* Each failure identifies the actual guest assertion; no host execution. */
 #define CHECK(expression) do { if(!(expression)) { printf("Sync failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
+#define NAMED_CHECKS(s,name) do { \
+  HANDLE a,b,c; \
+  a=CreateEventEx##s(NULL,name,2,0x1F0003); CHECK(a); \
+  b=OpenEvent##s(0x100000,0,name); CHECK(b); \
+  CHECK(!SetEvent(b)&&GetLastError()==5); \
+  CHECK(WaitForSingleObject(b,0)==0&&WaitForSingleObject(a,0)==258); \
+  c=CreateEvent##s(NULL,1,1,name); CHECK(c&&GetLastError()==183); \
+  CHECK(WaitForSingleObject(c,0)==258); \
+  CHECK(!CreateMutex##s(NULL,0,name)&&GetLastError()==6); \
+  CHECK(CloseHandle(a)&&CloseHandle(b)&&CloseHandle(c)); \
+  a=CreateMutexEx##s(NULL,name,1,0x1F0001); CHECK(a); \
+  b=OpenMutex##s(0,0,name); CHECK(b&&ReleaseMutex(b)); \
+  CHECK(CloseHandle(a)&&CloseHandle(b)); \
+  a=CreateSemaphoreEx##s(NULL,1,2,name,0,0x1F0003); CHECK(a); \
+  b=OpenSemaphore##s(0x100000,0,name); CHECK(b); \
+  CHECK(WaitForSingleObject(b,0)==0); \
+  CHECK(!ReleaseSemaphore(b,1,NULL)&&GetLastError()==5); \
+  CHECK(CloseHandle(a)&&CloseHandle(b)); \
+  CHECK(!OpenSemaphore##s(0x100000,0,name)&&GetLastError()==2); \
+} while(0)
+
 void mainCRTStartup(void){
   HANDLE objects[3],gate,extra;
   long previous=-1;
   DWORD result;
+  const WORD wideName[]={'L','o','c','a','l','\\','n','a','m','e','d',0};
+  NAMED_CHECKS(A,"Local\\named");
+  NAMED_CHECKS(W,wideName);
+  puts("Named synchronization checks passed.");
   objects[0]=CreateEventA(NULL,0,1,NULL);
   objects[1]=CreateSemaphoreW(NULL,0,2,NULL);
   objects[2]=CreateMutexA(NULL,0,NULL);

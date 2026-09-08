@@ -302,6 +302,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "CreateEventExA",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "CreateEventExW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "CreateEventW",
     "argc": 4,
     "cdecl": false,
@@ -330,6 +344,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "CreateMutexExA",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "CreateMutexExW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "CreateMutexW",
     "argc": 3,
     "cdecl": false,
@@ -339,6 +367,20 @@
     "dll": "kernel32.dll",
     "name": "CreateSemaphoreA",
     "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "CreateSemaphoreExA",
+    "argc": 6,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "CreateSemaphoreExW",
+    "argc": 6,
     "cdecl": false,
     "data": false
   },
@@ -1256,6 +1298,48 @@
     "dll": "kernel32.dll",
     "name": "MultiByteToWideChar",
     "argc": 6,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "OpenEventA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "OpenEventW",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "OpenMutexA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "OpenMutexW",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "OpenSemaphoreA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "OpenSemaphoreW",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },

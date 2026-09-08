@@ -42,7 +42,7 @@ export class Win32 {
     for(const prefix of ['Local','Global']){
       k(prefix+'Alloc',2,(f,n)=>{const ptr=p.heap.alloc(n,!!(f&0x40));return f&2?p.handle('global',{ptr,size:n}):ptr;});
       k(prefix+'Lock',1,h=>p.object(h,'global')?.ptr??(p.heap.blocks.has(h)?h:0));k(prefix+'Unlock',1,h=>{p.setError(0);return 0;});
-      k(prefix+'Free',1,h=>{const b=p.object(h,'global');if(b){p.heap.free(b.ptr);p.handles.delete(h);return 0;}return p.heap.free(h)?0:h;});
+      k(prefix+'Free',1,h=>{const b=p.object(h,'global');if(b){p.heap.free(b.ptr);p.releaseHandle(h);return 0;}return p.heap.free(h)?0:h;});
       k(prefix+'Size',1,h=>p.object(h,'global')?.size??p.heap.blocks.get(h)??0);
       k(prefix+'ReAlloc',3,(h,n,f)=>{const obj=p.object(h,'global');if(obj){obj.ptr=p.heap.realloc(obj.ptr,n,!!(f&0x40));obj.size=n;return h;}return p.heap.realloc(h,n,!!(f&0x40));});
     }
@@ -111,7 +111,7 @@ export class Win32 {
       k('FindResource'+suffix,3,(h,name,type)=>{const module=this.module(h);if(!module)return this.fail(126);const resource=p.loader.resource(module,type<65536?type:str(type),name<65536?name:str(name));if(!resource)return this.fail(1813);return p.handle('resource',resource);});
       k('GetVersionEx'+suffix,1,out=>{const size=m.u32(out);if(size<(wide?276:148))return this.fail(87);m.fill(out+4,size-4);m.w32(out+4,5);m.w32(out+8,1);m.w32(out+12,2600);m.w32(out+16,2);return 1;});
     }
-    k('FindClose',1,h=>p.object(h,'find')?(p.handles.delete(h),1):this.fail(6));
+    k('FindClose',1,h=>p.object(h,'find')?(p.releaseHandle(h),1):this.fail(6));
     k('LoadResource',2,(h,r)=>p.object(r,'resource')?.address??this.fail(6));k('LockResource',1,a=>a);k('SizeofResource',2,(h,r)=>p.object(r,'resource')?.size??0);k('FreeResource',1,()=>0);
     k('GetProcAddress',2,(h,name)=>{const symbol=name<65536?name:m.cstr(name),system=p.object(h,'module');if(system){const result=this.lookup(system.name,symbol);return result?.address??this.fail(127);}const module=this.module(h);if(!module)return this.fail(126);const exp=module.image.exports.get(symbol);if(!exp)return this.fail(127);if(exp.forwarder){const dot=exp.forwarder.lastIndexOf('.');const s=exp.forwarder.slice(dot+1);return p.loader.resolve(exp.forwarder.slice(0,dot),s.startsWith('#')?Number(s.slice(1)):s,module.path);}return module.base+exp.rva;});
     k('FreeLibrary',1,h=>{if(p.object(h,'module'))return 1;if(this.module(h)){p.note('FreeLibrary keeps packaged DLL mappings resident until process exit; detach/unloading is not implemented.');return 1;}return this.fail(6);});
@@ -151,6 +151,6 @@ export class Win32 {
       reg('RegQueryValueEx',6,(h,name,reserved,type,data,size)=>{const key=keyOf(h)?.toLowerCase(),val=key&&registry[key]&&Object.hasOwn(registry[key],str(name).toLowerCase())?registry[key][str(name).toLowerCase()]:null;if(!val)return 2;let bytes=Uint8Array.from(val.bytes);if((val.type===1||val.type===2||val.type===7)&&val.wide!==wide){const s=val.wide?new TextDecoder('utf-16le').decode(bytes):ansiDecode(bytes);if(wide){bytes=new Uint8Array(s.length*2);const d=new DataView(bytes.buffer);for(let i=0;i<s.length;i++)d.setUint16(i*2,s.charCodeAt(i),true);}else bytes=ansiEncode(s);}if(type)m.w32(type,val.type);if(!size)return 87;const capacity=m.u32(size);m.w32(size,bytes.length);if(!data)return 0;if(capacity<bytes.length)return 234;m.write(data,bytes);return 0;});
       reg('RegDeleteValue',2,(h,name)=>{const key=keyOf(h)?.toLowerCase(),n=str(name).toLowerCase();if(!key||!registry[key])return 6;if(!Object.hasOwn(registry[key],n))return 2;delete registry[key][n];save();return 0;});
     }
-    this.add('advapi32.dll','RegCloseKey',1,h=>roots.has(h)?0:p.object(h,'registry')?(p.handles.delete(h),0):6);
+    this.add('advapi32.dll','RegCloseKey',1,h=>roots.has(h)?0:p.object(h,'registry')?(p.releaseHandle(h),0):6);
   }
 }

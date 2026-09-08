@@ -116,13 +116,11 @@ test('Win32 sync: invalid handles, duplicate handles and array bounds leave sign
   assert.equal(call('WaitForSingleObject',events[63],0),TIMEOUT);
 });
 
-test('Win32 sync: unsupported naming, security and APC modes fail explicitly',()=>{
+test('Win32 sync: unsupported security descriptors and APC modes fail explicitly',()=>{
   const {p,call,array}=setup(),h=call('CreateEventA',0,0,1,0);
   for(const suffix of ['A','W'])for(const kind of ['Event','Mutex','Semaphore']){
     const args=kind==='Mutex'?[0,0,0]:[0,0,1,0];
-    args[args.length-1]=p.heap.string('sync',suffix==='W');
-    assert.throws(()=>call('Create'+kind+suffix,...args),e=>e.code==='UNSUPPORTED_SYNC');
-    args[args.length-1]=0;args[0]=p.heap.alloc(12);
+    args[0]=p.heap.alloc(12);p.memory.w32(args[0],12);p.memory.w32(args[0]+4,1);
     assert.throws(()=>call('Create'+kind+suffix,...args),e=>e.code==='UNSUPPORTED_SYNC');
   }
   assert.throws(()=>call('WaitForSingleObjectEx',h,0,1),e=>e.code==='UNSUPPORTED_APC');
@@ -159,6 +157,7 @@ test('EXE: compiled synchronization imports, stdcall stack, blocked wait and cle
   const t=guest('tests/SyncPrimitives.exe');run(t.p);
   assert.equal(t.p.waiting?.reason,'WaitForSingleObjectEx');
   assert.match(t.output(),/Synchronization checks passed/);
+  assert.match(t.output(),/Named synchronization checks passed/);
   const gate=[...t.p.handles].find(([,o])=>o.type==='event');
   assert.ok(gate);
   t.p.apis.lookup('kernel32.dll','SetEvent').fn(gate[0]);
@@ -167,6 +166,7 @@ test('EXE: compiled synchronization imports, stdcall stack, blocked wait and cle
   assert.match(t.output(),/Synchronization wait resumed/);
   assert.equal([...t.p.handles.values()].filter(o=>['event','semaphore','mutex'].includes(o.type)).length,0);
   assert.deepEqual(t.p.apis.missingImports(),[]);
+  assert.equal(t.p.namedObjects.size,0);
 });
 
 test('EXE: compiled synchronization timeout resumes through the guest ABI',t=>{

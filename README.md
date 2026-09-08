@@ -63,7 +63,7 @@ Importing the exact same original ZIP again restores that package's saved disk; 
 | Windows compatibility | Original kernel/file/heap/path/console handlers, portions of CRT, basic registry storage, window callbacks/messages, timers, basic controls and GDI drawing. |
 | Diagnostics | Pause/resume/step, breakpoint, register and memory-map display, recent API/EIP traces, exact unsupported import/opcode reports and JSON export. |
 
-`src/api-catalog.json` contains **419 registered import entries**, including A/W variants, CRT functions and data entries. **That count is not 419 fully compatible Windows APIs.** Many handlers implement a restricted argument/behavior subset; others explicitly reject unsupported modes. See the source and compatibility notes before assuming parity.
+`src/api-catalog.json` contains **431 registered import entries**, including A/W variants, CRT functions and data entries. **That count is not 431 fully compatible Windows APIs.** Many handlers implement a restricted argument/behavior subset; others explicitly reject unsupported modes. See the source and compatibility notes before assuming parity.
 
 ## Included compiled programs
 
@@ -77,7 +77,7 @@ These are PE32 binaries compiled from the included C source with LLVM, not JavaS
 | `apps/DllLoader.exe` | Two application DLLs, `DllMain`, IAT exports, dynamic `GetProcAddress`, and relocation when preferred bases collide. |
 | `apps/WindowStudio.exe` | Guest window procedure, controls, GDI shapes/text, timer, file-writing button and modal dialog result. |
 | `apps/PixelCanvas.exe` | Guest-computed pixels displayed with `StretchDIBits`; clicking regenerates the image. |
-| `tests/SyncPrimitives.exe` | Events, recursive mutexes, semaphores, atomic multi-object waits, error codes and a suspended wait. |
+| `tests/SyncPrimitives.exe` | Named A/W events, mutexes, semaphores, access rights, atomic multi-object waits and a suspended wait. |
 | `tests/HandleObjects.exe` | Duplicated file positions, handle flags, close protection and process/thread queries. |
 | `tests/UnsupportedApi.exe` | An **intentional failure** at `CreateThread`, demonstrating an honest unsupported-API diagnostic. |
 
@@ -89,7 +89,7 @@ npm test
 node --test tests/*.test.mjs
 ```
 
-The recorded run passes **58 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks and static-server delivery.
+The recorded run passes **65 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks and static-server delivery.
 
 The optional browser harness is:
 
@@ -131,7 +131,7 @@ src/runtime/pe.js          PE images, linking, relocation and DLL initialization
 src/runtime/process.js     Guest process, stack/TEB/PEB, imports and callbacks
 src/runtime/win32.js        Original kernel/file/path/heap/registry compatibility
 src/runtime/handles.js      Shared kernel objects, handle flags and duplication
-src/runtime/sync.js         Single-thread event/mutex/semaphore waits
+src/runtime/sync.js         Named event/mutex/semaphore objects, rights and waits
 src/runtime/gui.js          Window messaging, controls and GDI command generation
 src/runtime/crt.js          Restricted C runtime implementation
 src/runtime/zip.js          ZIP reader/writer and validation
