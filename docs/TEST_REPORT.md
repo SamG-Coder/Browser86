@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Checkbox and radio display - 2026-09-08
+
+**485 Node tests passed, 0 failed, 0 skipped.** The browser display now presents guest check-state metadata as checkbox/radio indicators, including indeterminate state, with accessible roles and checked values. It respects enabled state and WS_TABSTOP and removes check semantics on transition to push-button style. Clicks forward input without independently toggling state. Catalog remains 602 entries.
+
+**Twelve real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Added production GuestDisplay checks for unchecked/checked/mixed sequences, labels, radio state, disabled click suppression, focusability and style changes on an existing node. Evidence: [Node TAP](test-artifacts/button-display-tests.tap), [browser report](test-artifacts/button-display-browser-report.json), [visually inspected rendered example](test-artifacts/button-display.png).
+
+The rendered example was inspected for visible indicators and unclipped labels. This is an approximate presentation rather than native theme fidelity. Automatic guest checkbox toggling and radio grouping remain unfinished; the new DOM check exercises presentation and click forwarding, not those runtime behaviors.
+
 ## Built-in button check-state storage - 2026-09-08
 
 **485 Node tests passed, 0 failed, 0 skipped.** Built-in BUTTON controls now handle BM_GETCHECK/BM_SETCHECK independently of DefWindowProc. Tests cover styles 0-11, unsigned clamping, default/per-window state, radio WS_TABSTOP changes, unaffected siblings, serialization and custom-procedure overrides. Catalog remains 602 entries.

@@ -20,7 +20,12 @@ export class GuestDisplay {
       this.windows.set(w.hwnd,record);
     }
     const node=record.element;node.hidden=!w.visible;node.style.left=w.x+'px';node.style.top=w.y+'px';node.style.width=w.width+'px';node.style.zIndex=String(++this.z);
-    if(record.control){node.style.height=w.height+'px';node.disabled=!w.enabled;if(record.type==='EDIT'){if(node!==document.activeElement)node.value=w.title;}else node.textContent=w.title;}
+    if(record.control){node.style.height=w.height+'px';node.disabled=!w.enabled;if(record.type==='EDIT'){if(node!==document.activeElement)node.value=w.title;}else if(record.type==='BUTTON'){
+      const type=w.style&15,checkable=[2,3,4,5,6,9].includes(type),radio=type===4||type===9,state=w.checkState||0;
+      node.classList.toggle('checkable',checkable);node.tabIndex=w.style&0x10000?0:-1;
+      if(checkable){node.setAttribute('role',radio?'radio':'checkbox');node.setAttribute('aria-checked',state===2&&!radio?'mixed':state?'true':'false');const mark=element('span','check-mark',radio?(state?'\u25c9':'\u25cb'):state===2?'\u25a3':state?'\u2611':'\u2610');mark.setAttribute('aria-hidden','true');node.replaceChildren(mark,element('span','check-label',w.title));}
+      else{node.removeAttribute('role');node.removeAttribute('aria-checked');node.textContent=w.title;}
+    }else node.textContent=w.title;}
     else{record.title.textContent=w.title;record.client.style.width=w.width+'px';record.client.style.height=w.height+'px';if(record.canvas.width!==w.width||record.canvas.height!==w.height){record.canvas.width=w.width;record.canvas.height=w.height;record.context.fillStyle='#ffffff';record.context.fillRect(0,0,w.width,w.height);}}
     document.getElementById('desktop-empty').hidden=this.windows.size>0;
   }

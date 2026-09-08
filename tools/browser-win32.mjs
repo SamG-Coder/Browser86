@@ -58,6 +58,24 @@ try{
   checks.push('Browser mouse chords, modifiers and extra buttons translate to Win32 messages');
   assert.deepEqual(mouseResult.doubleMessages.map(message=>message.message),[0x201,0x202,0x203,0x202]);
   checks.push('Browser click timestamps drive CS_DBLCLKS down-up-double-up classification');
+  const checkControls=await page.evaluate(async()=>{
+    const {GuestDisplay}=await import('/src/ui/display.js'),root=document.createElement('div');document.body.append(root);const inputs=[],display=new GuestDisplay(root,event=>inputs.push(event));
+    try{
+      const base={title:'Options',x:0,y:0,width:240,height:160,visible:true,enabled:true};display.window({op:'create',window:{...base,hwnd:321,className:'Custom',style:0}});
+      const control={...base,hwnd:322,parent:321,className:'BUTTON',style:0x40010005,title:'Remember choice',width:180,height:24};
+      const states=[];for(const checkState of [0,1,2,0]){display.window({op:'update',window:{...control,checkState}});const node=display.windows.get(322).element;states.push({role:node.getAttribute('role'),checked:node.getAttribute('aria-checked'),mark:node.querySelector('.check-mark').textContent,label:node.querySelector('.check-label').textContent,tab:node.tabIndex});}
+      const node=display.windows.get(322).element;node.click();const afterClick=node.getAttribute('aria-checked');
+      display.window({op:'update',window:{...control,style:0x40000004,checkState:1,enabled:false,title:'Radio choice'}});const radio={role:node.getAttribute('role'),checked:node.getAttribute('aria-checked'),disabled:node.disabled,tab:node.tabIndex};node.click();
+      display.window({op:'update',window:{...control,style:0x40010000,checkState:1,title:'Push'}});const push={role:node.getAttribute('role'),checked:node.getAttribute('aria-checked'),text:node.textContent};
+      return {states,afterClick,inputs,radio,push};
+    }finally{display.reset();root.remove();}
+  });
+  assert.deepEqual(checkControls.states.map(s=>s.checked),['false','true','mixed','false']);
+  assert.deepEqual(checkControls.states.map(s=>s.mark),['\u2610','\u2611','\u25a3','\u2610']);
+  assert.ok(checkControls.states.every(s=>s.role==='checkbox'&&s.label==='Remember choice'&&s.tab===0));
+  assert.equal(checkControls.afterClick,'false');assert.deepEqual(checkControls.inputs,[{kind:'click',hwnd:322}]);
+  assert.deepEqual(checkControls.radio,{role:'radio',checked:'true',disabled:true,tab:-1});assert.deepEqual(checkControls.push,{role:null,checked:null,text:'Push'});
+  checks.push('Checkbox and radio display follows guest state, accessibility, enabled state and style changes');
   // Read the actual database; no storage adapter or worker mock is used.
   const savedFile=async()=>{
     const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('browser86-packages',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
