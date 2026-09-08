@@ -31,6 +31,7 @@ G={'TextOutA':5,'SetTextColor':2,'SetBkMode':2,'SetBkColor':2,'CreateSolidBrush'
 C={'printf':1,'sprintf':2,'puts':1,'memset':3,'memcpy':3}
 S={'WaitOnAddress':4,'WakeByAddressSingle':1,'WakeByAddressAll':1}
 G.update({'SaveDC':1,'RestoreDC':2,'GetCurrentPositionEx':2})
+G.update({'GetTextColor':1,'GetBkColor':1,'GetBkMode':1,'GetTextAlign':1,'GetCurrentObject':2,'GetObjectType':1})
 U.update({'GetDC':1,'ReleaseDC':2})
 U.update({'SetRect':5,'SetRectEmpty':1,'CopyRect':2,'EqualRect':2,'IsRectEmpty':1,'PtInRect':3,'OffsetRect':3,'InflateRect':3,'IntersectRect':3,'UnionRect':3,'SubtractRect':3})
 K.update({'MulDiv':3})

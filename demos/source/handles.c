@@ -191,6 +191,9 @@ void mainCRTStartup(void){
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
+  CHECK(GetTextColor(savedDC)==0&&GetBkColor(savedDC)==0xffffff&&GetBkMode(savedDC)==2&&GetTextAlign(savedDC)==0);
+  CHECK(GetObjectType(savedDC)==3&&GetObjectType(GetCurrentObject(savedDC,1))==1&&GetObjectType(GetCurrentObject(savedDC,2))==2&&GetObjectType(GetCurrentObject(savedDC,6))==6);
+  CHECK(GetTextColor(NULL)==0xffffffff&&GetBkMode(NULL)==0&&!GetCurrentObject(savedDC,99)&&GetLastError()==87);
   CHECK(savedDC&&MoveToEx(savedDC,3,4,NULL)&&SaveDC(savedDC)==1);
   CHECK(MoveToEx(savedDC,10,20,NULL)&&SaveDC(savedDC)==2&&MoveToEx(savedDC,30,40,NULL));
   CHECK(RestoreDC(savedDC,-1)&&GetCurrentPositionEx(savedDC,&savedPosition)&&savedPosition.x==10&&savedPosition.y==20);

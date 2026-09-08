@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## GDI state and object queries extension — 2026-09-08
+
+**209 Node tests passed, 0 failed, 0 skipped.** Three new tests cover default/mutated/restored settings, independent DCs, selected stock objects, restored handle identity, deleted handles, invalid inputs, last-error behavior and explicit unsupported selection kinds. The rebuilt HandleObjects.exe imports all six new APIs and checks their results through actual x86 calls. The catalog contains 495 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** Workers executed the rebuilt fixture under the deployed CSP; persistence, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/dc-queries-tests.tap) and [browser report](test-artifacts/dc-queries-browser-report.json).
+
+Native ctypes probes used an owned compatible memory DC, deleted in finally, to check defaults, invalid handles/types and last-error behavior. No guest executable ran on the host. Microsoft documents [GetCurrentObject](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getcurrentobject), [GetObjectType](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getobjecttype) and [GetTextColor](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-gettextcolor). Browser86 currently models display DCs, pens, brushes and fonts; this stage does not implement memory DCs, bitmaps, palettes or color spaces.
+
 ## GDI device-context state extension â€” 2026-09-08
 
 **206 Node tests passed, 0 failed, 0 skipped.** Four new tests cover nested absolute/relative restore, discarded levels and level reuse, independent DC stacks, selected-object lifetime protection, invalid handles/levels, last-error preservation and POINT output validation. Restored pen position/colors/selection are checked in actual emitted line/text commands. The rebuilt HandleObjects.exe imports SaveDC, RestoreDC and GetCurrentPositionEx, checks nested position restoration and invalid restore, and releases its DC. The catalog contains 489 entries.

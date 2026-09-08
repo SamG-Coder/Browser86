@@ -2,6 +2,31 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {guest} from './helpers.mjs';
 function setup(){const {p,events}=guest('HelloConsole.exe');return {p,events,m:p.memory,h:p.apis.gui.newDC(0),call:(name,...args)=>p.apis.lookup('gdi32.dll',name).fn(...args)};}
+test('Win32 DC queries: defaults, mutations and restored values are observable independently',()=>{
+  const {p,h,call}=setup(),other=p.apis.gui.newDC(0);
+  const names=['GetTextColor','GetBkColor','GetBkMode','GetTextAlign'];
+  const read=dc=>names.map(name=>call(name,dc));
+  assert.deepEqual(read(h),[0,0xffffff,2,0]);
+  call('SetTextColor',h,0x123456);call('SetBkColor',h,0xabcdef);call('SetBkMode',h,1);call('SetTextAlign',h,6);call('SaveDC',h);
+  call('SetTextColor',h,7);call('SetBkColor',h,8);call('SetBkMode',h,2);call('SetTextAlign',h,0);
+  assert.deepEqual(read(h),[7,8,2,0]);call('RestoreDC',h,-1);p.setError(1234);
+  assert.deepEqual(read(h),[0x123456,0xabcdef,1,6]);assert.deepEqual(read(other),[0,0xffffff,2,0]);assert.equal(p.lastError,1234);
+  for(const invalid of [0,123,call('GetStockObject',7)]){assert.deepEqual(read(invalid),[0xffffffff,0xffffffff,0,0xffffffff]);assert.equal(p.lastError,1234);}
+});
+test('Win32 GDI object queries: selected handles, restored identity and deleted objects',()=>{
+  const {p,h,call}=setup();assert.equal(call('GetObjectType',h),3);
+  for(const [type,index] of [[1,7],[2,0],[6,17]]){const selected=call('GetCurrentObject',h,type);assert.equal(selected,call('GetStockObject',index));assert.equal(call('GetObjectType',selected),type);}
+  const pen=call('CreatePen',0,2,123),stock=call('SelectObject',h,pen);call('SaveDC',h);call('SelectObject',h,stock);
+  assert.equal(call('GetCurrentObject',h,1),stock);call('RestoreDC',h,-1);assert.equal(call('GetCurrentObject',h,1),pen);
+  call('SelectObject',h,stock);assert.equal(call('DeleteObject',pen),1);p.setError(1234);assert.equal(call('GetObjectType',pen),0);assert.equal(p.lastError,1234);
+  assert.equal(call('GetObjectType',0),0);assert.equal(p.lastError,6);
+});
+test('Win32 GDI object queries: invalid types and unsupported selections are explicit',()=>{
+  const {p,h,call}=setup();
+  for(const type of [0,3,99]){assert.equal(call('GetCurrentObject',h,type),0);assert.equal(p.lastError,87);}
+  for(const type of [1,2,5,6,7,14]){p.setError(1234);assert.equal(call('GetCurrentObject',0,type),0);assert.equal(p.lastError,1234);}
+  for(const type of [5,7,14])assert.throws(()=>call('GetCurrentObject',h,type),e=>e.code==='UNSUPPORTED_GDI');
+});
 test('Win32 DC state: nested restores pop newer saves and reuse levels',()=>{
   const {p,h,call}=setup();call('SetTextColor',h,1);assert.equal(call('SaveDC',h),1);call('SetTextColor',h,2);assert.equal(call('SaveDC',h),2);call('SetTextColor',h,3);assert.equal(call('SaveDC',h),3);
   for(const invalid of [0,4,-4]){assert.equal(call('RestoreDC',h,invalid),0);assert.equal(p.lastError,87);}

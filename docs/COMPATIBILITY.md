@@ -102,6 +102,8 @@ The user32 rectangle helpers support SetRect/SetRectEmpty, CopyRect, EqualRect, 
 
 SaveDC/RestoreDC maintain an independent stack for each emulated DC. Saved state covers the currently modeled pen/brush/font selections, text/background colors, background mode, alignment, font size and current position. Positive restore indices identify saved levels; negative indices are relative to the latest save. Restoring discards that level and all newer levels. Invalid levels return error 87, and invalid DC handles return error 6. GetCurrentPositionEx exposes the restored position through an eight-byte POINT. The runtime's existing strict DeleteObject rule now also protects objects selected by saved states; native deferred-deletion behavior is not emulated. This does not add bitmap DCs, clipping, regions, palettes or mapping transforms, so SaveDC is limited to the state Browser86 actually models.
 
+GDI state queries now include GetTextColor, GetBkColor, GetBkMode, GetTextAlign, GetCurrentObject and GetObjectType. Queries reflect the live and restored DC state; selected pens, brushes and fonts retain handle identity. Existing display DCs report OBJ_DC. Color/alignment query failures preserve last error; invalid selection types report ERROR_INVALID_PARAMETER. Bitmap, palette and color-space selection queries on valid DCs explicitly fault because those objects are not implemented. Memory DCs and broader GDI object kinds remain unsupported.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

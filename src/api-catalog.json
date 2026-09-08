@@ -120,6 +120,27 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "GetBkColor",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "GetBkMode",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "GetCurrentObject",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetCurrentPositionEx",
     "argc": 2,
     "cdecl": false,
@@ -134,7 +155,28 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "GetObjectType",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetStockObject",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "GetTextAlign",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "GetTextColor",
     "argc": 1,
     "cdecl": false,
     "data": false
