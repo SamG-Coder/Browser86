@@ -280,4 +280,10 @@ API BOOL WINAPI IsWindowEnabled(HWND);
 API BOOL WINAPI IsWindowVisible(HWND);
 API HWND WINAPI SetFocus(HWND);
 API HWND WINAPI GetFocus(void);
+API BOOL WINAPI SetPropA(HWND,const char*,HANDLE);
+API BOOL WINAPI SetPropW(HWND,const WORD*,HANDLE);
+API HANDLE WINAPI GetPropA(HWND,const char*);
+API HANDLE WINAPI GetPropW(HWND,const WORD*);
+API HANDLE WINAPI RemovePropA(HWND,const char*);
+API HANDLE WINAPI RemovePropW(HWND,const WORD*);
 #endif

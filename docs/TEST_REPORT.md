@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Window property associations - 2026-09-08
+
+**310 Node tests passed, 0 failed, 0 skipped.** Added SetPropA/W, GetPropA/W and RemovePropA/W with per-window storage, case-insensitive names using the existing Windows ordinal table, arbitrary 32-bit values, numeric keys and #decimal aliases. Tests cover A/W interoperability, replacement and zero values, per-window isolation, name lifetime, empty/oversized strings, invalid handles, truncated memory, destruction-time removal and application ownership of data handles. The rebuilt HandleObjects.exe exercises all six imports. Catalog: 553 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-property-tests.tap), [browser report](test-artifacts/window-property-browser-report.json).
+
+Native ctypes probes used an owned hidden STATIC window and verified case-insensitive lookup, numeric keys, #0001/#1 aliasing, zero data, 255-unit success/256-unit failure, empty-name error 123, invalid integer-string error 87, invalid-window error 1400 and missing-name error 2 after removing the final string property. Numeric null lookup/removal preserved last error; SetProp with numeric zero failed with error 87. Probe properties were removed and the window destroyed; no guest executable ran on the host. References: [SetPropW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setpropw), [RemovePropW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-removepropw). Global atom APIs and string/atom interoperability, external-process atom state, enumeration and UIPI remain unfinished. The implementation bounds each window to 4096 properties with an explicit runtime limit fault.
+
 ## Keyboard focus callbacks - 2026-09-08
 
 **305 Node tests passed, 0 failed, 0 skipped.** SetFocus now delivers loss/gain callbacks with updated GetFocus state, handles null and same-window requests, rejects invalid windows and disabled child ancestry, and avoids stale gain notifications after a nested focus change. EnableWindow clears a directly focused window between WM_CANCELMODE and its disabled-state transition. Tests cover message arguments, prior-focus return values, callback-time state, popup-owner distinction and nested transitions. The rebuilt HandleObjects.exe checks six focus callbacks and error 87 beneath a disabled child ancestor. Catalog: 547 entries.

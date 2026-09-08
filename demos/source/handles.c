@@ -325,6 +325,11 @@ void mainCRTStartup(void){
   CHECK(enableCount==4&&enableLog[0]==31&&enableState[0]==1&&enableLog[1]==10&&enableState[1]==0&&enableLog[2]==31&&enableState[2]==0&&enableLog[3]==10&&enableState[3]==1);
   CHECK(GetParent(lifetimeWindows[2])==lifetimeWindows[1]&&GetParent(lifetimeWindows[3])==lifetimeWindows[0]);
   CHECK(IsChild(lifetimeWindows[0],lifetimeWindows[2])&&!IsChild(lifetimeWindows[0],lifetimeWindows[3])&&!IsChild(lifetimeWindows[0],lifetimeWindows[0]));
+  WORD propertyName[]={ 'C','o','n','t','e','x','t',0 };
+  CHECK(SetPropA(lifetimeWindows[0],"context",(HANDLE)0x12345678));CHECK(GetPropW(lifetimeWindows[0],propertyName)==(HANDLE)0x12345678);
+  CHECK(SetPropW(lifetimeWindows[0],propertyName,(HANDLE)0xffffffff));CHECK(RemovePropA(lifetimeWindows[0],"CONTEXT")== (HANDLE)0xffffffff);
+  CHECK(SetPropA(lifetimeWindows[0],"#0001",(HANDLE)123));CHECK(GetPropA(lifetimeWindows[0],(const char*)1)==(HANDLE)123);CHECK(RemovePropW(lifetimeWindows[0],(const WORD*)1)==(HANDLE)123);
+  CHECK(SetPropW(lifetimeWindows[0],propertyName,NULL));SetLastError(1234);CHECK(!GetPropA(lifetimeWindows[0],"context")&&GetLastError()==1234);CHECK(!RemovePropW(lifetimeWindows[0],propertyName));
   CHECK(!SetFocus(lifetimeWindows[1])&&GetFocus()==lifetimeWindows[1]);
   CHECK(SetFocus(lifetimeWindows[2])==lifetimeWindows[1]&&GetFocus()==lifetimeWindows[2]);
   CHECK(SetFocus(lifetimeWindows[2])==lifetimeWindows[2]);CHECK(SetFocus(NULL)==lifetimeWindows[2]&&!GetFocus());

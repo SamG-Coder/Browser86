@@ -3364,6 +3364,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetPropA",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "GetPropW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetSysColor",
     "argc": 1,
     "cdecl": false,
@@ -3665,6 +3679,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "RemovePropA",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "RemovePropW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "ScreenToClient",
     "argc": 2,
     "cdecl": false,
@@ -3702,6 +3730,20 @@
     "dll": "user32.dll",
     "name": "SetFocus",
     "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetPropA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetPropW",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },

@@ -178,6 +178,8 @@ IsWindowVisible now checks WS_VISIBLE through child ancestry without treating po
 
 SetFocus now sends WM_KILLFOCUS and WM_SETFOCUS through guest callbacks, with the new focus observable during both. Same-target requests send no messages; invalid windows fail with error 1400 and disabled targets/child ancestors with error 87. EnableWindow on the focused window sends WM_CANCELMODE, clears focus with WM_KILLFOCUS while the window is still enabled, then updates its state and sends WM_ENABLE. Activation messages, focus restoration on destruction, parent-disable focus transfer, changed-focus last-error parity and general reentrant focus parity remain unfinished.
 
+SetPropA/W, GetPropA/W and RemovePropA/W now provide per-window application data associations with case-insensitive names, CP1252/UTF-16 interoperability, integer keys and #decimal integer aliases. Values are arbitrary 32-bit data, including zero; removal never frees attached application data. String names are bounded to 255 UTF-16 units and each window to 4096 properties. Names remain available during destruction callbacks. Missing-name lookup models names held by guest window properties; global atom creation/name-to-atom interoperability, external-process atom state, enumeration and UIPI are not implemented.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
