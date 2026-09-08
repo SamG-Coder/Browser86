@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Polygon and polyline drawing extension - 2026-09-08
+
+**227 Node tests passed, 0 failed, 0 skipped.** Three new tests cover raw fill-mode state, saved-state restoration, independent DCs, selected objects/DC colors, signed point copies, current-position preservation, invalid counts/handles/pointers and atomic input validation. HandleObjects.exe imports Polygon, Polyline, GetPolyFillMode and SetPolyFillMode and checks success/failure through x86 calls. The catalog contains 510 entries.
+
+**Five real-canvas checks passed in Edge 152.0.4191.66.** tools/browser-polygons.mjs feeds actual runtime commands into GuestDisplay and inspects canvas pixels to distinguish alternate/winding overlap, native raw mode 3, open polylines and closed polygon outlines. Evidence: [canvas report](test-artifacts/polygons-canvas-report.json). **Eight existing real-origin browser checks also passed with no page errors**, including execution of the rebuilt fixture, persistence, reload and backup. Evidence: [Node TAP](test-artifacts/polygons-tests.tap) and [browser report](test-artifacts/polygons-browser-report.json).
+
+Native ctypes probes used an owned memory DC and offscreen bitmap, restored selections and deleted resources. They verified count/handle errors, null-array failures, raw fill-mode storage and interior coverage for modes 0,1,2,3,4,255,256,-1. No guest executable ran on the host. Microsoft documents [Polygon](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-polygon) and [SetPolyFillMode](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-setpolyfillmode). Browser antialiasing/stroke edges are not certified pixel-exact against GDI; mapping/clipping, patterned brushes and unsupported pen styles remain separate work.
+
 ## ANSI font-name fidelity correction - 2026-09-08
 
 **224 Node tests passed, 0 failed, 0 skipped.** Two new tests compare GetObjectA font-name conversion with all 65,535 nonzero native UTF-16 code-unit results and verify best-fit mappings, separate surrogate replacements, partial-output boundaries and ANSI tail preservation. The rebuilt HandleObjects.exe checks full-width/diacritic/minus best-fit mapping and two-byte surrogate fallback through real imported APIs. The catalog remains at 506 entries: this stage corrects existing behavior.

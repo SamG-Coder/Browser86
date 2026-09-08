@@ -1,6 +1,6 @@
 import {checkBuffer} from './files.js';
 import {RuntimeFault} from './errors.js';
-const fields=['textColor','background','bkMode','x','y','pen','brush','font','fontSize','align','dcPenColor','dcBrushColor'];
+const fields=['polyFillMode','textColor','background','bkMode','x','y','pen','brush','font','fontSize','align','dcPenColor','dcBrushColor'];
 export function installDCState(gui){
   const api=gui.api,m=gui.m,g=(name,n,fn)=>api.add('gdi32.dll',name,n,fn);
   for(const [kind,field] of [['Pen','dcPenColor'],['Brush','dcBrushColor']]){

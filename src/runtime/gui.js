@@ -1,6 +1,7 @@
 import {ansiDecode} from './memory.js';
 import {installRectangleDrawing} from './rectangle-drawing.js';
 import {installRectangles} from './rectangles.js';
+import {installPolygons} from './polygons.js';
 import {installFonts} from './fonts.js';
 import {installGDIObjects} from './gdi-objects.js';
 import {installDCState,dcSelectsObject} from './dc-state.js';
@@ -12,7 +13,7 @@ export class GUI {
   serialize(w){return {hwnd:w.hwnd,parent:w.parent,title:w.title,className:w.className,x:w.x,y:w.y,width:w.width,height:w.height,style:w.style,visible:w.visible,enabled:w.enabled,id:w.id};}
   notify(w,op='update'){this.p.emit('window',{op,window:this.serialize(w)});}
   dc(h){return this.p.object(h,'dc');}
-  newDC(hwnd){return this.p.handle('dc',{hwnd,dcPenColor:0,dcBrushColor:0xFFFFFF,textColor:0,background:0xFFFFFF,bkMode:2,x:0,y:0,pen:this.stockObject(7),brush:this.stockObject(0),font:this.stockObject(17),fontSize:16,align:0});}
+  newDC(hwnd){return this.p.handle('dc',{hwnd,polyFillMode:1,dcPenColor:0,dcBrushColor:0xFFFFFF,textColor:0,background:0xFFFFFF,bkMode:2,x:0,y:0,pen:this.stockObject(7),brush:this.stockObject(0),font:this.stockObject(17),fontSize:16,align:0});}
   draw(hdc,command){const dc=this.dc(hdc);if(!dc)return 0;this.p.emit('draw',{hwnd:dc.hwnd,...command});return 1;}
   drawingObject(dc,handle){const object=this.p.object(handle,'gdi');return object?.dcColor&&dc?{...object,color:dc[object.dcColor]}:object;}
   stockObject(index){if(this.stock.has(index))return this.stock.get(index);let object;if(index<=5)object={kind:'brush',color:[0xFFFFFF,0xC0C0C0,0x808080,0x404040,0,0][index],null:index===5};else if(index<=8)object={kind:'pen',color:index===6?0xFFFFFF:0,width:1,null:index===8};else if([10,11,12,13,14,16,17].includes(index))object={kind:'font',height:16,face:'Arial',weight:400};else if(index===18)object={kind:'brush',color:0xFFFFFF,dcColor:'dcBrushColor'};else if(index===19)object={kind:'pen',color:0,width:1,dcColor:'dcPenColor'};else return 0;const h=this.p.handle('gdi',{...object,stock:true});this.stock.set(index,h);return h;}
@@ -82,6 +83,7 @@ export class GUI {
     installDCState(this);
     installGDIObjects(this);
     installFonts(this);
+    installPolygons(this);
     g('GetStockObject',1,i=>this.stockObject(i));g('CreateSolidBrush',1,color=>p.handle('gdi',{kind:'brush',color}));
     g('SelectObject',2,(hdc,obj)=>{const dc=this.dc(hdc),object=p.object(obj,'gdi');if(!dc||!object)return 0;const old=dc[object.kind];dc[object.kind]=obj;return old||0;});
     g('DeleteObject',1,h=>{const obj=p.object(h,'gdi');if(!obj||obj.stock)return 0;if([...p.handles.values()].some(dc=>dc.type==='dc'&&dcSelectsObject(dc,h)))return 0;p.releaseHandle(h);return 1;});

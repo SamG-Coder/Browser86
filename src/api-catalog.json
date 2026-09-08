@@ -218,6 +218,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "GetPolyFillMode",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetStockObject",
     "argc": 1,
     "cdecl": false,
@@ -262,6 +269,20 @@
     "dll": "gdi32.dll",
     "name": "MoveToEx",
     "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "Polygon",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "Polyline",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },
@@ -339,6 +360,13 @@
     "dll": "gdi32.dll",
     "name": "SetPixel",
     "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "SetPolyFillMode",
+    "argc": 2,
     "cdecl": false,
     "data": false
   },

@@ -1,0 +1,43 @@
+{
+  "result": "PASS",
+  "browser": "152.0.4191.66",
+  "checks": [
+    "alternate leaves double-wound interior empty",
+    "winding fills double-wound interior",
+    "raw mode 3 uses alternate coverage",
+    "polyline remains open",
+    "polygon closes its outline"
+  ],
+  "pixels": [
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ]
+  ]
+}

@@ -191,6 +191,10 @@ void mainCRTStartup(void){
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
+  POINT shapePoints[3]={{1,1},{9,1},{5,9}};
+  CHECK(GetPolyFillMode(savedDC)==1&&SetPolyFillMode(savedDC,2)==1&&GetPolyFillMode(savedDC)==2);
+  CHECK(Polygon(savedDC,shapePoints,3)&&Polyline(savedDC,shapePoints,3));
+  CHECK(!Polygon(savedDC,shapePoints,1)&&GetLastError()==87);
   DWORD ansiFontData[23]={0},ansiFontCopy[15]={0};
   WORD* ansiFace=(WORD*)((BYTE*)ansiFontData+28);ansiFace[0]=0xff21;ansiFace[1]=0x100;ansiFace[2]=0x2212;ansiFace[3]=0xd83d;ansiFace[4]=0xde00;
   HANDLE ansiMappedFont=CreateFontIndirectW(ansiFontData);CHECK(ansiMappedFont&&GetObjectA(ansiMappedFont,60,ansiFontCopy)==60);
