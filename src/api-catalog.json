@@ -3559,6 +3559,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "FindWindowA",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "FindWindowW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "FrameRect",
     "argc": 3,
     "cdecl": false,

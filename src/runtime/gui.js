@@ -140,6 +140,12 @@ export class GUI {
       catch(error){p.heap.free(buffer);throw error;}
     });
     for(const wide of [false,true]){const suffix=wide?'W':'A',str=pointer=>a.str(pointer,wide);
+      u('FindWindow'+suffix,2,(className,title)=>{
+        const cls=className&&className<65536?[...this.classes.values()].find(c=>c.atom===className)?.name:className?str(className):null;
+        if(className&&cls===undefined)return 0;
+        const caption=title?str(title).toLowerCase():null;
+        return [...this.windows.values()].find(w=>!(w.style&0x40000000)&&(!className||w.className.toLowerCase()===cls.toLowerCase())&&(caption===null||w.title.toLowerCase()===caption))?.hwnd||0;
+      });
       for(const extended of [false,true])u('RegisterClass'+(extended?'Ex':'')+suffix,1,pointer=>{const o=extended?4:0;if(extended&&m.u32(pointer)!==48)return a.fail(87);checkBuffer(m,pointer,extended?48:40,'r');if(m.u32(pointer+o)&~0x0803feeb)return a.fail(87);if(m.i32(pointer+o+8)<0||m.i32(pointer+o+12)<0)return a.fail(87);const proc=m.u32(pointer+o+4),name=str(m.u32(pointer+o+36));if(!name)return a.fail(87);if(this.classes.has(name.toLowerCase()))return a.fail(1410);const menu=m.u32(pointer+o+32),menuName=menu>=65536?str(menu):null;const atom=this.nextAtom++;this.classes.set(name.toLowerCase(),{name,atom,proc,style:m.u32(pointer+o),classExtra:m.u32(pointer+o+8),windowExtra:m.u32(pointer+o+12),icon:m.u32(pointer+o+20),cursor:m.u32(pointer+o+24),menu,menuName,smallIcon:extended?m.u32(pointer+44):0,instance:m.u32(pointer+o+16)||p.main.base,background:m.u32(pointer+o+28),wide});return atom;});
       u('UnregisterClass'+suffix,2,(name,instance)=>{
         name>>>=0;if(!name)return a.fail(87);
