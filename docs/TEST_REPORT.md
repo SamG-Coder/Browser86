@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Recursive window destruction - 2026-09-08
+
+**289 Node tests passed, 0 failed, 0 skipped.** DestroyWindow now walks nested child and owned-window lifetimes using guest callback continuations, cleans up window handles, associated runtime DCs and timers, and clears stale focus. Tests verify the callback sequence, handle visibility during callbacks, unrelated-window survival, invalid handle error 1400, and sibling destruction from a callback without duplicate notifications. HandleObjects.exe now registers a custom window procedure, creates a parent, child, grandchild and owned popup, checks eight destruction callbacks in order, and verifies all four HWNDs are invalid afterward. Catalog: 546 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** The first browser run exposed a missing child-container reference when creating the grandchild. The display now supports nested child attachment and uses WS_CHILD to distinguish child controls from owned popups; the rerun passed. Evidence: [Node TAP](test-artifacts/window-destruction-tests.tap), [browser report](test-artifacts/window-destruction-browser-report.json).
+
+Native ctypes probes subclassed four owned hidden STATIC windows and recorded: owned WM_DESTROY/WM_NCDESTROY, parent WM_DESTROY, child WM_DESTROY, grandchild WM_DESTROY/WM_NCDESTROY, child WM_NCDESTROY, parent WM_NCDESTROY. Destroying the invalidated parent again returned zero/error 1400. All probe windows were destroyed; no guest executable ran on the host. References: [DestroyWindow](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-destroywindow), [WM_NCDESTROY](https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-ncdestroy). Full activation/focus transfer, WM_PARENTNOTIFY, creation-failure cleanup, native DC cache behavior and general reentrant window-manager parity remain unfinished.
+
 ## Window rectangle queries - 2026-09-08
 
 **286 Node tests passed, 0 failed, 0 skipped.** GetWindowRect now returns screen bounds through nested child ancestry and ignores popup owners. GetClientRect retains client-local dimensions. Both return error 1400 for invalid windows or null output pointers, preserve last error on success, and validate all sixteen output bytes before writing. Regression tests cover negative positions, changed parent origins and truncated guest buffers. The rebuilt HandleObjects.exe imports both APIs and checks child screen bounds (47,59,67,79), client bounds (0,0,20,20), and null-output failure. The catalog remains at 546 entries.

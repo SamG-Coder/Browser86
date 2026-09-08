@@ -3,6 +3,12 @@ int _fltused=0;
 unsigned long __readfsdword(unsigned long);
 #pragma intrinsic(__readfsdword)
 #define CHECK(expression) do { if(!(expression)) { printf("Handle failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
+static HWND lifetimeWindows[4];
+static DWORD lifetimeLog[8],lifetimeCount;
+static long WINAPI lifetimeProc(HWND h,DWORD msg,DWORD wp,long lp){
+  if(msg==2||msg==130){for(int i=0;i<4;i++)if(h==lifetimeWindows[i]&&lifetimeCount<8)lifetimeLog[lifetimeCount++]=i*256+msg;}
+  return DefWindowProcA(h,msg,wp,lp);
+}
 static DWORD initializationCalls;
 static BOOL WINAPI initializeOnce(DWORD *once,void *parameter,void **context){
   initializationCalls++;if(initializationCalls==1){SetLastError(123);return 0;}
@@ -290,6 +296,16 @@ void mainCRTStartup(void){
   CHECK(!GetRegionData(regionA,47,regionData)&&GetLastError()==87);
   CHECK(GetRegionData(regionB,48,regionData)==32&&regionData[2]==0&&regionData[3]==0);
   CHECK(!RectInRegion(regionB,NULL));CHECK(DeleteObject(regionA)&&DeleteObject(regionB));
+  WNDCLASSA lifetimeClass={0};lifetimeClass.proc=lifetimeProc;lifetimeClass.name="LifetimeFixture";CHECK(RegisterClassA(&lifetimeClass));
+  lifetimeWindows[0]=CreateWindowExA(0,"LifetimeFixture","",0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);
+  lifetimeWindows[1]=CreateWindowExA(0,"LifetimeFixture","",0x40000000,0,0,20,20,lifetimeWindows[0],NULL,NULL,NULL);
+  lifetimeWindows[2]=CreateWindowExA(0,"LifetimeFixture","",0x40000000,0,0,20,20,lifetimeWindows[1],NULL,NULL,NULL);
+  lifetimeWindows[3]=CreateWindowExA(0,"LifetimeFixture","",0x80000000,0,0,20,20,lifetimeWindows[0],NULL,NULL,NULL);
+  for(int i=0;i<4;i++)CHECK(lifetimeWindows[i]&&IsWindow(lifetimeWindows[i]));
+  CHECK(DestroyWindow(lifetimeWindows[0]));CHECK(lifetimeCount==8);
+  DWORD expectedLifetime[8]={770,898,2,258,514,642,386,130};
+  for(int i=0;i<8;i++)CHECK(lifetimeLog[i]==expectedLifetime[i]);
+  for(int i=0;i<4;i++)CHECK(!IsWindow(lifetimeWindows[i]));
   HWND coordinateWindow=CreateWindowExA(0,"STATIC","",0x80000000,40,50,100,100,NULL,NULL,NULL,NULL);
   HWND coordinateChild=CreateWindowExA(0,"STATIC","",0x40000000,7,9,20,20,coordinateWindow,NULL,NULL,NULL);POINT coordinatePoint={0,0};
   CHECK(coordinateWindow&&coordinateChild&&ClientToScreen(coordinateChild,&coordinatePoint)&&coordinatePoint.x==47&&coordinatePoint.y==59);

@@ -27,7 +27,21 @@ export class GUI {
   getMessage(out,hwnd,min,max,remove=true){const q=this.p.messageQueue;const i=q.findIndex(msg=>msg.message===WM_QUIT||((!hwnd||msg.hwnd===hwnd)&&(!min&&!max||msg.message>=min&&msg.message<=max)));if(i<0)return undefined;const msg=q[i];if(remove)q.splice(i,1);this.msgStruct(out,msg);return msg.message===WM_QUIT?0:1;}
   send(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(w.proc)return this.p.call(w.proc,[hwnd,msg,wp,lp]);return this.defWindow(hwnd,msg,wp,lp,wide);}
   defWindow(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(msg===0x81)return 1;if(msg===WM_CLOSE)return this.destroy(hwnd);if(msg===0x0C){w.title=this.api.str(lp,wide);this.notify(w);return 1;}if(msg===0x0D){this.m.string(lp,w.title,wide,wp);return Math.min(w.title.length,Math.max(0,wp-1));}if(msg===0x0E)return w.title.length;if(msg===0x14){this.draw(w.dc,{op:'fill',x:0,y:0,width:w.width,height:w.height,color:0xFFFFFF});return 1;}if(msg===0x84)return 1;if(msg===WM_PAINT){w.paintPending=false;return 0;}if(msg===0xF5&&w.className.toUpperCase()==='BUTTON'){this.p.postMessage(w.parent,WM_COMMAND,w.id&65535,hwnd);return 0;}if(msg===0x30){w.font=wp;return 0;}return 0;}
-  destroy(hwnd){const w=this.window(hwnd);if(!w||w.destroying)return 0;w.destroying=true;const finish=()=>{for(const child of [...this.windows.values()].filter(c=>c.parent===hwnd)){this.windows.delete(child.hwnd);this.p.releaseHandle(child.hwnd);this.p.emit('window',{op:'destroy',window:this.serialize(child)});}this.windows.delete(hwnd);this.p.releaseHandle(hwnd);this.p.emit('window',{op:'destroy',window:this.serialize(w)});for(const [key,t]of this.p.timers)if(t.hwnd===hwnd)this.p.timers.delete(key);return 1;};return w.proc?this.p.call(w.proc,[hwnd,WM_DESTROY,0,0],()=>this.p.call(w.proc,[hwnd,0x82,0,0],finish)):finish();}
+  destroy(hwnd,done=value=>value){
+    const w=this.window(hwnd);if(!w)return done(this.api.fail(1400));if(w.destroying)return done(0);w.destroying=true;
+    const notify=(message,next)=>w.proc?this.p.call(w.proc,[hwnd,message,0,0],next):next();
+    const descendants=(child,next)=>{
+      const pending=[...this.windows.values()].filter(c=>c.parent===hwnd&&!!(c.style&0x40000000)===child);
+      let i=0;const advance=()=>{while(i<pending.length){const c=pending[i++];if(this.window(c.hwnd)&&!c.destroying)return this.destroy(c.hwnd,advance);}return next();};return advance();
+    };
+    const finish=()=>{
+      this.windows.delete(hwnd);this.p.releaseHandle(hwnd);if(w.dc)this.p.releaseHandle(w.dc);
+      for(const [key,t]of this.p.timers)if(t.hwnd===hwnd)this.p.timers.delete(key);
+      if(this.focus===hwnd)this.focus=0;
+      this.p.emit('window',{op:'destroy',window:this.serialize(w)});return done(1);
+    };
+    return descendants(false,()=>notify(WM_DESTROY,()=>descendants(true,()=>notify(0x82,finish))));
+  }
   input(event){const p=this.p,w=this.window(event.hwnd);if(!w)return;
     if(event.kind==='close')p.postMessage(w.hwnd,WM_CLOSE);
     else if(event.kind==='click'){if(w.parent&&w.className.toUpperCase()==='BUTTON')p.postMessage(w.parent,WM_COMMAND,w.id&65535,w.hwnd);}
