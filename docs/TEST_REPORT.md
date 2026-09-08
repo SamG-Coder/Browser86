@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Rectangle brush drawing extension - 2026-09-08
+
+**219 Node tests passed, 0 failed, 0 skipped.** Three new tests compare emitted fill coverage with 72 recorded native offscreen raster cases and verify hollow brushes, selected-brush fallback, DC_BRUSH colors, system-color lookup, invalid DC errors and complete input validation before drawing. HandleObjects.exe imports FillRect and the new FrameRect, checking ordinary and inverted rectangles through x86 calls. The catalog contains 504 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The rebuilt fixture ran in the actual worker; persistence/reload/deletion/backup checks passed. Evidence: [Node TAP](test-artifacts/rectangle-drawing-tests.tap) and [browser report](test-artifacts/rectangle-drawing-browser-report.json).
+
+The reproducible tools/build-gdi-rect-vectors.py probe records coverage from an owned 8x8 bitmap and memory DC, restoring selections and deleting resources. Additional native probes verify brush fallback, hollow brushes and invalid DC return/error behavior. No guest executable ran on the host. Microsoft documents [FillRect](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-fillrect) and [FrameRect](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-framerect). Coverage comparisons apply to identity mapping and solid brushes; they do not establish transformed/clipped or patterned rendering parity. System colors use Browser86's existing fixed profile.
+
 ## Per-device-context stock colors extension - 2026-09-08
 
 **216 Node tests passed, 0 failed, 0 skipped.** Two new tests cover the four DC pen/brush color APIs, defaults, full-width COLORREF values, previous-color returns, independent DCs, saved state and native invalid-handle errors. Emitted rectangle/ellipse/roundrect/line/fill commands are checked for resolved colors; ordinary objects and shared stock handles remain unchanged. HandleObjects.exe imports all four APIs and checks defaults, changes and restoration through x86 calls. The catalog contains 503 entries.

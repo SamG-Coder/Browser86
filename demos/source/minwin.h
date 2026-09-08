@@ -199,6 +199,7 @@ API BOOL WINAPI Ellipse(HDC,int,int,int,int);
 API BOOL WINAPI MoveToEx(HDC,int,int,void*);
 API BOOL WINAPI LineTo(HDC,int,int);
 API int WINAPI FillRect(HDC,const RECT*,HANDLE);
+API int WINAPI FrameRect(HDC,const RECT*,HANDLE);
 API int WINAPI StretchDIBits(HDC,int,int,int,int,int,int,int,int,const void*,const void*,DWORD,DWORD);
 API int __cdecl printf(const char*,...);
 API int __cdecl sprintf(char*,const char*,...);

@@ -191,6 +191,10 @@ void mainCRTStartup(void){
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
+  RECT paintRect={1,1,4,4};HANDLE paintBrush=CreateSolidBrush(0x123456);
+  CHECK(FillRect(savedDC,&paintRect,paintBrush)&&FrameRect(savedDC,&paintRect,paintBrush));
+  paintRect.left=5;CHECK(!FrameRect(savedDC,&paintRect,paintBrush)&&FillRect(savedDC,&paintRect,paintBrush));
+  CHECK(DeleteObject(paintBrush));
   CHECK(GetDCPenColor(savedDC)==0&&GetDCBrushColor(savedDC)==0xffffff);
   CHECK(SetDCPenColor(savedDC,0x123456)==0&&SetDCBrushColor(savedDC,0xabcdef)==0xffffff);
   CHECK(SaveDC(savedDC)==1&&SetDCPenColor(savedDC,7)==0x123456&&SetDCBrushColor(savedDC,8)==0xabcdef);

@@ -3007,6 +3007,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "FrameRect",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetActiveWindow",
     "argc": 0,
     "cdecl": false,

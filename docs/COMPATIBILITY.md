@@ -110,6 +110,8 @@ CreatePenIndirect and CreateBrushIndirect consume complete x86 LOGPEN/LOGBRUSH s
 
 GetDCPenColor, SetDCPenColor, GetDCBrushColor and SetDCBrushColor maintain independent full-width COLORREF values per device context, with black/white defaults and SaveDC/RestoreDC support. DC_PEN/DC_BRUSH resolve their color when drawing without modifying shared stock handles. Rectangle, Ellipse, RoundRect, LineTo and FillRect consume these resolved colors; ordinary pens/brushes remain unaffected. Invalid DCs return CLR_INVALID and ERROR_INVALID_PARAMETER. ICM, palette mapping and pixel-exact native rasterization remain unsupported.
 
+FillRect and FrameRect share validated RECT reads and brush resolution. Hollow brushes leave pixels unchanged; invalid/non-brush handles fall back to the selected brush as observed natively. FillRect accepts system-color pseudo-brushes through the existing fixed GetSysColor profile and normalizes inverted extents. FrameRect draws one-unit borders, rejects inverted rectangles, and retains observed degenerate-edge coverage. DC_BRUSH colors are resolved per DC. These operations implement the current identity mapping; transforms, clipping regions and patterned brushes remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

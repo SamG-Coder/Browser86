@@ -1,4 +1,5 @@
 import {ansiDecode} from './memory.js';
+import {installRectangleDrawing} from './rectangle-drawing.js';
 import {installRectangles} from './rectangles.js';
 import {installGDIObjects} from './gdi-objects.js';
 import {installDCState,dcSelectsObject} from './dc-state.js';
@@ -77,13 +78,13 @@ export class GUI {
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
     installRectangles(this.api);
+    installRectangleDrawing(this);
     installDCState(this);
     installGDIObjects(this);
     g('GetStockObject',1,i=>this.stockObject(i));g('CreateSolidBrush',1,color=>p.handle('gdi',{kind:'brush',color}));
     g('SelectObject',2,(hdc,obj)=>{const dc=this.dc(hdc),object=p.object(obj,'gdi');if(!dc||!object)return 0;const old=dc[object.kind];dc[object.kind]=obj;return old||0;});
     g('DeleteObject',1,h=>{const obj=p.object(h,'gdi');if(!obj||obj.stock)return 0;if([...p.handles.values()].some(dc=>dc.type==='dc'&&dcSelectsObject(dc,h)))return 0;p.releaseHandle(h);return 1;});
     g('SetTextColor',2,(hdc,color)=>{const dc=this.dc(hdc);if(!dc)return 0xFFFFFFFF;const old=dc.textColor;dc.textColor=color;return old;});g('SetBkColor',2,(hdc,color)=>{const dc=this.dc(hdc);if(!dc)return 0xFFFFFFFF;const old=dc.background;dc.background=color;return old;});g('SetBkMode',2,(hdc,mode)=>{const dc=this.dc(hdc);if(!dc||![1,2].includes(mode))return 0;const old=dc.bkMode;dc.bkMode=mode;return old;});g('SetTextAlign',2,(hdc,align)=>{const dc=this.dc(hdc);if(!dc)return 0xFFFFFFFF;const old=dc.align;dc.align=align;return old;});
-    u('FillRect',3,(hdc,rect,brush)=>{const object=this.drawingObject(this.dc(hdc),brush),color=object?.color??(brush===6?0xFFFFFF:0xF0F0F0);return this.draw(hdc,{op:'fill',x:m.i32(rect),y:m.i32(rect+4),width:m.i32(rect+8)-m.i32(rect),height:m.i32(rect+12)-m.i32(rect+4),color});});
     for(const [name,op,n]of [['Rectangle','rectangle',5],['Ellipse','ellipse',5],['RoundRect','roundrect',7]])g(name,n,(hdc,left,top,right,bottom,rx=12,ry=12)=>{const dc=this.dc(hdc);if(!dc)return 0;return this.draw(hdc,{op,x:left|0,y:top|0,width:(right-left)|0,height:(bottom-top)|0,rx,ry,pen:this.drawingObject(dc,dc.pen),brush:this.drawingObject(dc,dc.brush)});});
     g('MoveToEx',4,(hdc,x,y,old)=>{const dc=this.dc(hdc);if(!dc)return 0;if(old){m.w32(old,dc.x);m.w32(old+4,dc.y);}dc.x=x|0;dc.y=y|0;return 1;});
     g('LineTo',3,(hdc,x,y)=>{const dc=this.dc(hdc);if(!dc)return 0;this.draw(hdc,{op:'line',x:dc.x,y:dc.y,x2:x|0,y2:y|0,pen:this.drawingObject(dc,dc.pen)});dc.x=x|0;dc.y=y|0;return 1;});
