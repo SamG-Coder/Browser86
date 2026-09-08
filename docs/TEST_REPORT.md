@@ -64,6 +64,12 @@ Native Windows probes verified cross-handle cancellation and restored link count
 
 Native Windows probes verified existing-target error 183, successful explicit replacement, open-target error 5, missing-parent error 3 and same-name success. Contract: [FILE_RENAME_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_rename_info). Directory and stream renames remain unsupported. Results: `test-artifacts/file-rename-tests.tap` and `test-artifacts/file-rename-browser-report.json`.
 
+## Directory rename — 2026-09-08
+
+**111 Node tests passed without failures or skips; eight real-origin Edge checks passed without page errors.** Four additional tests cover subtree identity/metadata/quota retention, Unicode and case-only paths, FileRenameInfo and MoveFileW, open descendants and duplicates, current-directory ancestors, self-descendant moves, missing parents and directory/file replacement rules. The compiled HandleObjects.exe creates a directory with a child, renames it through the handle API, moves it back with MoveFileA and reads its child before cleanup. The catalog remains at 438 entries.
+
+Native Windows probes verified ordinary directory rename, open-descendant denial (5), self-descendant rejection (87), directory-target replacement denial (5), and successful explicit replacement of a closed file with a directory. The earlier [FILE_RENAME_INFO contract](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_rename_info) applies. Results: `test-artifacts/directory-rename-tests.tap` and `test-artifacts/directory-rename-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

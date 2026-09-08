@@ -54,7 +54,9 @@ SetFileInformationByHandle supports FileEndOfFileInfo with its 8-byte signed LAR
 
 FileDispositionInfo supports marking and canceling deletion through a handle with DELETE access. Cancellation through another existing handle restores the name, link count and saved-disk entry, including after the requesting handle closes. FILE_FLAG_DELETE_ON_CLOSE still takes effect when its final alias closes. Empty directories can be marked; nonempty directories report ERROR_DIR_NOT_EMPTY, and pending directories reject child creation. The virtual drive root cannot be marked. FileDispositionInfoEx/POSIX flags remain unsupported.
 
-FileRenameInfo supports ordinary file renames with the x86 FILE_RENAME_INFO structure: counted UTF-16 names, relative/absolute virtual C: paths, directory-handle roots, case-only changes and optional replacement. Renames preserve identity, data, timestamps and open-handle positions. Replacement rejects open, read-only and directory targets; missing parents are not created. DELETE access is required. Directory rename, alternate streams, cross-volume moves and FileRenameInfoEx flags remain unsupported.
+FileRenameInfo supports ordinary file and directory renames with the x86 FILE_RENAME_INFO structure: counted UTF-16 names, relative/absolute virtual C: paths, directory-handle roots, case-only changes and optional replacement. Renames preserve identity, data, timestamps and open-handle positions. Replacement rejects open, read-only and directory targets; missing parents are not created. DELETE access is required. Alternate streams, cross-volume moves and FileRenameInfoEx flags remain unsupported.
+
+Directory renames through FileRenameInfo and MoveFileA/W move the complete subtree while preserving node identity and metadata. Open descendants block the operation, including duplicate references; so do the current directory or its ancestors. Moving a directory inside itself is rejected. Explicit FileRenameInfo replacement can replace a closed writable file with a directory, but cannot replace another directory. Missing destination parents are not created.
 
 ## Working with other programs
 

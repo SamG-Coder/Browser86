@@ -1,5 +1,6 @@
 import {RuntimeFault} from './errors.js';
 import {FILE_ATTRIBUTE_MASK} from './vfs.js';
+import {moveFileObject} from './file-rename.js';
 
 const INVALID=0xFFFFFFFF;
 export function installFileSystem(api){
@@ -57,7 +58,7 @@ export function installFileSystem(api){
       const source=v.get(str(from)),target=v.get(str(to));if(!source)return api.fail(2);
       if(source.deletePending||target?.deletePending)return api.fail(5);
       if(opens(source).some(f=>!(f.share&4)))return api.fail(32);
-      v.rename(source.path,str(to));return 1;
+      return moveFileObject(api,source,v.path(str(to)));
     }));
     k('CopyFile'+suffix,3,(from,to,fail)=>api.expected(()=>{
       const source=v.get(str(from)),target=v.get(str(to));if(!source||source.directory)return api.fail(2);

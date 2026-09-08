@@ -102,6 +102,15 @@ void mainCRTStartup(void){
   CHECK(CreateFileA("rename-source.txt",GENERIC_READ,7,NULL,3,0,NULL)==INVALID_HANDLE&&GetLastError()==2);
   CHECK(WriteFile(file,"r",1,&count,NULL)&&count==1);
   CHECK(CloseHandle(file)&&DeleteFileA("r.txt"));
+  CHECK(CreateDirectoryA("rename-dir",NULL));
+  file=CreateFileA("rename-dir/child",GENERIC_WRITE,7,NULL,2,0,NULL);
+  CHECK(file!=INVALID_HANDLE&&WriteFile(file,"d",1,&count,NULL)&&CloseHandle(file));
+  file=CreateFileA("rename-dir",0x10000,7,NULL,3,0x02000000,NULL);
+  CHECK(file!=INVALID_HANDLE&&SetFileInformationByHandle(file,3,&rename,sizeof(rename)));
+  CHECK(CloseHandle(file)&&MoveFileA("r.txt","rename-dir"));
+  file=CreateFileA("rename-dir/child",GENERIC_READ,7,NULL,3,0,NULL);
+  CHECK(file!=INVALID_HANDLE&&ReadFile(file,bytes,1,&count,NULL)&&count==1&&bytes[0]=='d');
+  CHECK(CloseHandle(file)&&DeleteFileA("rename-dir/child")&&RemoveDirectoryA("rename-dir"));
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
   CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);
