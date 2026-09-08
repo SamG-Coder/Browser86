@@ -164,6 +164,8 @@ IntersectClipRect creates or narrows a rectangular application clip, normalizes 
 
 OffsetClipRgn moves a copied rectangular application clip without changing source regions, earlier draw snapshots or saved DC states. No selected clip remains absent and returns SIMPLEREGION; an empty clip remains empty and returns NULLREGION. Result coordinates outside the supported region interval fail with error 1003 without mutation, while invalid DCs fail with error 6. Transformed offsets and complex-region movement remain unfinished.
 
+ClientToScreen, ScreenToClient and MapWindowPoints translate points using the current runtime window origins, accumulating WS_CHILD ancestry while treating popup owner positions independently. MapWindowPoints supports screen-coordinate null handles, arrays and packed signed 16-bit translation results, including zero-count calls. Input arrays are fully validated before writes. Mirrored layouts explicitly fault. This follows the current simplified client/window geometry profile; native nonclient borders, DPI virtualization, desktop-window handles and full GetWindowRect child-coordinate parity remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

@@ -3168,6 +3168,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "ClientToScreen",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "CopyRect",
     "argc": 2,
     "cdecl": false,
@@ -3539,6 +3546,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "MapWindowPoints",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "MessageBoxA",
     "argc": 4,
     "cdecl": false,
@@ -3638,6 +3652,13 @@
   {
     "dll": "user32.dll",
     "name": "ReleaseDC",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "ScreenToClient",
     "argc": 2,
     "cdecl": false,
     "data": false

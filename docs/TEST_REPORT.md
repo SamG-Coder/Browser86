@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Window coordinate conversion - 2026-09-08
+
+**284 Node tests passed, 0 failed, 0 skipped.** ClientToScreen, ScreenToClient and MapWindowPoints now translate points through WS_CHILD ancestry, distinguish popup owners, support point arrays and pack signed translation words. Tests cover round trips, null screen handles, zero-count mapping, unchanged last error, invalid windows/pointers, full-array validation and explicit mirrored-layout rejection. The rebuilt HandleObjects.exe creates guest parent/child windows, verifies (47,59) for a child at (7,9) under a parent at (40,50), checks the reverse conversion and packed mapping result, then destroys the windows. The catalog contains 546 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors**, including the compiled coordinate fixture, persistence and backup. Evidence: [Node TAP](test-artifacts/window-coordinate-tests.tap), [browser report](test-artifacts/window-coordinate-browser-report.json).
+
+Native probes used owned hidden borderless STATIC parent/child windows and verified the same origin, inverse conversion, packed words, zero-count mapping and invalid-window/null-point errors. The windows were destroyed; no guest executable ran on the host. References: [ClientToScreen](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-clienttoscreen), [MapWindowPoints](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-mapwindowpoints). Native nonclient geometry, DPI virtualization, mirrored layouts, desktop handles and broader window-rectangle parity remain unfinished.
+
 ## Moving application clips - 2026-09-08
 
 **281 Node tests passed, 0 failed, 0 skipped.** OffsetClipRgn now moves rectangular application clips with copied state, preserves source regions and earlier draw snapshots, and participates in SaveDC/RestoreDC. Tests cover absent/empty clips, signed extreme offsets, unchanged last error on success and atomic range failures with error 1003. The rebuilt HandleObjects.exe imports the API and verifies moved bounds and restoration. The catalog contains 543 entries.

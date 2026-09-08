@@ -1,3 +1,4 @@
+import {installWindowCoordinates} from './window-coordinates.js';
 import {installRegions} from './regions.js';
 import {installSystemColors} from './system-colors.js';
 import {ansiDecode} from './memory.js';
@@ -78,7 +79,7 @@ export class GUI {
     u('IsWindow',1,h=>this.window(h)?1:0);u('IsWindowVisible',1,h=>this.window(h)?.visible?1:0);u('IsWindowEnabled',1,h=>this.window(h)?.enabled?1:0);u('EnableWindow',2,(h,enabled)=>{const w=this.window(h);if(!w)return 0;const wasDisabled=!w.enabled;w.enabled=!!enabled;this.notify(w);return wasDisabled?1:0;});
     u('SetFocus',1,h=>{const old=this.focus;if(h&&!this.window(h))return 0;this.focus=h;return old;});u('GetFocus',0,()=>this.focus);u('GetActiveWindow',0,()=>this.focus||[...this.windows.keys()][0]||0);u('SetActiveWindow',1,h=>{const old=this.focus;this.focus=h;return old;});
     u('GetParent',1,h=>this.window(h)?.parent||0);u('GetDlgCtrlID',1,h=>this.window(h)?.id||0);u('GetDlgItem',2,(h,id)=>[...this.windows.values()].find(w=>w.parent===h&&w.id===id)?.hwnd||0);
-    u('SetCursor',1,cursor=>cursor);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));installSystemColors(this);installRegions(this);
+    u('SetCursor',1,cursor=>cursor);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));installWindowCoordinates(this);installSystemColors(this);installRegions(this);
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
     installRectangles(this.api);

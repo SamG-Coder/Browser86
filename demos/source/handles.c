@@ -290,6 +290,11 @@ void mainCRTStartup(void){
   CHECK(!GetRegionData(regionA,47,regionData)&&GetLastError()==87);
   CHECK(GetRegionData(regionB,48,regionData)==32&&regionData[2]==0&&regionData[3]==0);
   CHECK(!RectInRegion(regionB,NULL));CHECK(DeleteObject(regionA)&&DeleteObject(regionB));
+  HWND coordinateWindow=CreateWindowExA(0,"STATIC","",0x80000000,40,50,100,100,NULL,NULL,NULL,NULL);
+  HWND coordinateChild=CreateWindowExA(0,"STATIC","",0x40000000,7,9,20,20,coordinateWindow,NULL,NULL,NULL);POINT coordinatePoint={0,0};
+  CHECK(coordinateWindow&&coordinateChild&&ClientToScreen(coordinateChild,&coordinatePoint)&&coordinatePoint.x==47&&coordinatePoint.y==59);
+  CHECK(ScreenToClient(coordinateChild,&coordinatePoint)&&coordinatePoint.x==0&&coordinatePoint.y==0);
+  CHECK(MapWindowPoints(coordinateChild,NULL,&coordinatePoint,1)==0x003b002f&&coordinatePoint.x==47&&coordinatePoint.y==59);CHECK(DestroyWindow(coordinateWindow));
   RECT rectA,rectB,rectOut;POINT rectPoint={0,0};
   CHECK(SetRect(&rectA,0,0,10,10)&&SetRect(&rectB,0,0,5,10));
   CHECK(PtInRect(&rectA,rectPoint));rectPoint.x=10;CHECK(!PtInRect(&rectA,rectPoint));
