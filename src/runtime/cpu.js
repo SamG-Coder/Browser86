@@ -142,6 +142,7 @@ export class CPU {
     }
   }
   extended(w){const op=this.next8();
+    if(op===0x13&&this.op16&&!this.rep){const o=this.operand(32);if(o.isReg)this.unsupported('MOVLPD store requires a memory operand.');this.m.write(o.a,this.xmm[o.reg].subarray(0,8));return;}
     if(op>=0x80&&op<=0x8F){const d=signed(this.imm(w),w);if(this.condition(op&15))this.eip=trunc(this.eip+d,w);return;}
     if(op>=0x90&&op<=0x9F){const o=this.operand(8);o.set(this.condition(op&15)?1:0);return;}
     if(op>=0x40&&op<=0x4F){const o=this.operand(w),v=o.get();if(this.condition(op&15))this.set(o.reg,v,w);return;}

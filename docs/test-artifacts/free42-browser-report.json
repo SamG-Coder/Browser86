@@ -1,0 +1,17 @@
+{
+  "browser": "152.0.4191.66",
+  "results": [
+    {
+      "name": "Free42Binary.exe",
+      "status": "fault",
+      "terminal": "Launching C:/app/Free42Windows-32bit/Free42Binary.exe\nRuntime: original IA-32 interpreter / custom Win32 handlers.\nMapped C:/app/Free42Windows-32bit/Free42Binary.exe at 0x00400000 (2.3 MiB)\nEntrypoint loaded. Working directory: C:/app/Free42Windows-32bit\n175 unresolved import(s). Execution stops only if an unresolved import is called.\n\nUNSUPPORTED_API\nNot implemented: msvcrt.dll!__p__commode. This Windows API has no implementation in this build.\n{\n  \"dll\": \"msvcrt.dll\",\n  \"symbol\": \"__p__commode\",\n  \"caller\": \"0x004c026c\"\n}",
+      "windows": 0
+    },
+    {
+      "name": "Free42Decimal.exe",
+      "status": "fault",
+      "terminal": "Launching C:/app/Free42Windows-32bit/Free42Decimal.exe\nRuntime: original IA-32 interpreter / custom Win32 handlers.\nMapped C:/app/Free42Windows-32bit/Free42Decimal.exe at 0x00400000 (4.8 MiB)\nEntrypoint loaded. Working directory: C:/app/Free42Windows-32bit\n147 unresolved import(s). Execution stops only if an unresolved import is called.\n\nUNSUPPORTED_API\nNot implemented: msvcrt.dll!__p__commode. This Windows API has no implementation in this build.\n{\n  \"dll\": \"msvcrt.dll\",\n  \"symbol\": \"__p__commode\",\n  \"caller\": \"0x00654a87\"\n}",
+      "windows": 0
+    }
+  ]
+}

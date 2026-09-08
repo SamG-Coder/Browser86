@@ -1,0 +1,3273 @@
+{
+  "package": ".build/free42/Free42Windows-32bit.zip",
+  "results": [
+    {
+      "path": "Free42Windows-32bit/Free42Binary.exe",
+      "pe": {
+        "name": "Free42Windows-32bit/Free42Binary.exe",
+        "architecture": "x86",
+        "managed": false,
+        "isDll": false,
+        "subsystem": "Windows GUI",
+        "entryRva": "0x000c0491",
+        "imageBase": "0x00400000",
+        "imageBytes": 2408448,
+        "sections": [
+          {
+            "name": ".text",
+            "size": 789962
+          },
+          {
+            "name": ".rdata",
+            "size": 1377052
+          },
+          {
+            "name": ".data",
+            "size": 49668
+          },
+          {
+            "name": ".rsrc",
+            "size": 135432
+          },
+          {
+            "name": ".reloc",
+            "size": 38968
+          }
+        ],
+        "imports": [
+          {
+            "dll": "WINMM.dll",
+            "symbols": [
+              "PlaySoundA"
+            ]
+          },
+          {
+            "dll": "gdiplus.dll",
+            "symbols": [
+              "GdipCreateFromHDC",
+              "GdipGetClip",
+              "GdipCloneBrush",
+              "GdipDeleteRegion",
+              "GdipFillRectangleI",
+              "GdipDrawImage",
+              "GdipDeleteGraphics",
+              "GdipDeleteFont",
+              "GdipTranslateWorldTransform",
+              "GdipDrawImagePointRectI",
+              "GdipCreateBitmapFromScan0",
+              "GdipDeleteMatrix",
+              "GdiplusStartup",
+              "GdiplusShutdown",
+              "GdipDrawString",
+              "GdipSetClipRegion",
+              "GdipFree",
+              "GdipCreateBitmapFromGdiDib",
+              "GdipSetClipRectI",
+              "GdipScaleWorldTransform",
+              "GdipCreateRegion",
+              "GdipCreateSolidFill",
+              "GdipSetInterpolationMode",
+              "GdipCreateFont",
+              "GdipGetWorldTransform",
+              "GdipSetWorldTransform",
+              "GdipDisposeImage",
+              "GdipCreateMatrix",
+              "GdipSetImagePalette",
+              "GdipAlloc",
+              "GdipDeleteBrush",
+              "GdipCloneImage",
+              "GdipCreateFontFamilyFromName",
+              "GdipDeleteFontFamily"
+            ]
+          },
+          {
+            "dll": "UxTheme.dll",
+            "symbols": [
+              "EndBufferedPaint",
+              "BeginBufferedPaint",
+              "BufferedPaintUnInit",
+              "BufferedPaintInit"
+            ]
+          },
+          {
+            "dll": "KERNEL32.dll",
+            "symbols": [
+              "UnhandledExceptionFilter",
+              "IsProcessorFeaturePresent",
+              "SetUnhandledExceptionFilter",
+              "TerminateProcess",
+              "IsDebuggerPresent",
+              "GetStartupInfoW",
+              "GetModuleHandleW",
+              "QueryPerformanceCounter",
+              "GetCurrentProcessId",
+              "GetCurrentThreadId",
+              "InitializeSListHead",
+              "GetCurrentProcess",
+              "GlobalSize",
+              "Sleep",
+              "GlobalUnlock",
+              "GetTickCount",
+              "MultiByteToWideChar",
+              "GetLocaleInfoA",
+              "GetModuleHandleA",
+              "GlobalMemoryStatus",
+              "GetFileAttributesW",
+              "GetLocaleInfoW",
+              "FindClose",
+              "GetSystemPowerStatus",
+              "GetSystemTimeAsFileTime",
+              "WideCharToMultiByte",
+              "GlobalLock",
+              "GetLocalTime",
+              "GlobalFree",
+              "FindFirstFileW",
+              "FindNextFileW",
+              "GetModuleFileNameW",
+              "GlobalAlloc"
+            ]
+          },
+          {
+            "dll": "USER32.dll",
+            "symbols": [
+              "TrackPopupMenu",
+              "ClientToScreen",
+              "EnableMenuItem",
+              "LoadMenuA",
+              "SetDlgItemTextW",
+              "EnableWindow",
+              "SetScrollInfo",
+              "GetMenuItemInfoW",
+              "EndPaint",
+              "BeginPaint",
+              "ReleaseDC",
+              "IsIconic",
+              "InvalidateRect",
+              "SetForegroundWindow",
+              "UpdateWindow",
+              "RegisterClassExA",
+              "FindWindowA",
+              "DialogBoxParamW",
+              "SetDlgItemInt",
+              "SetScrollPos",
+              "GetSysColorBrush",
+              "PostQuitMessage",
+              "KillTimer",
+              "SetRect",
+              "GetMessageA",
+              "AppendMenuW",
+              "GetDlgItem",
+              "GetClientRect",
+              "CheckMenuItem",
+              "RemoveMenu",
+              "AppendMenuA",
+              "GetDlgItemInt",
+              "LoadIconA",
+              "SetCursor",
+              "SetClipboardData",
+              "SendMessageA",
+              "ScrollWindowEx",
+              "GetClipboardData",
+              "TranslateMessage",
+              "GetUpdateRect",
+              "BringWindowToTop",
+              "CreateWindowExA",
+              "IsRectEmpty",
+              "DefWindowProcA",
+              "AdjustWindowRect",
+              "MoveWindow",
+              "GetSysColor",
+              "MessageBoxA",
+              "GetDlgItemTextW",
+              "ValidateRect",
+              "SetWindowPlacement",
+              "PeekMessageA",
+              "LoadAcceleratorsA",
+              "EmptyClipboard",
+              "CloseClipboard",
+              "SetWindowLongA",
+              "SetTimer",
+              "GetDlgItemTextA",
+              "TranslateAcceleratorA",
+              "OffsetRect",
+              "OpenClipboard",
+              "ShowWindow",
+              "GetSubMenu",
+              "GetWindowPlacement",
+              "GetScrollInfo",
+              "GetSystemMetrics",
+              "EndDialog",
+              "SendMessageW",
+              "FillRect",
+              "PostMessageA",
+              "LoadStringA",
+              "GetMenuItemCount",
+              "MessageBoxW",
+              "SetWindowPos",
+              "GetDC",
+              "DestroyWindow",
+              "LoadCursorA",
+              "GetMenu",
+              "GetWindowRect",
+              "DispatchMessageA",
+              "OpenIcon"
+            ]
+          },
+          {
+            "dll": "GDI32.dll",
+            "symbols": [
+              "DeleteObject",
+              "SetBkMode",
+              "SetTextColor",
+              "DeleteDC",
+              "GetStockObject",
+              "CreateCompatibleDC",
+              "BitBlt",
+              "SelectObject",
+              "CreateBitmap"
+            ]
+          },
+          {
+            "dll": "COMDLG32.dll",
+            "symbols": [
+              "GetOpenFileNameW",
+              "GetSaveFileNameW"
+            ]
+          },
+          {
+            "dll": "SHELL32.dll",
+            "symbols": [
+              "SHGetSpecialFolderLocation",
+              "ShellExecuteA",
+              "SHGetMalloc",
+              "ShellExecuteW",
+              "SHGetPathFromIDListW"
+            ]
+          },
+          {
+            "dll": "MSVCP140.dll",
+            "symbols": [
+              "?_Xout_of_range@std@@YAXPBD@Z",
+              "?_Xlength_error@std@@YAXPBD@Z"
+            ]
+          },
+          {
+            "dll": "VCRUNTIME140.dll",
+            "symbols": [
+              "__std_exception_destroy",
+              "__std_terminate",
+              "__CxxFrameHandler3",
+              "strchr",
+              "wcsrchr",
+              "wcschr",
+              "_CxxThrowException",
+              "__current_exception",
+              "__current_exception_context",
+              "memset",
+              "memmove",
+              "_except_handler4_common",
+              "memcpy",
+              "__std_exception_copy"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-heap-l1-1-0.dll",
+            "symbols": [
+              "_set_new_mode",
+              "_callnewh",
+              "realloc",
+              "malloc",
+              "free"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-math-l1-1-0.dll",
+            "symbols": [
+              "_CIsinh",
+              "_dclass",
+              "_CIcosh",
+              "_CIatan2",
+              "_libm_sse2_asin_precise",
+              "_CIfmod",
+              "_CItanh",
+              "_libm_sse2_atan_precise",
+              "hypot",
+              "tgamma",
+              "log2",
+              "_libm_sse2_cos_precise",
+              "atanh",
+              "expm1",
+              "scalbn",
+              "acosh",
+              "ilogb",
+              "asinh",
+              "_libm_sse2_exp_precise",
+              "log1p",
+              "_libm_sse2_log10_precise",
+              "floor",
+              "_libm_sse2_log_precise",
+              "ceil",
+              "_libm_sse2_tan_precise",
+              "_libm_sse2_pow_precise",
+              "_libm_sse2_acos_precise",
+              "_libm_sse2_sqrt_precise",
+              "fma",
+              "_libm_sse2_sin_precise",
+              "__setusermatherr",
+              "nan",
+              "copysign",
+              "nextafter"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-string-l1-1-0.dll",
+            "symbols": [
+              "isdigit",
+              "wcsncat",
+              "_wcsicmp",
+              "wcsncpy",
+              "towupper",
+              "strtok",
+              "_strnicmp",
+              "isspace",
+              "toupper",
+              "strncmp",
+              "_stricmp"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-stdio-l1-1-0.dll",
+            "symbols": [
+              "ungetc",
+              "__stdio_common_vsscanf",
+              "fwrite",
+              "fread",
+              "ftell",
+              "fputs",
+              "_wfopen",
+              "__stdio_common_vswprintf",
+              "fgets",
+              "fputc",
+              "__stdio_common_vfwprintf",
+              "fflush",
+              "__p__commode",
+              "fseek",
+              "__stdio_common_vfprintf",
+              "fgetc",
+              "__acrt_iob_func",
+              "__stdio_common_vsprintf",
+              "ferror",
+              "_set_fmode",
+              "fclose"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-runtime-l1-1-0.dll",
+            "symbols": [
+              "_initterm_e",
+              "exit",
+              "_initterm",
+              "strerror",
+              "_get_narrow_winmain_command_line",
+              "_errno",
+              "_exit",
+              "_register_thread_local_exe_atexit_callback",
+              "_set_app_type",
+              "_invoke_watson",
+              "_seh_filter_exe",
+              "_cexit",
+              "terminate",
+              "_crt_atexit",
+              "_register_onexit_function",
+              "_controlfp_s",
+              "_initialize_onexit_table",
+              "_initialize_narrow_environment",
+              "_configure_narrow_argv",
+              "_c_exit"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-filesystem-l1-1-0.dll",
+            "symbols": [
+              "_wremove",
+              "_wmkdir",
+              "_wrename"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-utility-l1-1-0.dll",
+            "symbols": [
+              "srand"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-convert-l1-1-0.dll",
+            "symbols": [
+              "strtol"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-locale-l1-1-0.dll",
+            "symbols": [
+              "_configthreadlocale"
+            ]
+          }
+        ],
+        "tls": true,
+        "delayImports": false
+      },
+      "failure": {
+        "code": "UNSUPPORTED_API",
+        "message": "Not implemented: msvcrt.dll!__p__commode. This Windows API has no implementation in this build."
+      },
+      "events": [
+        {
+          "type": "module",
+          "path": "C:/app/Free42Windows-32bit/Free42Binary.exe",
+          "base": "0x00400000",
+          "bytes": 2408448,
+          "main": true
+        },
+        {
+          "type": "loaded",
+          "exe": {
+            "name": "C:/app/Free42Windows-32bit/Free42Binary.exe",
+            "architecture": "x86",
+            "managed": false,
+            "isDll": false,
+            "subsystem": "Windows GUI",
+            "entryRva": "0x000c0491",
+            "imageBase": "0x00400000",
+            "imageBytes": 2408448,
+            "sections": [
+              {
+                "name": ".text",
+                "size": 789962
+              },
+              {
+                "name": ".rdata",
+                "size": 1377052
+              },
+              {
+                "name": ".data",
+                "size": 49668
+              },
+              {
+                "name": ".rsrc",
+                "size": 135432
+              },
+              {
+                "name": ".reloc",
+                "size": 38968
+              }
+            ],
+            "imports": [
+              {
+                "dll": "WINMM.dll",
+                "symbols": [
+                  "PlaySoundA"
+                ]
+              },
+              {
+                "dll": "gdiplus.dll",
+                "symbols": [
+                  "GdipCreateFromHDC",
+                  "GdipGetClip",
+                  "GdipCloneBrush",
+                  "GdipDeleteRegion",
+                  "GdipFillRectangleI",
+                  "GdipDrawImage",
+                  "GdipDeleteGraphics",
+                  "GdipDeleteFont",
+                  "GdipTranslateWorldTransform",
+                  "GdipDrawImagePointRectI",
+                  "GdipCreateBitmapFromScan0",
+                  "GdipDeleteMatrix",
+                  "GdiplusStartup",
+                  "GdiplusShutdown",
+                  "GdipDrawString",
+                  "GdipSetClipRegion",
+                  "GdipFree",
+                  "GdipCreateBitmapFromGdiDib",
+                  "GdipSetClipRectI",
+                  "GdipScaleWorldTransform",
+                  "GdipCreateRegion",
+                  "GdipCreateSolidFill",
+                  "GdipSetInterpolationMode",
+                  "GdipCreateFont",
+                  "GdipGetWorldTransform",
+                  "GdipSetWorldTransform",
+                  "GdipDisposeImage",
+                  "GdipCreateMatrix",
+                  "GdipSetImagePalette",
+                  "GdipAlloc",
+                  "GdipDeleteBrush",
+                  "GdipCloneImage",
+                  "GdipCreateFontFamilyFromName",
+                  "GdipDeleteFontFamily"
+                ]
+              },
+              {
+                "dll": "UxTheme.dll",
+                "symbols": [
+                  "EndBufferedPaint",
+                  "BeginBufferedPaint",
+                  "BufferedPaintUnInit",
+                  "BufferedPaintInit"
+                ]
+              },
+              {
+                "dll": "KERNEL32.dll",
+                "symbols": [
+                  "UnhandledExceptionFilter",
+                  "IsProcessorFeaturePresent",
+                  "SetUnhandledExceptionFilter",
+                  "TerminateProcess",
+                  "IsDebuggerPresent",
+                  "GetStartupInfoW",
+                  "GetModuleHandleW",
+                  "QueryPerformanceCounter",
+                  "GetCurrentProcessId",
+                  "GetCurrentThreadId",
+                  "InitializeSListHead",
+                  "GetCurrentProcess",
+                  "GlobalSize",
+                  "Sleep",
+                  "GlobalUnlock",
+                  "GetTickCount",
+                  "MultiByteToWideChar",
+                  "GetLocaleInfoA",
+                  "GetModuleHandleA",
+                  "GlobalMemoryStatus",
+                  "GetFileAttributesW",
+                  "GetLocaleInfoW",
+                  "FindClose",
+                  "GetSystemPowerStatus",
+                  "GetSystemTimeAsFileTime",
+                  "WideCharToMultiByte",
+                  "GlobalLock",
+                  "GetLocalTime",
+                  "GlobalFree",
+                  "FindFirstFileW",
+                  "FindNextFileW",
+                  "GetModuleFileNameW",
+                  "GlobalAlloc"
+                ]
+              },
+              {
+                "dll": "USER32.dll",
+                "symbols": [
+                  "TrackPopupMenu",
+                  "ClientToScreen",
+                  "EnableMenuItem",
+                  "LoadMenuA",
+                  "SetDlgItemTextW",
+                  "EnableWindow",
+                  "SetScrollInfo",
+                  "GetMenuItemInfoW",
+                  "EndPaint",
+                  "BeginPaint",
+                  "ReleaseDC",
+                  "IsIconic",
+                  "InvalidateRect",
+                  "SetForegroundWindow",
+                  "UpdateWindow",
+                  "RegisterClassExA",
+                  "FindWindowA",
+                  "DialogBoxParamW",
+                  "SetDlgItemInt",
+                  "SetScrollPos",
+                  "GetSysColorBrush",
+                  "PostQuitMessage",
+                  "KillTimer",
+                  "SetRect",
+                  "GetMessageA",
+                  "AppendMenuW",
+                  "GetDlgItem",
+                  "GetClientRect",
+                  "CheckMenuItem",
+                  "RemoveMenu",
+                  "AppendMenuA",
+                  "GetDlgItemInt",
+                  "LoadIconA",
+                  "SetCursor",
+                  "SetClipboardData",
+                  "SendMessageA",
+                  "ScrollWindowEx",
+                  "GetClipboardData",
+                  "TranslateMessage",
+                  "GetUpdateRect",
+                  "BringWindowToTop",
+                  "CreateWindowExA",
+                  "IsRectEmpty",
+                  "DefWindowProcA",
+                  "AdjustWindowRect",
+                  "MoveWindow",
+                  "GetSysColor",
+                  "MessageBoxA",
+                  "GetDlgItemTextW",
+                  "ValidateRect",
+                  "SetWindowPlacement",
+                  "PeekMessageA",
+                  "LoadAcceleratorsA",
+                  "EmptyClipboard",
+                  "CloseClipboard",
+                  "SetWindowLongA",
+                  "SetTimer",
+                  "GetDlgItemTextA",
+                  "TranslateAcceleratorA",
+                  "OffsetRect",
+                  "OpenClipboard",
+                  "ShowWindow",
+                  "GetSubMenu",
+                  "GetWindowPlacement",
+                  "GetScrollInfo",
+                  "GetSystemMetrics",
+                  "EndDialog",
+                  "SendMessageW",
+                  "FillRect",
+                  "PostMessageA",
+                  "LoadStringA",
+                  "GetMenuItemCount",
+                  "MessageBoxW",
+                  "SetWindowPos",
+                  "GetDC",
+                  "DestroyWindow",
+                  "LoadCursorA",
+                  "GetMenu",
+                  "GetWindowRect",
+                  "DispatchMessageA",
+                  "OpenIcon"
+                ]
+              },
+              {
+                "dll": "GDI32.dll",
+                "symbols": [
+                  "DeleteObject",
+                  "SetBkMode",
+                  "SetTextColor",
+                  "DeleteDC",
+                  "GetStockObject",
+                  "CreateCompatibleDC",
+                  "BitBlt",
+                  "SelectObject",
+                  "CreateBitmap"
+                ]
+              },
+              {
+                "dll": "COMDLG32.dll",
+                "symbols": [
+                  "GetOpenFileNameW",
+                  "GetSaveFileNameW"
+                ]
+              },
+              {
+                "dll": "SHELL32.dll",
+                "symbols": [
+                  "SHGetSpecialFolderLocation",
+                  "ShellExecuteA",
+                  "SHGetMalloc",
+                  "ShellExecuteW",
+                  "SHGetPathFromIDListW"
+                ]
+              },
+              {
+                "dll": "MSVCP140.dll",
+                "symbols": [
+                  "?_Xout_of_range@std@@YAXPBD@Z",
+                  "?_Xlength_error@std@@YAXPBD@Z"
+                ]
+              },
+              {
+                "dll": "VCRUNTIME140.dll",
+                "symbols": [
+                  "__std_exception_destroy",
+                  "__std_terminate",
+                  "__CxxFrameHandler3",
+                  "strchr",
+                  "wcsrchr",
+                  "wcschr",
+                  "_CxxThrowException",
+                  "__current_exception",
+                  "__current_exception_context",
+                  "memset",
+                  "memmove",
+                  "_except_handler4_common",
+                  "memcpy",
+                  "__std_exception_copy"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-heap-l1-1-0.dll",
+                "symbols": [
+                  "_set_new_mode",
+                  "_callnewh",
+                  "realloc",
+                  "malloc",
+                  "free"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-math-l1-1-0.dll",
+                "symbols": [
+                  "_CIsinh",
+                  "_dclass",
+                  "_CIcosh",
+                  "_CIatan2",
+                  "_libm_sse2_asin_precise",
+                  "_CIfmod",
+                  "_CItanh",
+                  "_libm_sse2_atan_precise",
+                  "hypot",
+                  "tgamma",
+                  "log2",
+                  "_libm_sse2_cos_precise",
+                  "atanh",
+                  "expm1",
+                  "scalbn",
+                  "acosh",
+                  "ilogb",
+                  "asinh",
+                  "_libm_sse2_exp_precise",
+                  "log1p",
+                  "_libm_sse2_log10_precise",
+                  "floor",
+                  "_libm_sse2_log_precise",
+                  "ceil",
+                  "_libm_sse2_tan_precise",
+                  "_libm_sse2_pow_precise",
+                  "_libm_sse2_acos_precise",
+                  "_libm_sse2_sqrt_precise",
+                  "fma",
+                  "_libm_sse2_sin_precise",
+                  "__setusermatherr",
+                  "nan",
+                  "copysign",
+                  "nextafter"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-string-l1-1-0.dll",
+                "symbols": [
+                  "isdigit",
+                  "wcsncat",
+                  "_wcsicmp",
+                  "wcsncpy",
+                  "towupper",
+                  "strtok",
+                  "_strnicmp",
+                  "isspace",
+                  "toupper",
+                  "strncmp",
+                  "_stricmp"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-stdio-l1-1-0.dll",
+                "symbols": [
+                  "ungetc",
+                  "__stdio_common_vsscanf",
+                  "fwrite",
+                  "fread",
+                  "ftell",
+                  "fputs",
+                  "_wfopen",
+                  "__stdio_common_vswprintf",
+                  "fgets",
+                  "fputc",
+                  "__stdio_common_vfwprintf",
+                  "fflush",
+                  "__p__commode",
+                  "fseek",
+                  "__stdio_common_vfprintf",
+                  "fgetc",
+                  "__acrt_iob_func",
+                  "__stdio_common_vsprintf",
+                  "ferror",
+                  "_set_fmode",
+                  "fclose"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-runtime-l1-1-0.dll",
+                "symbols": [
+                  "_initterm_e",
+                  "exit",
+                  "_initterm",
+                  "strerror",
+                  "_get_narrow_winmain_command_line",
+                  "_errno",
+                  "_exit",
+                  "_register_thread_local_exe_atexit_callback",
+                  "_set_app_type",
+                  "_invoke_watson",
+                  "_seh_filter_exe",
+                  "_cexit",
+                  "terminate",
+                  "_crt_atexit",
+                  "_register_onexit_function",
+                  "_controlfp_s",
+                  "_initialize_onexit_table",
+                  "_initialize_narrow_environment",
+                  "_configure_narrow_argv",
+                  "_c_exit"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-filesystem-l1-1-0.dll",
+                "symbols": [
+                  "_wremove",
+                  "_wmkdir",
+                  "_wrename"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-utility-l1-1-0.dll",
+                "symbols": [
+                  "srand"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-convert-l1-1-0.dll",
+                "symbols": [
+                  "strtol"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-locale-l1-1-0.dll",
+                "symbols": [
+                  "_configthreadlocale"
+                ]
+              }
+            ],
+            "tls": true,
+            "delayImports": false
+          },
+          "modules": [
+            {
+              "path": "C:/app/Free42Windows-32bit/Free42Binary.exe",
+              "base": "0x00400000"
+            }
+          ],
+          "missing": [
+            {
+              "dll": "winmm.dll",
+              "name": "PlaySoundA",
+              "reason": ""
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateFromHDC",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipGetClip",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCloneBrush",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteRegion",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipFillRectangleI",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDrawImage",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteGraphics",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteFont",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipTranslateWorldTransform",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDrawImagePointRectI",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateBitmapFromScan0",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteMatrix",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdiplusStartup",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdiplusShutdown",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDrawString",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipSetClipRegion",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipFree",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateBitmapFromGdiDib",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipSetClipRectI",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipScaleWorldTransform",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateRegion",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateSolidFill",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipSetInterpolationMode",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateFont",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipGetWorldTransform",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipSetWorldTransform",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDisposeImage",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateMatrix",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipSetImagePalette",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipAlloc",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteBrush",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCloneImage",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateFontFamilyFromName",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteFontFamily",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "uxtheme.dll",
+              "name": "EndBufferedPaint",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "uxtheme.dll",
+              "name": "BeginBufferedPaint",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "uxtheme.dll",
+              "name": "BufferedPaintUnInit",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "uxtheme.dll",
+              "name": "BufferedPaintInit",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "UnhandledExceptionFilter",
+              "reason": ""
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "InitializeSListHead",
+              "reason": ""
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "GetLocaleInfoA",
+              "reason": ""
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "GlobalMemoryStatus",
+              "reason": ""
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "GetLocaleInfoW",
+              "reason": ""
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "GetSystemPowerStatus",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "TrackPopupMenu",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "EnableMenuItem",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "LoadMenuA",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetScrollInfo",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetMenuItemInfoW",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "IsIconic",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetForegroundWindow",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "FindWindowA",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "DialogBoxParamW",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetScrollPos",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "AppendMenuW",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "CheckMenuItem",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "RemoveMenu",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "AppendMenuA",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetClipboardData",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "ScrollWindowEx",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetClipboardData",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetUpdateRect",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "BringWindowToTop",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetWindowPlacement",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "LoadAcceleratorsA",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "EmptyClipboard",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "CloseClipboard",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "TranslateAcceleratorA",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "OpenClipboard",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetSubMenu",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetWindowPlacement",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetScrollInfo",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "EndDialog",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetMenuItemCount",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetWindowPos",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetMenu",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "OpenIcon",
+              "reason": ""
+            },
+            {
+              "dll": "gdi32.dll",
+              "name": "DeleteDC",
+              "reason": ""
+            },
+            {
+              "dll": "gdi32.dll",
+              "name": "CreateCompatibleDC",
+              "reason": ""
+            },
+            {
+              "dll": "gdi32.dll",
+              "name": "BitBlt",
+              "reason": ""
+            },
+            {
+              "dll": "gdi32.dll",
+              "name": "CreateBitmap",
+              "reason": ""
+            },
+            {
+              "dll": "comdlg32.dll",
+              "name": "GetOpenFileNameW",
+              "reason": ""
+            },
+            {
+              "dll": "comdlg32.dll",
+              "name": "GetSaveFileNameW",
+              "reason": ""
+            },
+            {
+              "dll": "shell32.dll",
+              "name": "SHGetSpecialFolderLocation",
+              "reason": ""
+            },
+            {
+              "dll": "shell32.dll",
+              "name": "ShellExecuteA",
+              "reason": ""
+            },
+            {
+              "dll": "shell32.dll",
+              "name": "SHGetMalloc",
+              "reason": ""
+            },
+            {
+              "dll": "shell32.dll",
+              "name": "ShellExecuteW",
+              "reason": ""
+            },
+            {
+              "dll": "shell32.dll",
+              "name": "SHGetPathFromIDListW",
+              "reason": ""
+            },
+            {
+              "dll": "msvcp140.dll",
+              "name": "?_Xout_of_range@std@@YAXPBD@Z",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "msvcp140.dll",
+              "name": "?_Xlength_error@std@@YAXPBD@Z",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__std_exception_destroy",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__std_terminate",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__CxxFrameHandler3",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "strchr",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "wcsrchr",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "wcschr",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "_CxxThrowException",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__current_exception",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__current_exception_context",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "memset",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "memmove",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "_except_handler4_common",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "memcpy",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__std_exception_copy",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_set_new_mode",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_callnewh",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_CIsinh",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_dclass",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_CIcosh",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_CIatan2",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_asin_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_CIfmod",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_CItanh",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_atan_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "hypot",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "tgamma",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "log2",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_cos_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "atanh",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "expm1",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "scalbn",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "acosh",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "ilogb",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "asinh",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_exp_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "log1p",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_log10_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_log_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_tan_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_pow_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_acos_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_sqrt_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "fma",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_sin_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__setusermatherr",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "nan",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "copysign",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "nextafter",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "isdigit",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "wcsncat",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "towupper",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "strtok",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_strnicmp",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "isspace",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "ungetc",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__stdio_common_vsscanf",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "fputs",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_wfopen",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__stdio_common_vswprintf",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "fgets",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__stdio_common_vfwprintf",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__p__commode",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__stdio_common_vfprintf",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__acrt_iob_func",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__stdio_common_vsprintf",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "ferror",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "strerror",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_get_narrow_winmain_command_line",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_register_thread_local_exe_atexit_callback",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_invoke_watson",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_seh_filter_exe",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_cexit",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "terminate",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_crt_atexit",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_register_onexit_function",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_controlfp_s",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_initialize_onexit_table",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_initialize_narrow_environment",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_configure_narrow_argv",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_c_exit",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_wremove",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_wmkdir",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_wrename",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_configthreadlocale",
+              "reason": ""
+            }
+          ],
+          "cwd": "C:/app/Free42Windows-32bit",
+          "notes": [
+            "Original interpreter and partial Win32 runtime. Compatibility is not guaranteed."
+          ]
+        }
+      ]
+    },
+    {
+      "path": "Free42Windows-32bit/Free42Decimal.exe",
+      "pe": {
+        "name": "Free42Windows-32bit/Free42Decimal.exe",
+        "architecture": "x86",
+        "managed": false,
+        "isDll": false,
+        "subsystem": "Windows GUI",
+        "entryRva": "0x00254cac",
+        "imageBase": "0x00400000",
+        "imageBytes": 5005312,
+        "sections": [
+          {
+            "name": ".text",
+            "size": 2446474
+          },
+          {
+            "name": ".rdata",
+            "size": 1401188
+          },
+          {
+            "name": ".data",
+            "size": 945264
+          },
+          {
+            "name": ".rsrc",
+            "size": 135432
+          },
+          {
+            "name": ".reloc",
+            "size": 57628
+          }
+        ],
+        "imports": [
+          {
+            "dll": "WINMM.dll",
+            "symbols": [
+              "PlaySoundA"
+            ]
+          },
+          {
+            "dll": "gdiplus.dll",
+            "symbols": [
+              "GdipSetClipRegion",
+              "GdipFree",
+              "GdipCreateBitmapFromGdiDib",
+              "GdipSetClipRectI",
+              "GdipScaleWorldTransform",
+              "GdipDrawString",
+              "GdipCreateSolidFill",
+              "GdipSetInterpolationMode",
+              "GdipCreateFont",
+              "GdipCreateFromHDC",
+              "GdipGetWorldTransform",
+              "GdipSetWorldTransform",
+              "GdipDisposeImage",
+              "GdipCreateRegion",
+              "GdipCreateMatrix",
+              "GdipSetImagePalette",
+              "GdipAlloc",
+              "GdipGetClip",
+              "GdipCloneBrush",
+              "GdipDeleteRegion",
+              "GdipFillRectangleI",
+              "GdipDrawImage",
+              "GdipDeleteGraphics",
+              "GdipDeleteFont",
+              "GdipTranslateWorldTransform",
+              "GdipDrawImagePointRectI",
+              "GdipCreateBitmapFromScan0",
+              "GdipDeleteMatrix",
+              "GdiplusStartup",
+              "GdiplusShutdown",
+              "GdipDeleteBrush",
+              "GdipCloneImage",
+              "GdipCreateFontFamilyFromName",
+              "GdipDeleteFontFamily"
+            ]
+          },
+          {
+            "dll": "UxTheme.dll",
+            "symbols": [
+              "BeginBufferedPaint",
+              "BufferedPaintUnInit",
+              "BufferedPaintInit",
+              "EndBufferedPaint"
+            ]
+          },
+          {
+            "dll": "KERNEL32.dll",
+            "symbols": [
+              "UnhandledExceptionFilter",
+              "IsProcessorFeaturePresent",
+              "SetUnhandledExceptionFilter",
+              "TerminateProcess",
+              "IsDebuggerPresent",
+              "GetStartupInfoW",
+              "GetModuleHandleW",
+              "QueryPerformanceCounter",
+              "GetCurrentProcessId",
+              "GetCurrentThreadId",
+              "InitializeSListHead",
+              "GetCurrentProcess",
+              "GetTickCount",
+              "GlobalUnlock",
+              "GlobalAlloc",
+              "GlobalMemoryStatus",
+              "GlobalSize",
+              "Sleep",
+              "MultiByteToWideChar",
+              "GetLocaleInfoA",
+              "GetModuleHandleA",
+              "GetFileAttributesW",
+              "GetLocaleInfoW",
+              "FindClose",
+              "GetSystemTimeAsFileTime",
+              "WideCharToMultiByte",
+              "GlobalLock",
+              "GetLocalTime",
+              "GlobalFree",
+              "FindFirstFileW",
+              "FindNextFileW",
+              "GetModuleFileNameW",
+              "GetSystemPowerStatus"
+            ]
+          },
+          {
+            "dll": "USER32.dll",
+            "symbols": [
+              "GetMessageA",
+              "GetMenuItemInfoW",
+              "EnableWindow",
+              "EnableMenuItem",
+              "ClientToScreen",
+              "TrackPopupMenu",
+              "LoadMenuA",
+              "OpenIcon",
+              "EndPaint",
+              "BeginPaint",
+              "ReleaseDC",
+              "IsIconic",
+              "InvalidateRect",
+              "SetForegroundWindow",
+              "UpdateWindow",
+              "RegisterClassExA",
+              "FindWindowA",
+              "DialogBoxParamW",
+              "SetDlgItemInt",
+              "SetScrollPos",
+              "GetSysColorBrush",
+              "PostQuitMessage",
+              "KillTimer",
+              "SetRect",
+              "PeekMessageA",
+              "AppendMenuW",
+              "GetDlgItem",
+              "GetClientRect",
+              "CheckMenuItem",
+              "RemoveMenu",
+              "AppendMenuA",
+              "GetDlgItemInt",
+              "LoadIconA",
+              "SetCursor",
+              "SetClipboardData",
+              "SendMessageA",
+              "ScrollWindowEx",
+              "GetClipboardData",
+              "TranslateMessage",
+              "GetUpdateRect",
+              "BringWindowToTop",
+              "CreateWindowExA",
+              "IsRectEmpty",
+              "DefWindowProcA",
+              "AdjustWindowRect",
+              "MoveWindow",
+              "GetSysColor",
+              "MessageBoxA",
+              "GetDlgItemTextW",
+              "ValidateRect",
+              "SetWindowPlacement",
+              "SetDlgItemTextW",
+              "LoadAcceleratorsA",
+              "EmptyClipboard",
+              "CloseClipboard",
+              "SetWindowLongA",
+              "SetTimer",
+              "GetDlgItemTextA",
+              "TranslateAcceleratorA",
+              "OffsetRect",
+              "OpenClipboard",
+              "ShowWindow",
+              "GetSubMenu",
+              "GetWindowPlacement",
+              "GetScrollInfo",
+              "GetSystemMetrics",
+              "EndDialog",
+              "SendMessageW",
+              "FillRect",
+              "PostMessageA",
+              "LoadStringA",
+              "GetMenuItemCount",
+              "MessageBoxW",
+              "SetWindowPos",
+              "GetDC",
+              "DestroyWindow",
+              "LoadCursorA",
+              "GetMenu",
+              "GetWindowRect",
+              "DispatchMessageA",
+              "SetScrollInfo"
+            ]
+          },
+          {
+            "dll": "GDI32.dll",
+            "symbols": [
+              "SetBkMode",
+              "SetTextColor",
+              "DeleteDC",
+              "GetStockObject",
+              "CreateCompatibleDC",
+              "SelectObject",
+              "BitBlt",
+              "CreateBitmap",
+              "DeleteObject"
+            ]
+          },
+          {
+            "dll": "COMDLG32.dll",
+            "symbols": [
+              "GetOpenFileNameW",
+              "GetSaveFileNameW"
+            ]
+          },
+          {
+            "dll": "SHELL32.dll",
+            "symbols": [
+              "SHGetMalloc",
+              "SHGetPathFromIDListW",
+              "SHGetSpecialFolderLocation",
+              "ShellExecuteA",
+              "ShellExecuteW"
+            ]
+          },
+          {
+            "dll": "MSVCP140.dll",
+            "symbols": [
+              "?_Xout_of_range@std@@YAXPBD@Z",
+              "?_Xlength_error@std@@YAXPBD@Z"
+            ]
+          },
+          {
+            "dll": "VCRUNTIME140.dll",
+            "symbols": [
+              "__std_terminate",
+              "__std_exception_destroy",
+              "__CxxFrameHandler3",
+              "__std_exception_copy",
+              "strchr",
+              "memmove",
+              "wcschr",
+              "_CxxThrowException",
+              "__current_exception",
+              "__current_exception_context",
+              "memset",
+              "_except_handler4_common",
+              "memcpy",
+              "wcsrchr"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-heap-l1-1-0.dll",
+            "symbols": [
+              "_callnewh",
+              "realloc",
+              "malloc",
+              "free",
+              "_set_new_mode"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-string-l1-1-0.dll",
+            "symbols": [
+              "strncmp",
+              "_strnicmp",
+              "strtok",
+              "towupper",
+              "isdigit",
+              "toupper",
+              "wcsncpy",
+              "_wcsicmp",
+              "isspace",
+              "_stricmp",
+              "wcsncat"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-stdio-l1-1-0.dll",
+            "symbols": [
+              "__stdio_common_vfprintf",
+              "__p__commode",
+              "fflush",
+              "__acrt_iob_func",
+              "__stdio_common_vfwprintf",
+              "_set_fmode",
+              "fgets",
+              "__stdio_common_vswprintf",
+              "__stdio_common_vsscanf",
+              "_wfopen",
+              "fputs",
+              "fwrite",
+              "fread",
+              "ftell",
+              "ungetc",
+              "fgetc",
+              "__stdio_common_vsprintf",
+              "fputc",
+              "fclose",
+              "ferror",
+              "fseek"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-runtime-l1-1-0.dll",
+            "symbols": [
+              "_initterm",
+              "_get_narrow_winmain_command_line",
+              "_seh_filter_exe",
+              "_cexit",
+              "_exit",
+              "_crt_atexit",
+              "_register_onexit_function",
+              "_initialize_onexit_table",
+              "_initialize_narrow_environment",
+              "_configure_narrow_argv",
+              "_set_app_type",
+              "_errno",
+              "_c_exit",
+              "_register_thread_local_exe_atexit_callback",
+              "terminate",
+              "strerror",
+              "_invoke_watson",
+              "exit",
+              "_controlfp_s",
+              "_initterm_e"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-filesystem-l1-1-0.dll",
+            "symbols": [
+              "_wmkdir",
+              "_wrename",
+              "_wremove"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-utility-l1-1-0.dll",
+            "symbols": [
+              "srand"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-convert-l1-1-0.dll",
+            "symbols": [
+              "strtol"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-math-l1-1-0.dll",
+            "symbols": [
+              "_libm_sse2_pow_precise",
+              "_dclass",
+              "sqrt",
+              "ceil",
+              "__setusermatherr",
+              "_libm_sse2_sqrt_precise"
+            ]
+          },
+          {
+            "dll": "api-ms-win-crt-locale-l1-1-0.dll",
+            "symbols": [
+              "_configthreadlocale"
+            ]
+          }
+        ],
+        "tls": true,
+        "delayImports": false
+      },
+      "failure": {
+        "code": "UNSUPPORTED_API",
+        "message": "Not implemented: msvcrt.dll!__p__commode. This Windows API has no implementation in this build."
+      },
+      "events": [
+        {
+          "type": "module",
+          "path": "C:/app/Free42Windows-32bit/Free42Decimal.exe",
+          "base": "0x00400000",
+          "bytes": 5005312,
+          "main": true
+        },
+        {
+          "type": "loaded",
+          "exe": {
+            "name": "C:/app/Free42Windows-32bit/Free42Decimal.exe",
+            "architecture": "x86",
+            "managed": false,
+            "isDll": false,
+            "subsystem": "Windows GUI",
+            "entryRva": "0x00254cac",
+            "imageBase": "0x00400000",
+            "imageBytes": 5005312,
+            "sections": [
+              {
+                "name": ".text",
+                "size": 2446474
+              },
+              {
+                "name": ".rdata",
+                "size": 1401188
+              },
+              {
+                "name": ".data",
+                "size": 945264
+              },
+              {
+                "name": ".rsrc",
+                "size": 135432
+              },
+              {
+                "name": ".reloc",
+                "size": 57628
+              }
+            ],
+            "imports": [
+              {
+                "dll": "WINMM.dll",
+                "symbols": [
+                  "PlaySoundA"
+                ]
+              },
+              {
+                "dll": "gdiplus.dll",
+                "symbols": [
+                  "GdipSetClipRegion",
+                  "GdipFree",
+                  "GdipCreateBitmapFromGdiDib",
+                  "GdipSetClipRectI",
+                  "GdipScaleWorldTransform",
+                  "GdipDrawString",
+                  "GdipCreateSolidFill",
+                  "GdipSetInterpolationMode",
+                  "GdipCreateFont",
+                  "GdipCreateFromHDC",
+                  "GdipGetWorldTransform",
+                  "GdipSetWorldTransform",
+                  "GdipDisposeImage",
+                  "GdipCreateRegion",
+                  "GdipCreateMatrix",
+                  "GdipSetImagePalette",
+                  "GdipAlloc",
+                  "GdipGetClip",
+                  "GdipCloneBrush",
+                  "GdipDeleteRegion",
+                  "GdipFillRectangleI",
+                  "GdipDrawImage",
+                  "GdipDeleteGraphics",
+                  "GdipDeleteFont",
+                  "GdipTranslateWorldTransform",
+                  "GdipDrawImagePointRectI",
+                  "GdipCreateBitmapFromScan0",
+                  "GdipDeleteMatrix",
+                  "GdiplusStartup",
+                  "GdiplusShutdown",
+                  "GdipDeleteBrush",
+                  "GdipCloneImage",
+                  "GdipCreateFontFamilyFromName",
+                  "GdipDeleteFontFamily"
+                ]
+              },
+              {
+                "dll": "UxTheme.dll",
+                "symbols": [
+                  "BeginBufferedPaint",
+                  "BufferedPaintUnInit",
+                  "BufferedPaintInit",
+                  "EndBufferedPaint"
+                ]
+              },
+              {
+                "dll": "KERNEL32.dll",
+                "symbols": [
+                  "UnhandledExceptionFilter",
+                  "IsProcessorFeaturePresent",
+                  "SetUnhandledExceptionFilter",
+                  "TerminateProcess",
+                  "IsDebuggerPresent",
+                  "GetStartupInfoW",
+                  "GetModuleHandleW",
+                  "QueryPerformanceCounter",
+                  "GetCurrentProcessId",
+                  "GetCurrentThreadId",
+                  "InitializeSListHead",
+                  "GetCurrentProcess",
+                  "GetTickCount",
+                  "GlobalUnlock",
+                  "GlobalAlloc",
+                  "GlobalMemoryStatus",
+                  "GlobalSize",
+                  "Sleep",
+                  "MultiByteToWideChar",
+                  "GetLocaleInfoA",
+                  "GetModuleHandleA",
+                  "GetFileAttributesW",
+                  "GetLocaleInfoW",
+                  "FindClose",
+                  "GetSystemTimeAsFileTime",
+                  "WideCharToMultiByte",
+                  "GlobalLock",
+                  "GetLocalTime",
+                  "GlobalFree",
+                  "FindFirstFileW",
+                  "FindNextFileW",
+                  "GetModuleFileNameW",
+                  "GetSystemPowerStatus"
+                ]
+              },
+              {
+                "dll": "USER32.dll",
+                "symbols": [
+                  "GetMessageA",
+                  "GetMenuItemInfoW",
+                  "EnableWindow",
+                  "EnableMenuItem",
+                  "ClientToScreen",
+                  "TrackPopupMenu",
+                  "LoadMenuA",
+                  "OpenIcon",
+                  "EndPaint",
+                  "BeginPaint",
+                  "ReleaseDC",
+                  "IsIconic",
+                  "InvalidateRect",
+                  "SetForegroundWindow",
+                  "UpdateWindow",
+                  "RegisterClassExA",
+                  "FindWindowA",
+                  "DialogBoxParamW",
+                  "SetDlgItemInt",
+                  "SetScrollPos",
+                  "GetSysColorBrush",
+                  "PostQuitMessage",
+                  "KillTimer",
+                  "SetRect",
+                  "PeekMessageA",
+                  "AppendMenuW",
+                  "GetDlgItem",
+                  "GetClientRect",
+                  "CheckMenuItem",
+                  "RemoveMenu",
+                  "AppendMenuA",
+                  "GetDlgItemInt",
+                  "LoadIconA",
+                  "SetCursor",
+                  "SetClipboardData",
+                  "SendMessageA",
+                  "ScrollWindowEx",
+                  "GetClipboardData",
+                  "TranslateMessage",
+                  "GetUpdateRect",
+                  "BringWindowToTop",
+                  "CreateWindowExA",
+                  "IsRectEmpty",
+                  "DefWindowProcA",
+                  "AdjustWindowRect",
+                  "MoveWindow",
+                  "GetSysColor",
+                  "MessageBoxA",
+                  "GetDlgItemTextW",
+                  "ValidateRect",
+                  "SetWindowPlacement",
+                  "SetDlgItemTextW",
+                  "LoadAcceleratorsA",
+                  "EmptyClipboard",
+                  "CloseClipboard",
+                  "SetWindowLongA",
+                  "SetTimer",
+                  "GetDlgItemTextA",
+                  "TranslateAcceleratorA",
+                  "OffsetRect",
+                  "OpenClipboard",
+                  "ShowWindow",
+                  "GetSubMenu",
+                  "GetWindowPlacement",
+                  "GetScrollInfo",
+                  "GetSystemMetrics",
+                  "EndDialog",
+                  "SendMessageW",
+                  "FillRect",
+                  "PostMessageA",
+                  "LoadStringA",
+                  "GetMenuItemCount",
+                  "MessageBoxW",
+                  "SetWindowPos",
+                  "GetDC",
+                  "DestroyWindow",
+                  "LoadCursorA",
+                  "GetMenu",
+                  "GetWindowRect",
+                  "DispatchMessageA",
+                  "SetScrollInfo"
+                ]
+              },
+              {
+                "dll": "GDI32.dll",
+                "symbols": [
+                  "SetBkMode",
+                  "SetTextColor",
+                  "DeleteDC",
+                  "GetStockObject",
+                  "CreateCompatibleDC",
+                  "SelectObject",
+                  "BitBlt",
+                  "CreateBitmap",
+                  "DeleteObject"
+                ]
+              },
+              {
+                "dll": "COMDLG32.dll",
+                "symbols": [
+                  "GetOpenFileNameW",
+                  "GetSaveFileNameW"
+                ]
+              },
+              {
+                "dll": "SHELL32.dll",
+                "symbols": [
+                  "SHGetMalloc",
+                  "SHGetPathFromIDListW",
+                  "SHGetSpecialFolderLocation",
+                  "ShellExecuteA",
+                  "ShellExecuteW"
+                ]
+              },
+              {
+                "dll": "MSVCP140.dll",
+                "symbols": [
+                  "?_Xout_of_range@std@@YAXPBD@Z",
+                  "?_Xlength_error@std@@YAXPBD@Z"
+                ]
+              },
+              {
+                "dll": "VCRUNTIME140.dll",
+                "symbols": [
+                  "__std_terminate",
+                  "__std_exception_destroy",
+                  "__CxxFrameHandler3",
+                  "__std_exception_copy",
+                  "strchr",
+                  "memmove",
+                  "wcschr",
+                  "_CxxThrowException",
+                  "__current_exception",
+                  "__current_exception_context",
+                  "memset",
+                  "_except_handler4_common",
+                  "memcpy",
+                  "wcsrchr"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-heap-l1-1-0.dll",
+                "symbols": [
+                  "_callnewh",
+                  "realloc",
+                  "malloc",
+                  "free",
+                  "_set_new_mode"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-string-l1-1-0.dll",
+                "symbols": [
+                  "strncmp",
+                  "_strnicmp",
+                  "strtok",
+                  "towupper",
+                  "isdigit",
+                  "toupper",
+                  "wcsncpy",
+                  "_wcsicmp",
+                  "isspace",
+                  "_stricmp",
+                  "wcsncat"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-stdio-l1-1-0.dll",
+                "symbols": [
+                  "__stdio_common_vfprintf",
+                  "__p__commode",
+                  "fflush",
+                  "__acrt_iob_func",
+                  "__stdio_common_vfwprintf",
+                  "_set_fmode",
+                  "fgets",
+                  "__stdio_common_vswprintf",
+                  "__stdio_common_vsscanf",
+                  "_wfopen",
+                  "fputs",
+                  "fwrite",
+                  "fread",
+                  "ftell",
+                  "ungetc",
+                  "fgetc",
+                  "__stdio_common_vsprintf",
+                  "fputc",
+                  "fclose",
+                  "ferror",
+                  "fseek"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-runtime-l1-1-0.dll",
+                "symbols": [
+                  "_initterm",
+                  "_get_narrow_winmain_command_line",
+                  "_seh_filter_exe",
+                  "_cexit",
+                  "_exit",
+                  "_crt_atexit",
+                  "_register_onexit_function",
+                  "_initialize_onexit_table",
+                  "_initialize_narrow_environment",
+                  "_configure_narrow_argv",
+                  "_set_app_type",
+                  "_errno",
+                  "_c_exit",
+                  "_register_thread_local_exe_atexit_callback",
+                  "terminate",
+                  "strerror",
+                  "_invoke_watson",
+                  "exit",
+                  "_controlfp_s",
+                  "_initterm_e"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-filesystem-l1-1-0.dll",
+                "symbols": [
+                  "_wmkdir",
+                  "_wrename",
+                  "_wremove"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-utility-l1-1-0.dll",
+                "symbols": [
+                  "srand"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-convert-l1-1-0.dll",
+                "symbols": [
+                  "strtol"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-math-l1-1-0.dll",
+                "symbols": [
+                  "_libm_sse2_pow_precise",
+                  "_dclass",
+                  "sqrt",
+                  "ceil",
+                  "__setusermatherr",
+                  "_libm_sse2_sqrt_precise"
+                ]
+              },
+              {
+                "dll": "api-ms-win-crt-locale-l1-1-0.dll",
+                "symbols": [
+                  "_configthreadlocale"
+                ]
+              }
+            ],
+            "tls": true,
+            "delayImports": false
+          },
+          "modules": [
+            {
+              "path": "C:/app/Free42Windows-32bit/Free42Decimal.exe",
+              "base": "0x00400000"
+            }
+          ],
+          "missing": [
+            {
+              "dll": "winmm.dll",
+              "name": "PlaySoundA",
+              "reason": ""
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipSetClipRegion",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipFree",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateBitmapFromGdiDib",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipSetClipRectI",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipScaleWorldTransform",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDrawString",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateSolidFill",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipSetInterpolationMode",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateFont",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateFromHDC",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipGetWorldTransform",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipSetWorldTransform",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDisposeImage",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateRegion",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateMatrix",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipSetImagePalette",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipAlloc",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipGetClip",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCloneBrush",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteRegion",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipFillRectangleI",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDrawImage",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteGraphics",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteFont",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipTranslateWorldTransform",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDrawImagePointRectI",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateBitmapFromScan0",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteMatrix",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdiplusStartup",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdiplusShutdown",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteBrush",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCloneImage",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipCreateFontFamilyFromName",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "gdiplus.dll",
+              "name": "GdipDeleteFontFamily",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "uxtheme.dll",
+              "name": "BeginBufferedPaint",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "uxtheme.dll",
+              "name": "BufferedPaintUnInit",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "uxtheme.dll",
+              "name": "BufferedPaintInit",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "uxtheme.dll",
+              "name": "EndBufferedPaint",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "UnhandledExceptionFilter",
+              "reason": ""
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "InitializeSListHead",
+              "reason": ""
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "GlobalMemoryStatus",
+              "reason": ""
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "GetLocaleInfoA",
+              "reason": ""
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "GetLocaleInfoW",
+              "reason": ""
+            },
+            {
+              "dll": "kernel32.dll",
+              "name": "GetSystemPowerStatus",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetMenuItemInfoW",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "EnableMenuItem",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "TrackPopupMenu",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "LoadMenuA",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "OpenIcon",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "IsIconic",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetForegroundWindow",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "FindWindowA",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "DialogBoxParamW",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetScrollPos",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "AppendMenuW",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "CheckMenuItem",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "RemoveMenu",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "AppendMenuA",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetClipboardData",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "ScrollWindowEx",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetClipboardData",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetUpdateRect",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "BringWindowToTop",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetWindowPlacement",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "LoadAcceleratorsA",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "EmptyClipboard",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "CloseClipboard",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "TranslateAcceleratorA",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "OpenClipboard",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetSubMenu",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetWindowPlacement",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetScrollInfo",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "EndDialog",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetMenuItemCount",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetWindowPos",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "GetMenu",
+              "reason": ""
+            },
+            {
+              "dll": "user32.dll",
+              "name": "SetScrollInfo",
+              "reason": ""
+            },
+            {
+              "dll": "gdi32.dll",
+              "name": "DeleteDC",
+              "reason": ""
+            },
+            {
+              "dll": "gdi32.dll",
+              "name": "CreateCompatibleDC",
+              "reason": ""
+            },
+            {
+              "dll": "gdi32.dll",
+              "name": "BitBlt",
+              "reason": ""
+            },
+            {
+              "dll": "gdi32.dll",
+              "name": "CreateBitmap",
+              "reason": ""
+            },
+            {
+              "dll": "comdlg32.dll",
+              "name": "GetOpenFileNameW",
+              "reason": ""
+            },
+            {
+              "dll": "comdlg32.dll",
+              "name": "GetSaveFileNameW",
+              "reason": ""
+            },
+            {
+              "dll": "shell32.dll",
+              "name": "SHGetMalloc",
+              "reason": ""
+            },
+            {
+              "dll": "shell32.dll",
+              "name": "SHGetPathFromIDListW",
+              "reason": ""
+            },
+            {
+              "dll": "shell32.dll",
+              "name": "SHGetSpecialFolderLocation",
+              "reason": ""
+            },
+            {
+              "dll": "shell32.dll",
+              "name": "ShellExecuteA",
+              "reason": ""
+            },
+            {
+              "dll": "shell32.dll",
+              "name": "ShellExecuteW",
+              "reason": ""
+            },
+            {
+              "dll": "msvcp140.dll",
+              "name": "?_Xout_of_range@std@@YAXPBD@Z",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "msvcp140.dll",
+              "name": "?_Xlength_error@std@@YAXPBD@Z",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__std_terminate",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__std_exception_destroy",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__CxxFrameHandler3",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__std_exception_copy",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "strchr",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "memmove",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "wcschr",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "_CxxThrowException",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__current_exception",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "__current_exception_context",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "memset",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "_except_handler4_common",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "memcpy",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "vcruntime140.dll",
+              "name": "wcsrchr",
+              "reason": "The application DLL was not present in the package or virtual system directory."
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_callnewh",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_set_new_mode",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_strnicmp",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "strtok",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "towupper",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "isdigit",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "isspace",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "wcsncat",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__stdio_common_vfprintf",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__p__commode",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__acrt_iob_func",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__stdio_common_vfwprintf",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "fgets",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__stdio_common_vswprintf",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__stdio_common_vsscanf",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_wfopen",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "fputs",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "ungetc",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__stdio_common_vsprintf",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "ferror",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_get_narrow_winmain_command_line",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_seh_filter_exe",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_cexit",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_crt_atexit",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_register_onexit_function",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_initialize_onexit_table",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_initialize_narrow_environment",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_configure_narrow_argv",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_c_exit",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_register_thread_local_exe_atexit_callback",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "terminate",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "strerror",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_invoke_watson",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_controlfp_s",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_wmkdir",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_wrename",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_wremove",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_pow_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_dclass",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "__setusermatherr",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_libm_sse2_sqrt_precise",
+              "reason": ""
+            },
+            {
+              "dll": "msvcrt.dll",
+              "name": "_configthreadlocale",
+              "reason": ""
+            }
+          ],
+          "cwd": "C:/app/Free42Windows-32bit",
+          "notes": [
+            "Original interpreter and partial Win32 runtime. Compatibility is not guaranteed."
+          ]
+        }
+      ]
+    }
+  ]
+}

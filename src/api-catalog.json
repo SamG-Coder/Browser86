@@ -2664,6 +2664,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "_set_app_type",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_set_fmode",
     "argc": 1,
     "cdecl": true,
