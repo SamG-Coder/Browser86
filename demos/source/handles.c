@@ -1,0 +1,30 @@
+#include "minwin.h"
+#define CHECK(expression) do { if(!(expression)) { printf("Handle failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
+void mainCRTStartup(void){
+  HANDLE self=GetCurrentProcess(),file,copy,process,thread;
+  DWORD flags,count,code;
+  char bytes[4];
+  file=CreateFileA("handles.txt",GENERIC_READ|GENERIC_WRITE,0,NULL,2,0,NULL);
+  CHECK(file!=INVALID_HANDLE);
+  CHECK(DuplicateHandle(self,file,self,&copy,0,1,2));
+  CHECK(copy!=file);
+  CHECK(GetHandleInformation(copy,&flags)&&flags==1);
+  CHECK(SetHandleInformation(file,2,2));
+  CHECK(!CloseHandle(file)&&GetLastError()==6);
+  CHECK(WriteFile(file,"ab",2,&count,NULL)&&count==2);
+  CHECK(WriteFile(copy,"cd",2,&count,NULL)&&count==2);
+  CHECK(SetFilePointer(copy,0,NULL,0)==0);
+  CHECK(ReadFile(file,bytes,2,&count,NULL)&&count==2&&bytes[0]=='a'&&bytes[1]=='b');
+  CHECK(SetHandleInformation(file,2,0)&&CloseHandle(file));
+  CHECK(ReadFile(copy,bytes,2,&count,NULL)&&count==2&&bytes[0]=='c'&&bytes[1]=='d');
+  CHECK(CloseHandle(copy));
+  CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
+  CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
+  CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);
+  CHECK(GetExitCodeProcess(process,&code)&&code==259);
+  CHECK(GetExitCodeThread(thread,&code)&&code==259);
+  CHECK(WaitForSingleObject(thread,0)==258);
+  CHECK(CloseHandle(process)&&CloseHandle(thread));
+  puts("Handle checks passed.");
+  ExitProcess(0);
+}

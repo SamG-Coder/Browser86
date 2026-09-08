@@ -3,6 +3,7 @@ import {alignUp,ansiEncode,ansiDecode} from './memory.js';
 import {GUI} from './gui.js';
 import {installCRT} from './crt.js';
 import {installSynchronization} from './sync.js';
+import {installHandles} from './handles.js';
 const INVALID=0xFFFFFFFF;
 const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
 export class Win32 {
@@ -24,7 +25,7 @@ export class Win32 {
   sleep(ms){if(!ms)return 0;const end=performance.now()+ms;return this.p.wait(()=>performance.now()>=end?0:undefined,'Sleep');}
   filetime(address,date=Date.now()){const t=(BigInt(Math.trunc(date))+11644473600000n)*10000n;this.m.w32(address,Number(t&0xFFFFFFFFn));this.m.w32(address+4,Number(t>>32n));}
   installKernel(){const p=this.p,m=this.m,v=this.vfs;const k=(name,n,fn)=>this.add('kernel32.dll',name,n,fn);
-    k('ExitProcess',1,code=>{p.exit(code);return 0;});k('TerminateProcess',2,(h,c)=>{if(h!==INVALID)return this.fail(5);p.exit(c);return 1;});
+    k('ExitProcess',1,code=>{p.exit(code);return 0;});k('TerminateProcess',2,(h,c)=>{if(!p.isCurrentProcess(h))return this.fail(5);p.exit(c);return 1;});
     k('GetLastError',0,()=>m.u32(p.teb+0x34));k('SetLastError',1,e=>{p.setError(e);return 0;});
     k('GetCurrentProcess',0,()=>INVALID);k('GetCurrentThread',0,()=>0xFFFFFFFE);k('GetCurrentProcessId',0,()=>4);k('GetCurrentThreadId',0,()=>8);
     const heaps=new Map([[0x100,{blocks:null,maximum:0,used:0}]]),privateOwners=new Map();let nextHeap=0x200;
@@ -55,7 +56,7 @@ export class Win32 {
     k('FlushInstructionCache',3,()=>1); // Interpreter refetches every instruction.
     k('GetStdHandle',1,n=>n===0xFFFFFFF6?10:n===0xFFFFFFF5?11:n===0xFFFFFFF4?12:this.fail(87,INVALID));
     k('SetStdHandle',2,()=>{throw new RuntimeFault('UNSUPPORTED_API','Redirecting process standard handles is not implemented.');});
-    k('CloseHandle',1,h=>{if(h>=10&&h<=12)return 1;return p.handles.delete(h)?1:this.fail(6);});
+    installHandles(this);
     k('GetFileType',1,h=>h>=10&&h<=12?2:p.object(h,'file')?1:0);
     k('WriteFile',5,(h,buffer,count,written,overlap)=>{if(written)m.w32(written,0);if(overlap)throw new RuntimeFault('UNSUPPORTED_IO','Overlapped file I/O is not implemented.');if(count>128*1024*1024)return this.fail(8);const data=m.read(buffer,count);
       if(h===11||h===12){p.emit('stdout',{text:ansiDecode(data),stream:h===12?'stderr':'stdout'});if(written)m.w32(written,count);return 1;}
@@ -122,7 +123,7 @@ export class Win32 {
     k('GetSystemTimeAsFileTime',1,out=>{this.filetime(out);return 0;});
     const systemTime=(out,local)=>{const d=new Date(),f=name=>d[(local?'get':'getUTC')+name]();[f('FullYear'),f('Month')+1,f('Day'),f('Date'),f('Hours'),f('Minutes'),f('Seconds'),f('Milliseconds')].forEach((x,i)=>m.w16(out+i*2,x));return 0;};k('GetSystemTime',1,out=>systemTime(out,false));k('GetLocalTime',1,out=>systemTime(out,true));
     const systemInfo=out=>{m.fill(out,36);m.w16(out,0);m.w32(out+4,4096);m.w32(out+8,0x10000);m.w32(out+12,0x7FFEFFFF);m.w32(out+16,1);m.w32(out+20,1);m.w32(out+24,586);m.w32(out+28,65536);m.w16(out+32,5);return 0;};k('GetSystemInfo',1,systemInfo);k('GetNativeSystemInfo',1,systemInfo);
-    k('GetVersion',0,()=>0x0A280105);k('IsDebuggerPresent',0,()=>0);k('CheckRemoteDebuggerPresent',2,(h,out)=>{if(h!==INVALID)return this.fail(6);m.w32(out,0);return 1;});k('IsProcessorFeaturePresent',1,()=>0);
+    k('GetVersion',0,()=>0x0A280105);k('IsDebuggerPresent',0,()=>0);k('CheckRemoteDebuggerPresent',2,(h,out)=>{if(!p.isCurrentProcess(h))return this.fail(6);m.w32(out,0);return 1;});k('IsProcessorFeaturePresent',1,()=>0);
     k('GetACP',0,()=>1252);k('GetOEMCP',0,()=>437);
     k('MultiByteToWideChar',6,(cp,flags,src,count,out,capacity)=>{if(cp!==0&&cp!==1252&&cp!==65001)return this.fail(87);if(!count)return this.fail(87);const nullTerm=count===INVALID,data=nullTerm?(()=>{const s=m.cstr(src);return m.read(src,s.length+1);})():m.read(src,count);let text;try{text=cp===65001?new TextDecoder('utf-8',{fatal:!!(flags&8)}).decode(data):ansiDecode(data);}catch{return this.fail(1113);}if(!capacity)return text.length;if(capacity<text.length)return this.fail(122);for(let i=0;i<text.length;i++)m.w16(out+i*2,text.charCodeAt(i));return text.length;});
     k('WideCharToMultiByte',8,(cp,flags,src,count,out,capacity,defaultChar,usedDefault)=>{if(cp!==0&&cp!==1252&&cp!==65001)return this.fail(87);if(!count)return this.fail(87);const text=count===INVALID?m.wstr(src)+'\0':Array.from({length:count},(_,i)=>String.fromCharCode(m.u16(src+i*2))).join('');const data=cp===65001?new TextEncoder().encode(text):ansiEncode(text);if(usedDefault)m.w32(usedDefault,0);if(!capacity)return data.length;if(capacity<data.length)return this.fail(122);m.write(out,data);return data.length;});

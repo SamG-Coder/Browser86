@@ -41,20 +41,22 @@ export function installSynchronization(api){
     if(previous)m.w32(previous,semaphore.count);
     semaphore.count+=count;return 1;
   });
-  const ready=o=>o.type==='event'?o.signalled:o.type==='semaphore'?o.count>0:true;
+  const ready=o=>o.type==='event'?o.signalled:o.type==='semaphore'?o.count>0:o.type==='mutex'?true:p.exitCode!==null;
   const acquire=o=>{
     if(o.type==='event'&&!o.manual)o.signalled=false;
     else if(o.type==='semaphore')o.count--;
     else if(o.type==='mutex')o.depth++;
   };
   const wait=(handles,all,timeout,reason)=>{
-    const objects=handles.map(h=>p.object(h));
-    if(objects.some(o=>!o||!['event','mutex','semaphore'].includes(o.type)))return api.fail(6,WAIT_FAILED);
+    const resolve=h=>h===0xFFFFFFFF?p.processObject:h===0xFFFFFFFE?p.threadObject:p.object(h);
+    const objects=handles.map(resolve);
+    if(objects.some(o=>!o||!['event','mutex','semaphore','process','thread'].includes(o.type)))return api.fail(6,WAIT_FAILED);
     if(new Set(handles).size!==handles.length)return api.fail(87,WAIT_FAILED);
+    if(all&&new Set(objects).size!==objects.length)return api.fail(87,WAIT_FAILED);
     const deadline=timeout===WAIT_FAILED?Infinity:performance.now()+timeout;
     const check=()=>{
       // Windows leaves closing a pending handle undefined; fail deterministically.
-      if(handles.some((h,i)=>p.object(h)!==objects[i]))return api.fail(6,WAIT_FAILED);
+      if(handles.some((h,i)=>resolve(h)!==objects[i]))return api.fail(6,WAIT_FAILED);
       if(all){
         // No event reset, semaphore consumption or mutex acquisition until ALL
         // objects satisfy the wait. A failed/timed-out wait has no side effects.

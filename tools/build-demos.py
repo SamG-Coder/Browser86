@@ -11,6 +11,7 @@ for tool in ['clang','lld-link']:
     if not shutil.which(tool): raise SystemExit(f'{tool} is required to rebuild demos; the prebuilt demo ZIP can still run.')
 K={'GetStdHandle':1,'WriteFile':5,'ReadFile':5,'ExitProcess':1,'CreateFileA':7,'CloseHandle':1,'GetLastError':0,'GetCurrentDirectoryA':2,'GetModuleHandleA':1,'LoadLibraryA':1,'GetProcAddress':2,'GetTickCount':0,'CreateThread':6}
 K.update({'CreateEventA':4,'CreateEventW':4,'CreateMutexA':3,'CreateMutexW':3,'CreateSemaphoreA':4,'CreateSemaphoreW':4,'SetEvent':1,'ResetEvent':1,'ReleaseMutex':1,'ReleaseSemaphore':3,'WaitForSingleObject':2,'WaitForSingleObjectEx':3,'WaitForMultipleObjects':4,'WaitForMultipleObjectsEx':5})
+K.update({'GetCurrentProcess':0,'GetCurrentThread':0,'DuplicateHandle':7,'GetHandleInformation':2,'SetHandleInformation':3,'GetProcessId':1,'GetThreadId':1,'GetExitCodeProcess':2,'GetExitCodeThread':2,'SetFilePointer':4})
 U={'RegisterClassA':1,'CreateWindowExA':12,'ShowWindow':2,'UpdateWindow':1,'GetMessageA':4,'TranslateMessage':1,'DispatchMessageA':1,'DefWindowProcA':4,'PostQuitMessage':1,'DestroyWindow':1,'BeginPaint':2,'EndPaint':2,'SetWindowTextA':2,'MessageBoxA':4,'InvalidateRect':3,'SetTimer':4,'KillTimer':2,'FillRect':3}
 G={'TextOutA':5,'SetTextColor':2,'SetBkMode':2,'SetBkColor':2,'CreateSolidBrush':1,'CreatePen':3,'SelectObject':2,'DeleteObject':1,'GetStockObject':1,'Rectangle':5,'Ellipse':5,'MoveToEx':4,'LineTo':3,'StretchDIBits':13}
 C={'printf':1,'sprintf':2,'puts':1,'memset':3,'memcpy':3}
@@ -27,7 +28,7 @@ def compile(source):
 for name in ['mathhelper','scalehelper']:
     run('lld-link','/dll','/entry:DllMain','/nodefaultlib','/machine:x86','/base:0x10000000','/timestamp:0',f'/out:{BUILD/name}.dll',f'/implib:{BUILD/name}.lib',compile(name))
 outputs={}
-for source,target,subsystem in [('hello','HelloConsole.exe','console'),('files','apps/FileWorkbench.exe','console'),('interactive','apps/InteractiveConsole.exe','console'),('window','apps/WindowStudio.exe','windows'),('pixels','apps/PixelCanvas.exe','windows'),('dlls','apps/DllLoader.exe','console'),('sync','tests/SyncPrimitives.exe','console'),('unsupported','tests/UnsupportedApi.exe','console')]:
+for source,target,subsystem in [('hello','HelloConsole.exe','console'),('files','apps/FileWorkbench.exe','console'),('interactive','apps/InteractiveConsole.exe','console'),('window','apps/WindowStudio.exe','windows'),('pixels','apps/PixelCanvas.exe','windows'),('dlls','apps/DllLoader.exe','console'),('sync','tests/SyncPrimitives.exe','console'),('handles','tests/HandleObjects.exe','console'),('unsupported','tests/UnsupportedApi.exe','console')]:
     exe=BUILD/Path(target).name
     extra=[BUILD/'mathhelper.lib',BUILD/'scalehelper.lib'] if source=='dlls' else []
     run('lld-link','/entry:mainCRTStartup',f'/subsystem:{subsystem}','/nodefaultlib','/machine:x86','/timestamp:0',f'/out:{exe}',compile(source),*libs,*extra,*aliases)

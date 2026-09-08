@@ -379,6 +379,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "DuplicateHandle",
+    "argc": 7,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "EnterCriticalSection",
     "argc": 1,
     "cdecl": false,
@@ -617,6 +624,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GetExitCodeProcess",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GetExitCodeThread",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GetFileAttributesA",
     "argc": 1,
     "cdecl": false,
@@ -682,6 +703,13 @@
     "dll": "kernel32.dll",
     "name": "GetFullPathNameW",
     "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GetHandleInformation",
+    "argc": 2,
     "cdecl": false,
     "data": false
   },
@@ -757,6 +785,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GetProcessId",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GetStartupInfoA",
     "argc": 1,
     "cdecl": false,
@@ -822,6 +857,13 @@
     "dll": "kernel32.dll",
     "name": "GetTempPathW",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GetThreadId",
+    "argc": 1,
     "cdecl": false,
     "data": false
   },
@@ -1396,6 +1438,13 @@
     "dll": "kernel32.dll",
     "name": "SetFilePointer",
     "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "SetHandleInformation",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },

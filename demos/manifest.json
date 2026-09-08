@@ -8,6 +8,7 @@
     "apps/PixelCanvas.exe",
     "apps/DllLoader.exe",
     "tests/SyncPrimitives.exe",
+    "tests/HandleObjects.exe",
     "tests/UnsupportedApi.exe",
     "apps/mathhelper.dll",
     "apps/scalehelper.dll",

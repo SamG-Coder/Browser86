@@ -20,7 +20,10 @@ export class GuestProcess {
     const init=this.loader.initializers.splice(0);if(init.length)this.sequence(init,()=>{});
     this.emit('loaded',{exe:this.main.image.summary(),modules:this.loader.order.map(m=>({path:m.path,base:hex(m.base)})),missing:this.apis.missingImports(),cwd:this.vfs.cwd,notes:['Original interpreter and partial Win32 runtime. Compatibility is not guaranteed.']});
   }
-  handle(type,value){const h=this.nextHandle++;requireThat(this.handles.size<65536,'HANDLE_LIMIT','Guest handle limit reached.');this.handles.set(h,{type,...value});return h;}
+  handle(type,value){return this.referenceHandle({type,...value});}
+  referenceHandle(object,flags=0){const h=this.nextHandle++;requireThat(this.handles.size<65536,'HANDLE_LIMIT','Guest handle limit reached.');this.handles.set(h,object);if(flags)(this.handleFlags??=new Map()).set(h,flags);return h;}
+  releaseHandle(h){this.handleFlags?.delete(h);return this.handles.delete(h);}
+  isCurrentProcess(h){return h===0xFFFFFFFF||this.object(h,'process')?.id===4;}
   object(handle,type=null){const o=this.handles.get(handle>>>0);return o&&(!type||o.type===type)?o:null;}
   setError(value){this.lastError=value>>>0;this.memory.w32(this.teb+0x34,this.lastError);return 0;}
   note(message){if(!this.runtimeNotes.includes(message)){this.runtimeNotes.push(message);this.emit('log',{level:'warning',message});}}
