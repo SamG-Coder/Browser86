@@ -1,0 +1,20 @@
+{
+  "mode": "about:blank, original application code with test-only origin adapters",
+  "httpModuleDeliveryTested": false,
+  "realIndexedDBTested": false,
+  "deployedCSPTested": false,
+  "assertions": [
+    "Drag/drop flow and original import worker discover seven EXEs from DEFLATE ZIP",
+    "HelloConsole executes and exits 0 in original runtime Worker",
+    "Browser button enters guest WM_COMMAND callback and writes virtual file",
+    "Native browser dialog action resumes guest MessageBox with IDYES",
+    "Runtime Worker transfers changed VFS snapshot after window exits",
+    "Console input unblocks guest ReadFile through Worker event transport",
+    "Guest-generated DIB rendered to Canvas (151883 non-white pixels)",
+    "Canvas mouse input reruns guest pixel loop and changes displayed pixel values",
+    "Unsupported import is surfaced as visible structured failure"
+  ],
+  "browser": "144.0.7559.96",
+  "pageErrors": [],
+  "result": "PASS"
+}

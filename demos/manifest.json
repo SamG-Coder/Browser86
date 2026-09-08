@@ -1,0 +1,17 @@
+{
+  "build": "LLVM clang / lld-link; i686-pc-windows-msvc; -O1; no SDK",
+  "programs": [
+    "HelloConsole.exe",
+    "apps/FileWorkbench.exe",
+    "apps/InteractiveConsole.exe",
+    "apps/WindowStudio.exe",
+    "apps/PixelCanvas.exe",
+    "apps/DllLoader.exe",
+    "tests/UnsupportedApi.exe",
+    "apps/mathhelper.dll",
+    "apps/scalehelper.dll",
+    "apps/data/message.txt",
+    "README.txt"
+  ],
+  "source": "demos/source"
+}

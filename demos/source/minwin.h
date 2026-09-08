@@ -1,0 +1,73 @@
+/* Original minimal declarations for these demos. No Windows SDK files shipped. */
+#ifndef BROWSER86_MINWIN_H
+#define BROWSER86_MINWIN_H
+#define API __declspec(dllimport)
+#define WINAPI __stdcall
+#define NULL ((void*)0)
+typedef unsigned int DWORD;typedef int BOOL;typedef void* HANDLE;typedef HANDLE HWND;typedef HANDLE HDC;typedef unsigned short WORD;typedef unsigned char BYTE;
+typedef long (WINAPI *WNDPROC)(HWND,DWORD,DWORD,long);
+typedef struct {DWORD style;WNDPROC proc;int classExtra,windowExtra;HANDLE instance,icon,cursor,brush;const char *menu,*name;} WNDCLASSA;
+typedef struct {HWND hwnd;DWORD message,wParam;long lParam;DWORD time;long x,y;} MSG;
+typedef struct {HDC dc;BOOL erase;long left,top,right,bottom;BOOL restore,update;BYTE reserved[32];} PAINTSTRUCT;
+typedef struct {long left,top,right,bottom;} RECT;
+typedef struct {DWORD size;long width,height;WORD planes,bits;DWORD compression,imageSize;long xppm,yppm;DWORD colorsUsed,important;} BITMAPINFOHEADER;
+API HANDLE WINAPI GetStdHandle(DWORD);
+API BOOL WINAPI WriteFile(HANDLE,const void*,DWORD,DWORD*,void*);
+API BOOL WINAPI ReadFile(HANDLE,void*,DWORD,DWORD*,void*);
+API void WINAPI ExitProcess(DWORD);
+API HANDLE WINAPI CreateFileA(const char*,DWORD,DWORD,void*,DWORD,DWORD,HANDLE);
+API BOOL WINAPI CloseHandle(HANDLE);
+API DWORD WINAPI GetLastError(void);
+API DWORD WINAPI GetCurrentDirectoryA(DWORD,char*);
+API HANDLE WINAPI GetModuleHandleA(const char*);
+API HANDLE WINAPI LoadLibraryA(const char*);
+API void* WINAPI GetProcAddress(HANDLE,const char*);
+API DWORD WINAPI GetTickCount(void);
+API HANDLE WINAPI CreateThread(void*,DWORD,void*,void*,DWORD,DWORD*);
+API WORD WINAPI RegisterClassA(const WNDCLASSA*);
+API HWND WINAPI CreateWindowExA(DWORD,const char*,const char*,DWORD,int,int,int,int,HWND,HANDLE,HANDLE,void*);
+API BOOL WINAPI ShowWindow(HWND,int);
+API BOOL WINAPI UpdateWindow(HWND);
+API BOOL WINAPI GetMessageA(MSG*,HWND,DWORD,DWORD);
+API BOOL WINAPI TranslateMessage(const MSG*);
+API long WINAPI DispatchMessageA(const MSG*);
+API long WINAPI DefWindowProcA(HWND,DWORD,DWORD,long);
+API void WINAPI PostQuitMessage(int);
+API BOOL WINAPI DestroyWindow(HWND);
+API HDC WINAPI BeginPaint(HWND,PAINTSTRUCT*);
+API BOOL WINAPI EndPaint(HWND,const PAINTSTRUCT*);
+API BOOL WINAPI SetWindowTextA(HWND,const char*);
+API int WINAPI MessageBoxA(HWND,const char*,const char*,DWORD);
+API BOOL WINAPI InvalidateRect(HWND,const RECT*,BOOL);
+API DWORD WINAPI SetTimer(HWND,DWORD,DWORD,void*);
+API BOOL WINAPI KillTimer(HWND,DWORD);
+API BOOL WINAPI TextOutA(HDC,int,int,const char*,int);
+API DWORD WINAPI SetTextColor(HDC,DWORD);
+API int WINAPI SetBkMode(HDC,int);
+API DWORD WINAPI SetBkColor(HDC,DWORD);
+API HANDLE WINAPI CreateSolidBrush(DWORD);
+API HANDLE WINAPI CreatePen(int,int,DWORD);
+API HANDLE WINAPI SelectObject(HDC,HANDLE);
+API BOOL WINAPI DeleteObject(HANDLE);
+API HANDLE WINAPI GetStockObject(int);
+API BOOL WINAPI Rectangle(HDC,int,int,int,int);
+API BOOL WINAPI Ellipse(HDC,int,int,int,int);
+API BOOL WINAPI MoveToEx(HDC,int,int,void*);
+API BOOL WINAPI LineTo(HDC,int,int);
+API int WINAPI FillRect(HDC,const RECT*,HANDLE);
+API int WINAPI StretchDIBits(HDC,int,int,int,int,int,int,int,int,const void*,const void*,DWORD,DWORD);
+API int __cdecl printf(const char*,...);
+API int __cdecl sprintf(char*,const char*,...);
+API int __cdecl puts(const char*);
+API void* __cdecl memset(void*,int,unsigned int);
+#define RGB(r,g,b) ((DWORD)((r)|((g)<<8)|((b)<<16)))
+#define GENERIC_READ 0x80000000U
+#define GENERIC_WRITE 0x40000000U
+#define INVALID_HANDLE ((HANDLE)0xFFFFFFFFU)
+#define WM_DESTROY 2
+#define WM_PAINT 15
+#define WM_COMMAND 0x111
+#define WM_TIMER 0x113
+#define WS_OVERLAPPEDWINDOW 0x00CF0000U
+#define WS_CHILD_VISIBLE 0x50000000U
+#endif

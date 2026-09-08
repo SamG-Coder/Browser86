@@ -1,0 +1,41 @@
+# Compatibility contract — Browser86 0.1
+
+## The honest boundary
+
+The project runs **some native 32-bit Windows PE applications**, not every file ending in `.exe`. Successful results currently come from the included, purpose-built C programs. They prove real CPU execution, linking and API handling; they do not establish general compatibility with third-party software. No third-party application suite has been certified here.
+
+A green/imported executable is a candidate, not a compatibility guarantee. A known import means a handler exists, not that every flag, argument, threading mode or edge case behaves like Windows. Missing imports bind to diagnostic traps and fail when invoked. An unknown dynamic `GetProcAddress` returns null rather than fabricating a callable implementation.
+
+## Supported scope and gaps
+
+| Area | Current scope | Important gaps |
+|---|---|---|
+| Executable architecture | User-mode IA-32 PE32, console and GUI subsystems. | x86-64, ARM, DOS/16-bit/NE, kernel drivers, services requiring an OS. |
+| Integer CPU | Common arithmetic/logical instructions, flags, byte/high-byte/word/dword registers, ModRM/SIB, stack, near branches/calls, string loops, selected bit/atomic operations. | Full instruction-set coverage, privileged instructions, paging/system mode, complete CPU exception semantics. |
+| Floating point | Selected x87 operations and scalar/vector SSE operations. | Exact x87 extended precision, full SSE/MMX/AVX, floating exception/denormal control and all rounding semantics. |
+| Loading | Section mapping, imports/exports, HIGHLOW/HIGH/LOW relocation, application DLL initialization, TLS structures/callbacks, basic resources. | Delay imports, loader-lock parity, full manifests/SxS, full loader search policy, complete unloading/detach semantics. |
+| Process model | One emulated thread in one active guest process. Guest callbacks can nest and block. | `CreateThread`, child processes, general synchronization across threads, scheduling multiple guests, Windows exception dispatch/SEH. |
+| Files | Virtual C: only, regular files/directories, relative paths, basic sharing flags accepted in limited modes, synchronous I/O. | Real devices, network shares, host paths, overlapped I/O, full Windows file sharing/locking, reparse points, alternate streams and full filename rules. |
+| Memory | Protected sparse guest pages; process heap and separately owned private heap allocations. | Full Windows reserve/commit accounting. Reserve-only VirtualAlloc occupies host memory. HeapCreate's initial reservation is not modelled as a distinct committed region. Heap exceptions require unsupported SEH. |
+| GUI | Custom guest window procedures, basic messages/timers, BUTTON/STATIC/EDIT, pointer/keyboard events, basic message boxes. | Full USER32 behavior, menus, rich edit, common controls, common file dialogs, complete focus/activation/accessibility/IME, multi-monitor/DPI parity. |
+| Graphics | Canvas-backed basic GDI shapes/text and a limited 24/32-bit BI_RGB DIB/SRCCOPY path. | DirectX, accelerated OpenGL/Vulkan translation, full GDI bitmap/offscreen operations, font rasterization/metrics parity, complex raster operations. |
+| CRT | Portions of string/memory/formatting/math/file APIs and startup helpers. | Complete Microsoft C/C++ runtime, C++ exceptions, locale completeness, exact binary CRT ABI coverage, full text-mode newline semantics. |
+| Managed applications | CLR metadata is detected. | .NET Framework, .NET runtime, WinForms, WPF, managed C++/CLI. These need a managed runtime, not just CPU instructions. |
+| Registry | Small virtual registry backed by a JSON file inside virtual C:. | Native Windows registry compatibility, security descriptors, notifications and every value/key operation. |
+| Devices/network/audio | No guest host-device or network bridge. | WinSock, internet access, audio devices, hardware acceleration/device drivers, printing, USB, DRM/anti-cheat. |
+
+The original CPU uses direct interpretation, not a JIT. Native-speed execution is not claimed. Sustained workloads, large applications and real games may be slow or fail long before producing a window.
+
+## Import/storage limits
+
+Defaults: ZIP at most 256 MiB; expanded files at most 512 MiB; at most 20,000 entries; individual files at most 128 MiB. Stored and DEFLATE archives are supported. Encrypted ZIP, ZIP64, multi-disk archives and symlinks are rejected. Compression-ratio checks have a small-entry allowance; declared expanded bounds are still enforced during streaming decompression.
+
+The UI offers 128/256/512 MiB guest-memory caps. A single PE image is capped at 256 MiB. A single heap allocation is capped at 64 MiB. These are guest-accounting limits, not promises that total browser memory stays under the chosen number: imported archives, expanded disk data, snapshots, transfer copies, graphics buffers and IndexedDB may use additional memory.
+
+## Working with other programs
+
+Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
+
+If execution stops, save the diagnostic report. It contains the missing API or opcode, fault address, register state, recent EIP/API calls and mapped modules. A program that fails at startup has not been successfully run merely because its file was parsed.
+
+Do not hide a failure by returning zero/success from an unimplemented function. Correctly implement the behavior, reject the unsupported mode explicitly, or leave the diagnostic trap in place.
