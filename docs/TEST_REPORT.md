@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Cross-encoding window creation - 2026-09-08
+
+**335 Node tests passed, 0 failed, 0 skipped.** CreateWindowExA/W converts CREATESTRUCT strings to the registered procedure encoding. Tests inspect both creation callbacks, CP1252 best-fit output, original input preservation, numeric class atoms, null titles, invalid class/parent failures, and temporary allocation cleanup after success, either rejection stage and callback self-destruction. The rebuilt HandleObjects.exe imports RegisterClassW and CreateWindowExW and checks both conversion directions inside its guest procedure. Catalog remains 576 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-creation-encoding-tests.tap), [browser report](test-artifacts/window-creation-encoding-browser-report.json).
+
+A native ctypes probe registered private A/W classes and created hidden windows through the opposite API variant. Both WM_NCCREATE and WM_CREATE received the class encoding; Unicode title Cafe with accented e plus U+0100 became ANSI Cafe with accented e plus A. Null titles and integer class atoms were preserved. Every owned window was destroyed and each class unregistered. Guest executables ran only in Browser86. General A/W message translation, encoding changes during creation and subclass thunk identity remain unfinished.
+
 ## Window identity queries - 2026-09-08
 
 **331 Node tests passed, 0 failed, 0 skipped.** Added IsWindowUnicode and GetWindowThreadProcessId. Registered-class encoding is retained across opposite A/W creation calls and updated when SetWindowLongA/W replaces a procedure. Tests cover all four registration/creation combinations, built-in control variants, destroyed/invalid windows, identity consistency with GetCurrentProcessId/GetCurrentThreadId, optional output, unchanged failure output and truncated memory. The rebuilt HandleObjects.exe imports both new APIs and the existing current-ID queries, verifies owner IDs and ANSI identity, and checks invalid HWND failure. Catalog: 576 entries.

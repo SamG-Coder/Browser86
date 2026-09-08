@@ -4,6 +4,15 @@ unsigned long __readfsdword(unsigned long);
 #pragma intrinsic(__readfsdword)
 #define CHECK(expression) do { if(!(expression)) { printf("Handle failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
 static HWND lifetimeWindows[4];
+static DWORD creationWide,creationCount;
+static long WINAPI encodingProc(HWND h,DWORD msg,DWORD wp,long lp){
+  if(msg==129||msg==1){
+    DWORD *cs=(DWORD*)lp;creationCount++;
+    if(creationWide){WORD *title=(WORD*)cs[9],*name=(WORD*)cs[10];CHECK(title[0]=='C'&&title[3]==233&&title[4]==0);CHECK(name[0]=='W'&&name[1]==233&&name[2]==0);}
+    else {char *title=(char*)cs[9],*name=(char*)cs[10];CHECK(title[0]=='C'&&(unsigned char)title[3]==233&&title[4]==' '&&title[5]=='A'&&title[6]==0);CHECK(name[0]=='A'&&(unsigned char)name[1]==233&&name[2]==0);}
+  }
+  return msg==129?1:0;
+}
 static DWORD focusCount,focusMessages[8];
 static HWND focusObserved[8],focusOther[8];
 static DWORD lifetimeLog[8],lifetimeCount,enableLog[5],enableState[5],enableCount;
@@ -32,6 +41,11 @@ static BOOL WINAPI initializeOnce(DWORD *once,void *parameter,void **context){
   *context=parameter;return 1;
 }
 void mainCRTStartup(void){
+  WNDCLASSA encodingA={0};encodingA.proc=encodingProc;encodingA.name="A\xe9";CHECK(RegisterClassA(&encodingA));
+  WORD aName[]={'A',233,0},wTitle[]={'C','a','f',233,' ',256,0};
+  HWND encodingWindow=CreateWindowExW(0,aName,wTitle,0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);CHECK(DestroyWindow(encodingWindow));
+  WORD wName[]={'W',233,0};WNDCLASSW encodingW={0};encodingW.proc=encodingProc;encodingW.name=wName;CHECK(RegisterClassW(&encodingW));creationWide=1;creationCount=0;
+  encodingWindow=CreateWindowExA(0,"W\xe9","Caf\xe9",0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);CHECK(DestroyWindow(encodingWindow));
   HANDLE self=GetCurrentProcess(),file,copy,process,thread;
   DWORD flags,count,code;
   char bytes[4];

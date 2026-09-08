@@ -7,6 +7,7 @@ import {installWindowCoordinates} from './window-coordinates.js';
 import {installRegions} from './regions.js';
 import {installSystemColors} from './system-colors.js';
 import {ansiDecode} from './memory.js';
+import {sbcsTables} from './sbcs-tables.js';
 import {installRectangleDrawing} from './rectangle-drawing.js';
 import {installRectangles} from './rectangles.js';
 import {installPolyDraw} from './poly-draw.js';
@@ -16,6 +17,7 @@ import {installGDIObjects} from './gdi-objects.js';
 import {installDCState,dcSelectsObject} from './dc-state.js';
 import {RuntimeFault,requireThat} from './errors.js';
 const WM_CREATE=1,WM_DESTROY=2,WM_SIZE=5,WM_PAINT=15,WM_CLOSE=16,WM_QUIT=18,WM_COMMAND=0x111;
+const creationAnsiBestFit=new Map(sbcsTables[1252].encode[0]);
 export class GUI {
   constructor(apis){this.api=apis;this.p=apis.p;this.m=apis.m;this.classes=new Map();this.windows=new Map();this.nextAtom=0xC000;this.stock=new Map();this.focus=0;this.keyChars=new Map();this.nextTimer=1;this.install();}
   window(h){return this.windows.get(h>>>0);}
@@ -62,9 +64,19 @@ export class GUI {
       u('CreateWindowEx'+suffix,12,(exStyle,className,title,style,x,y,width,height,parent,menu,instance,param)=>{const cls=className<65536?[...this.classes.values()].find(c=>c.atom===className):this.classes.get(str(className).toLowerCase());const name=cls?.name||(className>=65536?str(className):'');if(!cls&&!['BUTTON','STATIC','EDIT'].includes(name.toUpperCase()))return a.fail(1407);
         if(parent&&!this.window(parent))return a.fail(1400);const requestedParent=parent;if(parent&&!(style&0x40000000))parent=childRoot(this,parent);const text=str(title),hwnd=p.handle('window',{});const w={hwnd,className:name,title:text,parent,id:menu,proc:cls?.proc||0,wide:cls?.wide??wide,style,exStyle,x:x===0x80000000?40:x|0,y:y===0x80000000?40:y|0,width:width===0x80000000?640:Math.max(1,Math.min(1920,width|0)),height:height===0x80000000?420:Math.max(1,Math.min(1080,height|0)),visible:!!(style&0x10000000),enabled:!(style&0x08000000),paintPending:false,dc:0};
         w.dc=this.newDC(hwnd);this.windows.set(hwnd,w);this.notify(w,'create');
-        const cs=p.heap.alloc(48,true);[param,instance,menu,requestedParent,w.height,w.width,w.y,w.x,style,title,className,exStyle].forEach((v,i)=>m.w32(cs+i*4,v));
-        const finish=()=>{p.heap.free(cs);if(!this.window(hwnd))return 0;if(w.visible)this.queuePaint(w);return hwnd;};
-        const reject=nonclientOnly=>{const done=()=>{p.heap.free(cs);return 0;};return this.window(hwnd)?this.destroy(hwnd,done,nonclientOnly):done();};
+        const temporary=[];
+        const creationString=(pointer,atom=false)=>{
+          if(!pointer||wide===w.wide||(atom&&pointer<65536))return pointer;
+          const value=str(pointer),out=p.heap.alloc((value.length+1)*(w.wide?2:1));temporary.push(out);
+          if(w.wide)m.string(out,value,true,value.length+1);
+          else {for(let i=0;i<value.length;i++)m.w8(out+i,creationAnsiBestFit.get(value.charCodeAt(i))??63);m.w8(out+value.length,0);}
+          return out;
+        };
+        const creationTitle=creationString(title),creationClass=creationString(className,true),cs=p.heap.alloc(48,true);temporary.push(cs);
+        [param,instance,menu,requestedParent,w.height,w.width,w.y,w.x,style,creationTitle,creationClass,exStyle].forEach((v,i)=>m.w32(cs+i*4,v));
+        const release=()=>{for(const address of temporary)p.heap.free(address);};
+        const finish=()=>{release();if(!this.window(hwnd))return 0;if(w.visible)this.queuePaint(w);return hwnd;};
+        const reject=nonclientOnly=>{const done=()=>{release();return 0;};return this.window(hwnd)?this.destroy(hwnd,done,nonclientOnly):done();};
         if(!w.proc)return finish();return p.call(w.proc,[hwnd,0x81,0,cs],accepted=>!this.window(hwnd)?reject(true):accepted?p.call(w.proc,[hwnd,WM_CREATE,0,cs],result=>(result>>>0)===0xFFFFFFFF?reject(false):finish()):reject(true));});
       u('DefWindowProc'+suffix,4,(h,msg,wp,lp)=>this.defWindow(h,msg,wp,lp,wide));
       u('CallWindowProc'+suffix,5,(proc,h,msg,wp,lp)=>p.call(proc,[h,msg,wp,lp]));
