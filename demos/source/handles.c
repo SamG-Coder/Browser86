@@ -192,6 +192,9 @@ void mainCRTStartup(void){
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
+  DWORD extBrush[3]={0,0x123456,99},extDescription[6];
+  HANDLE extPen=ExtCreatePen(0x12200,4,extBrush,0,NULL);
+  CHECK(extPen&&GetObjectType(extPen)==11&&GetObjectW(extPen,24,extDescription)==24&&extDescription[0]==0x12200&&extDescription[1]==4&&extDescription[3]==0x123456&&extDescription[4]==99&&DeleteObject(extPen));
   union {float value;DWORD bits;} miter;
   CHECK(GetMiterLimit(savedDC,&miter.value)&&miter.bits==0x41200000);
   CHECK(SetMiterLimit(savedDC,2.5f,&miter.value)&&miter.bits==0x41200000&&GetMiterLimit(savedDC,&miter.value)&&miter.bits==0x40200000);

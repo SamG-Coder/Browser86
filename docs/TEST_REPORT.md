@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Extended solid pen creation and rendering - 2026-09-08
+
+**243 Node tests passed, 0 failed, 0 skipped.** Three new tests cover all nine geometric cap/join combinations, OBJ_EXTPEN, x86 descriptions, size/short-buffer queries, selected-object lifetime, saved miter-state resolution, invalid flag/width combinations and input validation. The rebuilt HandleObjects.exe imports ExtCreatePen and inspects its style, width, color and hatch fields through x86 calls. The catalog contains 519 entries.
+
+**Fourteen real-canvas checks passed in Edge 152.0.4191.66**, including visible geometric miter extension at limit 10 and beveling at limit 1. Evidence: [canvas report](test-artifacts/extended-pens-canvas-report.json). **Eight existing real-origin browser checks passed with no page errors**, including fixture execution, persistence and backup. Evidence: [Node TAP](test-artifacts/extended-pens-tests.tap) and [browser report](test-artifacts/extended-pens-browser-report.json).
+
+Native ctypes probes created/deleted owned extended pens to verify style/width validation, zero width, object type and descriptions. The native zero-entry EXTLOGPEN header is 28 bytes on the 64-bit host; the guest uses the 24-byte x86 header with a 32-bit hatch field. No guest executable ran on the host. Microsoft [ExtCreatePen](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-extcreatepen) specifies geometric caps, joins and miter behavior. This stage supports solid brush/solid line modes; dashed/null/inside-frame/user-style/pattern modes explicitly fault. Pixel-exact native rasterization, coordinate transforms and nonfinite miter rendering remain unfinished.
+
 ## GDI miter-limit state extension - 2026-09-08
 
 **240 Node tests passed, 0 failed, 0 skipped.** Two new tests cover defaults, float32 bit preservation, previous-value output, independent DCs, save/restore, NaN/infinity, invalid limits and atomic output validation. The rebuilt HandleObjects.exe imports GetMiterLimit and SetMiterLimit with a genuine float parameter and checks the output bits. The fixture supplies LLVM's required _fltused marker. The catalog contains 518 entries.

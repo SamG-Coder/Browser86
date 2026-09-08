@@ -30,6 +30,7 @@ export function installDCState(gui){
   g('GetObjectType',1,handle=>{
     if(!handle)return api.fail(6);
     if(gui.dc(handle))return 3;
+    if(gui.p.object(handle,'gdi')?.extended)return 11;
     return {pen:1,brush:2,font:6}[gui.p.object(handle,'gdi')?.kind]??0;
   });
   g('SaveDC',1,handle=>{

@@ -126,7 +126,9 @@ PolyBezier and PolyBezierTo draw unfilled cubic curves with the selected pen. Po
 
 PolyDraw supports PT_MOVETO, PT_LINETO, PT_BEZIERTO triples and PT_CLOSEFIGURE on line/curve endpoints, emitting an unfilled mixed path with the selected pen. All point/type data and groups are validated before drawing or changing current position. Native-probed closure behavior retains the supplied endpoint as current position, despite the documentation describing the closing-line endpoint. GDI path recording via BeginPath/EndPath, transforms, clipping and native rasterization remain unfinished.
 
-GetMiterLimit and SetMiterLimit store a per-DC float32 value with default 10.0, previous-value output and SaveDC/RestoreDC support. Values below 1 fail; native-accepted NaN and positive infinity are preserved. Optional setter output, null getter output and invalid-handle errors follow native probes. These state APIs do not yet affect rendering: native miter limits apply to geometric miter-join pens, and ExtCreatePen/geometric pen rendering remains unfinished.
+GetMiterLimit and SetMiterLimit store a per-DC float32 value with default 10.0, previous-value output and SaveDC/RestoreDC support. Values below 1 fail; native-accepted NaN and positive infinity are preserved. Optional setter output, null getter output and invalid-handle errors follow native probes. Finite limits now affect supported geometric miter-join pens from ExtCreatePen; nonfinite miter rendering explicitly faults.
+
+ExtCreatePen supports solid cosmetic (width one) and geometric pens with solid brushes. Geometric pens carry round/square/flat caps and round/bevel/miter joins into canvas strokes, with per-DC finite miter limits. GetObjectType returns OBJ_EXTPEN and GetObjectA/W return the 24-byte x86 fixed EXTLOGPEN header for zero style entries. Unsupported dash, null, inside-frame, user-style and patterned modes explicitly fault; mapping, native rasterization and nonfinite miter rendering remain unfinished.
 
 ## Working with other programs
 

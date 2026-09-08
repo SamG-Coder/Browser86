@@ -202,6 +202,7 @@ API DWORD WINAPI SetTextColor(HDC,DWORD);
 API int WINAPI SetBkMode(HDC,int);
 API DWORD WINAPI SetBkColor(HDC,DWORD);
 API HANDLE WINAPI CreateSolidBrush(DWORD);
+API HANDLE WINAPI ExtCreatePen(DWORD,DWORD,const void*,DWORD,const DWORD*);
 API HANDLE WINAPI CreatePen(int,int,DWORD);
 API HANDLE WINAPI CreatePenIndirect(const void*);
 API HANDLE WINAPI CreateBrushIndirect(const void*);

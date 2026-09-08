@@ -4,6 +4,15 @@ import {getFontObject} from './fonts.js';
 
 export function installGDIObjects(gui){
   const g=(name,count,fn)=>gui.api.add('gdi32.dll',name,count,fn),m=gui.m;
+  g('ExtCreatePen',5,(style,width,brush,styleCount,styles)=>{
+    const type=style&0xf0000,cap=style&0xf00,join=style&0xf000,pattern=style&15;
+    if((style&~0x1ff0f)||![0,0x10000].includes(type)||cap>0x200||join>0x2000||pattern>8)return gui.api.fail(87);
+    if(pattern!==7&&(styleCount||styles))return gui.api.fail(87);
+    if(!brush)return 0;checkBuffer(m,brush,12,'r');const brushStyle=m.u32(brush),color=m.u32(brush+4),hatch=m.u32(brush+8);
+    if(type===0&&width!==1)return gui.api.fail(87);
+    if(pattern!==0||brushStyle!==0)throw new RuntimeFault('UNSUPPORTED_GDI','ExtCreatePen currently supports solid pens with solid brushes.');
+    return gui.p.handle('gdi',{kind:'pen',extended:true,style,logicalWidth:width>>>0,width:Math.max(1,width>>>0),color,hatch,geometric:type===0x10000,lineCap:['round','square','butt'][cap>>>8],lineJoin:['round','bevel','miter'][join>>>12]});
+  });
   const createPen=(style,width,color)=>{
     // CreatePen normalizes unrecognized styles to PS_SOLID.
     style>>>=0;if(style>6)style=0;
@@ -24,6 +33,10 @@ export function installGDIObjects(gui){
   for(const suffix of ['A','W'])gui.api.add('gdi32.dll','GetObject'+suffix,3,(handle,count,out)=>{
     const object=gui.p.object(handle,'gdi');if(!object)return 0;
     if(object.kind==='font')return getFontObject(gui,object,suffix==='W',count,out);
+    if(object.extended){
+      if(!out)return 24;if((count>>>0)<24||(out&3))return 0;
+      checkBuffer(m,out,24);[object.style,object.logicalWidth,0,object.color,object.hatch,0].forEach((v,i)=>m.w32(out+i*4,v));return 24;
+    }
     if(!['pen','brush'].includes(object.kind))throw new RuntimeFault('UNSUPPORTED_GDI','This GDI object description is not implemented.');
     const pen=object.kind==='pen',size=pen?16:12;
     if(!out)return size;
