@@ -2,6 +2,17 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {guest} from './helpers.mjs';
 function setup(){const {p,events}=guest('HelloConsole.exe');return {p,events,m:p.memory,h:p.apis.gui.newDC(0),call:(name,...a)=>p.apis.lookup('gdi32.dll',name).fn(...a)};}
+test('PolyPolygon emits a single compound path with selected fill mode and independent contours',()=>{
+  const {p,m,events,h,call}=setup(),input=p.heap.alloc(64),counts=p.heap.alloc(8),paths=[[[1,1],[9,1],[9,9],[1,9]],[[3,3],[7,3],[7,7],[3,7]]];paths.flat(2).forEach((v,i)=>m.w32(input+4*i,v));m.w32(counts,4);m.w32(counts+4,4);call('MoveToEx',h,77,88,0);call('SetPolyFillMode',h,2);
+  assert.equal(call('PolyPolygon',h,input,counts,2),1);const draws=events.filter(e=>e.type==='draw');assert.equal(draws.length,1);assert.equal(draws[0].op,'polypolygon');assert.deepEqual(draws[0].paths,paths);assert.equal(draws[0].fillMode,2);assert.equal(draws[0].brush.color,0xffffff);assert.deepEqual([p.apis.gui.dc(h).x,p.apis.gui.dc(h).y],[77,88]);
+  m.w32(input,99);assert.equal(draws[0].paths[0][0][0],1);
+});
+test('PolyPolygon signed counts and inaccessible late contours fail without partial drawing',()=>{
+  const {p,m,events,h,call}=setup(),input=p.heap.alloc(32),counts=p.heap.alloc(8);m.w32(counts,2);m.map(0x60000000,4096);
+  p.setError(1234);assert.equal(call('PolyPolygon',h,input,counts,0),0);m.w32(counts+4,-1);assert.equal(call('PolyPolygon',h,input,counts,2),0);assert.equal(p.lastError,1234);
+  m.w32(counts+4,1);assert.equal(call('PolyPolygon',h,input,counts,2),0);assert.equal(p.lastError,87);assert.equal(call('PolyPolygon',h,input,counts,-1),0);
+  m.w32(counts+4,2);assert.throws(()=>call('PolyPolygon',h,0x60000ff0,counts,2));assert.throws(()=>call('PolyPolygon',h,input,0x60000ffc,2));assert.equal(events.filter(e=>e.type==='draw').length,0);
+});
 test('PolyPolyline keeps groups disconnected and leaves current position unchanged',()=>{
   const {p,m,events,h,call}=setup(),input=p.heap.alloc(40),counts=p.heap.alloc(8),points=[[-2,3],[4,5],[20,21],[22,23],[24,25]];
   points.flat().forEach((v,i)=>m.w32(input+4*i,v));m.w32(counts,2);m.w32(counts+4,3);call('MoveToEx',h,77,88,0);call('SelectObject',h,call('GetStockObject',19));call('SetDCPenColor',h,0x123456);p.setError(1234);

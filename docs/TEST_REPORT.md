@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## PolyPolygon compound contours extension - 2026-09-08
+
+**233 Node tests passed, 0 failed, 0 skipped.** Two new tests cover compound contour boundaries, selected fill mode, copied points, unchanged current position, signed count errors and complete validation before drawing. The rebuilt HandleObjects.exe imports PolyPolygon and executes a multi-contour call through x86. The catalog contains 513 entries.
+
+**Eight real-canvas checks passed in Edge 152.0.4191.66**, including nested contours with alternate fill, same-direction winding fill and opposite-direction winding holes. tools/browser-polygons.mjs passes actual runtime commands through GuestDisplay and inspects interior pixels. Evidence: [canvas report](test-artifacts/poly-polygon-canvas-report.json). **Eight existing real-origin browser checks passed with no page errors**, including the rebuilt fixture, persistence and backup. Evidence: [Node TAP](test-artifacts/poly-polygon-tests.tap) and [browser report](test-artifacts/poly-polygon-browser-report.json).
+
+Native ctypes probes used an owned memory DC, deleted in finally, to verify zero/negative group counts, zero/one/two-point contours, invalid later contours, null arrays and invalid DC errors. No guest executable ran on the host. Microsoft [PolyPolygon](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-polypolygon) specifies closed contours, current-position preservation and use of selected pen/brush/fill mode. Pixel-exact stroke edges, mapping transforms, clipping and pattern brushes remain unfinished.
+
 ## PolyPolyline disconnected line groups extension - 2026-09-08
 
 **231 Node tests passed, 0 failed, 0 skipped.** Two new tests verify independent group boundaries, selected pen colors, signed copied points, unchanged current position, invalid late groups, count/point buffer boundaries, total-count overflow protection and no partial drawing on failure. HandleObjects.exe imports PolyPolyline and checks valid groups and invalid counts through x86 calls. The catalog contains 512 entries.

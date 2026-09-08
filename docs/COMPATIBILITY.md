@@ -120,6 +120,8 @@ PolylineTo connects the current position to a copied POINT array using the selec
 
 PolyPolyline accepts consecutive POINT groups and a DWORD count array, emitting independent open line groups using the selected pen without changing current position. Every group must have at least two points. Empty/null input returns failure; invalid group sizes report ERROR_INVALID_PARAMETER. All counts and points are validated before drawing any group, with the existing total-point runtime limit. It reuses the open-polyline renderer and its current rasterization/mapping limitations.
 
+PolyPolygon reads signed contour counts and consecutive POINT arrays, validates all input before drawing, and emits a compound closed path using the selected pen/brush and polygon fill mode. Contours interact under a shared alternate/nonzero fill rule, including holes from nested or oppositely directed contours. Current position is unchanged. Empty/null inputs and invalid signed counts follow native-probed returns/errors. It shares the existing point limits and canvas rasterization/mapping limitations.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
