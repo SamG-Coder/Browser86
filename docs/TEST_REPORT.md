@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## MulDiv integer scaling extension — 2026-09-08
+
+**198 Node tests passed, 0 failed, 0 skipped.** Three new tests cover 4,245 recorded native results (all combinations of thirteen boundary inputs plus 2,048 seeded full-width triples), signed half rounding, products above JavaScript Number precision, overflow, zero divisors, INT_MIN behavior and last-error preservation. HandleObjects.exe was rebuilt with the three-stack-slot MulDiv import and checks representative success/failure paths through x86 calls. The catalog contains 479 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** Actual workers ran the updated fixture under the deployed CSP; IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/muldiv-tests.tap) and [browser report](test-artifacts/muldiv-browser-report.json).
+
+tools/build-muldiv-vectors.py records native scalar results and verifies unchanged last error. No guest executable ran on the host. Microsoft's [MulDiv documentation](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-muldiv) establishes 64-bit intermediate multiplication, nearest rounding with half-integers away from zero, and -1 for overflow/zero divisors. The implementation additionally preserves the probed native INT_MIN edge behavior; these reference results do not establish parity across every Windows implementation.
+
 ## Shell command-line parsing extension — 2026-09-08
 
 **195 Node tests passed, 0 failed, 0 skipped.** Four new tests cover 1,031 recorded native parser cases, contiguous x86 pointer/string allocation, single-call LocalFree, empty-input guest executable paths, leading empty arguments, last-error preservation and invalid-buffer allocation safety. The rebuilt HandleObjects.exe imports CommandLineToArgvW from shell32.dll and LocalFree from kernel32.dll, parses a quoted argument and frees the result through the interpreter. The catalog contains 478 entries.

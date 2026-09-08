@@ -30,6 +30,7 @@ U={'RegisterClassA':1,'CreateWindowExA':12,'ShowWindow':2,'UpdateWindow':1,'GetM
 G={'TextOutA':5,'SetTextColor':2,'SetBkMode':2,'SetBkColor':2,'CreateSolidBrush':1,'CreatePen':3,'SelectObject':2,'DeleteObject':1,'GetStockObject':1,'Rectangle':5,'Ellipse':5,'MoveToEx':4,'LineTo':3,'StretchDIBits':13}
 C={'printf':1,'sprintf':2,'puts':1,'memset':3,'memcpy':3}
 S={'WaitOnAddress':4,'WakeByAddressSingle':1,'WakeByAddressAll':1}
+K.update({'MulDiv':3})
 K.update({'LocalFree':1})
 K.update({'GetStringTypeW':4})
 K.update({'IsValidCodePage':1,'GetCPInfo':2,'GetCPInfoExA':3,'GetCPInfoExW':3})

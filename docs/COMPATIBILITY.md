@@ -96,6 +96,8 @@ GetStringTypeW supports CT_CTYPE1, CT_CTYPE2 and CT_CTYPE3 with pinned Windows 1
 
 CommandLineToArgvW is available from shell32.dll and returns a contiguous guest allocation containing x86 pointers and UTF-16 strings, released with one LocalFree call. Parsing preserves the shell API's distinct executable-name rules, leading empty argument, backslash/quote handling and consecutive-quote behavior. Empty input returns the guest executable path. It does not execute the parsed command or add process creation. The separate CRT argv parser retains its existing behavior; shell and CRT parsing must not be assumed identical.
 
+MulDiv uses exact integer multiplication/division for signed 32-bit inputs and rounds half-integers away from zero. Zero divisors and results whose magnitude exceeds INT_MAX return -1 without changing last error. Nonzero products involving an INT_MIN multiplicand also return -1, matching the observed native implementation even when a mathematical quotient would fit. A legitimate result of -1 is therefore indistinguishable from failure through the return value alone.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

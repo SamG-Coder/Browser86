@@ -12,6 +12,7 @@ API BOOL WINAPI SystemTimeToFileTime(const SYSTEMTIME*,FILETIME*);
 API long WINAPI CompareFileTime(const FILETIME*,const FILETIME*);
 API int WINAPI CompareStringOrdinal(const WORD*,int,const WORD*,int,BOOL);
 API BOOL WINAPI GetStringTypeW(DWORD,const WORD*,int,WORD*);
+API int WINAPI MulDiv(int,int,int);
 API WORD** WINAPI CommandLineToArgvW(const WORD*,int*);
 API void* WINAPI LocalFree(void*);
 typedef struct {DWORD maxCharSize;BYTE defaultChar[2],leadByte[12];} CPINFO;

@@ -1485,6 +1485,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "MulDiv",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "MultiByteToWideChar",
     "argc": 6,
     "cdecl": false,
