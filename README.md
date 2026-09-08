@@ -89,7 +89,7 @@ npm test
 node --test tests/*.test.mjs
 ```
 
-The recorded run passes **79 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks and static-server delivery.
+The recorded run passes **86 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks, open-file deletion lifetime and static-server delivery.
 
 The optional browser harness is:
 
@@ -131,6 +131,7 @@ src/runtime/pe.js          PE images, linking, relocation and DLL initialization
 src/runtime/process.js     Guest process, stack/TEB/PEB, imports and callbacks
 src/runtime/win32.js        Original kernel/file/path/heap/registry compatibility
 src/runtime/file-info.js    File IDs, attributes and exact persistent FILETIMEs
+src/runtime/file-system.js  File creation, sharing, copying and deletion lifetime
 src/runtime/files.js        Exact 64-bit file cursors and synchronous disk I/O
 src/runtime/handles.js      Shared kernel objects, handle flags and duplication
 src/runtime/sync.js         Named event/mutex/semaphore objects, rights and waits

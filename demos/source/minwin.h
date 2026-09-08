@@ -18,6 +18,7 @@ API BOOL WINAPI WriteFile(HANDLE,const void*,DWORD,DWORD*,void*);
 API BOOL WINAPI ReadFile(HANDLE,void*,DWORD,DWORD*,void*);
 API void WINAPI ExitProcess(DWORD);
 API HANDLE WINAPI CreateFileA(const char*,DWORD,DWORD,void*,DWORD,DWORD,HANDLE);
+API BOOL WINAPI DeleteFileA(const char*);
 API BOOL WINAPI CloseHandle(HANDLE);
 API HANDLE WINAPI GetCurrentProcess(void);
 API HANDLE WINAPI GetCurrentThread(void);

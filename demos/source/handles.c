@@ -39,6 +39,24 @@ void mainCRTStartup(void){
   CHECK(SetFileAttributesA("handles.txt",3)&&GetFileAttributesA("handles.txt")==3);
   CHECK(SetFileAttributesW(wideFile,128)&&GetFileAttributesA("handles.txt")==128);
   CHECK(CloseHandle(copy));
+  /* A deleted name stays reserved until the last open file object closes. */
+  file=CreateFileA("pending.txt",GENERIC_READ|GENERIC_WRITE,7,NULL,2,0,NULL);
+  CHECK(file!=INVALID_HANDLE);
+  CHECK(WriteFile(file,"xy",2,&count,NULL)&&count==2);
+  CHECK(DuplicateHandle(self,file,self,&copy,0,0,2));
+  CHECK(DeleteFileA("pending.txt"));
+  CHECK(CreateFileA("pending.txt",GENERIC_READ,7,NULL,2,0,NULL)==INVALID_HANDLE&&GetLastError()==5);
+  CHECK(CloseHandle(file));
+  CHECK(SetFilePointer(copy,0,NULL,0)==0);
+  CHECK(ReadFile(copy,bytes,2,&count,NULL)&&count==2&&bytes[0]=='x'&&bytes[1]=='y');
+  CHECK(CloseHandle(copy));
+  CHECK(CreateFileA("pending.txt",GENERIC_READ,7,NULL,3,0,NULL)==INVALID_HANDLE&&GetLastError()==2);
+  file=CreateFileA("temporary.txt",GENERIC_READ|GENERIC_WRITE,7,NULL,2,0x04000000,NULL);
+  CHECK(file!=INVALID_HANDLE);
+  CHECK(DuplicateHandle(self,file,self,&copy,0,0,3));
+  CHECK(WriteFile(copy,"z",1,&count,NULL)&&count==1);
+  CHECK(CloseHandle(copy));
+  CHECK(CreateFileA("temporary.txt",GENERIC_READ,7,NULL,3,0,NULL)==INVALID_HANDLE&&GetLastError()==2);
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
   CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);

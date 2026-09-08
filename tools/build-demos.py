@@ -13,6 +13,7 @@ K={'GetStdHandle':1,'WriteFile':5,'ReadFile':5,'ExitProcess':1,'CreateFileA':7,'
 K.update({'CreateEventA':4,'CreateEventW':4,'CreateMutexA':3,'CreateMutexW':3,'CreateSemaphoreA':4,'CreateSemaphoreW':4,'SetEvent':1,'ResetEvent':1,'ReleaseMutex':1,'ReleaseSemaphore':3,'WaitForSingleObject':2,'WaitForSingleObjectEx':3,'WaitForMultipleObjects':4,'WaitForMultipleObjectsEx':5})
 K.update({'GetCurrentProcess':0,'GetCurrentThread':0,'DuplicateHandle':7,'GetHandleInformation':2,'SetHandleInformation':3,'GetProcessId':1,'GetThreadId':1,'GetExitCodeProcess':2,'GetExitCodeThread':2,'SetFilePointer':4})
 K.update({'SetFilePointerEx':5,'GetFileSizeEx':2,'SetEndOfFile':1})
+K.update({'DeleteFileA':1})
 K.update({'GetFileTime':4,'SetFileTime':4,'GetFileInformationByHandle':2,'SetFileAttributesA':2,'SetFileAttributesW':2,'GetFileAttributesA':1})
 for suffix in ['A','W']:
     for name,count in [('OpenEvent',3),('OpenMutex',3),('OpenSemaphore',3),('CreateEventEx',4),('CreateMutexEx',4),('CreateSemaphoreEx',6)]:

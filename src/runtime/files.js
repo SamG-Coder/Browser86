@@ -15,7 +15,7 @@ export function installFileIO(api){
   const seek=(f,distance,method,limited=false)=>{
     if(method>2){api.fail(87);return null;}
     if(!f.read&&!f.write){api.fail(5);return null;}
-    const base=method===0?0n:method===1?BigInt(f.position):BigInt(v.readFile(f.path).length),next=base+distance;
+    const base=method===0?0n:method===1?BigInt(f.position):BigInt(f.node.data.length),next=base+distance;
     if(next<0n){api.fail(131);return null;}
     if(next>MAX_POSITION||limited&&next>0xFFFFFFFFn){api.fail(87);return null;}
     return next;
@@ -41,11 +41,11 @@ export function installFileIO(api){
   });
   k('GetFileSize',2,(h,high)=>{
     const f=diskFile(h);if(!f)return api.fail(6,INVALID);
-    return api.expected(()=>{const size=v.readFile(f.path).length;if(high){checkBuffer(m,high,4);m.w32(high,0);}return size;},INVALID);
+    return api.expected(()=>{const size=f.node.data.length;if(high){checkBuffer(m,high,4);m.w32(high,0);}return size;},INVALID);
   });
   k('GetFileSizeEx',2,(h,out)=>{
     const f=diskFile(h);if(!f)return api.fail(6);if(!out)return api.fail(87);
-    return api.expected(()=>{const size=v.readFile(f.path).length;checkBuffer(m,out,8);write64(m,out,BigInt(size));return 1;});
+    return api.expected(()=>{const size=f.node.data.length;checkBuffer(m,out,8);write64(m,out,BigInt(size));return 1;});
   });
   k('ReadFile',5,(h,buffer,count,read,overlap)=>{
     if(read){checkBuffer(m,read,4);m.w32(read,0);}
@@ -62,11 +62,11 @@ export function installFileIO(api){
     }
     const f=diskFile(h);if(!f)return api.fail(6);if(!f.read)return api.fail(5);
     return api.expected(()=>{
-      const file=v.readFile(f.path),position=BigInt(f.position);
+      const file=f.node.data,position=BigInt(f.position);
       const start=position>=BigInt(file.length)?file.length:Number(position);
       const data=file.subarray(start,start+count);
       checkBuffer(m,buffer,data.length);m.write(buffer,data);if(read)m.w32(read,data.length);
-      if(data.length&&!f.suppressAccess)v.setMetadata(f.path,{times:{access:fileTimeFromMs(Date.now())}});
+      if(data.length&&!f.suppressAccess)v.setMetadata(f.path,{times:{access:fileTimeFromMs(Date.now())}},{node:f.node});
       f.position=position+BigInt(data.length);return 1;
     });
   });
@@ -82,18 +82,18 @@ export function installFileIO(api){
     // A null write does not allocate, extend, or move the file cursor.
     if(!count)return 1;
     return api.expected(()=>{
-      const old=v.readFile(f.path),position=BigInt(f.position),end=position+BigInt(count);
+      const old=f.node.data,position=BigInt(f.position),end=position+BigInt(count);
       if(end>BigInt(v.limit)||BigInt(v.bytes-old.length)+ (end>BigInt(old.length)?end:BigInt(old.length))>BigInt(v.limit))return api.fail(112);
-      const data=m.read(buffer,count);v.writeAt(f.path,Number(position),data,{preserveWriteTime:!!f.suppressWrite,preserveAccessTime:!!f.suppressAccess});
+      const data=m.read(buffer,count);v.writeAt(f.path,Number(position),data,{node:f.node,preserveWriteTime:!!f.suppressWrite,preserveAccessTime:!!f.suppressAccess});
       f.position=end;if(written)m.w32(written,count);return 1;
     });
   });
   k('SetEndOfFile',1,h=>{
     const f=diskFile(h);if(!f)return api.fail(6);if(!f.write)return api.fail(5);
     return api.expected(()=>{
-      const old=v.readFile(f.path),position=BigInt(f.position);
+      const old=f.node.data,position=BigInt(f.position);
       if(position>BigInt(v.limit)||BigInt(v.bytes-old.length)+position>BigInt(v.limit))return api.fail(112);
-      const data=new Uint8Array(Number(position));data.set(old.subarray(0,data.length));v.writeFile(f.path,data,{preserveWriteTime:!!f.suppressWrite,preserveAccessTime:!!f.suppressAccess});return 1;
+      const data=new Uint8Array(Number(position));data.set(old.subarray(0,data.length));v.writeFile(f.path,data,{node:f.node,preserveWriteTime:!!f.suppressWrite,preserveAccessTime:!!f.suppressAccess});return 1;
     });
   });
   k('FlushFileBuffers',1,h=>{const f=diskFile(h);return !f?api.fail(6):!f.write?api.fail(5):1;});

@@ -33,9 +33,10 @@ export function installHandles(api){
       return api.fail(6);
     }
     // DUPLICATE_CLOSE_SOURCE closes even when creating the target fails.
-    // Keep the object reference alive locally while removing the source entry.
+    // Allocate the target first so transferring the last handle cannot destroy
+    // a delete-on-close file or remove a named synchronization object.
     const validTarget=p.isCurrentProcess(targetProcess),sourceAccess=p.handleAccess?.get(source)??0xFFFFFFFF;
-    if(options&1)p.releaseHandle(source);
+    try{
     if(options&~3)return api.fail(87);
     if(!targetProcess)return options&1?1:api.fail(87);
     if(!validTarget)return api.fail(6);
@@ -50,6 +51,7 @@ export function installHandles(api){
     const duplicate=p.referenceHandle(object,inherit?1:0,granted);
     if(out)m.w32(out,duplicate);
     return 1;
+    }finally{if(options&1)p.releaseHandle(source);}
   });
   k('GetProcessId',1,h=>p.isCurrentProcess(h)?4:api.fail(6));
   k('GetThreadId',1,h=>h===CURRENT_THREAD||p.object(h,'thread')?.id===8?8:api.fail(6));

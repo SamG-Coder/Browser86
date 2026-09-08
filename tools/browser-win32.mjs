@@ -54,6 +54,9 @@ try{
   const backup=path.join(output,'win32-backup.zip');await (await downloadPromise).saveAs(backup);
   const restored=new VirtualFileSystem(decodePackage(await readZip(new Uint8Array(await fs.readFile(backup)))).entries);
   assert.deepEqual(fileMetadata(restored.get('C:/app/tests/handles.txt')),metadata);
+  assert.equal(restored.get('C:/app/tests/pending.txt'),undefined);
+  assert.equal(restored.get('C:/app/tests/temporary.txt'),undefined);
+  checks.push('Deleted and delete-on-close guest files are absent from the persisted backup');
   checks.push('Downloaded ZIP preserves file ID, attributes and 100-nanosecond FILETIMEs');
   const oldId=await page.evaluate(()=>localStorage.getItem('browser86-last-package'));
   await page.locator('#zip-input').setInputFiles(backup);

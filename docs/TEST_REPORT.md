@@ -30,6 +30,14 @@ Latest file I/O stage: **71 tests passed, 0 failed, 0 skipped** on Node.js 24.19
 
 Run `node tools/serve.mjs`, then `node tools/browser-win32.mjs http://127.0.0.1:8080 [browser-binary]`. The optional Node `playwright` package is needed; `PLAYWRIGHT_MODULE` can select an existing installed package.
 
+## File deletion lifetime extension — 2026-09-08
+
+**86 Node tests passed, 0 failed, 0 skipped.** Seven new tests exercise independent opens and duplicate references, pending-name reservation, read/write after deletion, final-close quota recovery, mutual DELETE sharing, delete-on-close transfer/failure, forced cleanup on exit/stop/fault, snapshot exclusions, inheritance and unsupported directory modes. The rebuilt HandleObjects.exe calls DeleteFileA and exercises deletion and delete-on-close through real imports. The catalog remains at 436 entries; this stage improves existing APIs.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The checks cover module workers under the deployed CSP, both Win32 fixtures, IndexedDB, reload, ZIP export/reimport and absence of deleted temporary files in the saved disk. Raw results: `test-artifacts/file-lifetime-tests.tap` and `test-artifacts/file-lifetime-browser-report.json`.
+
+Contracts: [DeleteFileW](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-deletefilew), [CreateFileW](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew). POSIX unlink, mappings and CRT stream lifetime are outside this stage.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

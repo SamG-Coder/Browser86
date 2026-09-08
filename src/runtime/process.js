@@ -25,6 +25,7 @@ export class GuestProcess {
     const h=this.nextHandle++;requireThat(this.handles.size<65536,'HANDLE_LIMIT','Guest handle limit reached.');
     this.handles.set(h,object);if(flags)(this.handleFlags??=new Map()).set(h,flags);
     (this.handleAccess??=new Map()).set(h,access);
+    if(object.type==='file')object.handleReferences=(object.handleReferences||0)+1;
     if(object.nameKey){object.references=(object.references||0)+1;this.namedObjects.set(object.nameKey,object);}
     return h;
   }
@@ -32,9 +33,11 @@ export class GuestProcess {
     const object=this.object(h);this.handleFlags?.delete(h);this.handleAccess?.delete(h);
     if(!this.handles.delete(h))return false;
     if(object.nameKey&&!--object.references)this.namedObjects.delete(object.nameKey);
+    if(object.type==='file'&&!--object.handleReferences)object.onClose?.();
     return true;
   }
   hasHandleAccess(h,access){return ((this.handleAccess?.get(h)??0xFFFFFFFF)&access)===access;}
+  closeFiles(){for(const [h,object]of this.handles)if(object.type==='file')this.releaseHandle(h);}
   isCurrentProcess(h){return h===0xFFFFFFFF||this.object(h,'process')?.id===4;}
   object(handle,type=null){const o=this.handles.get(handle>>>0);return o&&(!type||o.type===type)?o:null;}
   setError(value){this.lastError=value>>>0;this.memory.w32(this.teb+0x34,this.lastError);return 0;}
@@ -71,10 +74,10 @@ export class GuestProcess {
   pause(reason='Paused by user'){this.status='paused';this.pauseReason=reason;this.emit('status',{status:this.status,reason});}
   resume(){if(this.status==='paused'){this.status='running';this.emit('status',{status:this.status});}}
   stepOne(){if(this.status!=='paused')return;this.poll();if(!this.waiting)this.cpu.step();this.emit('debug',this.debug());}
-  exit(code=0){this.status='exited';this.exitCode=code>>>0;this.waiting=null;this.emit('exit',{code:this.exitCode,instructions:this.cpu.instructions});}
-  stop(){if(!['exited','stopped','fault'].includes(this.status)){this.status='stopped';this.waiting=null;this.emit('status',{status:this.status,reason:'Stopped by user; virtual files are retained.'});}}
+  exit(code=0){this.status='exited';this.exitCode=code>>>0;this.waiting=null;this.closeFiles();this.emit('exit',{code:this.exitCode,instructions:this.cpu.instructions});}
+  stop(){if(!['exited','stopped','fault'].includes(this.status)){this.status='stopped';this.waiting=null;this.closeFiles();this.emit('status',{status:this.status,reason:'Stopped by user; virtual files are retained.'});}}
   postMessage(hwnd,message,wParam=0,lParam=0){requireThat(this.messageQueue.length<8192,'MESSAGE_LIMIT','Guest message queue limit reached.');this.messageQueue.push({hwnd:hwnd>>>0,message:message>>>0,wParam:wParam>>>0,lParam:lParam>>>0,time:Math.floor(performance.now()-this.started),x:0,y:0});}
   inputEvent(event){if(event.kind==='console'){const text=String(event.text);requireThat(text.length<=65536&&this.input.length+text.length+2<=1024*1024,'INPUT_LIMIT','Console input queue limit reached.');const data=ansiEncode(text+'\r\n');for(const byte of data)this.input.push(byte);return;}if(event.kind==='dialog'){this.dialogResults.set(event.id,event.result);return;}this.apis.gui.input(event);}
   debug(){return {...this.cpu.snapshot(),status:this.status,waiting:this.waiting?.reason||null,apiCalls:this.apiCalls,lastApi:this.lastApi,committedBytes:this.memory.allocated,mappings:this.memory.mappings(),modules:this.loader.order.map(m=>({path:m.path,base:hex(m.base),size:m.size})),callTrace:[...this.callTrace],missing:this.apis.missingImports(),notes:[...this.runtimeNotes]};}
-  fault(error){this.status='fault';const fault=error instanceof RuntimeFault?error.toJSON():{code:'HOST_RUNTIME_ERROR',message:String(error?.message||error),detail:{stack:error?.stack}};this.emit('fault',{...fault,debug:this.debug()});}
+  fault(error){this.status='fault';this.closeFiles();const fault=error instanceof RuntimeFault?error.toJSON():{code:'HOST_RUNTIME_ERROR',message:String(error?.message||error),detail:{stack:error?.stack}};this.emit('fault',{...fault,debug:this.debug()});}
 }

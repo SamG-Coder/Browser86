@@ -6,6 +6,7 @@ import {installSynchronization} from './sync.js';
 import {installHandles} from './handles.js';
 import {installFileIO} from './files.js';
 import {installFileInformation,writeFileTime} from './file-info.js';
+import {installFileSystem} from './file-system.js';
 const INVALID=0xFFFFFFFF;
 const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
 export class Win32 {
@@ -21,7 +22,7 @@ export class Win32 {
   systemHandle(name){name=this.canonical(name);if(!this.moduleHandles.has(name))this.moduleHandles.set(name,this.p.handle('module',{name,system:true}));return this.moduleHandles.get(name);}
   str(pointer,wide=false){return wide?this.m.wstr(pointer):this.m.cstr(pointer);}
   fail(error=87,value=0){this.p.setError(error);return value;}
-  expected(fn,invalid=0){try{return fn();}catch(e){if(e instanceof RuntimeFault&&e.code.startsWith('VFS_'))return this.fail(e.code==='VFS_NOT_FOUND'?2:e.code==='VFS_EXISTS'?183:5,invalid);throw e;}}
+  expected(fn,invalid=0){try{return fn();}catch(e){if(e instanceof RuntimeFault&&e.code.startsWith('VFS_'))return this.fail(e.code==='VFS_NOT_FOUND'?2:e.code==='VFS_EXISTS'?183:e.code==='VFS_SHARING'?32:5,invalid);throw e;}}
   copyString(buffer,capacity,text,wide=false,includeNullOnFailure=true){if(!capacity)return text.length+1;if(text.length>=capacity)return text.length+(includeNullOnFailure?1:0);this.m.string(buffer,text,wide,capacity);return text.length;}
   module(handle=0){return !handle?this.p.main:this.p.loader.moduleByBase(handle);}
   sleep(ms){if(!ms)return 0;const end=performance.now()+ms;return this.p.wait(()=>performance.now()>=end?0:undefined,'Sleep');}
@@ -62,23 +63,12 @@ export class Win32 {
     k('GetFileType',1,h=>h>=10&&h<=12?2:p.object(h,'file')?1:0);
     installFileIO(this);
     installFileInformation(this);
+    installFileSystem(this);
     k('GetConsoleMode',2,(h,out)=>{if(h<10||h>12)return this.fail(6);m.w32(out,h===10?7:3);return 1;});k('SetConsoleMode',2,(h,mode)=>h>=10&&h<=12?1:this.fail(6));
     k('AllocConsole',0,()=>1);k('FreeConsole',0,()=>1);k('GetConsoleOutputCP',0,()=>1252);k('GetConsoleCP',0,()=>1252);k('SetConsoleOutputCP',1,cp=>cp===1252?1:this.fail(87));k('SetConsoleCP',1,cp=>cp===1252?1:this.fail(87));
     for(const wide of [false,true]){const suffix=wide?'W':'A',str=a=>this.str(a,wide),write=(a,s,n=Infinity)=>m.string(a,s,wide,n);
-      k('CreateFile'+suffix,7,(name,access,share,security,creation,flags,template)=>this.expected(()=>{
-        if(flags&0x40000000)throw new RuntimeFault('UNSUPPORTED_IO','FILE_FLAG_OVERLAPPED is not implemented.');
-        if(flags&0x20000000)throw new RuntimeFault('UNSUPPORTED_IO','Unbuffered I/O and sector alignment are not implemented.');
-        const text=str(name);if(/^CONOUT\$$/i.test(text))return 11;if(/^CONIN\$$/i.test(text))return 10;
-        const path=v.path(text),node=v.get(path),exists=!!node;let read=!!(access&0x80000000),writable=!!(access&0x40000000);if(node?.directory&&(!(flags&0x02000000)||creation!==3))return this.fail(5,INVALID);if(node&&!node.directory&&(node.attributes&1)&&(writable||creation===2||creation===5))return this.fail(5,INVALID);
-        if(![1,2,3,4,5].includes(creation))return this.fail(87,INVALID);if(creation===1&&exists)return this.fail(80,INVALID);if((creation===3||creation===5)&&!exists)return this.fail(2,INVALID);if(creation===5&&!writable)return this.fail(5,INVALID);
-        for(const f of p.handles.values())if(f.type==='file'&&f.path.toLowerCase()===path.toLowerCase()){if(read&&!(f.share&1)||writable&&!(f.share&2)||f.read&&!(share&1)||f.write&&!(share&2))return this.fail(32,INVALID);}
-        const parent=path.slice(0,path.lastIndexOf('/'))||'C:/';if(!v.get(parent)?.directory)return this.fail(3,INVALID);
-        if(!exists||creation===2||creation===5)v.writeFile(path,new Uint8Array());p.setError(exists&&(creation===2||creation===4)?183:0);return p.handle('file',{path,position:0n,read,write:writable,share,directory:!!node?.directory,readAttributes:read||!!(access&0x80),writeAttributes:writable||!!(access&0x100)});},INVALID));
       k('CreateDirectory'+suffix,2,(name,security)=>this.expected(()=>{const path=v.path(str(name));if(v.exists(path))return this.fail(183);const parent=path.slice(0,path.lastIndexOf('/'))||'C:/';if(!v.get(parent)?.directory)return this.fail(3);v.mkdir(path);return 1;}));
       k('RemoveDirectory'+suffix,1,name=>this.expected(()=>{const node=v.get(str(name));if(!node?.directory)return this.fail(3);return v.remove(node.path)?1:0;}));
-      k('DeleteFile'+suffix,1,name=>this.expected(()=>{const node=v.get(str(name));if(!node||node.directory)return this.fail(2);if(node.attributes&1)return this.fail(5);for(const f of p.handles.values())if(f.type==='file'&&f.path.toLowerCase()===node.path.toLowerCase()&&!(f.share&4))return this.fail(32);return v.remove(node.path)?1:0;}));
-      k('MoveFile'+suffix,2,(from,to)=>this.expected(()=>{const source=v.path(str(from)),target=v.path(str(to)),files=[...new Set(p.handles.values())].filter(f=>f.type==='file'&&f.path.toLowerCase()===source.toLowerCase());if(files.some(f=>!(f.share&4)))return this.fail(32);v.rename(source,target);for(const f of files)f.path=target;return 1;}));
-      k('CopyFile'+suffix,3,(from,to,fail)=>this.expected(()=>{if(fail&&v.exists(str(to)))return this.fail(80);if(v.get(str(to))?.attributes&1)return this.fail(5);const source=v.get(str(from));v.writeFile(str(to),v.readFile(str(from)));v.setMetadata(str(to),{attributes:source.attributes,times:{write:source.times.write}});return 1;}));
       k('GetCurrentDirectory'+suffix,2,(size,out)=>this.copyString(out,size,v.cwd.replaceAll('/','\\'),wide));
       k('SetCurrentDirectory'+suffix,1,name=>this.expected(()=>{const node=v.get(str(name));if(!node?.directory)return this.fail(3);v.cwd=node.path;return 1;}));
       k('GetFullPathName'+suffix,4,(name,size,out,last)=>this.expected(()=>{const path=v.path(str(name)).replaceAll('/','\\');if(size>path.length&&last)m.w32(last,out+(path.lastIndexOf('\\')+1)*(wide?2:1));return this.copyString(out,size,path,wide);}));

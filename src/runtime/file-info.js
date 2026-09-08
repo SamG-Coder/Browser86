@@ -7,7 +7,7 @@ export function installFileInformation(api){
   k('GetFileTime',4,(h,creation,access,write)=>{
     const f=p.object(h,'file');if(!f)return api.fail(6);if(!f.readAttributes)return api.fail(5);
     return api.expected(()=>{
-      const node=v.get(f.path);if(!node)return api.fail(2);
+      const node=f.node;if(!node)return api.fail(2);
       for(const out of [creation,access,write])if(out)checkBuffer(m,out,8);
       for(const [out,key]of [[creation,'creation'],[access,'access'],[write,'write']])if(out)writeFileTime(m,out,node.times[key]);
       return 1;
@@ -16,7 +16,7 @@ export function installFileInformation(api){
   k('SetFileTime',4,(h,creation,access,write)=>{
     const f=p.object(h,'file');if(!f)return api.fail(6);if(!f.writeAttributes)return api.fail(5);
     return api.expected(()=>{
-      if(!v.get(f.path))return api.fail(2);
+      if(!f.node)return api.fail(2);
       const times={},suppress={};
       for(const [ptr,key]of [[creation,'creation'],[access,'access'],[write,'write']])if(ptr){
         checkBuffer(m,ptr,8,'r');const value=BigInt(m.u32(ptr))|(BigInt(m.u32(ptr+4))<<32n);
@@ -24,7 +24,7 @@ export function installFileInformation(api){
         if(value===0xFFFFFFFFFFFFFFFFn&&key!=='creation')suppress[key]=true;
         else times[key]=value.toString();
       }
-      if(Object.keys(times).length)v.setMetadata(f.path,{times});
+      if(Object.keys(times).length)v.setMetadata(f.path,{times},{node:f.node});
       if(suppress.access)f.suppressAccess=true;if(suppress.write)f.suppressWrite=true;
       return 1;
     });
@@ -32,7 +32,7 @@ export function installFileInformation(api){
   k('GetFileInformationByHandle',2,(h,out)=>{
     const f=p.object(h,'file');if(!f)return api.fail(6);if(!out)return api.fail(87);
     return api.expected(()=>{
-      const node=v.get(f.path);if(!node)return api.fail(2);
+      const node=f.node;if(!node)return api.fail(2);
       checkBuffer(m,out,52);m.fill(out,52);m.w32(out,node.attributes);
       for(const [offset,key]of [[4,'creation'],[12,'access'],[20,'write']])writeFileTime(m,out+offset,node.times[key]);
       m.w32(out+28,0xB8600001);m.w32(out+36,node.data?.length||0);m.w32(out+40,1);m.w32(out+48,node.id);return 1;
