@@ -216,6 +216,8 @@ RegisterClass/ExA/W now rejects negative signed class/window extra-storage count
 
 SetClassLongA/W now replaces GCL_WNDPROC when the setter encoding matches the class procedure encoding, returning the previous address. Existing windows retain their copied procedure; future windows use the replacement. Restoring the class leaves replacement windows unchanged. Per-window subclassing remains independent. Null replacement and restoration are supported as metadata operations; creating a window while the class procedure is null is not native-verified. Cross-encoding replacement still faults before mutation because callable procedure thunks remain unimplemented.
 
+GetWindowLongA/W and SetWindowLongA/W now support GWL_HINSTANCE. Windows retain the exact CreateWindowEx instance argument, including null, independently of the registered class module. Setters return the previous value, allow null replacement and preserve error state on success. Creation callbacks see the instance immediately; mutation does not rewrite CREATESTRUCT or change procedure encoding or process/thread ownership. Unknown negative indices now report error 1413, and the recognized but unsupported owner-setting index faults explicitly. Owner replacement, dialog-specific fields and cross-process behavior remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

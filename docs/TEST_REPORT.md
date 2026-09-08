@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Window instance handle queries and mutation - 2026-09-08
+
+**389 Node tests passed, 0 failed, 0 skipped.** GetWindowLongA/W and SetWindowLongA/W now support GWL_HINSTANCE and preserve the exact creation argument. Tests cover null and high-bit values, previous-value returns, encoding/class/process isolation, creation callback access and mutation, unchanged CREATESTRUCT, invalid indices and destroyed HWNDs. The rebuilt HandleObjects.exe reads, replaces and restores its instance handle and checks invalid-index error 1413. Catalog remains 580 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-instance-tests.tap), [browser report](test-artifacts/window-instance-browser-report.json).
+
+Native private A/W window probes used Get/SetWindowLongPtr on the 64-bit host. Null creation instance remained zero, explicit module handles were retained, replacement values and null were accepted, and setters returned prior values while preserving error 1234. Indices -99 and -100 failed with error 1413 for getters and setters. All owned windows/classes were cleaned up. Reference: [Microsoft SetWindowLongA](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowlonga). Owner replacement, dialog fields and cross-process behavior remain unfinished.
+
 ## Class procedure replacement - 2026-09-08
 
 **385 Node tests passed, 0 failed, 0 skipped.** SetClassLongA/W now supports GCL_WNDPROC replacement in the class procedure encoding. Tests cover existing/future windows, restoration, procedure queries, per-window subclass independence, previous values, null replacement, invalid HWNDs and cross-encoding rejection without mutation. The rebuilt HandleObjects.exe replaces the ANSI class procedure, creates a window, verifies different message results for existing/new windows, restores the class and verifies the new window still uses its replacement. Catalog remains 580 entries.

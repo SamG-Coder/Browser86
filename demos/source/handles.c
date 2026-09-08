@@ -74,6 +74,8 @@ void mainCRTStartup(void){
   SetLastError(1234);CHECK(!GetClassLongW(encodingWindow,8));CHECK(GetLastError()==1413);
   CHECK(!SetClassLongA(encodingWindow,0,0x12345678));CHECK(SetClassLongW(encodingWindow,1,0xaabbccdd)==0x123456);CHECK(GetClassLongA(encodingWindow,0)==0xbbccdd78);
   CHECK(!SetWindowLongA(encodingWindow,0,0x12345678));CHECK(SetWindowLongW(encodingWindow,1,0xaabbccdd)==0x123456);CHECK((DWORD)GetWindowLongA(encodingWindow,0)==0xbbccdd78);CHECK((DWORD)GetWindowLongW(encodingWindow,1)==0xaabbccdd);
+  CHECK(!GetWindowLongA(encodingWindow,-6));CHECK(!SetWindowLongW(encodingWindow,-6,0x12345678));CHECK(GetWindowLongA(encodingWindow,-6)==0x12345678);CHECK(SetWindowLongA(encodingWindow,-6,0)==0x12345678);
+  SetLastError(1234);CHECK(!GetWindowLongW(encodingWindow,-99));CHECK(GetLastError()==1413);
   SetLastError(1234);CHECK(!SetWindowLongA(encodingWindow,5,0));CHECK(GetLastError()==1413);
   HANDLE replacementClassBrush=CreateSolidBrush(0xabcdef);CHECK(SetClassLongW(encodingWindow,-10,(long)replacementClassBrush)==(DWORD)encodingA.brush);CHECK(GetObjectType(encodingA.brush)==2);
   CHECK(SetClassLongA(encodingWindow,-10,(long)encodingA.brush)==(DWORD)replacementClassBrush);CHECK(DeleteObject(replacementClassBrush));
