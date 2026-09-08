@@ -2,6 +2,18 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {guest} from './helpers.mjs';
 function setup(){const {p,events}=guest('HelloConsole.exe');return {p,events,m:p.memory,h:p.apis.gui.newDC(0),call:(name,...args)=>p.apis.lookup('gdi32.dll',name).fn(...args)};}
+test('Miter limits retain float bits, previous values and saved per-DC state',()=>{
+  const {p,m,h,call}=setup(),out=p.heap.alloc(8),other=p.apis.gui.newDC(0);assert.equal(call('GetMiterLimit',h,out),1);assert.equal(m.u32(out),0x41200000);
+  p.setError(1234);assert.equal(call('SetMiterLimit',h,0x40200000,out),1);assert.equal(m.u32(out),0x41200000);assert.equal(p.lastError,1234);call('SaveDC',h);
+  for(const bits of [0x3f800000,0x7fc00000,0x7f800000]){assert.equal(call('SetMiterLimit',h,bits,0),1);assert.equal(call('GetMiterLimit',h,out+1),1);assert.equal(m.u32(out+1),bits);}
+  call('RestoreDC',h,-1);call('GetMiterLimit',h,out);assert.equal(m.u32(out),0x40200000);call('GetMiterLimit',other,out);assert.equal(m.u32(out),0x41200000);
+});
+test('Miter limit errors preserve output and DC state',()=>{
+  const {p,m,h,call}=setup(),out=p.heap.alloc(4);m.w32(out,0xcccccccc);
+  for(const bits of [0,0x3f000000,0xbf800000,0xff800000]){assert.equal(call('SetMiterLimit',h,bits,out),0);assert.equal(p.lastError,87);assert.equal(m.u32(out),0xcccccccc);}
+  p.setError(1234);assert.equal(call('GetMiterLimit',h,0),0);assert.equal(p.lastError,1234);assert.equal(call('GetMiterLimit',0,out),0);assert.equal(p.lastError,87);assert.equal(call('SetMiterLimit',0,0x40000000,out),0);assert.equal(p.lastError,6);
+  m.map(0x60000000,4096);m.w16(0x60000ffe,0xcccc);assert.throws(()=>call('SetMiterLimit',h,0x40000000,0x60000ffe));assert.equal(m.u16(0x60000ffe),0xcccc);call('GetMiterLimit',h,out);assert.equal(m.u32(out),0x41200000);
+});
 test('DC pen and brush colors preserve full COLORREFs, saved state and native errors',()=>{
   const {p,h,call}=setup(),other=p.apis.gui.newDC(0);
   for(const [kind,initial] of [['Pen',0],['Brush',0xffffff]]){

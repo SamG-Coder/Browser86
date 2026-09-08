@@ -1,4 +1,5 @@
 #include "minwin.h"
+int _fltused=0;
 unsigned long __readfsdword(unsigned long);
 #pragma intrinsic(__readfsdword)
 #define CHECK(expression) do { if(!(expression)) { printf("Handle failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
@@ -191,6 +192,10 @@ void mainCRTStartup(void){
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
+  union {float value;DWORD bits;} miter;
+  CHECK(GetMiterLimit(savedDC,&miter.value)&&miter.bits==0x41200000);
+  CHECK(SetMiterLimit(savedDC,2.5f,&miter.value)&&miter.bits==0x41200000&&GetMiterLimit(savedDC,&miter.value)&&miter.bits==0x40200000);
+  CHECK(!SetMiterLimit(savedDC,0.5f,NULL)&&GetLastError()==87);
   POINT shapePoints[3]={{1,1},{9,1},{5,9}};
   POINT curvePoints[4]={{1,1},{3,9},{7,9},{9,1}};BYTE curveTypes[4]={6,4,4,5};
   CHECK(PolyDraw(savedDC,curvePoints,curveTypes,4)&&GetCurrentPositionEx(savedDC,&savedPosition)&&savedPosition.x==9&&savedPosition.y==1);

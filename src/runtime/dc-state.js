@@ -1,8 +1,18 @@
 import {checkBuffer} from './files.js';
 import {RuntimeFault} from './errors.js';
-const fields=['polyFillMode','textColor','background','bkMode','x','y','pen','brush','font','fontSize','align','dcPenColor','dcBrushColor'];
+const fields=['miterLimitBits','polyFillMode','textColor','background','bkMode','x','y','pen','brush','font','fontSize','align','dcPenColor','dcBrushColor'];
 export function installDCState(gui){
   const api=gui.api,m=gui.m,g=(name,n,fn)=>api.add('gdi32.dll',name,n,fn);
+  g('GetMiterLimit',2,(handle,out)=>{
+    const dc=gui.dc(handle);if(!dc)return api.fail(87);if(!out)return 0;
+    checkBuffer(m,out,4);m.w32(out,dc.miterLimitBits);return 1;
+  });
+  g('SetMiterLimit',3,(handle,bits,out)=>{
+    const dc=gui.dc(handle);if(!dc)return api.fail(6);
+    const view=new DataView(new ArrayBuffer(4));view.setUint32(0,bits,true);
+    if(view.getFloat32(0,true)<1)return api.fail(87);
+    if(out){checkBuffer(m,out,4);m.w32(out,dc.miterLimitBits);}dc.miterLimitBits=bits>>>0;return 1;
+  });
   for(const [kind,field] of [['Pen','dcPenColor'],['Brush','dcBrushColor']]){
     g('GetDC'+kind+'Color',1,handle=>{const dc=gui.dc(handle);return dc?dc[field]:api.fail(87,0xffffffff);});
     g('SetDC'+kind+'Color',2,(handle,color)=>{const dc=gui.dc(handle);if(!dc)return api.fail(87,0xffffffff);const old=dc[field];dc[field]=color>>>0;return old;});

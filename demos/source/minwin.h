@@ -31,6 +31,8 @@ API BOOL WINAPI PolyPolyline(HDC,const void*,const DWORD*,DWORD);
 API BOOL WINAPI PolyPolygon(HDC,const void*,const int*,int);
 API int WINAPI GetPolyFillMode(HDC);
 API int WINAPI SetPolyFillMode(HDC,int);
+API BOOL WINAPI GetMiterLimit(HDC,float*);
+API BOOL WINAPI SetMiterLimit(HDC,float,float*);
 API int WINAPI SaveDC(HDC);
 API DWORD WINAPI GetTextColor(HDC);
 API DWORD WINAPI GetBkColor(HDC);

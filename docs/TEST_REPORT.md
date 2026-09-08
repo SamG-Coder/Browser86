@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## GDI miter-limit state extension - 2026-09-08
+
+**240 Node tests passed, 0 failed, 0 skipped.** Two new tests cover defaults, float32 bit preservation, previous-value output, independent DCs, save/restore, NaN/infinity, invalid limits and atomic output validation. The rebuilt HandleObjects.exe imports GetMiterLimit and SetMiterLimit with a genuine float parameter and checks the output bits. The fixture supplies LLVM's required _fltused marker. The catalog contains 518 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The rebuilt fixture ran in the actual worker; persistence/reload/deletion/backup checks passed. Evidence: [Node TAP](test-artifacts/miter-limit-tests.tap) and [browser report](test-artifacts/miter-limit-browser-report.json).
+
+Native ctypes probes used an owned memory DC, deleted in finally, to verify defaults, invalid limits, NaN/infinity acceptance, optional output and invalid DC errors. No guest executable ran on the host. Microsoft [SetMiterLimit](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-setmiterlimit) and [GetMiterLimit](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getmiterlimit) define the state contract and geometric-line use. Rendering integration is deferred until geometric miter-join pens are supported; this stage does not claim visible miter-limit effects.
+
 ## PolyDraw mixed line and curve extension - 2026-09-08
 
 **238 Node tests passed, 0 failed, 0 skipped.** Three new tests cover native point-type sequences and final positions, combined move/line/curve/closure commands, selected pen color, copied inputs, malformed groups and atomic input validation. HandleObjects.exe imports PolyDraw and checks a closed cubic figure, endpoint position and malformed group error through x86 calls. The catalog contains 516 entries.

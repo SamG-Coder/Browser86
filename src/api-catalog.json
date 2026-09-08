@@ -197,6 +197,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "GetMiterLimit",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetObjectA",
     "argc": 3,
     "cdecl": false,
@@ -395,6 +402,13 @@
     "dll": "gdi32.dll",
     "name": "SetDIBitsToDevice",
     "argc": 12,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "SetMiterLimit",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },

@@ -126,6 +126,8 @@ PolyBezier and PolyBezierTo draw unfilled cubic curves with the selected pen. Po
 
 PolyDraw supports PT_MOVETO, PT_LINETO, PT_BEZIERTO triples and PT_CLOSEFIGURE on line/curve endpoints, emitting an unfilled mixed path with the selected pen. All point/type data and groups are validated before drawing or changing current position. Native-probed closure behavior retains the supplied endpoint as current position, despite the documentation describing the closing-line endpoint. GDI path recording via BeginPath/EndPath, transforms, clipping and native rasterization remain unfinished.
 
+GetMiterLimit and SetMiterLimit store a per-DC float32 value with default 10.0, previous-value output and SaveDC/RestoreDC support. Values below 1 fail; native-accepted NaN and positive infinity are preserved. Optional setter output, null getter output and invalid-handle errors follow native probes. These state APIs do not yet affect rendering: native miter limits apply to geometric miter-join pens, and ExtCreatePen/geometric pen rendering remains unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
