@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Wide built-in dash pen compatibility - 2026-09-08
+
+**249 Node tests passed, 0 failed, 0 skipped.** Twenty native reference cases cover four built-in dash styles across five signed widths. Both CreatePen and CreatePenIndirect preserve the requested LOGPEN style, normalize width, realize solid strokes, retain last error and support object selection, querying and deletion. Tests also cover short output buffers and explicit unsupported thin/inside-frame cases. The rebuilt HandleObjects.exe exercises both imported constructors and GetObjectA/W. The catalog remains at 519 entries.
+
+**Twenty-one real-canvas checks passed in Edge 152.0.4191.66**, including contiguous solid spans for each wide dash style. **Eight real-origin browser checks passed with no page errors.** Evidence: [Node TAP](test-artifacts/wide-pen-tests.tap), [canvas report](test-artifacts/wide-pen-canvas-report.json), [browser report](test-artifacts/wide-pen-browser-report.json), and [native vectors](../tests/wide-pen-vectors.json).
+
+The reproducible native probe uses an owned offscreen bitmap and releases its GDI resources. No guest executable runs on the host. Microsoft documents wide dash pens realizing as solid in [CreatePen](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createpen); native queries additionally establish that LOGPEN retains the original style. Thin dash/background behavior, ExtCreatePen built-in patterns and native pixel-exact edges remain unfinished.
+
 ## Extended null-pen compatibility - 2026-09-08
 
 **247 Node tests passed, 0 failed, 0 skipped.** Two new tests cover shared stock-handle identity, ignored width/brush/cap/join fields, ordinary object type/description, invisible draw commands, current-position updates and invalid style-array arguments. The rebuilt HandleObjects.exe imports ExtCreatePen with PS_NULL and checks its stock handle and object type. The catalog remains at 519 entries.

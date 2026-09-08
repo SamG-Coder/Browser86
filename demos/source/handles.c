@@ -234,6 +234,12 @@ void mainCRTStartup(void){
   CHECK(SaveDC(savedDC)==1&&SetDCPenColor(savedDC,7)==0x123456&&SetDCBrushColor(savedDC,8)==0xabcdef);
   CHECK(RestoreDC(savedDC,-1)&&GetDCPenColor(savedDC)==0x123456&&GetDCBrushColor(savedDC)==0xabcdef);
   DWORD penDescription[4],brushDescription[3];
+  for(int style=1;style<=4;style++){
+    HANDLE widePen=CreatePen(style,-3,0x123456);CHECK(widePen&&GetObjectW(widePen,16,penDescription)==16&&penDescription[0]==(DWORD)style&&penDescription[1]==3);
+    CHECK(DeleteObject(widePen));
+    DWORD wideData[4]={(DWORD)style,2,99,0x123456};widePen=CreatePenIndirect(wideData);
+    CHECK(widePen&&GetObjectA(widePen,16,penDescription)==16&&penDescription[0]==(DWORD)style&&penDescription[1]==2&&penDescription[2]==0);CHECK(DeleteObject(widePen));
+  }
   DWORD indirectPenData[4]={0,(DWORD)-3,99,0x123456},indirectBrushData[3]={1,0xabcdef,99};
   HANDLE indirectPen=CreatePenIndirect(indirectPenData),indirectBrush=CreateBrushIndirect(indirectBrushData);
   CHECK(indirectPen&&indirectBrush&&GetObjectW(indirectPen,16,penDescription)==16&&penDescription[1]==3&&penDescription[2]==0&&penDescription[3]==0x123456);
