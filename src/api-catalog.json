@@ -631,6 +631,13 @@
   },
   {
     "dll": "gdiplus.dll",
+    "name": "GdipCloneBrush",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
     "name": "GdipCloneImage",
     "argc": 2,
     "cdecl": false,
@@ -652,6 +659,90 @@
   },
   {
     "dll": "gdiplus.dll",
+    "name": "GdipCreateFont",
+    "argc": 5,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipCreateFontFamilyFromName",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipCreateFromHDC",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipCreateMatrix",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipCreateRegion",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipCreateSolidFill",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipDeleteBrush",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipDeleteFont",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipDeleteFontFamily",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipDeleteGraphics",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipDeleteMatrix",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipDeleteRegion",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
     "name": "GdipDisposeImage",
     "argc": 1,
     "cdecl": false,
@@ -659,8 +750,50 @@
   },
   {
     "dll": "gdiplus.dll",
+    "name": "GdipDrawImage",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipDrawImagePointRectI",
+    "argc": 9,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipDrawString",
+    "argc": 7,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipFillRectangleI",
+    "argc": 6,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
     "name": "GdipFree",
     "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipGetClip",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipGetWorldTransform",
+    "argc": 2,
     "cdecl": false,
     "data": false
   },
@@ -680,8 +813,50 @@
   },
   {
     "dll": "gdiplus.dll",
+    "name": "GdipScaleWorldTransform",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipSetClipRectI",
+    "argc": 6,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipSetClipRegion",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
     "name": "GdipSetImagePalette",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipSetInterpolationMode",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipSetWorldTransform",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipTranslateWorldTransform",
+    "argc": 4,
     "cdecl": false,
     "data": false
   },
@@ -3930,6 +4105,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetKeyboardState",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "GetKeyState",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetMenu",
     "argc": 1,
     "cdecl": false,
@@ -4176,6 +4365,20 @@
   {
     "dll": "user32.dll",
     "name": "KillTimer",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "LoadAcceleratorsA",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "LoadAcceleratorsW",
     "argc": 2,
     "cdecl": false,
     "data": false
@@ -4575,6 +4778,20 @@
   {
     "dll": "user32.dll",
     "name": "SubtractRect",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "TranslateAcceleratorA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "TranslateAcceleratorW",
     "argc": 3,
     "cdecl": false,
     "data": false

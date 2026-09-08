@@ -1,0 +1,34 @@
+import {requireThat} from './errors.js';
+import {bitmapPixels} from './gdiplus-bitmap.js';
+const identity=()=>[1,0,0,1,0,0];
+export const multiplyMatrix=(a,b)=>[a[0]*b[0]+a[2]*b[1],a[1]*b[0]+a[3]*b[1],a[0]*b[2]+a[2]*b[3],a[1]*b[2]+a[3]*b[3],a[0]*b[4]+a[2]*b[5]+a[4],a[1]*b[4]+a[3]*b[5]+a[5]];
+const point=(matrix,[x,y])=>[matrix[0]*x+matrix[2]*y+matrix[4],matrix[1]*x+matrix[3]*y+matrix[5]];
+const inverse=a=>{const d=a[0]*a[3]-a[1]*a[2];if(!d)return null;return [a[3]/d,-a[1]/d,-a[2]/d,a[0]/d,(a[2]*a[5]-a[3]*a[4])/d,(a[1]*a[4]-a[0]*a[5])/d];};
+const float=bits=>{const v=new DataView(new ArrayBuffer(4));v.setUint32(0,bits,true);return v.getFloat32(0,true);};
+export function installGDIPlusGraphics(api){
+  const p=api.p,m=api.m,gui=api.gui,g=(n,a,f)=>api.add('gdiplus.dll',n,a,f),object=(h,kind)=>p.object(h,'gdiplus-'+kind);
+  const create=(out,kind,data)=>{if(!out)return 2;m.w32(out,p.handle('gdiplus-'+kind,data));return 0;};
+  g('GdipCreateFromHDC',2,(hdc,out)=>gui.dc(hdc)?create(out,'graphics',{hdc,matrix:identity(),clip:null,smoothing:true}):2);
+  for(const kind of ['Graphics','Matrix','Region','Brush','Font','FontFamily'])g('GdipDelete'+kind,1,h=>{if(!object(h,kind.toLowerCase()))return 2;p.releaseHandle(h);return 0;});
+  g('GdipCreateMatrix',1,out=>create(out,'matrix',{values:identity()}));
+  g('GdipGetWorldTransform',2,(h,matrix)=>{const graphics=object(h,'graphics'),target=object(matrix,'matrix');if(!graphics||!target)return 2;target.values=[...graphics.matrix];return 0;});
+  g('GdipSetWorldTransform',2,(h,matrix)=>{const graphics=object(h,'graphics'),source=object(matrix,'matrix');if(!graphics||!source)return 2;graphics.matrix=[...source.values];return 0;});
+  for(const scale of [false,true])g('Gdip'+(scale?'Scale':'Translate')+'WorldTransform',4,(h,x,y,order)=>{const graphics=object(h,'graphics');x=float(x);y=float(y);if(!graphics||!Number.isFinite(x)||!Number.isFinite(y)||order>1)return 2;const next=scale?[x,0,0,y,0,0]:[1,0,0,1,x,y];graphics.matrix=order?multiplyMatrix(next,graphics.matrix):multiplyMatrix(graphics.matrix,next);return 0;});
+  g('GdipSetInterpolationMode',2,(h,mode)=>{const graphics=object(h,'graphics');if(!graphics||mode>7)return 2;graphics.smoothing=mode!==5;return 0;});
+  g('GdipCreateRegion',1,out=>create(out,'region',{polygons:null}));
+  g('GdipGetClip',2,(h,region)=>{const graphics=object(h,'graphics'),target=object(region,'region');if(!graphics||!target)return 2;const inv=inverse(graphics.matrix);if(!inv)return 2;target.polygons=graphics.clip?.map(poly=>poly.map(v=>point(inv,v)))??null;return 0;});
+  const setClip=(graphics,polygons,mode)=>{requireThat(mode===0||mode===1,'GDIPLUS_CLIP','Only replacement and intersection clipping are implemented.');if(mode===0)graphics.clip=polygons;else if(polygons)graphics.clip=[...(graphics.clip||[]),...polygons];return 0;};
+  g('GdipSetClipRectI',6,(h,x,y,width,height,mode)=>{const graphics=object(h,'graphics');if(!graphics)return 2;x|=0;y|=0;width|=0;height|=0;const polygon=[[x,y],[x+width,y],[x+width,y+height],[x,y+height]].map(v=>point(graphics.matrix,v));return setClip(graphics,[polygon],mode);});
+  g('GdipSetClipRegion',3,(h,region,mode)=>{const graphics=object(h,'graphics'),source=object(region,'region');if(!graphics||!source)return 2;return setClip(graphics,source.polygons?.map(poly=>poly.map(v=>point(graphics.matrix,v)))??null,mode);});
+  const draw=(graphics,command)=>{gui.draw(graphics.hdc,{...command,transform:[...graphics.matrix],gdipClip:graphics.clip?structuredClone(graphics.clip):null});return 0;};
+  const image=(h,bitmap,x,y,sx,sy,width,height)=>{const graphics=object(h,'graphics'),source=object(bitmap,'image');if(!graphics||!source)return 2;return draw(graphics,{op:'pixels',x,y,width:width??source.width,height:height??source.height,sourceX:sx,sourceY:sy,sourceWidth:width??source.width,sourceHeight:height??source.height,pixelWidth:source.width,pixelHeight:source.height,rgba:bitmapPixels(m,source),smoothing:graphics.smoothing});};
+  g('GdipDrawImage',4,(h,bitmap,x,y)=>image(h,bitmap,float(x),float(y),0,0));
+  g('GdipDrawImagePointRectI',9,(h,bitmap,x,y,sx,sy,width,height,unit)=>{requireThat(unit===2,'GDIPLUS_UNIT','Only pixel source units are implemented.');return image(h,bitmap,x|0,y|0,sx|0,sy|0,width|0,height|0);});
+  g('GdipCreateSolidFill',2,(color,out)=>create(out,'brush',{color}));
+  g('GdipCloneBrush',2,(h,out)=>{const source=object(h,'brush');return source?create(out,'brush',{color:source.color}):2;});
+  const color=argb=>({color:((argb&255)<<16)|(argb&0xff00)|((argb>>>16)&255),opacity:(argb>>>24)/255});
+  g('GdipFillRectangleI',6,(h,brush,x,y,width,height)=>{const graphics=object(h,'graphics'),fill=object(brush,'brush');return graphics&&fill?draw(graphics,{op:'fill',x:x|0,y:y|0,width:width|0,height:height|0,...color(fill.color)}):2;});
+  g('GdipCreateFontFamilyFromName',3,(name,collection,out)=>{requireThat(!collection,'GDIPLUS_FONT','Private font collections are not implemented.');return name?create(out,'fontfamily',{name:m.wstr(name)}):2;});
+  g('GdipCreateFont',5,(family,size,style,unit,out)=>{const source=object(family,'fontfamily');size=float(size);if(!source||!Number.isFinite(size)||size<=0)return 2;requireThat(unit===2||unit===3,'GDIPLUS_FONT','Only pixel and point font sizes are implemented.');return create(out,'font',{name:source.name,height:size*(unit===3?96/72:1),style});});
+  g('GdipDrawString',7,(h,text,length,font,rect,format,brush)=>{const graphics=object(h,'graphics'),face=object(font,'font'),fill=object(brush,'brush');if(!graphics||!face||!fill||!text||!rect)return 2;requireThat(!format&&!(face.style&~1),'GDIPLUS_TEXT','Only default string layout and regular/bold text are implemented.');const value=length===0xffffffff?m.wstr(text):Array.from({length:Math.min(length,0x100000)},(_,i)=>String.fromCharCode(m.u16(text+i*2))).join(''),x=float(m.u32(rect)),y=float(m.u32(rect+4)),width=float(m.u32(rect+8)),height=float(m.u32(rect+12));if(![x,y,width,height].every(Number.isFinite))return 2;p.note('GDI+ text uses approximate browser font metrics.');let offset=0;for(const line of value.split('\n')){if(offset+face.height>height)break;draw(graphics,{op:'text',x,y:y+offset,text:line,font:{height:face.height,face:face.name,weight:face.style&1?700:400},maxWidth:width,align:0,...color(fill.color)});offset+=face.height*1.2;}return 0;});
+}

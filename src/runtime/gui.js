@@ -1,6 +1,7 @@
 import {installCursors,defaultSetCursor} from './cursors.js';
 import {installMenus} from './menus.js';
 import {paintControl} from './control-paint.js';
+import {installAccelerators} from './accelerators.js';
 import {installWindowWord} from './window-word.js';
 import {installDialogIntegers} from './dialog-integers.js';
 import {dialogCode} from './dialog-code.js';
@@ -124,6 +125,7 @@ export class GUI {
     return descendants(false,()=>nonclientOnly?children():notify(WM_DESTROY,children));
   }
   input(event){const p=this.p,w=this.window(event.hwnd);if(!w)return;
+    if(event.kind==='key'){const code=event.code&255;event.down?this.keys.add(code):this.keys.delete(code);for(const [property,key]of [['shiftKey',16],['ctrlKey',17],['altKey',18]])if(event[property]!==undefined)event[property]?this.keys.add(key):this.keys.delete(key);}
     if(event.kind==='mouse'&&w.menu&&this.menuMouse(w,event))return;
     if(event.kind==='menu'||event.kind==='menu-open'){this.menuInput(event);return;}
     if(event.kind==='close')p.postMessage(w.hwnd,WM_CLOSE);
@@ -134,6 +136,7 @@ export class GUI {
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
     installMenus(this);
+    installAccelerators(this);
     installDialogIntegers(this);
     installRadioChecks(this);
     u('CheckDlgButton',3,(h,id,state)=>{const child=this.dialogItem(h,id);return child?this.send(child,0xf1,state,0,true,()=>1):0;});
@@ -210,7 +213,7 @@ export class GUI {
     }
     u('TranslateMessage',1,address=>{const msg=this.readMsg(address);if(msg.message===0x100){const char=this.keyChars.get(msg.wParam);if(char){for(const c of char)p.postMessage(msg.hwnd,0x102,c.charCodeAt(0),msg.lParam);return 1;}}return 0;});
     u('PostQuitMessage',1,code=>{p.postMessage(0,WM_QUIT,code,0);return 0;});u('DestroyWindow',1,h=>this.destroy(h));
-    u('ShowWindow',2,(h,command)=>{const w=this.window(h);if(!w)return 0;const old=w.visible;w.visible=command!==0;w.style=(w.visible?w.style|0x10000000:w.style&~0x10000000)>>>0;this.notify(w);if(w.visible){this.queuePaint(w);p.postMessage(h,WM_SIZE,0,(w.width|(w.height<<16))>>>0);}return old?1:0;});
+    u('ShowWindow',2,(h,command)=>{const w=this.window(h);if(!w)return 0;const old=w.visible;w.visible=command!==0;w.style=(w.visible?w.style|0x10000000:w.style&~0x10000000)>>>0;this.notify(w);if(w.visible)return this.send(h,WM_SIZE,0,(w.width|(w.height<<16))>>>0,w.wide,()=>{if(this.window(h))this.queuePaint(w);return old?1:0;});return old?1:0;});
     u('UpdateWindow',1,h=>{const w=this.window(h);if(!w)return 0;w.paintPending=false;p.messageQueue=p.messageQueue.filter(msg=>!(msg.hwnd===h&&msg.message===WM_PAINT));return w.proc?p.call(w.proc,[h,WM_PAINT,0,0],()=>1):1;});
     u('InvalidateRect',3,(h,rect,erase)=>{const w=this.window(h);if(!w)return 0;this.queuePaint(w);return 1;});u('ValidateRect',2,(h,rect)=>{const w=this.window(h);if(!w)return 0;w.paintPending=false;p.messageQueue=p.messageQueue.filter(msg=>!(msg.hwnd===h&&msg.message===WM_PAINT));return 1;});
     u('BeginPaint',2,(h,ps)=>{const w=this.window(h);if(!w)return 0;m.fill(ps,64);m.w32(ps,w.dc);m.w32(ps+4,1);m.w32(ps+16,w.width);m.w32(ps+20,w.height);w.paintPending=false;return w.dc;});u('EndPaint',2,(h,ps)=>this.window(h)?1:0);
