@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Class procedure replacement - 2026-09-08
+
+**385 Node tests passed, 0 failed, 0 skipped.** SetClassLongA/W now supports GCL_WNDPROC replacement in the class procedure encoding. Tests cover existing/future windows, restoration, procedure queries, per-window subclass independence, previous values, null replacement, invalid HWNDs and cross-encoding rejection without mutation. The rebuilt HandleObjects.exe replaces the ANSI class procedure, creates a window, verifies different message results for existing/new windows, restores the class and verifies the new window still uses its replacement. Catalog remains 580 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-procedure-tests.tap), [browser report](test-artifacts/class-procedure-browser-report.json).
+
+Native private A/W class probes used SetClassLongPtr on the 64-bit host. Existing windows returned 11 and newly created replacement windows returned 22; restoring the class left the replacement window returning 22. Null replacement returned the prior procedure and preserved last error; it was restored before further window creation. All owned windows/classes were cleaned up. Reference: [Microsoft SetClassLongW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclasslongw). Cross-encoding procedure thunks, built-in classes and creation with a null class procedure remain unfinished/unverified.
+
 ## Class registration structure validation - 2026-09-08
 
 **381 Node tests passed, 0 failed, 0 skipped.** RegisterClass/ExA/W validates signed extra-storage counts and readable structures before consuming atoms. RegisterClassEx requires the exact x86 cbSize of 48. Tests cover all A/W/Ex variants, negative values, under/oversized headers, truncated memory, unchanged registry state, corrected retry and accepted 40/41/256-byte areas. The rebuilt HandleObjects.exe imports RegisterClassExA/W and checks invalid sizes/counts followed by successful registration and cleanup. Catalog remains 580 entries.

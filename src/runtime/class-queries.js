@@ -20,6 +20,7 @@ export function installClassQueries(gui){
   index|=0;value>>>=0;
   if(index>=0){if(index+4>cls.classExtra)return api.fail(1413);const old=extraLong(cls,index);cls.extraBytes??=new Map();for(let i=0;i<4;i++)cls.extraBytes.set(index+i,(value>>>(i*8))&255);return old;}
   if(index===-10){const old=cls.background;cls.background=value;return old;}
+  if(index===-24){if((suffix==='W')!==cls.wide)throw new RuntimeFault('UNSUPPORTED_GUI','Cross-encoding class procedure thunks are not implemented.');const old=cls.proc;cls.proc=value;return old;}
   if(fields.has(index)||index===-24||index===-8)throw new RuntimeFault('UNSUPPORTED_GUI','This class metadata mutation is not implemented.');
   return api.fail(1413);
  });

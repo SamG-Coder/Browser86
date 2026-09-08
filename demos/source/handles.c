@@ -6,6 +6,7 @@ unsigned long __readfsdword(unsigned long);
 static HWND lifetimeWindows[4];
 static DWORD creationWide,creationCount,textMessageCount;
 static long WINAPI encodingProc(HWND h,DWORD msg,DWORD wp,long lp){
+  if(msg==0x401)return 11;
   if(msg==14)return 7;
   if(msg==13){
     WORD text[]={'C','a','f',233,' ',256,0};DWORD length=creationWide?6:4,count=wp?(length<wp-1?length:wp-1):0;
@@ -25,6 +26,7 @@ static long WINAPI encodingProc(HWND h,DWORD msg,DWORD wp,long lp){
   }
   return msg==129?1:0;
 }
+static long WINAPI replacementClassProc(HWND h,DWORD msg,DWORD wp,long lp){if(msg==0x401)return 22;return encodingProc(h,msg,wp,lp);}
 static DWORD focusCount,focusMessages[8];
 static HWND focusObserved[8],focusOther[8];
 static DWORD lifetimeLog[8],lifetimeCount,enableLog[5],enableState[5],enableCount;
@@ -75,6 +77,9 @@ void mainCRTStartup(void){
   SetLastError(1234);CHECK(!SetWindowLongA(encodingWindow,5,0));CHECK(GetLastError()==1413);
   HANDLE replacementClassBrush=CreateSolidBrush(0xabcdef);CHECK(SetClassLongW(encodingWindow,-10,(long)replacementClassBrush)==(DWORD)encodingA.brush);CHECK(GetObjectType(encodingA.brush)==2);
   CHECK(SetClassLongA(encodingWindow,-10,(long)encodingA.brush)==(DWORD)replacementClassBrush);CHECK(DeleteObject(replacementClassBrush));
+  CHECK(SetClassLongA(encodingWindow,-24,(long)replacementClassProc)==(DWORD)encodingProc);
+  HWND subclassWindow=CreateWindowExW(0,aName,wTitle,0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(subclassWindow);CHECK(SendMessageA(encodingWindow,0x401,0,0)==11);CHECK(SendMessageA(subclassWindow,0x401,0,0)==22);
+  CHECK(SetClassLongA(encodingWindow,-24,(long)encodingProc)==(DWORD)replacementClassProc);CHECK(SendMessageA(subclassWindow,0x401,0,0)==22);CHECK(DestroyWindow(subclassWindow));
   CHECK(DefWindowProcA(encodingWindow,20,(DWORD)GetDC(encodingWindow),0)==1);
   SetLastError(1234);CHECK(DefWindowProcA(encodingWindow,20,0,0)==1);CHECK(GetLastError()==6);
   readWide[2]=0x5858;CHECK(SendMessageW(encodingWindow,13,2,(long)readWide)==3);CHECK(readWide[0]=='C'&&readWide[1]=='a'&&readWide[2]==0x5858);CHECK(DestroyWindow(encodingWindow));
