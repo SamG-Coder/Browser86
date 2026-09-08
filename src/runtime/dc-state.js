@@ -40,7 +40,7 @@ export function installDCState(gui){
     if(!handle)return api.fail(6);
     if(gui.dc(handle))return 3;
     if(gui.p.object(handle,'gdi')?.extended)return 11;
-    return {pen:1,brush:2,font:6}[gui.p.object(handle,'gdi')?.kind]??0;
+    return {pen:1,brush:2,font:6,region:8}[gui.p.object(handle,'gdi')?.kind]??0;
   });
   g('SaveDC',1,handle=>{
     const dc=gui.dc(handle);if(!dc)return api.fail(6);

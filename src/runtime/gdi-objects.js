@@ -35,6 +35,7 @@ export function installGDIObjects(gui){
   });
   for(const suffix of ['A','W'])gui.api.add('gdi32.dll','GetObject'+suffix,3,(handle,count,out)=>{
     const object=gui.p.object(handle,'gdi');if(!object)return 0;
+    if(object.kind==='region')return gui.api.fail(6);
     if(object.kind==='font')return getFontObject(gui,object,suffix==='W',count,out);
     if(object.extended){
       const dash=object.dash||[],size=24+4*dash.length;if(!out)return size;if((count>>>0)<size||(out&3))return 0;

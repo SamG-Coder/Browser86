@@ -140,6 +140,8 @@ GetBrushOrgEx and SetBrushOrgEx maintain a per-DC signed device-coordinate brush
 
 GetSysColorBrush returns cached solid-brush handles for indices 0 through 30, using the same fixed color profile as GetSysColor. Brushes support selection, saved DC state, LOGBRUSH queries and drawing; DeleteObject succeeds without releasing system-owned brushes. Unsupported indices return zero without changing last error, and GetSysColor now also returns zero outside the supported range. The profile is synthetic and does not follow host themes; SetSysColors and dynamic color notifications are not implemented.
 
+Rectangular regions support CreateRectRgn, CreateRectRgnIndirect, SetRectRgn, GetRgnBox, PtInRegion, EqualRgn and OffsetRgn. Reversed corners normalize; zero-width/height regions are canonical empty regions. Point containment includes left/top and excludes right/bottom. Creation and offsets use the native-probed coordinate interval [-134217728,134217727]; SetRectRgn retains full signed 32-bit values. Regions report OBJ_REGION and use DeleteObject; GetObjectA/W fail as on Windows. Guest input/output buffers are fully validated. Complex/combined regions, RectInRegion and region clipping/drawing remain unfinished; SelectObject with a region explicitly faults.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

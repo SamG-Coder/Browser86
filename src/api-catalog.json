@@ -127,6 +127,20 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "CreateRectRgn",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "CreateRectRgnIndirect",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "CreateSolidBrush",
     "argc": 1,
     "cdecl": false,
@@ -143,6 +157,13 @@
     "dll": "gdi32.dll",
     "name": "Ellipse",
     "argc": 5,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "EqualRgn",
+    "argc": 2,
     "cdecl": false,
     "data": false
   },
@@ -246,6 +267,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "GetRgnBox",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetStockObject",
     "argc": 1,
     "cdecl": false,
@@ -290,6 +318,13 @@
     "dll": "gdi32.dll",
     "name": "MoveToEx",
     "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "OffsetRgn",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },
@@ -346,6 +381,13 @@
     "dll": "gdi32.dll",
     "name": "PolyPolyline",
     "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "PtInRegion",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },
@@ -444,6 +486,13 @@
     "dll": "gdi32.dll",
     "name": "SetPolyFillMode",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "SetRectRgn",
+    "argc": 5,
     "cdecl": false,
     "data": false
   },

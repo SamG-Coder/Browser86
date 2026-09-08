@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Rectangular GDI regions - 2026-09-08
+
+**258 Node tests passed, 0 failed, 0 skipped.** Three new tests exercise seven region APIs: CreateRectRgn, CreateRectRgnIndirect, SetRectRgn, GetRgnBox, PtInRegion, EqualRgn and OffsetRgn. Coverage includes reversed corners, canonical empty regions, point boundaries, copied inputs, coordinate limits, atomic offset failures, object types/deletion, invalid handles and complete buffer validation. The rebuilt HandleObjects.exe imports all seven functions and verifies their behavior in the x86 interpreter. The catalog contains 529 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors**, including the rebuilt compiled fixture, persistence and backup. Evidence: [Node TAP](test-artifacts/rect-region-tests.tap), [browser report](test-artifacts/rect-region-browser-report.json).
+
+Native ctypes probes verified normalization, left/top-inclusive and right/bottom-exclusive point tests, zero empty bounds, last-error differences, object query failures and coordinate limits. CreateRectRgn accepted [-134217728,134217727] and rejected adjacent values with error 87, while SetRectRgn retained full signed 32-bit coordinates. OffsetRgn rejected out-of-range results without mutation and preserved empty regions. Native region handles were released. No guest executable ran on the host. Reference: [CreateRectRgn](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createrectrgn); exact boundary behavior follows native probes. Complex regions, combination, RectInRegion and clipping/drawing remain unfinished. Region selection explicitly faults rather than reporting successful clipping.
+
 ## Cached system-color brushes - 2026-09-08
 
 **255 Node tests passed, 0 failed, 0 skipped.** Three new tests cover cached brushes for all 31 supported indices, solid LOGBRUSH descriptions matching GetSysColor, handle survival after DeleteObject, saved selections, FillRect/FrameRect/Rectangle commands and invalid indices without allocation or last-error changes. The rebuilt HandleObjects.exe imports GetSysColorBrush and GetSysColor and checks object type, descriptions, caching, deletion and invalid indices. The catalog contains 522 entries.
