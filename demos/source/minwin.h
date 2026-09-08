@@ -368,3 +368,5 @@ API DWORD WINAPI GetDlgItemInt(HWND,int,BOOL*,BOOL);
 
 API BOOL WINAPI CheckDlgButton(HWND,int,DWORD);
 API DWORD WINAPI IsDlgButtonChecked(HWND,int);
+
+API BOOL WINAPI CheckRadioButton(HWND,int,int,int);

@@ -14,3 +14,22 @@ export function buttonClick(gui,w,queued=false){
   if(queued){gui.p.postMessage(w.parent,0x111,w.id&65535,w.hwnd);return 0;}
   return gui.send(w.parent,0x111,w.id&65535,w.hwnd,w.wide,()=>0);
 }
+
+export function installRadioChecks(gui){
+  gui.api.add('user32.dll','CheckRadioButton',4,(parent,first,last,selected)=>{
+    if(!gui.window(parent))return gui.api.fail(1400);
+    first|=0;last|=0;selected|=0;
+    const children=[...gui.windows.values()].filter(w=>(w.style&0x40000000)&&w.parent===(parent>>>0)).map(w=>w.hwnd);
+    let index=0;
+    const advance=()=>{
+      while(index<children.length){
+        const w=gui.window(children[index++]);if(!w)continue;
+        const id=w.id|0;if(id<first||id>last)continue;
+        const result=gui.send(w.hwnd,0xf1,+(id===selected),0,true);
+        if(result?.call){const finish=value=>value?.call?{...value,then:reply=>finish(value.then(reply))}:advance();return finish(result);}
+      }
+      return 1;
+    };
+    return advance();
+  });
+}

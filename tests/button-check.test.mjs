@@ -21,3 +21,13 @@ test('BM_CLICK updates state before synchronous parent notification and preserve
 test('Browser click input toggles before queued command and suppresses disabled controls',()=>{
  const {p,u,create}=setup(),parent=create(0),child=create(6),w=p.apis.gui.window(child);w.parent=parent;w.id=42;for(const state of [1,2,0]){p.inputEvent({kind:'click',hwnd:child});assert.equal(w.checkState,state);const message=p.messageQueue.pop();assert.deepEqual([message.hwnd,message.message,message.wParam,message.lParam],[parent,0x111,42,child]);}w.enabled=false;p.inputEvent({kind:'click',hwnd:child});assert.equal(w.checkState,0);assert.equal(p.messageQueue.length,0);assert.equal(u('SendMessageW',child,0xf5,0,0),0);assert.equal(w.checkState,1);
 });
+
+test('CheckRadioButton changes only immediate children within inclusive signed ID range',()=>{
+ const {p,u,create}=setup(),parent=create(0),a=create(4),b=create(9),outside=create(4),grand=create(4),popup=create(4);for(const [h,id,owner,child]of [[a,-1,parent,true],[b,2,parent,true],[outside,3,parent,true],[grand,1,a,true],[popup,1,parent,false]]){const w=p.apis.gui.window(h);w.id=id;w.parent=owner;if(child)w.style|=0x40000000;u('SendMessageA',h,0xf1,1,0);}assert.equal(u('CheckRadioButton',parent,-1,2,2),1);assert.deepEqual([a,b,outside,grand,popup].map(h=>u('SendMessageA',h,0xf0,0,0)),[0,1,1,1,1]);assert.equal(u('CheckRadioButton',parent,-1,2,99),1);assert.equal(u('SendMessageA',b,0xf0,0,0),0);
+});
+test('CheckRadioButton synchronously visits custom controls and skips destroyed later children',()=>{
+ const {p,u,create}=setup(),parent=create(0),a=create(0),b=create(0);for(const [h,id]of [[a,1],[b,2]]){const w=p.apis.gui.window(h);w.id=id;w.parent=parent;w.style|=0x40000000;u('SetWindowLongW',h,-4,12345);}const first=u('CheckRadioButton',parent,1,2,2);assert.deepEqual(first.call.args,[a,0xf1,0,0]);const second=first.then(77);assert.deepEqual(second.call.args,[b,0xf1,1,0]);assert.equal(second.then(0),1);const again=u('CheckRadioButton',parent,1,2,1);u('SetWindowLongW',b,-4,0);u('DestroyWindow',b);assert.equal(again.then(0),1);assert.equal(p.messageQueue.length,0);
+});
+test('CheckRadioButton accepts empty and reversed ranges and rejects invalid parents',()=>{
+ const {p,u,create}=setup(),parent=create(0);for(const args of [[1,2,9],[2,1,1]]){p.setError(1234);assert.equal(u('CheckRadioButton',parent,...args),1);assert.equal(p.lastError,1234);}for(const h of [0,123]){assert.equal(u('CheckRadioButton',h,2,1,1),0);assert.equal(p.lastError,1400);}
+});

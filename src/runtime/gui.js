@@ -1,7 +1,7 @@
 import {installCursors,defaultSetCursor} from './cursors.js';
 import {installWindowWord} from './window-word.js';
 import {installDialogIntegers} from './dialog-integers.js';
-import {buttonCheck,buttonClick} from './button-check.js';
+import {buttonCheck,buttonClick,installRadioChecks} from './button-check.js';
 import {installClassQueries} from './class-queries.js';
 import {installWindowIdentity} from './window-identity.js';
 import {installWindowProperties,releaseWindowProperties} from './window-properties.js';
@@ -126,6 +126,7 @@ export class GUI {
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
     installDialogIntegers(this);
+    installRadioChecks(this);
     u('CheckDlgButton',3,(h,id,state)=>{const child=this.dialogItem(h,id);return child?this.send(child,0xf1,state,0,true,()=>1):0;});
     u('IsDlgButtonChecked',2,(h,id)=>{const child=this.dialogItem(h,id);return child?this.send(child,0xf0,0,0,true,result=>result>>>0):0;});
     u('SetDlgItemInt',4,(h,id,value,signed)=>{

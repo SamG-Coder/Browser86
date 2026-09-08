@@ -3294,6 +3294,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "CheckRadioButton",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "ClientToScreen",
     "argc": 2,
     "cdecl": false,

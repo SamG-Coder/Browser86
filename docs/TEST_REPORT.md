@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Radio selection by control ID range - 2026-09-08
+
+**491 Node tests passed, 0 failed, 0 skipped.** Added CheckRadioButton with inclusive signed-ID filtering, immediate-child scope and synchronous BM_SETCHECK callbacks. Tests cover built-in state, excluded grandchildren/owned popups, out-of-range selection, empty/reversed ranges, custom callback order/results, destroyed later children and invalid parent handles. Catalog now contains 603 entries, without implying full API parity.
+
+**Thirteen real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Rebuilt HandleObjects.exe imports CheckRadioButton and checks selection/clearing by ID range inside the browser worker. Evidence: [Node TAP](test-artifacts/check-radio-tests.tap), [browser report](test-artifacts/check-radio-browser-report.json).
+
+Native private A/W custom-control probes confirmed immediate-child-only dispatch, inclusion of non-radio controls, absent-selection clearing, success for reversed/empty ranges, preserved error 1234 on success and error 1400 for an invalid nonzero parent. Probe windows/classes were cleaned up. Reference: [Microsoft CheckRadioButton](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-checkradiobutton). Enumeration currently snapshots insertion order; native z-order changes and all callback-driven enumeration mutations remain unverified. Automatic radio grouping on click remains unfinished.
+
 ## Automatic checkbox activation - 2026-09-08
 
 **488 Node tests passed, 0 failed, 0 skipped.** Automatic checkboxes now alternate 0/1 and automatic three-state controls cycle 0/1/2 before parent notification. BM_CLICK dispatches synchronous WM_COMMAND/BN_CLICKED and preserves reentrant parent state changes; browser clicks update state before queuing commands. Tests cover manual styles, parameters, command IDs, callback results and disabled browser/programmatic differences. Catalog remains 602 entries.
