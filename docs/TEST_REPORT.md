@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## SBCS conversion extension — 2026-09-08
+
+**187 Node tests passed, 0 failed, 0 skipped.** Five new tests cover all-byte OEM round trips, ACP/thread/OEM aliases, native best-fit versus exact-only mappings, custom defaults, substitution reporting, surrogate code units, decomposition, glyph mode, signed lengths, size queries, short-buffer prefix behavior, invalid flags and output validation. The rebuilt HandleObjects.exe exercises Windows-1252 best-fit/exact conversion and an OEM 437 round trip through the existing conversion imports. The catalog remains at 476 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** Actual workers executed the updated fixture under the deployed CSP; IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/sbcs-tests.tap) and [browser report](test-artifacts/sbcs-browser-report.json).
+
+tools/build-sbcs-tables.py recorded all 256 byte decodings for eight flag modes and all 65,536 UTF-16 code-unit encodings for best-fit/exact modes on each of 1252 and 437. Tables are pinned to Windows 10.0.26200. Additional owned-buffer ctypes probes verified custom defaults, supplementary/unpaired surrogate replacement, flags and partial output on insufficient capacity. No guest executable ran on the host. Microsoft's [MultiByteToWideChar](https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-multibytetowidechar) and [WideCharToMultiByte](https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-widechartomultibyte) document conversion flags and default reporting. Wide-character composite checking remains explicitly unsupported; arbitrary code pages and all-version NLS parity are not certified.
+
 ## Code-page information extension — 2026-09-08
 
 **182 Node tests passed, 0 failed, 0 skipped.** Four new tests cover concrete IDs versus aliases, fixed ACP/OEM resolution, default characters, lead-byte ranges, ANSI/Unicode names, x86 field offsets, reserved flags, unsupported IDs and atomic output validation. The rebuilt HandleObjects.exe imports IsValidCodePage, GetCPInfo and GetCPInfoExA/W and verifies structure sizes 20/284/544 plus metadata and error results through the interpreter. The catalog contains 476 entries.

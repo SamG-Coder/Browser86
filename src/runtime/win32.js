@@ -16,7 +16,7 @@ import {installSRWLocks} from './srw-lock.js';
 import {installConditionVariables} from './condition-variable.js';
 import {installTimeConversions} from './time-conversion.js';
 import {installOrdinalComparison} from './ordinal.js';
-import {utf8ToWide,wideToUtf8} from './utf8.js';
+import {installCodePageConversions} from './sbcs.js';
 import {installCodePageInfo} from './code-page.js';
 const INVALID=0xFFFFFFFF;
 const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
@@ -114,8 +114,6 @@ export class Win32 {
     const systemInfo=out=>{m.fill(out,36);m.w16(out,0);m.w32(out+4,4096);m.w32(out+8,0x10000);m.w32(out+12,0x7FFEFFFF);m.w32(out+16,1);m.w32(out+20,1);m.w32(out+24,586);m.w32(out+28,65536);m.w16(out+32,5);return 0;};k('GetSystemInfo',1,systemInfo);k('GetNativeSystemInfo',1,systemInfo);
     k('GetVersion',0,()=>0x0A280105);k('IsDebuggerPresent',0,()=>0);k('CheckRemoteDebuggerPresent',2,(h,out)=>{if(!p.isCurrentProcess(h))return this.fail(6);m.w32(out,0);return 1;});k('IsProcessorFeaturePresent',1,()=>0);
     k('GetACP',0,()=>1252);k('GetOEMCP',0,()=>437);
-    k('MultiByteToWideChar',6,(cp,flags,src,count,out,capacity)=>{if(cp===65001)return utf8ToWide(this,flags,src,count,out,capacity);if(cp!==0&&cp!==1252&&cp!==65001)return this.fail(87);if(!count)return this.fail(87);const nullTerm=count===INVALID,data=nullTerm?(()=>{const s=m.cstr(src);return m.read(src,s.length+1);})():m.read(src,count);let text;try{text=cp===65001?new TextDecoder('utf-8',{fatal:!!(flags&8)}).decode(data):ansiDecode(data);}catch{return this.fail(1113);}if(!capacity)return text.length;if(capacity<text.length)return this.fail(122);for(let i=0;i<text.length;i++)m.w16(out+i*2,text.charCodeAt(i));return text.length;});
-    k('WideCharToMultiByte',8,(cp,flags,src,count,out,capacity,defaultChar,usedDefault)=>{if(cp===65001)return wideToUtf8(this,flags,src,count,out,capacity,defaultChar,usedDefault);if(cp!==0&&cp!==1252&&cp!==65001)return this.fail(87);if(!count)return this.fail(87);const text=count===INVALID?m.wstr(src)+'\0':Array.from({length:count},(_,i)=>String.fromCharCode(m.u16(src+i*2))).join('');const data=cp===65001?new TextEncoder().encode(text):ansiEncode(text);if(usedDefault)m.w32(usedDefault,0);if(!capacity)return data.length;if(capacity<data.length)return this.fail(122);m.write(out,data);return data.length;});
     installTLS(this);
     installInitOnce(this);
     installAddressWait(this);
@@ -126,6 +124,7 @@ export class Win32 {
     installTimeConversions(this);
     installOrdinalComparison(this);
     installCodePageInfo(this);
+    installCodePageConversions(this);
     k('InterlockedIncrement',1,a=>{const n=(m.u32(a)+1)>>>0;m.w32(a,n);return n;});k('InterlockedDecrement',1,a=>{const n=(m.u32(a)-1)>>>0;m.w32(a,n);return n;});k('InterlockedExchange',2,(a,value)=>{const old=m.u32(a);m.w32(a,value);return old;});k('InterlockedExchangeAdd',2,(a,value)=>{const old=m.u32(a);m.w32(a,old+value);return old;});k('InterlockedCompareExchange',3,(a,value,compare)=>{const old=m.u32(a);if(old===compare)m.w32(a,value);return old;});
     installSynchronization(this);
     k('SetUnhandledExceptionFilter',1,callback=>{const old=this.exceptionFilter||0;this.exceptionFilter=callback;p.note('An exception filter was registered, but guest SEH dispatch is not implemented. Faults stop with diagnostics.');return old;});

@@ -201,6 +201,11 @@ void mainCRTStartup(void){
   CHECK(MultiByteToWideChar(65001,8,utf8Bom,-1,decoded,8)==3&&decoded[0]==0xfeff&&decoded[1]=='A');
   CHECK(WideCharToMultiByte(65001,0x80,decoded,3,encoded,16,NULL,NULL)==5&&encoded[0]==(char)0xef);
   decoded[0]=0xd800;CHECK(!WideCharToMultiByte(65001,0x80,decoded,1,encoded,16,NULL,NULL)&&GetLastError()==1113);
+  BOOL usedFallback=0;WORD legacyText[]={0x221e,0};
+  CHECK(WideCharToMultiByte(1252,0,legacyText,1,encoded,16,NULL,&usedFallback)==1&&encoded[0]=='8'&&!usedFallback);
+  CHECK(WideCharToMultiByte(1252,0x400,legacyText,1,encoded,16,"!",&usedFallback)==1&&encoded[0]=='!'&&usedFallback);
+  CHECK(WideCharToMultiByte(437,0,legacyText,1,encoded,16,NULL,NULL)==1&&(BYTE)encoded[0]==0xec);
+  CHECK(MultiByteToWideChar(1,0,encoded,1,decoded,8)==1&&decoded[0]==0x221e);
   WORD ordinalA[]={'A',0,'x',0},ordinalB[]={'a',0,'y',0};
   CHECK(CompareStringOrdinal(ordinalA,-1,ordinalB,-1,1)==2);
   CHECK(CompareStringOrdinal(ordinalA,3,ordinalB,3,1)==1);
