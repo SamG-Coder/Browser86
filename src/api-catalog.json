@@ -281,6 +281,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "CompareFileTime",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "CopyFileA",
     "argc": 3,
     "cdecl": false,
@@ -465,6 +472,13 @@
     "dll": "kernel32.dll",
     "name": "ExpandEnvironmentStringsW",
     "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "FileTimeToSystemTime",
+    "argc": 2,
     "cdecl": false,
     "data": false
   },
@@ -1752,6 +1766,13 @@
   {
     "dll": "kernel32.dll",
     "name": "SleepEx",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "SystemTimeToFileTime",
     "argc": 2,
     "cdecl": false,
     "data": false

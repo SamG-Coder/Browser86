@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## UTC time conversion extension — 2026-09-08
+
+**162 Node tests passed, 0 failed, 0 skipped.** Four new tests cover native known-value vectors, 1601/1970 epochs, Gregorian leap dates, ignored input weekday, last-error preservation, asymmetric upper year limits, invalid fields, unchanged failure output, fractional-millisecond truncation, exact unsigned comparisons beyond 2^53, overlapping buffers and complete memory validation. HandleObjects.exe was rebuilt with FileTimeToSystemTime, SystemTimeToFileTime and CompareFileTime imports; the guest checks a leap-day round trip, signed comparison results and invalid-date rejection. The catalog contains 468 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The updated fixture executed in the actual runtime worker and existing CSP, IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/time-conversion-tests.tap) and [browser report](test-artifacts/time-conversion-browser-report.json).
+
+Native ctypes probes used scratch structures to verify success/failure values, untouched error outputs, sub-millisecond truncation, upper boundaries and unsigned comparisons. No guest executable ran on the host. Contracts were checked against Microsoft's [FileTimeToSystemTime](https://learn.microsoft.com/en-us/windows/win32/api/timezoneapi/nf-timezoneapi-filetimetosystemtime), [SystemTimeToFileTime](https://learn.microsoft.com/en-us/windows/win32/api/timezoneapi/nf-timezoneapi-systemtimetofiletime) and [CompareFileTime](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-comparefiletime) documentation. Time-zone/DST and DOS packed-date conversion APIs remain outside this implementation.
+
 ## Condition variable extension — 2026-09-08
 
 **158 Node tests passed, 0 failed, 0 skipped.** Five new tests cover zero-timeout lock reacquisition, CS and both SRW modes, wake-one/all, no retained wake signals, independent condition variables, process isolation, CPU suspension, delayed reacquisition after wake/timeout, invalid inputs and recursive CS rejection. HandleObjects.exe was rebuilt to import all five APIs and exercise timeout/reacquisition through real x86 calls. The catalog contains 465 entries.

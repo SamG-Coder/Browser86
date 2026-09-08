@@ -6,6 +6,10 @@
 #define NULL ((void*)0)
 typedef unsigned int DWORD;typedef int BOOL;typedef void* HANDLE;typedef HANDLE HWND;typedef HANDLE HDC;typedef unsigned short WORD;typedef unsigned char BYTE;
 typedef struct {DWORD low,high;} FILETIME;
+typedef struct {WORD year,month,weekday,day,hour,minute,second,millis;} SYSTEMTIME;
+API BOOL WINAPI FileTimeToSystemTime(const FILETIME*,SYSTEMTIME*);
+API BOOL WINAPI SystemTimeToFileTime(const SYSTEMTIME*,FILETIME*);
+API long WINAPI CompareFileTime(const FILETIME*,const FILETIME*);
 typedef struct {DWORD attributes;FILETIME creation,access,write;DWORD volume,sizeHigh,sizeLow,links,idHigh,idLow;} BY_HANDLE_FILE_INFORMATION;
 typedef struct {long long allocationSize,endOfFile;DWORD links;BYTE deletePending,directory;} FILE_STANDARD_INFO;
 typedef struct {unsigned long long volume;BYTE id[16];} FILE_ID_INFO;

@@ -184,6 +184,11 @@ void mainCRTStartup(void){
   InitializeSRWLock(&srw);CHECK(TryAcquireSRWLockShared(&srw));ReleaseSRWLockShared(&srw);
   CHECK(TryAcquireSRWLockExclusive(&srw));ReleaseSRWLockExclusive(&srw);
   DWORD condition=0;
+  SYSTEMTIME utc={2000,2,65535,29,23,59,59,999},converted;FILETIME stamp,epoch={0,0};
+  CHECK(SystemTimeToFileTime(&utc,&stamp));CHECK(FileTimeToSystemTime(&stamp,&converted));
+  CHECK(converted.year==2000&&converted.month==2&&converted.day==29&&converted.weekday==2&&converted.millis==999);
+  CHECK(CompareFileTime(&epoch,&stamp)==-1&&CompareFileTime(&stamp,&epoch)==1&&CompareFileTime(&stamp,&stamp)==0);
+  utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   InitializeConditionVariable(&condition);WakeConditionVariable(&condition);WakeAllConditionVariable(&condition);
   AcquireSRWLockExclusive(&srw);CHECK(!SleepConditionVariableSRW(&condition,&srw,0,0)&&GetLastError()==1460);ReleaseSRWLockExclusive(&srw);
   AcquireSRWLockShared(&srw);CHECK(!SleepConditionVariableSRW(&condition,&srw,0,1)&&GetLastError()==1460);ReleaseSRWLockShared(&srw);

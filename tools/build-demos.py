@@ -30,6 +30,7 @@ U={'RegisterClassA':1,'CreateWindowExA':12,'ShowWindow':2,'UpdateWindow':1,'GetM
 G={'TextOutA':5,'SetTextColor':2,'SetBkMode':2,'SetBkColor':2,'CreateSolidBrush':1,'CreatePen':3,'SelectObject':2,'DeleteObject':1,'GetStockObject':1,'Rectangle':5,'Ellipse':5,'MoveToEx':4,'LineTo':3,'StretchDIBits':13}
 C={'printf':1,'sprintf':2,'puts':1,'memset':3,'memcpy':3}
 S={'WaitOnAddress':4,'WakeByAddressSingle':1,'WakeByAddressAll':1}
+K.update({'FileTimeToSystemTime':2,'SystemTimeToFileTime':2,'CompareFileTime':2})
 K.update({'InitializeConditionVariable':1,'SleepConditionVariableCS':3,'SleepConditionVariableSRW':4,'WakeConditionVariable':1,'WakeAllConditionVariable':1})
 K.update({name:1 for name in ['InitializeSRWLock','AcquireSRWLockShared','AcquireSRWLockExclusive','TryAcquireSRWLockShared','TryAcquireSRWLockExclusive','ReleaseSRWLockShared','ReleaseSRWLockExclusive']})
 K.update({'SetEnvironmentVariableA':2,'GetEnvironmentVariableA':3,'ExpandEnvironmentStringsA':3,'GetEnvironmentStrings':0,'FreeEnvironmentStringsA':1,'GetEnvironmentStringsW':0,'FreeEnvironmentStringsW':1})
