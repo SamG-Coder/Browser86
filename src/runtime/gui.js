@@ -1,5 +1,6 @@
 import {installCursors,defaultSetCursor} from './cursors.js';
 import {installWindowWord} from './window-word.js';
+import {installDialogIntegers} from './dialog-integers.js';
 import {installClassQueries} from './class-queries.js';
 import {installWindowIdentity} from './window-identity.js';
 import {installWindowProperties,releaseWindowProperties} from './window-properties.js';
@@ -121,6 +122,7 @@ export class GUI {
     else if(event.kind==='key'){const code=event.code>>>0;this.keyChars.set(code,event.char||'');p.postMessage(w.hwnd,event.down?0x100:0x101,code,event.down?1:0xC0000001);}
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
+    installDialogIntegers(this);
     u('SetDlgItemInt',4,(h,id,value,signed)=>{
       const child=this.dialogItem(h,id);if(!child)return 0;
       const wide=this.window(child).wide,text=signed&&value>>>0===0x80000000?'-0':String(signed?value|0:value>>>0),buffer=p.heap.alloc((text.length+1)*(wide?2:1));

@@ -363,3 +363,5 @@ API DWORD WINAPI GetDlgItemTextA(HWND,int,char*,int);
 API DWORD WINAPI GetDlgItemTextW(HWND,int,WORD*,int);
 
 API BOOL WINAPI SetDlgItemInt(HWND,int,DWORD,BOOL);
+
+API DWORD WINAPI GetDlgItemInt(HWND,int,BOOL*,BOOL);

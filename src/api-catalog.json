@@ -3518,6 +3518,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetDlgItemInt",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetDlgItemTextA",
     "argc": 4,
     "cdecl": false,

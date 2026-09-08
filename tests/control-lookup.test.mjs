@@ -48,3 +48,13 @@ test('SetDlgItemInt supplies correctly encoded callback text and normalizes resu
 test('SetDlgItemInt rejects missing controls and invalid or destroyed parents',()=>{
  const {p,u,parent}=setup();assert.equal(u('SetDlgItemInt',parent,99,1,1),0);assert.equal(p.lastError,1421);u('DestroyWindow',parent);for(const h of [0,123,parent]){assert.equal(u('SetDlgItemInt',h,99,1,1),0);assert.equal(p.lastError,1400);}
 });
+
+test('GetDlgItemInt separates parsed prefixes from complete translation and checks numeric bounds',()=>{
+ const {p,u,create,parent}=setup(),child=create(parent,7),flag=p.heap.alloc(4);for(const [text,signed,value,ok] of [['',0,0,0],['0',0,0,1],[' 12x',1,12,0],['12 ',0,12,0],['+12',1,0,0],['\t12',1,0,0],['-1',0,0,0],[' -1',2,0xffffffff,1],['2147483648',1,0,0],['-2147483648',1,0x80000000,0],['-2147483649',1,0,0],['4294967295',0,0xffffffff,1],['4294967296',0,0,0],['0'.repeat(100)+'7',0,0,1]]){p.apis.gui.window(child).title=text;p.setError(1234);p.memory.w32(flag,123);assert.equal(u('GetDlgItemInt',parent,7,flag,signed),value,text);assert.equal(p.memory.u32(flag),ok,text);assert.equal(p.lastError,1234);assert.equal(u('GetDlgItemInt',parent,7,0,signed),value);}
+});
+test('GetDlgItemInt queries callbacks synchronously with native capacity and releases temporary buffers',()=>{
+ const {p,u,create,parent}=setup(),child=create(parent,7),flag=p.heap.alloc(4),m=p.memory;u('SetWindowLongW',child,-4,12345);m.w32(flag,123);const result=u('GetDlgItemInt',parent,7,flag,1),buffer=result.call.args[3];assert.deepEqual(result.call.args.slice(0,3),[child,13,47]);assert.equal(m.u32(flag),0);m.string(buffer,'-42',true,47);assert.equal(result.then(3),0xffffffd6);assert.equal(m.u32(flag),1);assert.equal(p.heap.blocks.has(buffer),false);
+});
+test('GetDlgItemInt clears translation status for invalid targets and checks status output',()=>{
+ const {p,u,parent}=setup(),flag=p.heap.alloc(4);for(const h of [parent,0,123]){p.memory.w32(flag,123);assert.equal(u('GetDlgItemInt',h,99,flag,1),0);assert.equal(p.memory.u32(flag),0);assert.equal(p.lastError,h===parent?1421:1400);}assert.throws(()=>u('GetDlgItemInt',parent,99,0xffffffff,1));
+});

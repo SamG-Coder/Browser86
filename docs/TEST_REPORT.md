@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Dialog integer parsing - 2026-09-08
+
+**479 Node tests passed, 0 failed, 0 skipped.** Added GetDlgItemInt with synchronous Unicode WM_GETTEXT, a native 47-character request, optional translated output and exact integer overflow checks. Tests cover numeric boundaries, leading spaces, rejected signs/whitespace, numeric prefixes with false status, long truncated input, null status pointers, invalid targets and callback buffer release. Catalog now contains 600 entries, without implying full API parity.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Rebuilt HandleObjects.exe imports GetDlgItemInt and reads signed -1 with true translation status inside the browser worker. Evidence: [Node TAP](test-artifacts/get-dlg-int-tests.tap), [browser report](test-artifacts/get-dlg-int-browser-report.json).
+
+Native private A/W control probes confirmed that trailing nonnumeric text returns the numeric prefix with false status, leading plus/tabs are rejected, parse failure preserves error 1234 and signed -2147483648 returns 0x80000000 with false status. The Unicode callback capacity was 47 (94 when converted to ANSI). Missing/invalid targets reported 1421/1400 with false status. Probe windows/classes were cleaned up. Reference: [Microsoft GetDlgItemInt](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdlgitemint). These observed quirks were checked on a 64-bit Windows host; independent native x86 verification and broader dialog-manager behavior remain outstanding.
+
 ## Dialog integer text formatting - 2026-09-08
 
 **476 Node tests passed, 0 failed, 0 skipped.** Added SetDlgItemInt with signed/unsigned 32-bit formatting, synchronous WM_SETTEXT dispatch, Boolean callback results and temporary storage retained until callback completion. Tests cover zero, maximum signed/unsigned values, high-bit values, noncanonical BOOL flags, A/W callback strings, allocation release and invalid/missing/destroyed targets. Catalog now contains 599 entries, without implying full API parity.
