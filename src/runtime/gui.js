@@ -53,20 +53,21 @@ export class GUI {
     else {for(let i=0;i<value.length;i++)this.m.w8(out+i,windowAnsiBestFit.get(value.charCodeAt(i))??63);this.m.w8(out+value.length,0);}
     return out;
   }
-  send(hwnd,msg,wp,lp,wide=false,done=value=>value){
-    const w=this.window(hwnd);if(!w)return done(0);
-    if(!w.proc&&w.builtin&&msg===0x87)return done(dialogCode(w));
-    if(!w.proc&&w.builtin&&w.className.toUpperCase()==='EDIT'&&msg===0xcf){w.style=(wp?w.style|0x800:w.style&~0x800)>>>0;this.notify(w);return done(1);}
-    if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&(msg===0xf0||msg===0xf1))return done(buttonCheck(this,w,msg,wp));
-    if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&msg===0xf4)return done(buttonStyle(this,w,wp,lp));
-    if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&msg===0xf5){const finish=result=>result?.call?{...result,then:value=>finish(result.then(value))}:done(result);return finish(buttonClick(this,w));}
-    if(w.proc&&msg===0x0E&&wide!==w.wide){
+  builtinProcedure(w,wide){if(!w.builtin)return 0;this.builtinProcedures??=new Map();const key=w.className.toUpperCase()+(wide?"W":"A");if(!this.builtinProcedures.has(key)){const name="#Builtin."+key,address=this.api.add("user32.dll",name,4,(h,msg,wp,lp)=>this.send(h,msg,wp,lp,wide,value=>value,true));this.api.functions.delete("user32.dll!"+name);this.builtinProcedures.set(key,address);}return this.builtinProcedures.get(key);}
+  send(hwnd,msg,wp,lp,wide=false,done=value=>value,builtin=false){
+    const w=this.window(hwnd);if(!w)return done(0);const procedure=builtin?0:w.proc;
+    if(!procedure&&w.builtin&&msg===0x87)return done(dialogCode(w));
+    if(!procedure&&w.builtin&&w.className.toUpperCase()==='EDIT'&&msg===0xcf){w.style=(wp?w.style|0x800:w.style&~0x800)>>>0;this.notify(w);return done(1);}
+    if(!procedure&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&(msg===0xf0||msg===0xf1))return done(buttonCheck(this,w,msg,wp));
+    if(!procedure&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&msg===0xf4)return done(buttonStyle(this,w,wp,lp));
+    if(!procedure&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&msg===0xf5){const finish=result=>result?.call?{...result,then:value=>finish(result.then(value))}:done(result);return finish(buttonClick(this,w));}
+    if(procedure&&msg===0x0E&&wide!==w.wide){
       const procedureWide=w.wide;
-      return this.p.call(w.proc,[hwnd,msg,wp,0],length=>{
+      return this.p.call(procedure,[hwnd,msg,wp,0],length=>{
         length>>>=0;if(!length||!this.window(hwnd))return done(0);
         requireThat(length<1048576,'STRING_LIMIT','Window text length exceeds the conversion limit.');
         const buffer=this.p.heap.alloc((length+1)*(procedureWide?2:1),true);
-        return this.p.call(w.proc,[hwnd,0x0D,length+1,buffer],count=>{
+        return this.p.call(procedure,[hwnd,0x0D,length+1,buffer],count=>{
           try {count>>>=0;requireThat(count<=length,'CALLBACK_RESULT','WM_GETTEXT returned a count outside its buffer.');
             // CP1252 and UTF-16 conversion emits one destination unit per source unit.
             return done(count);
@@ -74,11 +75,11 @@ export class GUI {
         });
       });
     }
-    if(w.proc&&msg===0x0D&&wide!==w.wide&&lp){
+    if(procedure&&msg===0x0D&&wide!==w.wide&&lp){
       const capacity=wp>>>0;requireThat(capacity<=1048576,'STRING_LIMIT','Window text buffer exceeds the conversion limit.');
       if(capacity)checkBuffer(this.m,lp,capacity*(wide?2:1));
       const procedureWide=w.wide,procedureCapacity=capacity*(wide?2:1),buffer=this.p.heap.alloc(Math.max(1,procedureCapacity*(procedureWide?2:1)),true);
-      return this.p.call(w.proc,[hwnd,msg,procedureCapacity,buffer],result=>{
+      return this.p.call(procedure,[hwnd,msg,procedureCapacity,buffer],result=>{
         try {
           const count=result>>>0;requireThat(count<=Math.max(0,procedureCapacity-1),'CALLBACK_RESULT','WM_GETTEXT returned a count outside its buffer.');
           const copied=Math.min(capacity,count+1);if(copied)checkBuffer(this.m,lp,copied*(wide?2:1));
@@ -90,8 +91,8 @@ export class GUI {
         } finally {this.p.heap.free(buffer);}
       });
     }
-    if(w.proc){const temporary=[];if(msg===0x0C)lp=this.convertString(lp,wide,w.wide,temporary);
-      return this.p.call(w.proc,[hwnd,msg,wp,lp],result=>{for(const address of temporary)this.p.heap.free(address);return done(result);});}
+    if(procedure){const temporary=[];if(msg===0x0C)lp=this.convertString(lp,wide,w.wide,temporary);
+      return this.p.call(procedure,[hwnd,msg,wp,lp],result=>{for(const address of temporary)this.p.heap.free(address);return done(result);});}
     const finish=result=>result?.call?{...result,then:value=>finish(result.then?result.then(value):value)}:done(result);
     return finish(this.defWindow(hwnd,msg,wp,lp,wide));
   }
@@ -205,8 +206,8 @@ export class GUI {
       u('MessageBox'+suffix,4,(hwnd,text,caption,type)=>{const groups={0:[['OK',1]],1:[['OK',1],['Cancel',2]],2:[['Abort',3],['Retry',4],['Ignore',5]],3:[['Yes',6],['No',7],['Cancel',2]],4:[['Yes',6],['No',7]],5:[['Retry',4],['Cancel',2]],6:[['Cancel',2],['Try again',10],['Continue',11]]};const buttons=groups[type&15];if(!buttons)throw new RuntimeFault('UNSUPPORTED_DIALOG','This MessageBox button type is not implemented.');const id=p.nextDialog++;p.emit('dialog',{id,hwnd,text:str(text),caption:str(caption),buttons,flags:type});return p.wait(()=>{if(!p.dialogResults.has(id))return undefined;const value=p.dialogResults.get(id);p.dialogResults.delete(id);return value;},'MessageBox response');});
       u('LoadIcon'+suffix,2,(instance,name)=>name<65536?name:0);
       u('LoadString'+suffix,4,(instance,id,out,capacity)=>{const module=a.module(instance);if(!module)return 0;const r=p.loader.resource(module,6,(id>>>4)+1);if(!r)return 0;let cursor=r.address;for(let i=0;i<(id&15);i++){const n=m.u16(cursor);cursor+=2+n*2;}const length=m.u16(cursor);requireThat(cursor+2+length*2<=r.address+r.size,'PE_RESOURCE','String resource exceeds resource size.');const text=Array.from({length},(_,i)=>String.fromCharCode(m.u16(cursor+2+i*2))).join('');if(!capacity&&wide){m.w32(out,cursor+2);return length;}m.string(out,text,wide,capacity);return Math.min(text.length,Math.max(0,capacity-1));});
-      u('GetWindowLong'+suffix,2,(h,index)=>{const w=this.window(h);if(!w)return a.fail(1400);index|=0;if(index>=0)return this.windowExtra(w,index);return index===-4?w.proc:index===-6?w.instance:index===-12?w.id:index===-16?w.style:index===-20?w.exStyle:index===-21?w.userData||0:index===-8?w.parent:a.fail(1413);});
-      u('SetWindowLong'+suffix,3,(h,index,value)=>{const w=this.window(h);if(!w)return a.fail(1400);index|=0;if(index>=0)return this.windowExtra(w,index,value);const field=index===-4?'proc':index===-6?'instance':index===-12?'id':index===-16?'style':index===-20?'exStyle':index===-21?'userData':null;if(!field){if(index===-8)return setWindowOwner(this,w,value);return a.fail(1413);}const old=w[field]||0;w[field]=value;if(field==='proc')w.wide=wide;if(field==='style'){w.visible=!!(value&0x10000000);w.enabled=!(value&0x08000000);this.notify(w);}return old;});
+      u('GetWindowLong'+suffix,2,(h,index)=>{const w=this.window(h);if(!w)return a.fail(1400);index|=0;if(index>=0)return this.windowExtra(w,index);return index===-4?(w.proc||this.builtinProcedure(w,wide)):index===-6?w.instance:index===-12?w.id:index===-16?w.style:index===-20?w.exStyle:index===-21?w.userData||0:index===-8?w.parent:a.fail(1413);});
+      u('SetWindowLong'+suffix,3,(h,index,value)=>{const w=this.window(h);if(!w)return a.fail(1400);index|=0;if(index>=0)return this.windowExtra(w,index,value);const field=index===-4?'proc':index===-6?'instance':index===-12?'id':index===-16?'style':index===-20?'exStyle':index===-21?'userData':null;if(!field){if(index===-8)return setWindowOwner(this,w,value);return a.fail(1413);}const old=w[field]||(field==='proc'?this.builtinProcedure(w,wide):0);w[field]=field==='proc'&&value===this.builtinProcedure(w,wide)?0:value;if(field==='proc')w.wide=wide;if(field==='style'){w.visible=!!(value&0x10000000);w.enabled=!(value&0x08000000);this.notify(w);}return old;});
       g('TextOut'+suffix,5,(hdc,x,y,text,count)=>{const dc=this.dc(hdc);if(!dc)return 0;requireThat(count<=1024*1024,'STRING_LIMIT','GDI text is too long.');const value=wide?Array.from({length:count},(_,i)=>String.fromCharCode(m.u16(text+i*2))).join(''):ansiDecode(m.read(text,count));const font=p.object(dc.font,'gdi');return this.draw(hdc,{op:'text',x:x|0,y:y|0,text:value,color:dc.textColor,background:dc.background,opaque:dc.bkMode===2,font:{height:Math.abs(font?.height||16),face:font?.face||'Arial',weight:font?.weight||400},align:dc.align});});
       u('DrawText'+suffix,5,(hdc,text,count,rect,format)=>{const dc=this.dc(hdc);if(!dc)return 0;const value=count===0xFFFFFFFF?str(text):wide?Array.from({length:count},(_,i)=>String.fromCharCode(m.u16(text+i*2))).join(''):ansiDecode(m.read(text,count));const font=p.object(dc.font,'gdi'),height=Math.abs(font?.height||16),x=m.i32(rect),y=m.i32(rect+4),width=m.i32(rect+8)-x;if(format&0x400){m.w32(rect+12,y+height);m.w32(rect+8,x+Math.min(width||1e6,Math.ceil(value.length*height*0.6)));return height;}this.draw(hdc,{op:'text',x,y,text:value,color:dc.textColor,background:dc.background,opaque:dc.bkMode===2,font:{height,face:font?.face||'Arial',weight:font?.weight||400},maxWidth:width,align:format&1?6:format&2?2:0});return height;});
       g('GetTextExtentPoint32'+suffix,4,(hdc,text,count,out)=>{const dc=this.dc(hdc);if(!dc)return 0;const font=p.object(dc.font,'gdi'),h=Math.abs(font?.height||16);m.w32(out,Math.ceil(count*h*0.6));m.w32(out+4,h);p.note('Text extents use approximate browser-font metrics; Windows font rasterization is not reproduced exactly.');return 1;});
