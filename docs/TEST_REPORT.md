@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Control ID lookup - 2026-09-08
+
+**466 Node tests passed, 0 failed, 0 skipped.** GetDlgCtrlID/GetDlgItem now validate handles, preserve signed 32-bit IDs, report missing controls with error 1421 and restrict lookup to immediate child windows. Tests cover ID replacement, destruction, zero/high-bit IDs, successful last-error preservation and exclusion of grandchildren/owned popups. Catalog remains 592 entries.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/control-lookup-tests.tap), [browser report](test-artifacts/control-lookup-browser-report.json). These browser checks provide general regression coverage; the new lookup behavior is exercised by Node tests.
+
+Native private A/W class probes confirmed signed IDs, success preserving error 1234, invalid/null handles returning error 1400, missing controls returning 1421 and exclusion of grandchildren/owned popups. Probe windows/classes were cleaned up. References: [Microsoft GetDlgCtrlID](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdlgctrlid), [Microsoft GetDlgItem](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdlgitem). Duplicate-ID ordering and cross-process lookup remain unverified.
+
 ## Class-name buffers and encoding - 2026-09-08
 
 **462 Node tests passed, 0 failed, 0 skipped.** GetClassNameA/W now handles native zero/one-capacity differences, ANSI best-fit conversion, invalid-HWND precedence and full actual-write validation. Tests cover truncated and full output, terminators, untouched neighboring bytes, preserved buffers on errors, destroyed windows and explicit negative-capacity rejection. The rebuilt HandleObjects.exe checks Unicode class-name output and one-character buffer failure. Catalog remains 592 entries.

@@ -185,7 +185,8 @@ export class GUI {
     u('MoveWindow',6,(h,x,y,width,height,repaint)=>{const w=this.window(h);if(!w)return 0;w.x=x|0;w.y=y|0;w.width=Math.max(1,Math.min(1920,width|0));w.height=Math.max(1,Math.min(1080,height|0));this.notify(w);if(repaint)this.queuePaint(w);return 1;});
     u('IsWindow',1,h=>this.window(h)?1:0);
     u('GetActiveWindow',0,()=>this.focus||[...this.windows.keys()][0]||0);u('SetActiveWindow',1,h=>{const old=this.focus;this.focus=h;return old;});
-    u('GetDlgCtrlID',1,h=>this.window(h)?.id||0);u('GetDlgItem',2,(h,id)=>[...this.windows.values()].find(w=>w.parent===h&&w.id===id)?.hwnd||0);
+    u('GetDlgCtrlID',1,h=>{const w=this.window(h);return w?w.id|0:a.fail(1400);});
+    u('GetDlgItem',2,(h,id)=>{if(!this.window(h))return a.fail(1400);const child=[...this.windows.values()].find(w=>(w.style&0x40000000)&&w.parent===(h>>>0)&&(w.id|0)===(id|0));return child?child.hwnd:a.fail(1421);});
     installCursors(this);installMouseCapture(this);installDoubleClick(this);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,36:4,37:4,61:1,80:1}[index]??0));installClassQueries(this);installWindowWord(this);installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
