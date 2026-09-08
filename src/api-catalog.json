@@ -3874,7 +3874,21 @@
   },
   {
     "dll": "user32.dll",
+    "name": "DeleteMenu",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "DestroyCursor",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "DestroyMenu",
     "argc": 1,
     "cdecl": false,
     "data": false
@@ -3896,6 +3910,13 @@
   {
     "dll": "user32.dll",
     "name": "DispatchMessageW",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "DrawMenuBar",
     "argc": 1,
     "cdecl": false,
     "data": false
@@ -4716,6 +4737,13 @@
     "dll": "user32.dll",
     "name": "SetFocus",
     "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetMenu",
+    "argc": 2,
     "cdecl": false,
     "data": false
   },
