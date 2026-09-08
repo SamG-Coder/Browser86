@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Per-device-context stock colors extension - 2026-09-08
+
+**216 Node tests passed, 0 failed, 0 skipped.** Two new tests cover the four DC pen/brush color APIs, defaults, full-width COLORREF values, previous-color returns, independent DCs, saved state and native invalid-handle errors. Emitted rectangle/ellipse/roundrect/line/fill commands are checked for resolved colors; ordinary objects and shared stock handles remain unchanged. HandleObjects.exe imports all four APIs and checks defaults, changes and restoration through x86 calls. The catalog contains 503 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The rebuilt fixture ran in the actual worker; persistence/reload/deletion/backup checks passed. Evidence: [Node TAP](test-artifacts/dc-stock-colors-tests.tap) and [browser report](test-artifacts/dc-stock-colors-browser-report.json). Drawing-command tests do not establish pixel-exact native rasterization.
+
+Native ctypes probes used an owned memory DC, deleted in finally, to verify defaults, invalid DC errors, preservation of full COLORREF bits and restoration. No guest executable ran on the host. Microsoft documents [SetDCPenColor](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-setdcpencolor) and [SetDCBrushColor](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-setdcbrushcolor). ICM and palette mapping are not implemented.
+
 ## Indirect GDI object creation extension - 2026-09-08
 
 **214 Node tests passed, 0 failed, 0 skipped.** Two new tests cover copying and independence from input structures, selected objects in emitted drawing commands, hollow brushes, GetObject inspection, deletion, invalid pointers, complete input validation before allocation, unsupported styles and pen-style normalization. The rebuilt HandleObjects.exe imports CreatePenIndirect and CreateBrushIndirect and verifies both structures through actual x86 calls. The catalog contains 499 entries.

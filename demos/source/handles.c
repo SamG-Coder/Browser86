@@ -191,6 +191,10 @@ void mainCRTStartup(void){
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
+  CHECK(GetDCPenColor(savedDC)==0&&GetDCBrushColor(savedDC)==0xffffff);
+  CHECK(SetDCPenColor(savedDC,0x123456)==0&&SetDCBrushColor(savedDC,0xabcdef)==0xffffff);
+  CHECK(SaveDC(savedDC)==1&&SetDCPenColor(savedDC,7)==0x123456&&SetDCBrushColor(savedDC,8)==0xabcdef);
+  CHECK(RestoreDC(savedDC,-1)&&GetDCPenColor(savedDC)==0x123456&&GetDCBrushColor(savedDC)==0xabcdef);
   DWORD penDescription[4],brushDescription[3];
   DWORD indirectPenData[4]={0,(DWORD)-3,99,0x123456},indirectBrushData[3]={1,0xabcdef,99};
   HANDLE indirectPen=CreatePenIndirect(indirectPenData),indirectBrush=CreateBrushIndirect(indirectBrushData);

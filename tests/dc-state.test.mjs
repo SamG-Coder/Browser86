@@ -2,6 +2,28 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {guest} from './helpers.mjs';
 function setup(){const {p,events}=guest('HelloConsole.exe');return {p,events,m:p.memory,h:p.apis.gui.newDC(0),call:(name,...args)=>p.apis.lookup('gdi32.dll',name).fn(...args)};}
+test('DC pen and brush colors preserve full COLORREFs, saved state and native errors',()=>{
+  const {p,h,call}=setup(),other=p.apis.gui.newDC(0);
+  for(const [kind,initial] of [['Pen',0],['Brush',0xffffff]]){
+    const get='GetDC'+kind+'Color',set='SetDC'+kind+'Color';assert.equal(call(get,h),initial);p.setError(1234);
+    assert.equal(call(set,h,0xff123456),initial);assert.equal(call(get,h),0xff123456);assert.equal(call(get,other),initial);assert.equal(p.lastError,1234);
+    call('SaveDC',h);assert.equal(call(set,h,0xffffffff),0xff123456);assert.equal(call(get,h),0xffffffff);call('RestoreDC',h,-1);assert.equal(call(get,h),0xff123456);
+    for(const invalid of [0,123,call('GetStockObject',7)]){assert.equal(call(get,invalid),0xffffffff);assert.equal(p.lastError,87);p.setError(1234);assert.equal(call(set,invalid,0),0xffffffff);assert.equal(p.lastError,87);}
+  }
+});
+test('DC stock colors affect selected drawing objects without mutating shared handles',()=>{
+  const {p,events,m,h,call}=setup(),other=p.apis.gui.newDC(0),pen=call('GetStockObject',19),brush=call('GetStockObject',18);
+  call('SetDCPenColor',h,0x123456);call('SetDCBrushColor',h,0xabcdef);call('Rectangle',h,0,0,10,10);
+  let drawing=events.filter(e=>e.type==='draw').at(-1);assert.equal(drawing.pen.color,0);assert.equal(drawing.brush.color,0xffffff);
+  for(const dc of [h,other]){call('SelectObject',dc,pen);call('SelectObject',dc,brush);}
+  for(const op of ['Rectangle','Ellipse','RoundRect']){call(op,h,0,0,10,10,2,2);drawing=events.filter(e=>e.type==='draw').at(-1);assert.equal(drawing.pen.color,0x123456);assert.equal(drawing.brush.color,0xabcdef);}
+  call('LineTo',h,20,20);assert.equal(events.filter(e=>e.type==='draw').at(-1).pen.color,0x123456);
+  const rect=p.heap.alloc(16);[0,0,10,10].forEach((v,i)=>m.w32(rect+4*i,v));p.apis.lookup('user32.dll','FillRect').fn(h,rect,brush);assert.equal(events.filter(e=>e.type==='draw').at(-1).color,0xabcdef);
+  call('Rectangle',other,0,0,10,10);drawing=events.filter(e=>e.type==='draw').at(-1);assert.equal(drawing.pen.color,0);assert.equal(drawing.brush.color,0xffffff);
+  call('SaveDC',h);call('SetDCPenColor',h,7);call('SetDCBrushColor',h,8);call('RestoreDC',h,-1);call('Rectangle',h,0,0,10,10);
+  const saved=events.filter(e=>e.type==='draw').at(-1);call('SetDCPenColor',h,9);assert.equal(saved.pen.color,0x123456);assert.equal(saved.brush.color,0xabcdef);
+  assert.equal(p.object(pen,'gdi').color,0);assert.equal(p.object(brush,'gdi').color,0xffffff);
+});
 test('Win32 DC queries: defaults, mutations and restored values are observable independently',()=>{
   const {p,h,call}=setup(),other=p.apis.gui.newDC(0);
   const names=['GetTextColor','GetBkColor','GetBkMode','GetTextAlign'];

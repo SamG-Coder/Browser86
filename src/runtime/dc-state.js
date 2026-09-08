@@ -1,8 +1,12 @@
 import {checkBuffer} from './files.js';
 import {RuntimeFault} from './errors.js';
-const fields=['textColor','background','bkMode','x','y','pen','brush','font','fontSize','align'];
+const fields=['textColor','background','bkMode','x','y','pen','brush','font','fontSize','align','dcPenColor','dcBrushColor'];
 export function installDCState(gui){
   const api=gui.api,m=gui.m,g=(name,n,fn)=>api.add('gdi32.dll',name,n,fn);
+  for(const [kind,field] of [['Pen','dcPenColor'],['Brush','dcBrushColor']]){
+    g('GetDC'+kind+'Color',1,handle=>{const dc=gui.dc(handle);return dc?dc[field]:api.fail(87,0xffffffff);});
+    g('SetDC'+kind+'Color',2,(handle,color)=>{const dc=gui.dc(handle);if(!dc)return api.fail(87,0xffffffff);const old=dc[field];dc[field]=color>>>0;return old;});
+  }
   for(const [name,field,failure] of [['GetTextColor','textColor',0xffffffff],['GetBkColor','background',0xffffffff],['GetBkMode','bkMode',0],['GetTextAlign','align',0xffffffff]]){
     g(name,1,handle=>gui.dc(handle)?.[field]??failure);
   }

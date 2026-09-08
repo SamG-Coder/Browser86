@@ -108,6 +108,8 @@ GetObjectA/W return x86 LOGPEN (16 bytes) and LOGBRUSH (12 bytes) for supported 
 
 CreatePenIndirect and CreateBrushIndirect consume complete x86 LOGPEN/LOGBRUSH structures, copying supported properties into independent GDI objects. Solid/null styles support selection, drawing, inspection and deletion. The unused pen Y width and solid/null brush hatch are ignored. CreatePen and CreatePenIndirect share normalization, including unrecognized pen styles falling back to solid. Unreadable input faults before handle allocation; unrecognized brush styles return zero without changing last error. Dashed/dotted/inside-frame pens and hatched/pattern/DIB brushes remain explicitly unsupported.
 
+GetDCPenColor, SetDCPenColor, GetDCBrushColor and SetDCBrushColor maintain independent full-width COLORREF values per device context, with black/white defaults and SaveDC/RestoreDC support. DC_PEN/DC_BRUSH resolve their color when drawing without modifying shared stock handles. Rectangle, Ellipse, RoundRect, LineTo and FillRect consume these resolved colors; ordinary pens/brushes remain unaffected. Invalid DCs return CLR_INVALID and ERROR_INVALID_PARAMETER. ICM, palette mapping and pixel-exact native rasterization remain unsupported.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
