@@ -12,7 +12,7 @@ for(const entry of entries.filter(e=>/\.exe$/i.test(e.path))){
     const p=new GuestProcess({entries,exePath:'C:/app/'+entry.path,emit:(type,data)=>events.push({type,...data})});
     for(let i=0;i<200&&p.status==='running'&&!p.waiting;i++)p.tick(20000,50);
     Object.assign(result,{status:p.status,instructions:p.cpu.instructions,lastApi:p.lastApi,waiting:!!p.waiting});
-  }catch(error){result.failure={code:error.code,message:error.message,details:error.details};}
+  }catch(error){result.failure={code:error.code,message:error.message,detail:error.detail};}
   result.events=events;
 }
 console.log(JSON.stringify({package:filename,results},null,2));

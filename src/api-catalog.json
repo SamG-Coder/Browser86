@@ -2631,6 +2631,20 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "__stdio_common_vsprintf",
+    "argc": 7,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "__stdio_common_vswprintf",
+    "argc": 7,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_acmdln",
     "cdecl": false,
     "data": true
@@ -2740,6 +2754,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "_mkdir",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_msize",
     "argc": 1,
     "cdecl": true,
@@ -2819,6 +2840,20 @@
     "dll": "msvcrt.dll",
     "name": "_wcsicmp",
     "argc": 2,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "_wfopen",
+    "argc": 2,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "_wmkdir",
+    "argc": 1,
     "cdecl": true,
     "data": false
   },
@@ -2943,6 +2978,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "ferror",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "fflush",
     "argc": 1,
     "cdecl": true,
@@ -2952,6 +2994,13 @@
     "dll": "msvcrt.dll",
     "name": "fgetc",
     "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "fgets",
+    "argc": 3,
     "cdecl": true,
     "data": false
   },
@@ -3223,6 +3272,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "strncat",
+    "argc": 3,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "strncmp",
     "argc": 3,
     "cdecl": true,
@@ -3323,6 +3379,13 @@
     "dll": "msvcrt.dll",
     "name": "wcslen",
     "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "wcsncat",
+    "argc": 3,
     "cdecl": true,
     "data": false
   },
