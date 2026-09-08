@@ -4763,6 +4763,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "SetMenuItemInfoA",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetMenuItemInfoW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "SetPropA",
     "argc": 3,
     "cdecl": false,
