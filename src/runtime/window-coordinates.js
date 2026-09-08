@@ -8,6 +8,7 @@ export function windowOrigin(gui,h){
 export function installWindowCoordinates(gui){
  const {api,m}=gui,u=(n,c,f)=>api.add('user32.dll',n,c,f);
  const origin=h=>windowOrigin(gui,h);
+ u('SetWindowPlacement',2,(h,input)=>{const w=gui.window(h);if(!w)return api.fail(1400);if(!input||m.u32(input)!==44)return api.fail(87);checkBuffer(m,input,44,'r');const flags=m.u32(input+4),show=m.u32(input+8),x=m.i32(input+28),y=m.i32(input+32),width=m.i32(input+36)-x,height=m.i32(input+40)-y;if(flags||![0,1,4,5,8,9].includes(show))throw new RuntimeFault('UNSUPPORTED_GUI','Window placement flags and minimized/maximized placement are not implemented.');if(width<=0||height<=0||width>1920||height>1080)return api.fail(87);w.x=x;w.y=y;w.width=width;w.height=height;w.visible=show!==0;w.style=(w.visible?w.style|0x10000000:w.style&~0x10000000)>>>0;gui.notify(w);return gui.send(h,5,0,(width|(height<<16))>>>0,w.wide,()=>{if(gui.window(h)&&w.visible)gui.queuePaint(w);return 1;});});
  u('GetWindowPlacement',2,(h,out)=>{const w=gui.window(h);if(!w)return api.fail(1400);if(!out||m.u32(out)!==44)return api.fail(87);checkBuffer(m,out,44);m.fill(out,44,0);m.w32(out,44);m.w32(out+8,w.visible?1:0);m.w32(out+12,0xffffffff);m.w32(out+16,0xffffffff);m.w32(out+20,0xffffffff);m.w32(out+24,0xffffffff);[w.x,w.y,w.x+w.width,w.y+w.height].forEach((v,i)=>m.w32(out+28+i*4,v));return 1;});
  for(const screen of [false,true])u(screen?'GetWindowRect':'GetClientRect',2,(h,out)=>{
   const w=gui.window(h);if(!w||!out)return api.fail(1400);

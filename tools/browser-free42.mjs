@@ -22,7 +22,7 @@ try{
   await canvas.click({position:{x:294,y:389},delay:100});await page.waitForTimeout(500);const cleared=await pixels();result.cleared=hash(cleared);await fs.writeFile(`${out}/${name}-clear.png`,cleared);assert.notEqual(result.cleared,result.calculation);
   assert.equal(result.cleared,'b146075c47d88510193977c076341c1dc2d407ad6dcb4eeb020aa7086e512810','Visually verified 0.0000 calculator image changed');
   await page.locator('.guest-titlebar button').click();await page.waitForFunction(()=>['fault','exited'].includes(document.querySelector('#status').dataset.state),null,{timeout:15000});
-  result.status=await page.locator('#status').getAttribute('data-state');result.detail=await page.locator('#metric-detail').innerText();result.terminal=await page.locator('#terminal').innerText();results.push(result);await context.close();
+  result.status=await page.locator('#status').getAttribute('data-state');result.detail=await page.locator('#metric-detail').innerText();result.terminal=await page.locator('#terminal').innerText();results.push(result);await page.waitForFunction(()=>document.querySelector('#save-state').textContent.startsWith('Saved locally'));await page.reload();await page.waitForFunction(()=>!document.querySelector('#run').disabled);await page.locator('#run').click();await page.waitForFunction(()=>document.querySelector('#status').dataset.state==='fault'||document.querySelector('#metric-detail').textContent==='Window messages',null,{timeout:60000});result.reloadStatus=await page.locator('#status').getAttribute('data-state');result.reloadTerminal=await page.locator('#terminal').innerText();assert.equal(result.reloadStatus,'running',result.reloadTerminal);await context.close();
  }
  await fs.writeFile(`${out}/report.json`,JSON.stringify({url,archive,archiveSHA256:hash(await fs.readFile(archive)),results},null,2));
  assert.ok(results.every(r=>r.status==='exited'&&r.detail==='Exit code 0'),JSON.stringify(results));
@@ -30,3 +30,4 @@ try{
  assert.equal(results[0].cleared,results[1].cleared,'Both EXEs should paint the same cleared image');
  console.log(JSON.stringify({result:'PASS',results},null,2));
 }finally{await browser.close();}
+

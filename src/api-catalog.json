@@ -4763,6 +4763,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "SetWindowPlacement",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "SetWindowTextA",
     "argc": 2,
     "cdecl": false,
