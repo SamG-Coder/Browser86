@@ -10,6 +10,15 @@ export function installRegions(gui){
   const [l,t,r,b]=o.rect;gui.draw(dcHandle,{op:'fill',x:l,y:t,width:r-l,height:b-t,color:brush.dcColor?dc[brush.dcColor]:brush.color});return 1;
  };
  g('FillRgn',3,fill);
+ g('FrameRgn',5,(dcHandle,regionHandle,brushHandle,w,h)=>{
+  w=Math.abs(w|0);h=Math.abs(h|0);if(!w||!h||w===0x80000000||h===0x80000000||!brushHandle)return 0;
+  const dc=gui.dc(dcHandle);if(!dc)return api.fail(6);const o=region(regionHandle);if(!o)return 0;if(!o.rect)return 1;
+  const brush=p.object(brushHandle,'gdi');if(!brush||!['brush','pen'].includes(brush.kind)||brush.null)return 0;
+  const [l,t,r,b]=o.rect,width=r-l,height=b-t,color=brush.dcColor?dc[brush.dcColor]:brush.color;
+  const paint=(x,y,width,height)=>gui.draw(dcHandle,{op:'fill',x,y,width,height,color});
+  if(w*2>=width||h*2>=height)paint(l,t,width,height);
+  else{paint(l,t,width,h);paint(l,b-h,width,h);paint(l,t+h,w,height-2*h);paint(r-w,t+h,w,height-2*h);}return 1;
+ });
  g('PaintRgn',2,(h,r)=>{const dc=gui.dc(h);return dc?fill(h,r,dc.brush):api.fail(6);});
  g('CreateRectRgn',4,create);
  g('CreateRectRgnIndirect',1,input=>{checkBuffer(m,input,16,'r');return create(...[0,4,8,12].map(i=>m.i32(input+i)));});

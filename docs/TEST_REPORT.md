@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Rectangular region framing - 2026-09-08
+
+**266 Node tests passed, 0 failed, 0 skipped.** FrameRgn now renders inward rectangular borders with independent stroke width/height, negative magnitudes and oversized border handling. A differential test compares emitted coverage with 196 native bitmap masks across reversed, thin and empty regions; another covers invalid/hollow brushes, empty-region validation, zero/INT_MIN widths and DC color resolution. The rebuilt HandleObjects.exe imports FrameRgn and checks negative thickness and zero-thickness failure. The catalog contains 534 entries.
+
+**Twenty-six real-canvas checks and eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Added canvas cases verify an unpainted interior for a narrow border and a filled interior for an oversized one. Evidence: [Node TAP](test-artifacts/frame-region-tests.tap), [canvas report](test-artifacts/frame-region-canvas-report.json), [browser report](test-artifacts/frame-region-browser-report.json), [native vectors](../tests/frame-region-vectors.json).
+
+The [native generator](../tools/build-frame-region-vectors.py) uses an owned 8x8 bitmap and releases its region, bitmap and DC handles. Probes verified inward coverage, absolute negative thickness, zero/INT_MIN failures and brush/empty-region return values. No guest executable ran on the host. Reference: [Framing Regions](https://learn.microsoft.com/en-us/windows/win32/gdi/framing-regions). Complex-region framing, clipping, mapping and patterned brushes remain unfinished.
+
 ## Region fill and paint APIs - 2026-09-08
 
 **264 Node tests passed, 0 failed, 0 skipped.** FillRgn and PaintRgn now render rectangular region bounds with explicit and selected solid brushes. Tests cover selection/current-position preservation, moved region bounds, dynamic DC brush/pen colors, empty regions, invalid handles and visible hollow brush failures. The rebuilt HandleObjects.exe imports both functions and checks ordinary fills, painting, null brush failure and empty-region success. The catalog contains 533 entries.

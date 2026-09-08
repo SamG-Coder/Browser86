@@ -1,0 +1,190 @@
+{
+  "result": "PASS",
+  "browser": "152.0.4191.66",
+  "checks": [
+    "alternate leaves double-wound interior empty",
+    "winding fills double-wound interior",
+    "raw mode 3 uses alternate coverage",
+    "polyline remains open",
+    "polygon closes its outline",
+    "alternate nested contours leave a hole",
+    "winding nested contours with same direction fill",
+    "winding nested contours with opposite directions leave a hole",
+    "PolyBezier draws cubic curve through its midpoint",
+    "PolyBezierTo draws from current position through its midpoint",
+    "PolyDraw renders cubic segments",
+    "PolyDraw closes a line figure",
+    "geometric miter join extends within limit 10",
+    "geometric miter join bevels at limit 1",
+    "user-style gap remains empty",
+    "user-style dash paints its span",
+    "extended null pen leaves canvas unchanged",
+    "wide dash pen renders solid",
+    "wide dot pen renders solid",
+    "wide dash-dot pen renders solid",
+    "wide dash-dot-dot pen renders solid",
+    "system color brush fills with COLOR_WINDOWTEXT",
+    "FillRgn paints rectangular region",
+    "PaintRgn uses selected brush",
+    "FrameRgn leaves an unpainted interior",
+    "oversized FrameRgn fills the region"
+  ],
+  "pixels": [
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ]
+  ]
+}
