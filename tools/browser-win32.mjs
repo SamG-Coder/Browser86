@@ -86,7 +86,9 @@ try{
       const radios=[0x20009,9,0x20009].map((style,i)=>u('CreateWindowExA',0,process.heap.string('BUTTON'),process.heap.string('Radio '+i),0x50010000|style,10,40+i*26,180,24,parent,50+i,0,0));
       const radioStates=[];for(const index of [0,1,2]){display.windows.get(radios[index]).element.click();radioStates.push(radios.map(h=>display.windows.get(h).element.getAttribute('aria-checked')));}
       const changing=display.windows.get(radios[0]).element;u('SendMessageA',radios[0],0xf4,0,0x10000);const deferredRole=changing.getAttribute('role');u('SendMessageW',radios[0],0xf4,0,1);const redrawnRole=changing.getAttribute('role');
-      return {states,radioStates,deferredRole,redrawnRole,commands:process.messageQueue.filter(m=>m.message===0x111&&m.wParam===42).map(m=>[m.hwnd===parent,m.wParam,m.lParam===child])};
+      const edit=u('CreateWindowExA',0,process.heap.string('EDIT'),process.heap.string('Original'),0x50000800,10,10,100,20,parent,70,0,0),editNode=display.windows.get(edit).element;
+      const readOnlyStates=[editNode.readOnly];u('SendMessageA',edit,0xcf,0,0);readOnlyStates.push(editNode.readOnly);editNode.focus();u('SendMessageW',edit,0xcf,1,0);u('SetWindowTextA',edit,process.heap.string('Programmatic'));readOnlyStates.push(editNode.readOnly,editNode.value);
+      return {states,radioStates,deferredRole,redrawnRole,readOnlyStates,commands:process.messageQueue.filter(m=>m.message===0x111&&m.wParam===42).map(m=>[m.hwnd===parent,m.wParam,m.lParam===child])};
     }finally{display.reset();root.remove();}
   });
   assert.deepEqual(automaticClicks.states,[[1,'true'],[2,'mixed'],[0,'false']]);assert.deepEqual(automaticClicks.commands,Array(3).fill([true,42,true]));
@@ -95,6 +97,8 @@ try{
   checks.push('Automatic radio clicks enforce visible WS_GROUP selection boundaries');
   assert.equal(automaticClicks.deferredRole,'radio');assert.equal(automaticClicks.redrawnRole,null);
   checks.push('BM_SETSTYLE defers display changes until its low-word redraw flag is set');
+  assert.deepEqual(automaticClicks.readOnlyStates,[true,false,true,'Programmatic']);
+  checks.push('Edit read-only style follows guest messages and allows focused programmatic text updates');
   // Read the actual database; no storage adapter or worker mock is used.
   const savedFile=async()=>{
     const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('browser86-packages',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});

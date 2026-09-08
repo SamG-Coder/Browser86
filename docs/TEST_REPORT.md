@@ -2,6 +2,10 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Read-only edit controls - 2026-09-08
+
+502 Node tests passed and 16 browser checks passed. EM_SETREADONLY changes ES_READONLY, blocks browser-origin input, allows programmatic text changes and updates focused read-only display text. Native private A/W probes confirmed style changes and permitted WM_SETTEXT; native incidental last-error changes remain unimplemented. Evidence: [TAP](test-artifacts/edit-readonly-tests.tap), [browser](test-artifacts/edit-readonly-browser-report.json). Rich Edit and broader edit behavior remain incomplete.
+
 ## Built-in dialog control codes - 2026-09-08
 
 **499 Node tests passed, 0 failed, 0 skipped.** Built-in BUTTON, STATIC and EDIT controls now handle WM_GETDLGCODE. Tests cover button types 0-11, multiline edit distinctions, representative MSG/key inputs, input preservation, last-error preservation, type changes and custom/default procedure behavior. Catalog remains 603 entries.

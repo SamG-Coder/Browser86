@@ -20,7 +20,7 @@ export class GuestDisplay {
       this.windows.set(w.hwnd,record);
     }
     const node=record.element;node.hidden=!w.visible;node.style.left=w.x+'px';node.style.top=w.y+'px';node.style.width=w.width+'px';node.style.zIndex=String(++this.z);
-    if(record.control){node.style.height=w.height+'px';node.disabled=!w.enabled;if(record.type==='EDIT'){if(node!==document.activeElement)node.value=w.title;}else if(record.type==='BUTTON'){
+    if(record.control){node.style.height=w.height+'px';node.disabled=!w.enabled;if(record.type==='EDIT'){node.readOnly=!!(w.style&0x800);if(node!==document.activeElement||node.readOnly)node.value=w.title;}else if(record.type==='BUTTON'){
       const type=w.style&15,checkable=[2,3,4,5,6,9].includes(type),radio=type===4||type===9,state=w.checkState||0;
       node.classList.toggle('checkable',checkable);node.tabIndex=w.style&0x10000?0:-1;
       if(checkable){node.setAttribute('role',radio?'radio':'checkbox');node.setAttribute('aria-checked',state===2&&!radio?'mixed':state?'true':'false');const mark=element('span','check-mark',radio?(state?'\u25c9':'\u25cb'):state===2?'\u25a3':state?'\u2611':'\u2610');mark.setAttribute('aria-hidden','true');node.replaceChildren(mark,element('span','check-label',w.title));}

@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {guest} from './helpers.mjs';
+function setup(){const {p}=guest('HelloConsole.exe'),u=(n,...a)=>p.apis.lookup('user32.dll',n).fn(...a),h=u('CreateWindowExA',0,p.heap.string('EDIT'),p.heap.string('original'),0,0,0,100,20,0,0,0,0);return {p,u,h};}
+test('EM_SETREADONLY changes only ES_READONLY and accepts nonzero Boolean values',()=>{const {u,h}=setup();for(const value of [1,0,2,0xffffffff,0]){assert.equal(u('SendMessageW',h,0xcf,value,0),1);assert.equal(u('GetWindowLongA',h,-16),value?0x800:0);}});
+test('Read-only edits reject user input but allow programmatic text and restore editability',()=>{const {p,u,h}=setup();u('SendMessageA',h,0xcf,1,0);p.inputEvent({kind:'edit',hwnd:h,text:'blocked'});assert.equal(p.apis.gui.window(h).title,'original');assert.equal(u('SetWindowTextA',h,p.heap.string('changed')),1);assert.equal(p.apis.gui.window(h).title,'changed');u('SendMessageW',h,0xcf,0,0);p.inputEvent({kind:'edit',hwnd:h,text:'accepted'});assert.equal(p.apis.gui.window(h).title,'accepted');});
+test('Custom edit procedures override EM_SETREADONLY and DefWindowProc remains inert',()=>{const {u,h}=setup();assert.equal(u('DefWindowProcA',h,0xcf,1,0),0);assert.equal(u('GetWindowLongA',h,-16),0);u('SetWindowLongW',h,-4,12345);const call=u('SendMessageW',h,0xcf,1,0);assert.deepEqual(call.call.args,[h,0xcf,1,0]);assert.equal(call.then(7),7);});

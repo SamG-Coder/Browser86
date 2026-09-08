@@ -53,6 +53,7 @@ export class GUI {
   send(hwnd,msg,wp,lp,wide=false,done=value=>value){
     const w=this.window(hwnd);if(!w)return done(0);
     if(!w.proc&&w.builtin&&msg===0x87)return done(dialogCode(w));
+    if(!w.proc&&w.builtin&&w.className.toUpperCase()==='EDIT'&&msg===0xcf){w.style=(wp?w.style|0x800:w.style&~0x800)>>>0;this.notify(w);return done(1);}
     if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&(msg===0xf0||msg===0xf1))return done(buttonCheck(this,w,msg,wp));
     if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&msg===0xf4)return done(buttonStyle(this,w,wp,lp));
     if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&msg===0xf5){const finish=result=>result?.call?{...result,then:value=>finish(result.then(value))}:done(result);return finish(buttonClick(this,w));}
@@ -123,7 +124,7 @@ export class GUI {
   input(event){const p=this.p,w=this.window(event.hwnd);if(!w)return;
     if(event.kind==='close')p.postMessage(w.hwnd,WM_CLOSE);
     else if(event.kind==='click'){if(w.enabled&&w.parent&&w.className.toUpperCase()==='BUTTON'){if(w.builtin&&!w.proc)buttonClick(this,w,true);else p.postMessage(w.parent,WM_COMMAND,w.id&65535,w.hwnd);}}
-    else if(event.kind==='edit'){w.title=String(event.text).slice(0,65535);if(w.parent)p.postMessage(w.parent,WM_COMMAND,((0x300<<16)|(w.id&65535))>>>0,w.hwnd);}
+    else if(event.kind==='edit'){if(!w.enabled||(w.style&0x800))return;w.title=String(event.text).slice(0,65535);if(w.parent)p.postMessage(w.parent,WM_COMMAND,((0x300<<16)|(w.id&65535))>>>0,w.hwnd);}
     else if(event.kind==='mouse'){const message=mouseMessage(event);if(!message)return;const target=this.window(this.capture)||w;let x=event.x,y=event.y;if(target!==w){const from=windowOrigin(this,w.hwnd),to=windowOrigin(this,target.hwnd);x+=from[0]-to[0];y+=from[1]-to[1];}const origin=windowOrigin(this,target.hwnd);classifyClick(this,event,target,message,x+origin[0],y+origin[1]);const xy=((x&65535)|((y&65535)<<16))>>>0;p.postMessage(target.hwnd,message.message,message.wParam,xy);}
     else if(event.kind==='key'){const code=event.code>>>0;this.keyChars.set(code,event.char||'');p.postMessage(w.hwnd,event.down?0x100:0x101,code,event.down?1:0xC0000001);}
   }
