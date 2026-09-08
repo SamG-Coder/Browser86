@@ -163,6 +163,11 @@ API void* __cdecl memset(void*,int,unsigned int);
 #define WS_OVERLAPPEDWINDOW 0x00CF0000U
 #define WS_CHILD_VISIBLE 0x50000000U
 API void WINAPI InitializeSRWLock(void*);
+API void WINAPI InitializeConditionVariable(void*);
+API BOOL WINAPI SleepConditionVariableCS(void*,void*,DWORD);
+API BOOL WINAPI SleepConditionVariableSRW(void*,void*,DWORD,DWORD);
+API void WINAPI WakeConditionVariable(void*);
+API void WINAPI WakeAllConditionVariable(void*);
 API void WINAPI AcquireSRWLockShared(void*);
 API void WINAPI AcquireSRWLockExclusive(void*);
 API BYTE WINAPI TryAcquireSRWLockShared(void*);

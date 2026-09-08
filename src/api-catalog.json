@@ -1107,6 +1107,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "InitializeConditionVariable",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "InitializeCriticalSection",
     "argc": 1,
     "cdecl": false,
@@ -1730,6 +1737,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "SleepConditionVariableCS",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "SleepConditionVariableSRW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "SleepEx",
     "argc": 2,
     "cdecl": false,
@@ -1863,6 +1884,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "WakeAllConditionVariable",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "WakeByAddressAll",
     "argc": 1,
     "cdecl": false,
@@ -1871,6 +1899,13 @@
   {
     "dll": "kernel32.dll",
     "name": "WakeByAddressSingle",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "WakeConditionVariable",
     "argc": 1,
     "cdecl": false,
     "data": false

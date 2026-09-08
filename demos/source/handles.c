@@ -183,6 +183,13 @@ void mainCRTStartup(void){
   AcquireSRWLockExclusive(&srw);CHECK(!TryAcquireSRWLockShared(&srw));CHECK(!TryAcquireSRWLockExclusive(&srw));ReleaseSRWLockExclusive(&srw);
   InitializeSRWLock(&srw);CHECK(TryAcquireSRWLockShared(&srw));ReleaseSRWLockShared(&srw);
   CHECK(TryAcquireSRWLockExclusive(&srw));ReleaseSRWLockExclusive(&srw);
+  DWORD condition=0;
+  InitializeConditionVariable(&condition);WakeConditionVariable(&condition);WakeAllConditionVariable(&condition);
+  AcquireSRWLockExclusive(&srw);CHECK(!SleepConditionVariableSRW(&condition,&srw,0,0)&&GetLastError()==1460);ReleaseSRWLockExclusive(&srw);
+  AcquireSRWLockShared(&srw);CHECK(!SleepConditionVariableSRW(&condition,&srw,0,1)&&GetLastError()==1460);ReleaseSRWLockShared(&srw);
+  InitializeCriticalSection(&critical);EnterCriticalSection(&critical);
+  CHECK(!SleepConditionVariableCS(&condition,&critical,0)&&GetLastError()==1460);
+  CHECK(critical.recursion==1&&critical.owner!=NULL);LeaveCriticalSection(&critical);DeleteCriticalSection(&critical);
   CHECK(GetEnvironmentVariableA("b86_test",finalPath,256)==5&&finalPath[0]=='v');
   CHECK(ExpandEnvironmentStringsA("[%B86_TEST%]",finalPath,256)==8&&finalPath[0]=='['&&finalPath[6]==']');
   CHECK(SetEnvironmentVariableA("B86_TEST",""));

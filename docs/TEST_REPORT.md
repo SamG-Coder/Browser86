@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Condition variable extension — 2026-09-08
+
+**158 Node tests passed, 0 failed, 0 skipped.** Five new tests cover zero-timeout lock reacquisition, CS and both SRW modes, wake-one/all, no retained wake signals, independent condition variables, process isolation, CPU suspension, delayed reacquisition after wake/timeout, invalid inputs and recursive CS rejection. HandleObjects.exe was rebuilt to import all five APIs and exercise timeout/reacquisition through real x86 calls. The catalog contains 465 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The updated fixture executed in an actual runtime module worker and existing CSP, IndexedDB, reload, deletion and backup checks passed. Raw evidence: [Node TAP](test-artifacts/condition-variable-tests.tap) and [browser report](test-artifacts/condition-variable-browser-report.json).
+
+Contracts were checked against Microsoft's [condition variable overview](https://learn.microsoft.com/en-us/windows/win32/sync/condition-variables), [SleepConditionVariableCS](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-sleepconditionvariablecs) and [SleepConditionVariableSRW](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-sleepconditionvariablesrw). Native ctypes probes on owned process-local locks confirmed that zero-timeout SRW waits return false/error 1460 and reacquire the original exclusive/shared mode. Guest executables were only executed by Browser86. Injected unit-level wakes and releases test continuations; guest thread scheduling remains unimplemented.
+
 ## SRW lock extension — 2026-09-08
 
 **153 Node tests passed, 0 failed, 0 skipped.** Five new tests cover static/dynamic initialization, both ownership modes, failed try-acquisition, last-error preservation, suspended CPU execution and resumption, invalid memory/state/releases, and lock/process isolation. The rebuilt HandleObjects.exe imports and exercises all seven SRW functions through the x86 interpreter. The catalog contains 460 entries.
