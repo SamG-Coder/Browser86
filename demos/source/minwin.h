@@ -42,6 +42,8 @@ API int WINAPI GetRgnBox(HANDLE,void*);
 API BOOL WINAPI PtInRegion(HANDLE,int,int);
 API BOOL WINAPI RectInRegion(HANDLE,const void*);
 API DWORD WINAPI GetRegionData(HANDLE,DWORD,void*);
+API int WINAPI SelectClipRgn(HDC,HANDLE);
+API int WINAPI GetClipRgn(HDC,HANDLE);
 API BOOL WINAPI InvertRect(HDC,const void*);
 API BOOL WINAPI InvertRgn(HDC,HANDLE);
 API BOOL WINAPI FrameRgn(HDC,HANDLE,HANDLE,int,int);

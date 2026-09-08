@@ -211,6 +211,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "GetClipRgn",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetCurrentObject",
     "argc": 2,
     "cdecl": false,
@@ -458,6 +465,13 @@
     "dll": "gdi32.dll",
     "name": "SaveDC",
     "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "SelectClipRgn",
+    "argc": 2,
     "cdecl": false,
     "data": false
   },

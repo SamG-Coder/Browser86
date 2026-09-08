@@ -1,6 +1,6 @@
 import {checkBuffer} from './files.js';
 import {RuntimeFault} from './errors.js';
-const fields=['brushOrgX','brushOrgY','miterLimitBits','polyFillMode','textColor','background','bkMode','x','y','pen','brush','font','fontSize','align','dcPenColor','dcBrushColor'];
+const fields=['clipRegion','brushOrgX','brushOrgY','miterLimitBits','polyFillMode','textColor','background','bkMode','x','y','pen','brush','font','fontSize','align','dcPenColor','dcBrushColor'];
 export function installDCState(gui){
   const api=gui.api,m=gui.m,g=(name,n,fn)=>api.add('gdi32.dll',name,n,fn);
   g('GetBrushOrgEx',2,(handle,out)=>{

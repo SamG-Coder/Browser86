@@ -26,5 +26,5 @@ test('Region invalid handles preserve native errors and guest outputs validate a
  assert.equal(m.u32(out),123);m.map(0x60000000,4096);const edge=0x60000ffc;m.w32(edge,0xcccccccc);
  for(const ptr of [0,edge]){const count=p.handles.size;assert.throws(()=>call('CreateRectRgnIndirect',ptr));assert.equal(p.handles.size,count);assert.throws(()=>call('GetRgnBox',h,ptr));}assert.equal(m.u32(edge),0xcccccccc);
  for(const n of ['GetObjectA','GetObjectW']){assert.equal(call(n,h,16,out),0);assert.equal(p.lastError,6);}
- const dc=p.apis.gui.newDC(0);assert.throws(()=>call('SelectObject',dc,h),e=>e.code==='UNSUPPORTED_GDI');
+ const dc=p.apis.gui.newDC(0);assert.equal(call('SelectObject',dc,h),2);
 });

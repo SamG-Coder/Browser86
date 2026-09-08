@@ -4,6 +4,15 @@ const inRange=values=>values.every(n=>n>=-0x8000000&&n<0x8000000);
 export function installRegions(gui){
  const {p,m,api}=gui,g=(n,c,f)=>api.add('gdi32.dll',n,c,f),region=h=>{const o=p.object(h,'gdi');return o?.kind==='region'?o:null;};
  const create=(...values)=>{values=values.map(n=>n|0);if(!inRange(values))return api.fail(87);return p.handle('gdi',{kind:'region',rect:normalize(...values)});};
+ g('SelectClipRgn',2,(h,r)=>{
+  const dc=gui.dc(h);if(!dc)return api.fail(6);if(!r){dc.clipRegion=null;return 2;}const o=region(r);if(!o)return 0;
+  dc.clipRegion={rect:o.rect?[...o.rect]:null};const bounds=o.rect,w=gui.window(dc.hwnd),width=w?.width??1280,height=w?.height??720;
+  return bounds&&bounds[0]<width&&bounds[1]<height&&bounds[2]>0&&bounds[3]>0?2:1;
+ });
+ g('GetClipRgn',2,(h,r)=>{
+  const dc=gui.dc(h);if(!dc)return api.fail(r?87:6,-1);const o=region(r);if(!o)return -1;if(!dc.clipRegion)return 0;
+  o.rect=dc.clipRegion.rect?[...dc.clipRegion.rect]:null;return 1;
+ });
  const fill=(dcHandle,regionHandle,brushHandle)=>{
   if(!brushHandle)return 0;const dc=gui.dc(dcHandle);if(!dc)return api.fail(6);const o=region(regionHandle);if(!o)return 0;if(!o.rect)return 1;
   const brush=p.object(brushHandle,'gdi');if(!brush||!['brush','pen'].includes(brush.kind)||brush.null)return 0;

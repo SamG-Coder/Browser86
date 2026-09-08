@@ -22,6 +22,7 @@ export class GuestDisplay {
     document.getElementById('desktop-empty').hidden=this.windows.size>0;
   }
   draw(commands){for(const c of commands){const record=this.windows.get(c.hwnd);if(!record?.context)continue;const ctx=record.context;ctx.save();try{
+      if(c.clip){ctx.beginPath();for(const [l,t,r,b] of c.clip){const x=Math.max(0,l),y=Math.max(0,t),right=Math.min(ctx.canvas.width,r),bottom=Math.min(ctx.canvas.height,b);if(right>x&&bottom>y)ctx.rect(x,y,right-x,bottom-y);}ctx.clip();}
       if(c.pen?.geometric){ctx.lineCap=c.pen.lineCap;ctx.lineJoin=c.pen.lineJoin;ctx.miterLimit=c.pen.miterLimit;ctx.setLineDash(c.pen.dash||[]);}
       if(c.op==='fill'){ctx.fillStyle=color(c.color);ctx.fillRect(c.x,c.y,c.width,c.height);}
       else if(c.op==='invert'){

@@ -273,6 +273,9 @@ void mainCRTStartup(void){
   regionInput.left=10;regionInput.right=11;regionInput.top=2;regionInput.bottom=20;CHECK(!RectInRegion(regionA,&regionInput));
   CHECK(OffsetRgn(regionB,2,-1)==2&&!EqualRgn(regionA,regionB));
   CHECK(SetRectRgn(regionB,3,4,3,8)&&GetRgnBox(regionB,&regionBox)==1&&regionBox.left==0&&regionBox.bottom==0);
+  CHECK(!GetClipRgn(savedDC,regionB)&&SelectClipRgn(savedDC,regionA)==2&&GetClipRgn(savedDC,regionB)==1&&EqualRgn(regionA,regionB));
+  CHECK(SaveDC(savedDC)==1&&SelectClipRgn(savedDC,NULL)==2&&RestoreDC(savedDC,-1)&&GetClipRgn(savedDC,regionB)==1);
+  CHECK(SelectClipRgn(savedDC,NULL)==2&&SetRectRgn(regionB,0,0,0,0));
   CHECK(InvertRect(savedDC,&regionInput)&&InvertRect(savedDC,&regionInput));
   RECT extremeInvert={(int)0x80000000,1,7,7};CHECK(InvertRect(savedDC,&extremeInvert)&&InvertRect(savedDC,&extremeInvert));
   CHECK(InvertRgn(savedDC,regionA)&&InvertRgn(savedDC,regionA)&&InvertRgn(savedDC,regionB));

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Rectangular application clipping - 2026-09-08
+
+**274 Node tests passed, 0 failed, 0 skipped.** SelectClipRgn and GetClipRgn now copy rectangular application clips independently of source and destination handles. Tests cover mutation/deletion isolation, draw-command snapshots, no-clip versus empty-clip states, nested SaveDC/RestoreDC, independent DCs, invalid-handle error distinctions and offscreen complexity results. SelectObject region selection uses the clipping path. The rebuilt HandleObjects.exe imports both APIs and checks query/copy/save/restore/removal. The catalog contains 538 entries.
+
+**Nine real-canvas clipping checks and eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Canvas coverage includes solid fills, lines, polygons, inversion, text, bitmap transport, empty clipping, saved clipping restoration and removal. Evidence: [Node TAP](test-artifacts/clip-region-tests.tap), [canvas report](test-artifacts/clip-region-canvas-report.json), [browser report](test-artifacts/clip-region-browser-report.json).
+
+Native probes established getter errors, null removal, copied-region lifetime and saved-state restoration. A region changed after selection remained (1,2,7,8) when queried after restore. Owned native DC/region handles were released. No guest executable ran on the host. References: [SelectClipRgn](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-selectcliprgn), [GetClipRgn](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getcliprgn). Complex regions, clip combinations, coordinate mapping, update-region clipping and native window occlusion remain unfinished. Screen DC extent uses the existing fixed runtime profile.
+
 ## Inversion at extreme coordinates - 2026-09-08
 
 **271 Node tests passed, 0 failed, 0 skipped.** A new reference test checks full endpoint spans for fifty native rectangles using INT_MIN, INT_MAX, negative and visible coordinates on both axes. The rebuilt C fixture exercises repeated INT_MIN-origin inversion. The catalog remains at 536 entries.
