@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Class and window extra-storage size mutation - 2026-09-08
+
+**450 Node tests passed, 0 failed, 0 skipped.** SetClassLongA/W now rejects GCL_CBCLSEXTRA changes with error 87 and supports GCL_CBWNDEXTRA replacement. Tests cover prior sizes, future-window allocation bounds, existing data retention, shrink/grow/zero transitions, invalid HWNDs and raw negative metadata with explicitly unsupported creation. The rebuilt HandleObjects.exe changes/restores the window default and checks class-size rejection. Catalog remains 588 entries.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-extra-size-tests.tap), [browser report](test-artifacts/class-extra-size-browser-report.json).
+
+Native private A/W class probes rejected class-extra changes (including unchanged values) with error 87, accepted window-extra replacement and preserved error 1234. Existing windows retained eight-byte bounds when the default changed to four, twelve or zero; newly created windows used the new default. Raw 0xffffffff metadata was accepted, but creation with negative sizes was not probed. Windows/classes were cleaned up. Reference: [Microsoft SetClassLongW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclasslongw). Large-allocation limits and resource-exhaustion parity remain unfinished.
+
 ## Class module replacement and unregistration matching - 2026-09-08
 
 **446 Node tests passed, 0 failed, 0 skipped.** SetClassLongA/W supports GCL_HMODULE replacement, previous-value returns and raw zero/high-bit values. Tests cover shared class state, independent window instance handles, invalid HWNDs and unregistration by atom/name with null or explicit module arguments. The prior test expecting null unregistration to reject a non-main module was corrected using native evidence. The rebuilt HandleObjects.exe replaces the class module with zero, queries it and restores the main module. Catalog remains 588 entries.

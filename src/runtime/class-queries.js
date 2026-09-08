@@ -32,6 +32,8 @@ export function installClassQueries(gui){
   const cls=gui.classes.get(w.className.toLowerCase());if(!cls)throw new RuntimeFault('UNSUPPORTED_GUI','Built-in class metadata is not implemented.');
   index|=0;value>>>=0;
   if(index>=0){if(index+4>cls.classExtra)return api.fail(1413);const old=extraLong(cls,index);cls.extraBytes??=new Map();for(let i=0;i<4;i++)cls.extraBytes.set(index+i,(value>>>(i*8))&255);return old;}
+  if(index===-20)return api.fail(87);
+  if(index===-18){const old=cls.windowExtra;cls.windowExtra=value;return old;}
   if(index===-16){const old=cls.instance;cls.instance=value;return old;}
   if(index===-12){const old=cls.cursor;cls.cursor=value&&p.object(value,'cursor')?value:0;if(value&&!cls.cursor)p.setError(1402);return old;}
   if(index===-10){const old=cls.background;cls.background=value;return old;}

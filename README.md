@@ -89,7 +89,7 @@ npm test
 node --test tests/*.test.mjs
 ```
 
-The recorded run passes **446 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks, environment buffers and blocks, open-file deletion lifetime, extended file-information queries and static-server delivery.
+The recorded run passes **450 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks, environment buffers and blocks, open-file deletion lifetime, extended file-information queries and static-server delivery.
 
 The optional browser harness is:
 
