@@ -1,7 +1,7 @@
 import {installCursors,defaultSetCursor} from './cursors.js';
 import {installWindowWord} from './window-word.js';
 import {installDialogIntegers} from './dialog-integers.js';
-import {buttonCheck} from './button-check.js';
+import {buttonCheck,buttonClick} from './button-check.js';
 import {installClassQueries} from './class-queries.js';
 import {installWindowIdentity} from './window-identity.js';
 import {installWindowProperties,releaseWindowProperties} from './window-properties.js';
@@ -52,6 +52,7 @@ export class GUI {
   send(hwnd,msg,wp,lp,wide=false,done=value=>value){
     const w=this.window(hwnd);if(!w)return done(0);
     if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&(msg===0xf0||msg===0xf1))return done(buttonCheck(this,w,msg,wp));
+    if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&msg===0xf5){const finish=result=>result?.call?{...result,then:value=>finish(result.then(value))}:done(result);return finish(buttonClick(this,w));}
     if(w.proc&&msg===0x0E&&wide!==w.wide){
       const procedureWide=w.wide;
       return this.p.call(w.proc,[hwnd,msg,wp,0],length=>{
@@ -87,7 +88,7 @@ export class GUI {
     const finish=result=>result?.call?{...result,then:value=>finish(result.then?result.then(value):value)}:done(result);
     return finish(this.defWindow(hwnd,msg,wp,lp,wide));
   }
-  defWindow(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(msg===0x81)return 1;if(msg===0x205){const [x,y]=windowOrigin(this,hwnd),point=((((lp<<16)>>16)+x)&65535)|((((lp>>16)+y)&65535)<<16);return this.send(hwnd,0x7b,hwnd,point>>>0,wide,()=>0);}if(msg===0x7b)return (w.style&0x40000000)&&w.parent?this.send(w.parent,msg,wp,lp,wide,()=>0):0;if(msg===0x1f)return cancelCapture(this,hwnd);if(msg===0x20)return defaultSetCursor(this,w,wp,lp,wide);if(msg===WM_CLOSE)return this.destroy(hwnd);if(msg===0x0C){w.title=this.api.str(lp,wide);this.notify(w);return 1;}if(msg===0x0D){this.m.string(lp,w.title,wide,wp);return Math.min(w.title.length,Math.max(0,wp-1));}if(msg===0x0E)return w.title.length;if(msg===0x14)return this.eraseBackground(w,wp);if(msg===0x84)return 1;if(msg===WM_PAINT){w.paintPending=false;return 0;}if(msg===0xF5&&w.className.toUpperCase()==='BUTTON'){this.p.postMessage(w.parent,WM_COMMAND,w.id&65535,hwnd);return 0;}if(msg===0x30){w.font=wp;return 0;}return 0;}
+  defWindow(hwnd,msg,wp,lp,wide=false){const w=this.window(hwnd);if(!w)return 0;if(msg===0x81)return 1;if(msg===0x205){const [x,y]=windowOrigin(this,hwnd),point=((((lp<<16)>>16)+x)&65535)|((((lp>>16)+y)&65535)<<16);return this.send(hwnd,0x7b,hwnd,point>>>0,wide,()=>0);}if(msg===0x7b)return (w.style&0x40000000)&&w.parent?this.send(w.parent,msg,wp,lp,wide,()=>0):0;if(msg===0x1f)return cancelCapture(this,hwnd);if(msg===0x20)return defaultSetCursor(this,w,wp,lp,wide);if(msg===WM_CLOSE)return this.destroy(hwnd);if(msg===0x0C){w.title=this.api.str(lp,wide);this.notify(w);return 1;}if(msg===0x0D){this.m.string(lp,w.title,wide,wp);return Math.min(w.title.length,Math.max(0,wp-1));}if(msg===0x0E)return w.title.length;if(msg===0x14)return this.eraseBackground(w,wp);if(msg===0x84)return 1;if(msg===WM_PAINT){w.paintPending=false;return 0;}if(msg===0x30){w.font=wp;return 0;}return 0;}
   windowExtra(w,index,value,size=4){
     if(index+size>w.extraSize)return this.api.fail(1413);
     let old=0;for(let i=0;i<size;i++)old|=(w.extraBytes?.get(index+i)||0)<<(i*8);
@@ -118,7 +119,7 @@ export class GUI {
   }
   input(event){const p=this.p,w=this.window(event.hwnd);if(!w)return;
     if(event.kind==='close')p.postMessage(w.hwnd,WM_CLOSE);
-    else if(event.kind==='click'){if(w.parent&&w.className.toUpperCase()==='BUTTON')p.postMessage(w.parent,WM_COMMAND,w.id&65535,w.hwnd);}
+    else if(event.kind==='click'){if(w.enabled&&w.parent&&w.className.toUpperCase()==='BUTTON'){if(w.builtin&&!w.proc)buttonClick(this,w,true);else p.postMessage(w.parent,WM_COMMAND,w.id&65535,w.hwnd);}}
     else if(event.kind==='edit'){w.title=String(event.text).slice(0,65535);if(w.parent)p.postMessage(w.parent,WM_COMMAND,((0x300<<16)|(w.id&65535))>>>0,w.hwnd);}
     else if(event.kind==='mouse'){const message=mouseMessage(event);if(!message)return;const target=this.window(this.capture)||w;let x=event.x,y=event.y;if(target!==w){const from=windowOrigin(this,w.hwnd),to=windowOrigin(this,target.hwnd);x+=from[0]-to[0];y+=from[1]-to[1];}const origin=windowOrigin(this,target.hwnd);classifyClick(this,event,target,message,x+origin[0],y+origin[1]);const xy=((x&65535)|((y&65535)<<16))>>>0;p.postMessage(target.hwnd,message.message,message.wParam,xy);}
     else if(event.kind==='key'){const code=event.code>>>0;this.keyChars.set(code,event.char||'');p.postMessage(w.hwnd,event.down?0x100:0x101,code,event.down?1:0xC0000001);}

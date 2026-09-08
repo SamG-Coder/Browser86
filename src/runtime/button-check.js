@@ -6,3 +6,11 @@ export function buttonCheck(gui,w,message,value){
   const changed=(w.checkState||0)!==state||oldStyle!==w.style;
   w.checkState=state;if(changed)gui.notify(w);return 0;
 }
+
+export function buttonClick(gui,w,queued=false){
+  const type=w.style&15;
+  if(type===3||type===6)buttonCheck(gui,w,0xf1,((w.checkState||0)+1)%(type===6?3:2));
+  if(!w.parent)return 0;
+  if(queued){gui.p.postMessage(w.parent,0x111,w.id&65535,w.hwnd);return 0;}
+  return gui.send(w.parent,0x111,w.id&65535,w.hwnd,w.wide,()=>0);
+}

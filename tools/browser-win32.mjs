@@ -76,6 +76,18 @@ try{
   assert.equal(checkControls.afterClick,'false');assert.deepEqual(checkControls.inputs,[{kind:'click',hwnd:322}]);
   assert.deepEqual(checkControls.radio,{role:'radio',checked:'true',disabled:true,tab:-1});assert.deepEqual(checkControls.push,{role:null,checked:null,text:'Push'});
   checks.push('Checkbox and radio display follows guest state, accessibility, enabled state and style changes');
+  const automaticClicks=await page.evaluate(async()=>{
+    const {GuestDisplay}=await import('/src/ui/display.js'),{GuestProcess}=await import('/src/runtime/process.js'),{readZip}=await import('/src/runtime/zip.js');
+    const entries=await readZip(new Uint8Array(await (await fetch('/demos/browser86-demo.zip')).arrayBuffer())),root=document.createElement('div');document.body.append(root);let process;const display=new GuestDisplay(root,event=>process.inputEvent(event));
+    try{
+      process=new GuestProcess({entries,exePath:'C:/app/HelloConsole.exe',emit:(type,data)=>{if(type==='window')display.window(data);}});const u=(n,...a)=>process.apis.lookup('user32.dll',n).fn(...a);
+      const parent=u('CreateWindowExA',0,process.heap.string('STATIC'),0,0x10000000,0,0,220,120,0,0,0,0),child=u('CreateWindowExA',0,process.heap.string('BUTTON'),process.heap.string('Automatic'),0x50010006,10,10,180,26,parent,42,0,0),node=display.windows.get(child).element,states=[];
+      for(let i=0;i<3;i++){node.click();states.push([u('IsDlgButtonChecked',parent,42),node.getAttribute('aria-checked')]);}
+      return {states,commands:process.messageQueue.filter(m=>m.message===0x111).map(m=>[m.hwnd===parent,m.wParam,m.lParam===child])};
+    }finally{display.reset();root.remove();}
+  });
+  assert.deepEqual(automaticClicks.states,[[1,'true'],[2,'mixed'],[0,'false']]);assert.deepEqual(automaticClicks.commands,Array(3).fill([true,42,true]));
+  checks.push('Real runtime automatic checkbox clicks cycle visible state and enqueue parent commands');
   // Read the actual database; no storage adapter or worker mock is used.
   const savedFile=async()=>{
     const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('browser86-packages',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});

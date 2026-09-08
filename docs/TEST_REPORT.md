@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Automatic checkbox activation - 2026-09-08
+
+**488 Node tests passed, 0 failed, 0 skipped.** Automatic checkboxes now alternate 0/1 and automatic three-state controls cycle 0/1/2 before parent notification. BM_CLICK dispatches synchronous WM_COMMAND/BN_CLICKED and preserves reentrant parent state changes; browser clicks update state before queuing commands. Tests cover manual styles, parameters, command IDs, callback results and disabled browser/programmatic differences. Catalog remains 602 entries.
+
+**Thirteen real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** The new check connects real GuestProcess and GuestDisplay, clicks an automatic three-state control and verifies visible true/mixed/false states and parent commands. Rebuilt HandleObjects.exe verifies A/W BM_CLICK cycling in the browser worker. Evidence: [Node TAP](test-artifacts/button-click-tests.tap), [browser report](test-artifacts/button-click-browser-report.json).
+
+Native hidden A/W button probes confirmed state cycles before parent callbacks, unchanged manual state and programmatic BM_CLICK operating on disabled controls. Probe windows/classes were cleaned up. Reference: [Microsoft BM_CLICK](https://learn.microsoft.com/en-us/windows/win32/controls/bm-click). Automatic radio grouping, full WM_LBUTTONDOWN/UP and focus/capture sequencing, and native incidental last-error changes remain incomplete. Browser input retains queued parent delivery; the synchronous guarantee here applies to BM_CLICK API dispatch.
+
 ## Checkbox and radio display - 2026-09-08
 
 **485 Node tests passed, 0 failed, 0 skipped.** The browser display now presents guest check-state metadata as checkbox/radio indicators, including indeterminate state, with accessible roles and checked values. It respects enabled state and WS_TABSTOP and removes check semantics on transition to push-button style. Clicks forward input without independently toggling state. Catalog remains 602 entries.
