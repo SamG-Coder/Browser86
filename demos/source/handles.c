@@ -21,6 +21,11 @@ static long WINAPI rejectProc(HWND h,DWORD msg,DWORD wp,long lp){
   if(msg==1)return -1;
   return DefWindowProcA(h,msg,wp,lp);
 }
+static DWORD propertyEnumCount,propertyEnumSum;
+static BOOL WINAPI enumPropertyA(HWND h,char *name,HANDLE data){propertyEnumCount++;propertyEnumSum+=(DWORD)data;CHECK(GetPropA(h,name)==data);return 7;}
+static BOOL WINAPI enumPropertyW(HWND h,WORD *name,HANDLE data){propertyEnumCount++;propertyEnumSum+=(DWORD)data;CHECK(GetPropW(h,name)==data);return 7;}
+static BOOL WINAPI enumPropertyExA(HWND h,char *name,HANDLE data,DWORD param){CHECK(param==0xabcdef12);CHECK(GetPropA(h,name)==data);return 0;}
+static BOOL WINAPI enumPropertyExW(HWND h,WORD *name,HANDLE data,DWORD param){CHECK(param==99);propertyEnumCount++;CHECK(RemovePropW(h,name)==data);return 7;}
 static DWORD initializationCalls;
 static BOOL WINAPI initializeOnce(DWORD *once,void *parameter,void **context){
   initializationCalls++;if(initializationCalls==1){SetLastError(123);return 0;}
@@ -330,6 +335,12 @@ void mainCRTStartup(void){
   CHECK(SetPropW(lifetimeWindows[0],propertyName,(HANDLE)0xffffffff));CHECK(RemovePropA(lifetimeWindows[0],"CONTEXT")== (HANDLE)0xffffffff);
   CHECK(SetPropA(lifetimeWindows[0],"#0001",(HANDLE)123));CHECK(GetPropA(lifetimeWindows[0],(const char*)1)==(HANDLE)123);CHECK(RemovePropW(lifetimeWindows[0],(const WORD*)1)==(HANDLE)123);
   CHECK(SetPropW(lifetimeWindows[0],propertyName,NULL));SetLastError(1234);CHECK(!GetPropA(lifetimeWindows[0],"context")&&GetLastError()==1234);CHECK(!RemovePropW(lifetimeWindows[0],propertyName));
+  CHECK(SetPropA(lifetimeWindows[0],"Enumerated",(HANDLE)17));CHECK(SetPropA(lifetimeWindows[0],(const char*)5,(HANDLE)23));
+  CHECK(EnumPropsA(lifetimeWindows[0],enumPropertyA)==7&&propertyEnumCount==2&&propertyEnumSum==40);
+  propertyEnumCount=propertyEnumSum=0;CHECK(EnumPropsW(lifetimeWindows[0],enumPropertyW)==7&&propertyEnumCount==2&&propertyEnumSum==40);
+  CHECK(EnumPropsExA(lifetimeWindows[0],enumPropertyExA,0xabcdef12)==0);
+  propertyEnumCount=0;CHECK(EnumPropsExW(lifetimeWindows[0],enumPropertyExW,99)==7&&propertyEnumCount==2);
+  CHECK(EnumPropsA(lifetimeWindows[0],enumPropertyA)==-1);
   CHECK(!SetFocus(lifetimeWindows[1])&&GetFocus()==lifetimeWindows[1]);
   CHECK(SetFocus(lifetimeWindows[2])==lifetimeWindows[1]&&GetFocus()==lifetimeWindows[2]);
   CHECK(SetFocus(lifetimeWindows[2])==lifetimeWindows[2]);CHECK(SetFocus(NULL)==lifetimeWindows[2]&&!GetFocus());

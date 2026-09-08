@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Window property enumeration - 2026-09-08
+
+**314 Node tests passed, 0 failed, 0 skipped.** Added EnumPropsA/W and EnumPropsExA/W using guest callback continuations. Property metadata now preserves original spelling across case-insensitive replacements. Tests cover both encodings, integer keys, zero data, Ex application parameters, signed last-callback results, early stopping, empty lists, invalid HWNDs, null callback rejection for nonempty lists, current-property removal and nested temporary-buffer lifetimes. The rebuilt HandleObjects.exe imports all four functions, verifies two-property enumeration and early stopping, then removes the properties through an ExW callback. Catalog: 557 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/property-enumeration-tests.tap), [browser report](test-artifacts/property-enumeration-browser-report.json).
+
+Native ctypes probes verified original MixedCase spelling after a MIXEDCASE replacement, string/integer callback keys, Ex parameter forwarding, result 7 from callbacks returning 7 and result 0 on early stopping. STATIC windows also exposed an internal property; a separate registered custom class verified genuinely empty enumeration returns -1 and preserves error 1234, including a null callback for the empty list. Invalid windows returned -1/error 1400. Probe windows were destroyed and the private class unregistered; no guest executable ran on the host. References: [EnumPropsExW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumpropsexw), [PropEnumProcExW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nc-winuser-propenumprocexw). The runtime enumerates a snapshot of guest properties, not native system/control properties; global atom identity, ANSI best-fit parity and callback mutations beyond documented current-property removal remain unfinished.
+
 ## Window property associations - 2026-09-08
 
 **310 Node tests passed, 0 failed, 0 skipped.** Added SetPropA/W, GetPropA/W and RemovePropA/W with per-window storage, case-insensitive names using the existing Windows ordinal table, arbitrary 32-bit values, numeric keys and #decimal aliases. Tests cover A/W interoperability, replacement and zero values, per-window isolation, name lifetime, empty/oversized strings, invalid handles, truncated memory, destruction-time removal and application ownership of data handles. The rebuilt HandleObjects.exe exercises all six imports. Catalog: 553 entries.
