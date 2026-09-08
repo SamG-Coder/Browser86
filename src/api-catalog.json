@@ -2575,6 +2575,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "__p__commode",
+    "argc": 0,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "__p__environ",
     "argc": 0,
     "cdecl": true,
@@ -2592,6 +2599,19 @@
     "name": "_acmdln",
     "cdecl": false,
     "data": true
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "_commode",
+    "cdecl": false,
+    "data": true
+  },
+  {
+    "dll": "msvcrt.dll",
+    "name": "_crt_atexit",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
   },
   {
     "dll": "msvcrt.dll",
