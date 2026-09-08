@@ -53,6 +53,12 @@ static BOOL WINAPI initializeOnce(DWORD *once,void *parameter,void **context){
   *context=parameter;return 1;
 }
 void mainCRTStartup(void){
+  static WNDCLASSEXA validationClass;validationClass.size=49;validationClass.cls.proc=encodingProc;validationClass.cls.name="ValidationClass";
+  CHECK(!RegisterClassExA(&validationClass));CHECK(GetLastError()==87);validationClass.size=48;validationClass.cls.classExtra=-1;
+  CHECK(!RegisterClassExA(&validationClass));CHECK(GetLastError()==87);validationClass.cls.classExtra=256;validationClass.cls.windowExtra=256;
+  WORD validationAtom=RegisterClassExA(&validationClass);CHECK(validationAtom);CHECK(UnregisterClassA((const char*)(DWORD)validationAtom,NULL));
+  static WORD validationName[]={'V','a','l','i','d','W',0};static WNDCLASSEXW validationWide;validationWide.size=48;validationWide.cls.proc=encodingProc;validationWide.cls.name=validationName;validationWide.cls.windowExtra=-1;
+  CHECK(!RegisterClassExW(&validationWide));CHECK(GetLastError()==87);validationWide.cls.windowExtra=41;validationAtom=RegisterClassExW(&validationWide);CHECK(validationAtom);CHECK(UnregisterClassW((const WORD*)(DWORD)validationAtom,NULL));
   WNDCLASSA encodingA={0};encodingA.classExtra=8;encodingA.windowExtra=8;encodingA.proc=encodingProc;encodingA.name="A\xe9";encodingA.brush=CreateSolidBrush(0x123456);WORD encodingAtomA=RegisterClassA(&encodingA);CHECK(encodingAtomA);
   WORD aName[]={'A',233,0},wTitle[]={'C','a','f',233,' ',256,0};
   HWND encodingWindow=CreateWindowExW(0,aName,wTitle,0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Class registration structure validation - 2026-09-08
+
+**381 Node tests passed, 0 failed, 0 skipped.** RegisterClass/ExA/W validates signed extra-storage counts and readable structures before consuming atoms. RegisterClassEx requires the exact x86 cbSize of 48. Tests cover all A/W/Ex variants, negative values, under/oversized headers, truncated memory, unchanged registry state, corrected retry and accepted 40/41/256-byte areas. The rebuilt HandleObjects.exe imports RegisterClassExA/W and checks invalid sizes/counts followed by successful registration and cleanup. Catalog remains 580 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-registration-validation-tests.tap), [browser report](test-artifacts/class-registration-validation-browser-report.json).
+
+Native private-class probes rejected negative cbClsExtra/cbWndExtra with error 87 and accepted 40, 41 and 256 bytes. RegisterClassEx required exactly 80 bytes in the 64-bit probe; the guest equivalent is 48 bytes. Smaller and larger sizes failed with error 87. Successful classes were unregistered. Reference: [Microsoft WNDCLASSEXW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-wndclassexw). The new C scratch structures use static storage to stay within the fixture's existing minimal runtime without introducing a stack-probe dependency; the successful rebuild preceded the recorded test/browser runs. Exhaustion, remaining flag/handle validation and class namespaces remain unfinished.
+
 ## Per-window extra storage - 2026-09-08
 
 **377 Node tests passed, 0 failed, 0 skipped.** GetWindowLongA/W and SetWindowLongA/W now support positive offsets into custom-window extra bytes. Tests cover RegisterClass/Ex A/W, initial zeroes, overlapping unaligned writes, previous values, sibling/class/user-data isolation, new-window reset, creation/destruction callback access, invalid handles and out-of-bounds access without mutation. The rebuilt HandleObjects.exe imports all four variants and verifies overlapping data and error 1413. Catalog remains 580 entries.

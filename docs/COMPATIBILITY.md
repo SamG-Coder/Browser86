@@ -212,6 +212,8 @@ SetClassLongA/W now writes class-extra DWORDs and replaces GCL_HBRBACKGROUND. Ex
 
 GetWindowLongA/W and SetWindowLongA/W now read and write positive DWORD offsets in custom-window extra storage reserved by cbWndExtra. Each window captures its storage size at creation and starts with zero bytes. Unaligned overlapping writes return the previous little-endian value; out-of-range offsets fail with error 1413 without mutation. Storage is independent of class-extra bytes, sibling windows and GWL_USERDATA, and remains accessible during creation/destruction callbacks. Built-in control extra layouts, changing reserved sizes and complete registration validation remain unfinished.
 
+RegisterClass/ExA/W now rejects negative signed class/window extra-storage counts with error 87. RegisterClassEx requires exactly 48 bytes for its x86 cbSize; both smaller and larger values fail. Full fixed-size structures are checked for readable guest memory before any class atom or registry mutation. Counts 40, 41 and 256 remain accepted, matching current native probes; no obsolete 40-byte cap is imposed. Exhaustion limits, all registration flag/handle checks and namespace behavior remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
