@@ -1,5 +1,6 @@
 import {ansiDecode} from './memory.js';
 import {installRectangles} from './rectangles.js';
+import {installDCState,dcSelectsObject} from './dc-state.js';
 import {RuntimeFault,requireThat} from './errors.js';
 const WM_CREATE=1,WM_DESTROY=2,WM_SIZE=5,WM_PAINT=15,WM_CLOSE=16,WM_QUIT=18,WM_COMMAND=0x111;
 export class GUI {
@@ -74,9 +75,10 @@ export class GUI {
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
     installRectangles(this.api);
+    installDCState(this);
     g('GetStockObject',1,i=>this.stockObject(i));g('CreateSolidBrush',1,color=>p.handle('gdi',{kind:'brush',color}));g('CreatePen',3,(style,width,color)=>{if(style!==0&&style!==5)throw new RuntimeFault('UNSUPPORTED_GDI','Only solid or null pens are implemented.');return p.handle('gdi',{kind:'pen',color,width:Math.max(1,width|0),null:style===5});});
     g('SelectObject',2,(hdc,obj)=>{const dc=this.dc(hdc),object=p.object(obj,'gdi');if(!dc||!object)return 0;const old=dc[object.kind];dc[object.kind]=obj;return old||0;});
-    g('DeleteObject',1,h=>{const obj=p.object(h,'gdi');if(!obj||obj.stock)return 0;if([...p.handles.values()].some(dc=>dc.type==='dc'&&[dc.pen,dc.brush,dc.font].includes(h)))return 0;p.releaseHandle(h);return 1;});
+    g('DeleteObject',1,h=>{const obj=p.object(h,'gdi');if(!obj||obj.stock)return 0;if([...p.handles.values()].some(dc=>dc.type==='dc'&&dcSelectsObject(dc,h)))return 0;p.releaseHandle(h);return 1;});
     g('SetTextColor',2,(hdc,color)=>{const dc=this.dc(hdc);if(!dc)return 0xFFFFFFFF;const old=dc.textColor;dc.textColor=color;return old;});g('SetBkColor',2,(hdc,color)=>{const dc=this.dc(hdc);if(!dc)return 0xFFFFFFFF;const old=dc.background;dc.background=color;return old;});g('SetBkMode',2,(hdc,mode)=>{const dc=this.dc(hdc);if(!dc||![1,2].includes(mode))return 0;const old=dc.bkMode;dc.bkMode=mode;return old;});g('SetTextAlign',2,(hdc,align)=>{const dc=this.dc(hdc);if(!dc)return 0xFFFFFFFF;const old=dc.align;dc.align=align;return old;});
     u('FillRect',3,(hdc,rect,brush)=>{const object=p.object(brush,'gdi'),color=object?.color??(brush===6?0xFFFFFF:0xF0F0F0);return this.draw(hdc,{op:'fill',x:m.i32(rect),y:m.i32(rect+4),width:m.i32(rect+8)-m.i32(rect),height:m.i32(rect+12)-m.i32(rect+4),color});});
     for(const [name,op,n]of [['Rectangle','rectangle',5],['Ellipse','ellipse',5],['RoundRect','roundrect',7]])g(name,n,(hdc,left,top,right,bottom,rx=12,ry=12)=>{const dc=this.dc(hdc);if(!dc)return 0;return this.draw(hdc,{op,x:left|0,y:top|0,width:(right-left)|0,height:(bottom-top)|0,rx,ry,pen:p.object(dc.pen,'gdi'),brush:p.object(dc.brush,'gdi')});});

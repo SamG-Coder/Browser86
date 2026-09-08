@@ -120,6 +120,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "GetCurrentPositionEx",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetDeviceCaps",
     "argc": 2,
     "cdecl": false,
@@ -169,8 +176,22 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "RestoreDC",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "RoundRect",
     "argc": 7,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "SaveDC",
+    "argc": 1,
     "cdecl": false,
     "data": false
   },

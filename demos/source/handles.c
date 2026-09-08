@@ -190,6 +190,12 @@ void mainCRTStartup(void){
   CHECK(CompareFileTime(&epoch,&stamp)==-1&&CompareFileTime(&stamp,&epoch)==1&&CompareFileTime(&stamp,&stamp)==0);
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
+  HDC savedDC=GetDC(NULL);POINT savedPosition;
+  CHECK(savedDC&&MoveToEx(savedDC,3,4,NULL)&&SaveDC(savedDC)==1);
+  CHECK(MoveToEx(savedDC,10,20,NULL)&&SaveDC(savedDC)==2&&MoveToEx(savedDC,30,40,NULL));
+  CHECK(RestoreDC(savedDC,-1)&&GetCurrentPositionEx(savedDC,&savedPosition)&&savedPosition.x==10&&savedPosition.y==20);
+  CHECK(RestoreDC(savedDC,1)&&GetCurrentPositionEx(savedDC,&savedPosition)&&savedPosition.x==3&&savedPosition.y==4);
+  CHECK(!RestoreDC(savedDC,-1)&&GetLastError()==87);CHECK(ReleaseDC(NULL,savedDC));
   RECT rectA,rectB,rectOut;POINT rectPoint={0,0};
   CHECK(SetRect(&rectA,0,0,10,10)&&SetRect(&rectB,0,0,5,10));
   CHECK(PtInRect(&rectA,rectPoint));rectPoint.x=10;CHECK(!PtInRect(&rectA,rectPoint));

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## GDI device-context state extension — 2026-09-08
+
+**206 Node tests passed, 0 failed, 0 skipped.** Four new tests cover nested absolute/relative restore, discarded levels and level reuse, independent DC stacks, selected-object lifetime protection, invalid handles/levels, last-error preservation and POINT output validation. Restored pen position/colors/selection are checked in actual emitted line/text commands. The rebuilt HandleObjects.exe imports SaveDC, RestoreDC and GetCurrentPositionEx, checks nested position restoration and invalid restore, and releases its DC. The catalog contains 489 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** Actual workers executed the updated fixture under the deployed CSP; IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/dc-state-tests.tap) and [browser report](test-artifacts/dc-state-browser-report.json). This focused check does not certify full GUI rendering or unimplemented DC state.
+
+Native ctypes probes used a temporary compatible memory DC (deleted in finally) to verify save levels, relative/absolute restore, invalid-level errors and level reuse. No guest executable ran on the host. Microsoft's [SaveDC](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-savedc) and [RestoreDC](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-restoredc) document the stack contract. Only existing emulated state is saved; mapping/clipping/regions and native deferred object deletion remain limitations.
+
 ## Rectangle helper extension — 2026-09-08
 
 **202 Node tests passed, 0 failed, 0 skipped.** Four new tests check 3,072 recorded native intersection/union/subtraction results with separate and aliased destinations (9,216 comparisons), point boundaries, inverted/empty rectangles, copying/equality, signed inflate/offset arithmetic, last-error preservation and atomic buffer validation. HandleObjects.exe imports all eleven rectangle helpers, including the three-stack-slot PtInRect signature for a by-value POINT. Seven imports are new; four existing handlers now share complete buffer validation. The catalog contains 486 entries.
