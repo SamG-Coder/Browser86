@@ -41,6 +41,11 @@ export function installCRT(api){const p=api.p,m=api.m,v=api.vfs;const c=(name,n,
     m.w32(argcP,argc);m.w32(argvP,argvArray);return 0;
   });
   c('_initialize_narrow_environment',0,()=>0);c('_get_initial_narrow_environment',0,()=>envArray);
+  c('_get_narrow_winmain_command_line',0,()=>{
+    let cursor=p.commandA,quoted=false;
+    while(m.u8(cursor)){const ch=m.u8(cursor);if(ch===34)quoted=!quoted;if(!quoted&&ch<=32)break;cursor++;}
+    while(m.u8(cursor)&&m.u8(cursor)<=32)cursor++;return cursor;
+  });
   c('__getmainargs',5,(outc,outv,oute,wildcard,info)=>{m.w32(outc,argc);m.w32(outv,argvArray);m.w32(oute,envArray);return 0;});c('__p___argc',0,()=>argcP);c('__p___argv',0,()=>argvP);c('__p___wargv',0,()=>wargvP);c('__p__environ',0,()=>envP);c('__p__acmdln',0,()=>{const a=p.heap.alloc(4);m.w32(a,p.commandA);return a;});
   api.data('msvcrt.dll','__argc',argcP);api.data('msvcrt.dll','__argv',argvP);api.data('msvcrt.dll','_environ',envP);const acmdln=p.heap.alloc(4);m.w32(acmdln,p.commandA);api.data('msvcrt.dll','_acmdln',acmdln);
   const atExit=[];for(const name of ['atexit','_crt_atexit'])c(name,1,fn=>{atExit.push(fn);return 0;});c('_onexit',1,fn=>{atExit.push(fn);return fn;});
@@ -85,4 +90,7 @@ export function installCRT(api){const p=api.p,m=api.m,v=api.vfs;const c=(name,n,
   c('fprintf',2,(h,fmt)=>{const f=streams.get(h);if(!f?.write)return -1;const text=format(m.cstr(fmt),2),data=ansiEncode(text);v.writeAt(f.path,f.position,data);f.position+=data.length;return data.length;});
   c('remove',1,name=>api.expected(()=>v.remove(m.cstr(name))?0:-1,-1));c('rename',2,(from,to)=>api.expected(()=>v.rename(m.cstr(from),m.cstr(to))?0:-1,-1));
   c('time',1,out=>{const seconds=Math.floor(Date.now()/1000);if(out)m.w32(out,seconds);return seconds;});c('clock',0,()=>Math.floor(performance.now()-p.started));
+  for(const name of ['memcpy','memmove','memset','memcmp','memchr','strchr','strrchr','strcmp','strlen','wcschr','wcsrchr']){
+    const entry=api.lookup('msvcrt.dll',name);api.add('vcruntime140.dll',name,entry.argc,entry.fn,true);
+  }
 }

@@ -2684,6 +2684,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "_get_narrow_winmain_command_line",
+    "argc": 0,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "_initialize_narrow_environment",
     "argc": 0,
     "cdecl": true,
@@ -4288,6 +4295,83 @@
   {
     "dll": "user32.dll",
     "name": "wsprintfA",
+    "argc": 2,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "memchr",
+    "argc": 3,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "memcmp",
+    "argc": 3,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "memcpy",
+    "argc": 3,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "memmove",
+    "argc": 3,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "memset",
+    "argc": 3,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "strchr",
+    "argc": 2,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "strcmp",
+    "argc": 2,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "strlen",
+    "argc": 1,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "strrchr",
+    "argc": 2,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "wcschr",
+    "argc": 2,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "vcruntime140.dll",
+    "name": "wcsrchr",
     "argc": 2,
     "cdecl": true,
     "data": false
