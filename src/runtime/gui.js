@@ -1,6 +1,7 @@
 import {installCursors,defaultSetCursor} from './cursors.js';
 import {installWindowWord} from './window-word.js';
 import {installDialogIntegers} from './dialog-integers.js';
+import {dialogCode} from './dialog-code.js';
 import {buttonCheck,buttonClick,buttonStyle,installRadioChecks} from './button-check.js';
 import {installClassQueries} from './class-queries.js';
 import {installWindowIdentity} from './window-identity.js';
@@ -51,6 +52,7 @@ export class GUI {
   }
   send(hwnd,msg,wp,lp,wide=false,done=value=>value){
     const w=this.window(hwnd);if(!w)return done(0);
+    if(!w.proc&&w.builtin&&msg===0x87)return done(dialogCode(w));
     if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&(msg===0xf0||msg===0xf1))return done(buttonCheck(this,w,msg,wp));
     if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&msg===0xf4)return done(buttonStyle(this,w,wp,lp));
     if(!w.proc&&w.builtin&&w.className.toUpperCase()==='BUTTON'&&msg===0xf5){const finish=result=>result?.call?{...result,then:value=>finish(result.then(value))}:done(result);return finish(buttonClick(this,w));}

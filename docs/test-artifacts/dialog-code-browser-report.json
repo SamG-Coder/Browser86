@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "url": "http://127.0.0.1:8096",
+  "browser": "152.0.4191.66",
+  "checks": [
+    "HTTP module and ZIP import workers run under the deployed CSP",
+    "SyncPrimitives.exe executes in the real runtime module worker",
+    "HandleObjects.exe executes in the real runtime module worker",
+    "Guest SetCursor updates browser canvas cursor styles through the worker bridge",
+    "Browser mouse chords, modifiers and extra buttons translate to Win32 messages",
+    "Browser click timestamps drive CS_DBLCLKS down-up-double-up classification",
+    "Checkbox and radio display follows guest state, accessibility, enabled state and style changes",
+    "Real runtime automatic checkbox clicks cycle visible state and enqueue parent commands",
+    "Automatic radio clicks enforce visible WS_GROUP selection boundaries",
+    "BM_SETSTYLE defers display changes until its low-word redraw flag is set",
+    "Guest file ID, attributes and exact FILETIMEs reach real IndexedDB",
+    "Metadata and package survive a real page reload",
+    "Deleted and delete-on-close guest files are absent from the persisted backup",
+    "Downloaded ZIP preserves file ID, attributes and 100-nanosecond FILETIMEs",
+    "Backup reimport mounts a new package with the same file metadata"
+  ],
+  "pageErrors": []
+}

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Built-in dialog control codes - 2026-09-08
+
+**499 Node tests passed, 0 failed, 0 skipped.** Built-in BUTTON, STATIC and EDIT controls now handle WM_GETDLGCODE. Tests cover button types 0-11, multiline edit distinctions, representative MSG/key inputs, input preservation, last-error preservation, type changes and custom/default procedure behavior. Catalog remains 603 entries.
+
+**Fifteen real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Rebuilt HandleObjects.exe verifies a built-in button dialog code after BM_SETSTYLE inside the browser worker. Evidence: [Node TAP](test-artifacts/dialog-code-tests.tap), [browser report](test-artifacts/dialog-code-browser-report.json).
+
+Native private A/W control probes confirmed all implemented button codes, STATIC 0x100, single-line EDIT 0x89 and multiline EDIT 0x8d. Representative Tab/Enter/Escape/letter key and character MSG inputs did not change edit responses. Successful queries preserved error 1234. Probe windows/classes were cleaned up. Reference: [Microsoft WM_GETDLGCODE](https://learn.microsoft.com/en-us/windows/win32/dlgbox/wm-getdlgcode). Extended button types remain explicitly unsupported. Dialog navigation, edit selection/multiline behavior and keyboard routing remain incomplete despite these metadata responses.
+
 ## Button type changes with BM_SETSTYLE - 2026-09-08
 
 **496 Node tests passed, 0 failed, 0 skipped.** Built-in buttons now implement BM_SETSTYLE, replacing only type bits while preserving other styles and stored check state. Tests cover high-bit inputs, transitions through checkbox/push/radio types, low-word redraw semantics, unchanged-type redraw, future activation behavior and custom procedure overrides. Catalog remains 603 entries.
