@@ -3896,6 +3896,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "SetClassLongA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetClassLongW",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "SetCursor",
     "argc": 1,
     "cdecl": false,

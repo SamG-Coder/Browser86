@@ -53,7 +53,7 @@ static BOOL WINAPI initializeOnce(DWORD *once,void *parameter,void **context){
   *context=parameter;return 1;
 }
 void mainCRTStartup(void){
-  WNDCLASSA encodingA={0};encodingA.proc=encodingProc;encodingA.name="A\xe9";encodingA.brush=CreateSolidBrush(0x123456);WORD encodingAtomA=RegisterClassA(&encodingA);CHECK(encodingAtomA);
+  WNDCLASSA encodingA={0};encodingA.classExtra=8;encodingA.proc=encodingProc;encodingA.name="A\xe9";encodingA.brush=CreateSolidBrush(0x123456);WORD encodingAtomA=RegisterClassA(&encodingA);CHECK(encodingAtomA);
   WORD aName[]={'A',233,0},wTitle[]={'C','a','f',233,' ',256,0};
   HWND encodingWindow=CreateWindowExW(0,aName,wTitle,0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);
   CHECK(SendMessageW(encodingWindow,12,99,(long)wTitle)==7);CHECK(SetWindowTextW(encodingWindow,wTitle)==1);CHECK(textMessageCount==2);
@@ -63,7 +63,10 @@ void mainCRTStartup(void){
   CHECK(!UnregisterClassW((const WORD*)(DWORD)encodingAtomA,NULL));CHECK(GetLastError()==1412);
   CHECK(GetObjectType(encodingA.brush)==2);
   CHECK(GetClassLongA(encodingWindow,-32)==encodingAtomA);CHECK(GetClassLongW(encodingWindow,-10)==(DWORD)encodingA.brush);CHECK(GetClassLongA(encodingWindow,-24)==(DWORD)encodingProc);
-  SetLastError(1234);CHECK(!GetClassLongW(encodingWindow,0));CHECK(GetLastError()==1413);
+  SetLastError(1234);CHECK(!GetClassLongW(encodingWindow,8));CHECK(GetLastError()==1413);
+  CHECK(!SetClassLongA(encodingWindow,0,0x12345678));CHECK(SetClassLongW(encodingWindow,1,0xaabbccdd)==0x123456);CHECK(GetClassLongA(encodingWindow,0)==0xbbccdd78);
+  HANDLE replacementClassBrush=CreateSolidBrush(0xabcdef);CHECK(SetClassLongW(encodingWindow,-10,(long)replacementClassBrush)==(DWORD)encodingA.brush);CHECK(GetObjectType(encodingA.brush)==2);
+  CHECK(SetClassLongA(encodingWindow,-10,(long)encodingA.brush)==(DWORD)replacementClassBrush);CHECK(DeleteObject(replacementClassBrush));
   CHECK(DefWindowProcA(encodingWindow,20,(DWORD)GetDC(encodingWindow),0)==1);
   SetLastError(1234);CHECK(DefWindowProcA(encodingWindow,20,0,0)==1);CHECK(GetLastError()==6);
   readWide[2]=0x5858;CHECK(SendMessageW(encodingWindow,13,2,(long)readWide)==3);CHECK(readWide[0]=='C'&&readWide[1]=='a'&&readWide[2]==0x5858);CHECK(DestroyWindow(encodingWindow));

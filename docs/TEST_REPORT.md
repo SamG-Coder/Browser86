@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Shared class data and brush replacement - 2026-09-08
+
+**373 Node tests passed, 0 failed, 0 skipped.** Added SetClassLongA/W for class-extra DWORD writes and background brush replacement. Tests cover cross-window/A/W visibility, overlapping unaligned bytes, previous values, bounds, invalid handles, unsupported fields, erasing with replacement brushes, null brushes and cleanup ownership. The rebuilt HandleObjects.exe imports both setters, verifies overlapping writes, and swaps/restores its class brush without deleting it prematurely. Catalog: 580 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-mutation-tests.tap), [browser report](test-artifacts/class-mutation-browser-report.json).
+
+Native probes used SetClassLongA for DWORD storage and the 64-bit host's SetClassLongPtrW for brush handles. Writing 0x12345678 at offset 0 then 0xaabbccdd at offset 1 returned previous value 0x123456 and yielded 0xbbccdd78 at offset 0. An offset-5 DWORD in eight bytes failed with error 1413 without modification. Replacing a brush retained the old handle; unregistration deleted only the replacement. All owned windows, classes and remaining brushes were cleaned up. Reference: [Microsoft SetClassLongA](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclasslonga). Other metadata setters, procedure replacement, registration validation and built-in class mutation remain unfinished.
+
 ## Class metadata queries - 2026-09-08
 
 **369 Node tests passed, 0 failed, 0 skipped.** Added GetClassLongA/W for custom-class scalar metadata, same-encoding procedure addresses, integer/null menu identifiers and initial zeroed class-extra DWORDs. Registration retains the x86 WNDCLASS/EX fields. Tests cover A/W and extended variants, overwritten registration input, zero values preserving last error, extra-storage bounds, invalid/destroyed HWNDs, subclass distinction and explicit unsupported paths. The rebuilt HandleObjects.exe imports both APIs and queries its atom, brush and procedure plus an invalid extra offset. Catalog: 578 entries.
