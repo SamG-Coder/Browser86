@@ -188,6 +188,8 @@ GlobalAddAtomA/W, GlobalFindAtomA/W, GlobalGetAtomNameA/W and GlobalDeleteAtom n
 
 GlobalAddAtomExA/W now accept flags 0 and ATOM_FLAG_GLOBAL (2), using the shared global name/refcount table. Integer and null atom inputs bypass flag validation, matching the native probe; invalid high flag bits on string names return error 87. String flag 1 (alone or combined with 2) raises UNSUPPORTED_ATOM pending verified semantics. These APIs do not expand the single-guest scope of the global table.
 
+IsWindowUnicode now reports a registered class's encoding independently of the CreateWindowExA/W entry point, and SetWindowLongA/W procedure replacement updates that encoding. Built-in controls follow the creation variant. GetWindowThreadProcessId returns the existing single-guest process/thread IDs and validates the optional four-byte process output before writing; invalid windows return error 1400 with unchanged output. This does not implement general ANSI/Unicode message translation, cross-encoding CREATESTRUCT conversion, subclass thunk identity or multiple owning processes/threads.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

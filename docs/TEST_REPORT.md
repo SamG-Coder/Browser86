@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Window identity queries - 2026-09-08
+
+**331 Node tests passed, 0 failed, 0 skipped.** Added IsWindowUnicode and GetWindowThreadProcessId. Registered-class encoding is retained across opposite A/W creation calls and updated when SetWindowLongA/W replaces a procedure. Tests cover all four registration/creation combinations, built-in control variants, destroyed/invalid windows, identity consistency with GetCurrentProcessId/GetCurrentThreadId, optional output, unchanged failure output and truncated memory. The rebuilt HandleObjects.exe imports both new APIs and the existing current-ID queries, verifies owner IDs and ANSI identity, and checks invalid HWND failure. Catalog: 576 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-identity-tests.tap), [browser report](test-artifacts/window-identity-browser-report.json).
+
+Native ctypes probes registered a private Unicode class, created hidden windows through both CreateWindowExA and W, and observed Unicode identity in both. Setting the window procedure with SetWindowLongPtrA changed identity to ANSI; the W version restored Unicode. GetWindowThreadProcessId matched the probe's current thread/process IDs and preserved error 1234. Invalid HWNDs returned zero/error 1400, leaving a process-output sentinel unchanged. Probe windows were destroyed and the class unregistered; no guest executable ran on the host. References: [IsWindowUnicode](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-iswindowunicode), [GetWindowThreadProcessId](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowthreadprocessid). General message translation, cross-encoding CREATESTRUCT conversion, subclass thunk identity and multiple owning processes/threads remain unfinished.
+
 ## Extended global atom flags - 2026-09-08
 
 **328 Node tests passed, 0 failed, 0 skipped.** Added GlobalAddAtomExA/W for flags 0 and ATOM_FLAG_GLOBAL (2). Tests verify A/W identity, ordinary reference lifetime, property interoperability, invalid string flags returning error 87, integer/null inputs ignoring flags, invalid name memory and no reference changes on failure. The rebuilt HandleObjects.exe imports both functions and checks accepted flags, invalid flags and balanced deletion. Catalog: 574 entries.

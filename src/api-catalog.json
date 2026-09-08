@@ -3602,6 +3602,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetWindowThreadProcessId",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "InflateRect",
     "argc": 3,
     "cdecl": false,
@@ -3652,6 +3659,13 @@
   {
     "dll": "user32.dll",
     "name": "IsWindowEnabled",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "IsWindowUnicode",
     "argc": 1,
     "cdecl": false,
     "data": false

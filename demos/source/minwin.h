@@ -307,4 +307,8 @@ API DWORD WINAPI GlobalGetAtomNameA(WORD,char*,int);
 API DWORD WINAPI GlobalGetAtomNameW(WORD,WORD*,int);
 API WORD WINAPI GlobalAddAtomExA(const char*,DWORD);
 API WORD WINAPI GlobalAddAtomExW(const WORD*,DWORD);
+API BOOL WINAPI IsWindowUnicode(HWND);
+API DWORD WINAPI GetWindowThreadProcessId(HWND,DWORD*);
+API DWORD WINAPI GetCurrentThreadId(void);
+API DWORD WINAPI GetCurrentProcessId(void);
 #endif

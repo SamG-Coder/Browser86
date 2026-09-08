@@ -324,6 +324,9 @@ void mainCRTStartup(void){
   lifetimeWindows[2]=CreateWindowExA(0,"LifetimeFixture","",0x40000000,0,0,20,20,lifetimeWindows[1],NULL,NULL,NULL);
   lifetimeWindows[3]=CreateWindowExA(0,"LifetimeFixture","",0x80000000,0,0,20,20,lifetimeWindows[1],NULL,NULL,NULL);
   for(int i=0;i<4;i++)CHECK(lifetimeWindows[i]&&IsWindow(lifetimeWindows[i]));
+  DWORD windowProcessId=0;CHECK(GetWindowThreadProcessId(lifetimeWindows[0],&windowProcessId)==GetCurrentThreadId()&&windowProcessId==GetCurrentProcessId());
+  CHECK(GetWindowThreadProcessId(lifetimeWindows[1],NULL)==GetCurrentThreadId()&&!IsWindowUnicode(lifetimeWindows[0]));
+  SetLastError(1234);CHECK(!GetWindowThreadProcessId(NULL,&windowProcessId)&&GetLastError()==1400&&windowProcessId==GetCurrentProcessId());
   CHECK(IsWindowEnabled(lifetimeWindows[0])&&!IsWindowVisible(lifetimeWindows[0]));
   CHECK(!EnableWindow(lifetimeWindows[0],0)&&!IsWindowEnabled(lifetimeWindows[0])&&IsWindowEnabled(lifetimeWindows[1]));
   CHECK(EnableWindow(lifetimeWindows[0],0));CHECK(EnableWindow(lifetimeWindows[0],1));CHECK(!EnableWindow(lifetimeWindows[0],1));
