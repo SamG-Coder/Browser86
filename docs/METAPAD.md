@@ -9,3 +9,9 @@ No host execution or application rebuilding was used. This is a recorded startup
 Reproduce with `node tools/probe-application.mjs .build/metapad/metapad36LE.zip`, or import the official ZIP in Browser86 and launch `metapad.exe`.
 
 Evidence: [browser report](test-artifacts/metapad-first-browser.json), [screenshot](test-artifacts/metapad-first-browser.png).
+
+## Startup API progress
+
+The first blocker is now resolved. `GetDialogBaseUnits` derives its packed horizontal/vertical values from Browser86's approximate virtual system-font metrics. `DeleteMenu`, `DestroyMenu`, `SetMenu`, and `DrawMenuBar` implement menu lifetime, attachment, and drawing behavior. Built-in control subclassing now returns a callable original window procedure instead of zero, allowing Metapad's EDIT subclass to forward messages through CallWindowProc.
+
+The current runtime and browser probes reach `user32.dll!RegisterWindowMessageA`, caller `0x0040c0ca`. The browser reports 55 unresolved imports, one guest window record, and no browser JavaScript errors. An interactive editor is still unverified and the save/reopen acceptance test remains incomplete. Validation at this stage: 558 Node tests and 16 browser regression checks pass.
