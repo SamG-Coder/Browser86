@@ -3441,6 +3441,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetCapture",
+    "argc": 0,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetClassLongA",
     "argc": 2,
     "cdecl": false,
@@ -3861,6 +3868,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "ReleaseCapture",
+    "argc": 0,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "ReleaseDC",
     "argc": 2,
     "cdecl": false,
@@ -3904,6 +3918,13 @@
   {
     "dll": "user32.dll",
     "name": "SetActiveWindow",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetCapture",
     "argc": 1,
     "cdecl": false,
     "data": false

@@ -5,7 +5,8 @@ import {installWindowProperties,releaseWindowProperties} from './window-properti
 import {installWindowFocus} from './window-focus.js';
 import {installWindowState} from './window-state.js';
 import {childRoot,setWindowOwner,installWindowHierarchy} from './window-hierarchy.js';
-import {installWindowCoordinates} from './window-coordinates.js';
+import {installMouseCapture} from './mouse-capture.js';
+import {installWindowCoordinates,windowOrigin} from './window-coordinates.js';
 import {installRegions} from './regions.js';
 import {installSystemColors} from './system-colors.js';
 import {ansiDecode} from './memory.js';
@@ -102,7 +103,7 @@ export class GUI {
     const finish=()=>{
       releaseWindowProperties(this,w);this.windows.delete(hwnd);this.p.releaseHandle(hwnd);if(w.dc)this.p.releaseHandle(w.dc);
       for(const [key,t]of this.p.timers)if(t.hwnd===hwnd)this.p.timers.delete(key);
-      if(this.focus===hwnd)this.focus=0;
+      if(this.focus===hwnd)this.focus=0;if(this.capture===hwnd)this.capture=0;
       this.p.emit('window',{op:'destroy',window:this.serialize(w)});return done(1);
     };
     const children=()=>descendants(true,()=>notify(0x82,finish));
@@ -112,7 +113,7 @@ export class GUI {
     if(event.kind==='close')p.postMessage(w.hwnd,WM_CLOSE);
     else if(event.kind==='click'){if(w.parent&&w.className.toUpperCase()==='BUTTON')p.postMessage(w.parent,WM_COMMAND,w.id&65535,w.hwnd);}
     else if(event.kind==='edit'){w.title=String(event.text).slice(0,65535);if(w.parent)p.postMessage(w.parent,WM_COMMAND,((0x300<<16)|(w.id&65535))>>>0,w.hwnd);}
-    else if(event.kind==='mouse'){const id=event.event==='down'?0x201:event.event==='up'?0x202:0x200,xy=((event.x&65535)|((event.y&65535)<<16))>>>0;p.postMessage(w.hwnd,id,event.buttons||0,xy);}
+    else if(event.kind==='mouse'){const target=this.window(this.capture)||w,id=event.event==='down'?0x201:event.event==='up'?0x202:0x200;let x=event.x,y=event.y;if(target!==w){const from=windowOrigin(this,w.hwnd),to=windowOrigin(this,target.hwnd);x+=from[0]-to[0];y+=from[1]-to[1];}const xy=((x&65535)|((y&65535)<<16))>>>0;p.postMessage(target.hwnd,id,event.buttons||0,xy);}
     else if(event.kind==='key'){const code=event.code>>>0;this.keyChars.set(code,event.char||'');p.postMessage(w.hwnd,event.down?0x100:0x101,code,event.down?1:0xC0000001);}
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
@@ -182,7 +183,7 @@ export class GUI {
     u('IsWindow',1,h=>this.window(h)?1:0);
     u('GetActiveWindow',0,()=>this.focus||[...this.windows.keys()][0]||0);u('SetActiveWindow',1,h=>{const old=this.focus;this.focus=h;return old;});
     u('GetDlgCtrlID',1,h=>this.window(h)?.id||0);u('GetDlgItem',2,(h,id)=>[...this.windows.values()].find(w=>w.parent===h&&w.id===id)?.hwnd||0);
-    installCursors(this);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));installClassQueries(this);installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
+    installCursors(this);installMouseCapture(this);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));installClassQueries(this);installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
     installRectangles(this.api);

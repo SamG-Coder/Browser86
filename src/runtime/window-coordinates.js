@@ -1,12 +1,13 @@
 import {checkBuffer} from './files.js';
 import {RuntimeFault} from './errors.js';
-export function installWindowCoordinates(gui){
- const {api,m}=gui,u=(n,c,f)=>api.add('user32.dll',n,c,f);
- const origin=h=>{
+export function windowOrigin(gui,h){
   let w=gui.window(h);if(!w)return null;let x=0,y=0;const seen=new Set();
   while(w){if(seen.has(w.hwnd))throw new RuntimeFault('WINDOW_HIERARCHY','Cyclic window ancestry.');seen.add(w.hwnd);if(w.exStyle&0x400000)throw new RuntimeFault('UNSUPPORTED_GUI','Mirrored coordinate mapping is not implemented.');x=(x+w.x)|0;y=(y+w.y)|0;if(!(w.style&0x40000000))break;w=gui.window(w.parent);}
   return [x,y];
- };
+}
+export function installWindowCoordinates(gui){
+ const {api,m}=gui,u=(n,c,f)=>api.add('user32.dll',n,c,f);
+ const origin=h=>windowOrigin(gui,h);
  for(const screen of [false,true])u(screen?'GetWindowRect':'GetClientRect',2,(h,out)=>{
   const w=gui.window(h);if(!w||!out)return api.fail(1400);
   const [x,y]=screen?origin(h):[0,0];checkBuffer(m,out,16);

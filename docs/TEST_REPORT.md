@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Mouse capture state, notifications and guest input routing - 2026-09-08
+
+**424 Node tests passed, 0 failed, 0 skipped.** SetCapture/GetCapture/ReleaseCapture now implement guest capture state and synchronous WM_CAPTURECHANGED callbacks. Tests cover same-window reassignment, prior-value returns, null/release behavior, invalid targets, state visible during callbacks, callback reentrancy, destruction ordering and mapped input between nested guest windows. Coordinate origin calculation is shared with existing mapping APIs. The rebuilt HandleObjects.exe imports and exercises capture, repeated capture, invalid handles and release. Catalog now contains 586 entries, without implying full API parity.
+
+**Nine real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/mouse-capture-tests.tap), [browser report](test-artifacts/mouse-capture-browser-report.json). Capture APIs execute in the actual guest worker; cross-window input routing is covered by focused runtime tests.
+
+Native private hidden A/W windows confirmed notifications even when assigning capture to the same HWND, new capture state during callbacks, error 1400 without mutation for invalid targets, null-detach previous values and successful empty ReleaseCapture. Destroying the captured window kept capture during WM_DESTROY and WM_NCDESTROY, then cleared it without WM_CAPTURECHANGED. Probe windows/classes were cleaned up. References: [Microsoft SetCapture](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcapture), [Microsoft WM_CAPTURECHANGED](https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-capturechanged). Delivery outside guest canvases, DOM control capture, foreground restrictions, multiple input queues and related cursor-message synthesis remain unfinished.
+
 ## Default cursor message handling - 2026-09-08
 
 **418 Node tests passed, 0 failed, 0 skipped.** DefWindowProcA/W now handles explicit WM_SETCURSOR messages, including class selection, null-class preservation, resize shapes, child-parent forwarding and nonzero parent replies. Tests cover hidden selection, unchanged parameters, cross-encoding callbacks, owned popups, nested forwarding, destruction during callbacks and explicit unsupported error-hit beeps. The nested test exposed and fixed premature completion of default-procedure callbacks in GUI.send. The rebuilt HandleObjects.exe exercises client and resize-border cursor selection. Catalog remains 583 entries.
