@@ -13,9 +13,18 @@ function menuPointer(gui,cls,wide){
 const fields=new Map([[-32,'atom'],[-26,'style'],[-20,'classExtra'],[-18,'windowExtra'],[-16,'instance'],[-14,'icon'],[-12,'cursor'],[-10,'background'],[-34,'smallIcon']]);
 // Native queries hide internal style bits; setters still return the raw stored value.
 const visibleClassStyles=0x37bff;
-function extraLong(cls,index){let value=0;for(let i=0;i<4;i++)value|=(cls.extraBytes?.get(index+i)||0)<<(i*8);return value>>>0;}
+function extraLong(cls,index,size=4){let value=0;for(let i=0;i<size;i++)value|=(cls.extraBytes?.get(index+i)||0)<<(i*8);return value>>>0;}
 export function installClassQueries(gui){
  const {api,p}=gui;
+ for(const write of [false,true])api.add('user32.dll',write?'SetClassWord':'GetClassWord',write?3:2,(hwnd,index,value)=>{
+  const w=gui.window(hwnd);if(!w)return api.fail(1400);
+  const cls=gui.classes.get(w.className.toLowerCase());if(!cls)throw new RuntimeFault('UNSUPPORTED_GUI','Built-in class metadata is not implemented.');
+  index|=0;if(!write&&index===-32)return cls.atom;
+  if(index<0||index+2>cls.classExtra)return api.fail(1413);
+  const old=extraLong(cls,index,2);
+  if(write){cls.extraBytes??=new Map();cls.extraBytes.set(index,value&255);cls.extraBytes.set(index+1,(value>>>8)&255);}
+  return old;
+ });
  for(const wide of [false,true])api.add('user32.dll','GetClassLong'+(wide?'W':'A'),2,(hwnd,index)=>{
   const w=gui.window(hwnd);if(!w)return api.fail(1400);
   const cls=gui.classes.get(w.className.toLowerCase());if(!cls)throw new RuntimeFault('UNSUPPORTED_GUI','Built-in class metadata is not implemented.');

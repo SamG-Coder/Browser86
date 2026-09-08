@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## WORD class storage accessors - 2026-09-08
+
+**454 Node tests passed, 0 failed, 0 skipped.** GetClassWord/SetClassWord share backing bytes with DWORD class accessors. Tests cover overlapping unaligned writes, WORD truncation, neighboring-byte preservation, cross-window sharing, two-byte bounds, atom queries, metadata-index rejection and invalid/destroyed HWNDs. The rebuilt HandleObjects.exe imports both APIs and checks atom lookup, last-slot storage and boundary rejection. Catalog now contains 590 entries, without implying full API parity.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-word-tests.tap), [browser report](test-artifacts/class-word-browser-report.json).
+
+Native private A/W class probes accepted offsets 0, 1 and 6 in eight-byte class storage, rejected offset 7 with error 1413, and confirmed overlapping WORD values. GetClassWord returned the class atom; other tested negative metadata indices failed with 1413. SetClassWord rejected negative indices, including the atom field. Successful operations preserved error 1234. Probe windows/classes were cleaned up. References: [Microsoft GetClassWord](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getclassword), [Microsoft SetClassWord](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclassword). Built-in class metadata and storage remain unfinished.
+
 ## Class and window extra-storage size mutation - 2026-09-08
 
 **450 Node tests passed, 0 failed, 0 skipped.** SetClassLongA/W now rejects GCL_CBCLSEXTRA changes with error 87 and supports GCL_CBWNDEXTRA replacement. Tests cover prior sizes, future-window allocation bounds, existing data retention, shrink/grow/zero transitions, invalid HWNDs and raw negative metadata with explicitly unsupported creation. The rebuilt HandleObjects.exe changes/restores the window default and checks class-size rejection. Catalog remains 588 entries.

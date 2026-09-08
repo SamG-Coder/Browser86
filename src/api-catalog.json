@@ -3476,6 +3476,13 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetClassWord",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetClientRect",
     "argc": 2,
     "cdecl": false,
@@ -3946,6 +3953,13 @@
   {
     "dll": "user32.dll",
     "name": "SetClassLongW",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "SetClassWord",
     "argc": 3,
     "cdecl": false,
     "data": false
