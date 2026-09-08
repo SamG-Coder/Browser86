@@ -1,6 +1,7 @@
 // Original IA-32 user-mode interpreter. Guest code is never evaluated as JS.
 // Only explicitly implemented instructions execute; unsupported encodings fault.
 import {RuntimeFault,hex} from './errors.js';
+import {encodeFloat80,decodeFloat80} from './float80.js';
 export const EAX=0,ECX=1,EDX=2,EBX=3,ESP=4,EBP=5,ESI=6,EDI=7;
 export const CF=1,PF=4,AF=16,ZF=64,SF=128,TF=256,IF=512,DF=1024,OF=2048;
 const PARITY=Uint8Array.from({length:256},(_,n)=>{let p=0;for(let i=0;i<8;i++)p^=(n>>>i)&1;return p?0:PF;});
@@ -207,6 +208,8 @@ export class CPU {
       this.unsupported('This x87 register operation is not implemented.');
     }
     const o=this.operand(32),a=o.a;
+    if(op===0xdb&&sub===7){this.m.write(a,encodeFloat80(this.fget()));this.fpop();return;}
+    if(op===0xdb&&sub===5){this.fpush(decodeFloat80(this.m.read(a,10)));return;}
     const f32=()=>new DataView(this.m.read(a,4).buffer).getFloat32(0,true),f64=()=>new DataView(this.m.read(a,8).buffer).getFloat64(0,true);
     const store=(v,size,float=true)=>{const data=new Uint8Array(size),d=new DataView(data.buffer);if(float){if(size===4)d.setFloat32(0,v,true);else d.setFloat64(0,v,true);}else if(size===2)d.setInt16(0,v,true);else if(size===4)d.setInt32(0,v,true);else d.setBigInt64(0,BigInt(Number.isFinite(v)?v:0),true);this.m.write(a,data);};
     if(op===0xD9){if(sub===0)this.fpush(f32());else if(sub===2||sub===3){store(this.fget(),4);if(sub===3)this.fpop();}else if(sub===5)this.fpuControl=this.m.u16(a);else if(sub===7)this.m.w16(a,this.fpuControl);else this.unsupported();return;}
