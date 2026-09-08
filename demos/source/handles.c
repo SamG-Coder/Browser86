@@ -177,6 +177,16 @@ void mainCRTStartup(void){
   CHECK(critical.recursion==0&&critical.owner==NULL&&critical.lockCount==-1);
   DeleteCriticalSection(&critical);InitializeCriticalSection(&critical);DeleteCriticalSection(&critical);
   CHECK(InitializeCriticalSectionAndSpinCount(&critical,100));DeleteCriticalSection(&critical);
+  CHECK(SetEnvironmentVariableA("B86_TEST","value"));
+  CHECK(GetEnvironmentVariableA("b86_test",finalPath,256)==5&&finalPath[0]=='v');
+  CHECK(ExpandEnvironmentStringsA("[%B86_TEST%]",finalPath,256)==8&&finalPath[0]=='['&&finalPath[6]==']');
+  CHECK(SetEnvironmentVariableA("B86_TEST",""));
+  CHECK(GetEnvironmentVariableA("B86_TEST",NULL,0)==1);
+  CHECK(GetEnvironmentVariableA("B86_TEST",finalPath,256)==0&&finalPath[0]==0);
+  CHECK(FreeEnvironmentStringsA(GetEnvironmentStrings()));
+  CHECK(FreeEnvironmentStringsW(GetEnvironmentStringsW()));
+  CHECK(SetEnvironmentVariableA("B86_TEST",NULL));
+  CHECK(GetEnvironmentVariableA("B86_TEST",finalPath,256)==0&&GetLastError()==203);
   CHECK(DuplicateHandle(self,self,self,&process,0,0,2));
   CHECK(DuplicateHandle(self,GetCurrentThread(),self,&thread,0,0,2));
   CHECK(GetProcessId(process)==4&&GetThreadId(thread)==8);

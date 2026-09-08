@@ -11,6 +11,7 @@ import {installTLS} from './tls.js';
 import {installInitOnce} from './init-once.js';
 import {installAddressWait} from './address-wait.js';
 import {installCriticalSections} from './critical-section.js';
+import {installEnvironment} from './environment.js';
 const INVALID=0xFFFFFFFF;
 const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
 export class Win32 {
@@ -83,10 +84,6 @@ export class Win32 {
       k('GetModuleHandle'+suffix,1,name=>{if(!name)return p.main.base;const text=str(name),key=this.canonical(text);if(this.isSystemModule(key))return this.systemHandle(key);const module=p.loader.order.find(x=>x.name.toLowerCase()===text.toLowerCase()||x.path.toLowerCase()===text.replaceAll('\\','/').toLowerCase());return module?.base??this.fail(126);});
       k('LoadLibrary'+suffix,1,name=>this.loadLibrary(str(name)));
       k('LoadLibraryEx'+suffix,3,(name,file,flags)=>{if(file||flags)return this.fail(87);return this.loadLibrary(str(name));});
-      k('GetEnvironmentVariable'+suffix,3,(name,out,size)=>{const value=p.environment.get(str(name).toUpperCase());if(value===undefined)return this.fail(203);return this.copyString(out,size,value,wide);});
-      k('SetEnvironmentVariable'+suffix,2,(name,value)=>{const key=str(name).toUpperCase();if(!key||key.includes('='))return this.fail(87);if(value)p.environment.set(key,str(value));else p.environment.delete(key);return 1;});
-      k('GetEnvironmentStrings'+suffix,0,()=>p.heap.string([...p.environment].map(([a,b])=>a+'='+b).join('\0')+'\0',wide));k('FreeEnvironmentStrings'+suffix,1,a=>p.heap.free(a)?1:0);
-      k('ExpandEnvironmentStrings'+suffix,3,(src,out,size)=>{const text=str(src).replace(/%([^%]+)%/g,(all,key)=>p.environment.get(key.toUpperCase())??all);if(size>=text.length+1)write(out,text,size);return text.length+1;});
       k('GetStartupInfo'+suffix,1,out=>{m.fill(out,68);m.w32(out,68);m.w32(out+44,0x100);m.w32(out+56,10);m.w32(out+60,11);m.w32(out+64,12);return 0;});
       k('OutputDebugString'+suffix,1,text=>{p.emit('log',{level:'debug',message:str(text)});return 0;});
       k('SetConsoleTitle'+suffix,1,name=>{p.emit('title',{text:str(name)});return 1;});
@@ -117,6 +114,7 @@ export class Win32 {
     installInitOnce(this);
     installAddressWait(this);
     installCriticalSections(this);
+    installEnvironment(this);
     k('InterlockedIncrement',1,a=>{const n=(m.u32(a)+1)>>>0;m.w32(a,n);return n;});k('InterlockedDecrement',1,a=>{const n=(m.u32(a)-1)>>>0;m.w32(a,n);return n;});k('InterlockedExchange',2,(a,value)=>{const old=m.u32(a);m.w32(a,value);return old;});k('InterlockedExchangeAdd',2,(a,value)=>{const old=m.u32(a);m.w32(a,old+value);return old;});k('InterlockedCompareExchange',3,(a,value,compare)=>{const old=m.u32(a);if(old===compare)m.w32(a,value);return old;});
     installSynchronization(this);
     k('SetUnhandledExceptionFilter',1,callback=>{const old=this.exceptionFilter||0;this.exceptionFilter=callback;p.note('An exception filter was registered, but guest SEH dispatch is not implemented. Faults stop with diagnostics.');return old;});

@@ -638,6 +638,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GetEnvironmentStrings",
+    "argc": 0,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GetEnvironmentStringsA",
     "argc": 0,
     "cdecl": false,
