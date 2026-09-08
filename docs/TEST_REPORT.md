@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## GDI pen and brush descriptions extension - 2026-09-08
+
+**212 Node tests passed, 0 failed, 0 skipped.** Three new tests cover both GetObject variants, pen/brush layouts, size queries, zero/negative/null pen widths, null brushes, short buffers, alignment, last-error preservation, invalid handles, explicit unsupported fonts and atomic guest-memory validation. HandleObjects.exe imports both APIs and checks stock-object descriptions and short pen-buffer failure through x86 calls. The catalog contains 497 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The rebuilt fixture ran in the actual module worker; persistence and backup checks passed. Evidence: [Node TAP](test-artifacts/gdi-objects-tests.tap) and [browser report](test-artifacts/gdi-objects-browser-report.json).
+
+Native ctypes probes created and deleted owned pens/brushes, checking A/W capacity/alignment, null-output queries, logical width and null-object fields. No guest executable ran on the host. The native probe was 64-bit (LOGBRUSH is 16 bytes there); the runtime uses the documented x86 layout with a 32-bit hatch member and 12-byte structure. Short-brush copy behavior is adopted from the native probe, not independently verified against a 32-bit Windows process. References: Microsoft [GetObject](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getobject), [LOGPEN](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-logpen) and [LOGBRUSH](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-logbrush). Font, bitmap, palette and extended-pen descriptions remain unsupported.
+
 ## GDI state and object queries extension — 2026-09-08
 
 **209 Node tests passed, 0 failed, 0 skipped.** Three new tests cover default/mutated/restored settings, independent DCs, selected stock objects, restored handle identity, deleted handles, invalid inputs, last-error behavior and explicit unsupported selection kinds. The rebuilt HandleObjects.exe imports all six new APIs and checks their results through actual x86 calls. The catalog contains 495 entries.

@@ -104,6 +104,8 @@ SaveDC/RestoreDC maintain an independent stack for each emulated DC. Saved state
 
 GDI state queries now include GetTextColor, GetBkColor, GetBkMode, GetTextAlign, GetCurrentObject and GetObjectType. Queries reflect the live and restored DC state; selected pens, brushes and fonts retain handle identity. Existing display DCs report OBJ_DC. Color/alignment query failures preserve last error; invalid selection types report ERROR_INVALID_PARAMETER. Bitmap, palette and color-space selection queries on valid DCs explicitly fault because those objects are not implemented. Memory DCs and broader GDI object kinds remain unsupported.
 
+GetObjectA/W return x86 LOGPEN (16 bytes) and LOGBRUSH (12 bytes) for supported pens and solid/null brushes. Null output queries the required size. Pen output requires the full structure; brush output copies the available prefix and returns the full size. Output must be DWORD-aligned. Logical zero-width pens remain distinguishable from one-unit pens, negative widths use their magnitude, and null pens report the native default width/color. Font descriptions and other GDI object structures remain explicitly unsupported.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

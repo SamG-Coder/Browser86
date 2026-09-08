@@ -1,5 +1,6 @@
 import {ansiDecode} from './memory.js';
 import {installRectangles} from './rectangles.js';
+import {installGDIObjects} from './gdi-objects.js';
 import {installDCState,dcSelectsObject} from './dc-state.js';
 import {RuntimeFault,requireThat} from './errors.js';
 const WM_CREATE=1,WM_DESTROY=2,WM_SIZE=5,WM_PAINT=15,WM_CLOSE=16,WM_QUIT=18,WM_COMMAND=0x111;
@@ -76,7 +77,8 @@ export class GUI {
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
     installRectangles(this.api);
     installDCState(this);
-    g('GetStockObject',1,i=>this.stockObject(i));g('CreateSolidBrush',1,color=>p.handle('gdi',{kind:'brush',color}));g('CreatePen',3,(style,width,color)=>{if(style!==0&&style!==5)throw new RuntimeFault('UNSUPPORTED_GDI','Only solid or null pens are implemented.');return p.handle('gdi',{kind:'pen',color,width:Math.max(1,width|0),null:style===5});});
+    installGDIObjects(this);
+    g('GetStockObject',1,i=>this.stockObject(i));g('CreateSolidBrush',1,color=>p.handle('gdi',{kind:'brush',color}));g('CreatePen',3,(style,width,color)=>{if(style!==0&&style!==5)throw new RuntimeFault('UNSUPPORTED_GDI','Only solid or null pens are implemented.');return p.handle('gdi',{kind:'pen',color:style===5?0:color,logicalWidth:style===5?1:Math.abs(width|0),width:style===5?1:Math.max(1,Math.abs(width|0)),null:style===5});});
     g('SelectObject',2,(hdc,obj)=>{const dc=this.dc(hdc),object=p.object(obj,'gdi');if(!dc||!object)return 0;const old=dc[object.kind];dc[object.kind]=obj;return old||0;});
     g('DeleteObject',1,h=>{const obj=p.object(h,'gdi');if(!obj||obj.stock)return 0;if([...p.handles.values()].some(dc=>dc.type==='dc'&&dcSelectsObject(dc,h)))return 0;p.releaseHandle(h);return 1;});
     g('SetTextColor',2,(hdc,color)=>{const dc=this.dc(hdc);if(!dc)return 0xFFFFFFFF;const old=dc.textColor;dc.textColor=color;return old;});g('SetBkColor',2,(hdc,color)=>{const dc=this.dc(hdc);if(!dc)return 0xFFFFFFFF;const old=dc.background;dc.background=color;return old;});g('SetBkMode',2,(hdc,mode)=>{const dc=this.dc(hdc);if(!dc||![1,2].includes(mode))return 0;const old=dc.bkMode;dc.bkMode=mode;return old;});g('SetTextAlign',2,(hdc,align)=>{const dc=this.dc(hdc);if(!dc)return 0xFFFFFFFF;const old=dc.align;dc.align=align;return old;});
