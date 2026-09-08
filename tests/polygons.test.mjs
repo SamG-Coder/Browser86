@@ -2,6 +2,20 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {guest} from './helpers.mjs';
 function setup(){const {p,events}=guest('HelloConsole.exe');return {p,events,m:p.memory,h:p.apis.gui.newDC(0),call:(name,...a)=>p.apis.lookup('gdi32.dll',name).fn(...a)};}
+test('PolyPolyline keeps groups disconnected and leaves current position unchanged',()=>{
+  const {p,m,events,h,call}=setup(),input=p.heap.alloc(40),counts=p.heap.alloc(8),points=[[-2,3],[4,5],[20,21],[22,23],[24,25]];
+  points.flat().forEach((v,i)=>m.w32(input+4*i,v));m.w32(counts,2);m.w32(counts+4,3);call('MoveToEx',h,77,88,0);call('SelectObject',h,call('GetStockObject',19));call('SetDCPenColor',h,0x123456);p.setError(1234);
+  assert.equal(call('PolyPolyline',h,input,counts,2),1);assert.equal(p.lastError,1234);const draws=events.filter(e=>e.type==='draw');assert.deepEqual(draws.map(e=>e.points),[points.slice(0,2),points.slice(2)]);assert.ok(draws.every(e=>e.op==='polyline'&&e.brush===null&&e.pen.color===0x123456));
+  m.w32(input,999);m.w32(counts,99);assert.equal(draws[0].points[0][0],-2);assert.deepEqual([p.apis.gui.dc(h).x,p.apis.gui.dc(h).y],[77,88]);
+});
+test('PolyPolyline validates every count and full point range before drawing',()=>{
+  const {p,m,events,h,call}=setup(),input=p.heap.alloc(32),counts=p.heap.alloc(8);m.map(0x60000000,4096);m.w32(counts,2);
+  for(const n of [0,1]){m.w32(counts+4,n);assert.equal(call('PolyPolyline',h,input,counts,2),0);assert.equal(p.lastError,87);}
+  m.w32(counts+4,2);assert.throws(()=>call('PolyPolyline',h,0x60000ff0,counts,2));assert.throws(()=>call('PolyPolyline',h,input,0x60000ffc,2));
+  m.w32(counts,0xffffffff);assert.throws(()=>call('PolyPolyline',h,input,counts,2),e=>e.code==='GDI_LIMIT');
+  p.setError(1234);for(const args of [[h,0,0,0],[h,0,counts,1],[h,input,0,1]])assert.equal(call('PolyPolyline',...args),0);assert.equal(p.lastError,1234);assert.equal(events.filter(e=>e.type==='draw').length,0);
+  assert.equal(call('PolyPolyline',0,input,counts,1),0);assert.equal(p.lastError,6);
+});
 test('PolylineTo connects and updates current position across drawing and saved state',()=>{
   const {p,m,events,h,call}=setup(),input=p.heap.alloc(16);[2,3,-4,5].forEach((n,i)=>m.w32(input+4*i,n));
   call('MoveToEx',h,7,8,0);call('SaveDC',h);call('SelectObject',h,call('GetStockObject',19));call('SetDCPenColor',h,0x123456);p.setError(1234);

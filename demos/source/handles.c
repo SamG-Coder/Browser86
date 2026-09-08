@@ -192,6 +192,8 @@ void mainCRTStartup(void){
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
   POINT shapePoints[3]={{1,1},{9,1},{5,9}};
+  POINT groupedPoints[4]={{1,1},{4,1},{7,7},{9,7}};DWORD groupedCounts[2]={2,2};
+  CHECK(PolyPolyline(savedDC,groupedPoints,groupedCounts,2));groupedCounts[1]=1;CHECK(!PolyPolyline(savedDC,groupedPoints,groupedCounts,2)&&GetLastError()==87);
   CHECK(MoveToEx(savedDC,7,8,NULL)&&PolylineTo(savedDC,shapePoints,3));
   CHECK(GetCurrentPositionEx(savedDC,&savedPosition)&&savedPosition.x==5&&savedPosition.y==9&&PolylineTo(savedDC,NULL,0));
   CHECK(GetPolyFillMode(savedDC)==1&&SetPolyFillMode(savedDC,2)==1&&GetPolyFillMode(savedDC)==2);

@@ -33,7 +33,7 @@ S={'WaitOnAddress':4,'WakeByAddressSingle':1,'WakeByAddressAll':1}
 G.update({'GetDCPenColor':1,'SetDCPenColor':2,'GetDCBrushColor':1,'SetDCBrushColor':2})
 G.update({'CreatePenIndirect':1,'CreateBrushIndirect':1})
 G.update({'CreateFontIndirectA':1,'CreateFontIndirectW':1})
-G.update({'PolylineTo':3,'Polygon':3,'Polyline':3,'GetPolyFillMode':1,'SetPolyFillMode':2})
+G.update({'PolyPolyline':4,'PolylineTo':3,'Polygon':3,'Polyline':3,'GetPolyFillMode':1,'SetPolyFillMode':2})
 G.update({'GetObjectA':3,'GetObjectW':3})
 G.update({'SaveDC':1,'RestoreDC':2,'GetCurrentPositionEx':2})
 G.update({'GetTextColor':1,'GetBkColor':1,'GetBkMode':1,'GetTextAlign':1,'GetCurrentObject':2,'GetObjectType':1})

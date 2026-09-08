@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## PolyPolyline disconnected line groups extension - 2026-09-08
+
+**231 Node tests passed, 0 failed, 0 skipped.** Two new tests verify independent group boundaries, selected pen colors, signed copied points, unchanged current position, invalid late groups, count/point buffer boundaries, total-count overflow protection and no partial drawing on failure. HandleObjects.exe imports PolyPolyline and checks valid groups and invalid counts through x86 calls. The catalog contains 512 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The rebuilt fixture ran in the actual worker; persistence/reload/deletion/backup checks passed. Evidence: [Node TAP](test-artifacts/poly-polyline-tests.tap) and [browser report](test-artifacts/poly-polyline-browser-report.json). Rendering uses the previously verified open-polyline canvas command.
+
+Native ctypes probes used an owned memory DC, deleted in finally, to verify empty calls, zero/one-point groups, invalid later groups, null arrays and invalid DC errors. No guest executable ran on the host. Microsoft [PolyPolyline](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-polypolyline) documents independent unfilled groups and current-position preservation. Mapping, clipping and pixel-exact native stroke rendering remain unfinished.
+
 ## PolylineTo current-position drawing extension - 2026-09-08
 
 **229 Node tests passed, 0 failed, 0 skipped.** Two new tests check initial/current/final points, selected DC pen color, subsequent LineTo continuation, saved-state restoration, null-pen position changes, zero-count success and atomic failure behavior. The rebuilt HandleObjects.exe imports PolylineTo and verifies final position and zero-count behavior through x86 calls. The catalog contains 511 entries.

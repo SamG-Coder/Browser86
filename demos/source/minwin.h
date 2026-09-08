@@ -24,6 +24,7 @@ API DWORD WINAPI SetDCBrushColor(HDC,DWORD);
 API BOOL WINAPI Polygon(HDC,const void*,int);
 API BOOL WINAPI Polyline(HDC,const void*,int);
 API BOOL WINAPI PolylineTo(HDC,const void*,DWORD);
+API BOOL WINAPI PolyPolyline(HDC,const void*,const DWORD*,DWORD);
 API int WINAPI GetPolyFillMode(HDC);
 API int WINAPI SetPolyFillMode(HDC,int);
 API int WINAPI SaveDC(HDC);

@@ -4,6 +4,16 @@ import {RuntimeFault} from './errors.js';
 export function installPolygons(gui){
   const g=(name,n,fn)=>gui.api.add('gdi32.dll',name,n,fn);
   g('GetPolyFillMode',1,h=>gui.dc(h)?.polyFillMode??0);
+  g('PolyPolyline',4,(h,input,countsAddress,groups)=>{
+    const dc=gui.dc(h);if(!dc)return gui.api.fail(6);groups>>>=0;
+    if(!groups||!input||!countsAddress)return 0;
+    if(groups>524288)throw new RuntimeFault('GDI_LIMIT','Polyline group count exceeds the runtime limit.');
+    checkBuffer(gui.m,countsAddress,groups*4,'r');const counts=[];let total=0;
+    for(let i=0;i<groups;i++){const count=gui.m.u32(countsAddress+i*4);if(count<2)return gui.api.fail(87);total+=count;counts.push(count);}
+    if(total>1048576)throw new RuntimeFault('GDI_LIMIT','Polyline point count exceeds the runtime limit.');
+    checkBuffer(gui.m,input,total*8,'r');let offset=0;const paths=counts.map(count=>Array.from({length:count},()=>{const point=[gui.m.i32(input+offset),gui.m.i32(input+offset+4)];offset+=8;return point;}));
+    const pen=gui.drawingObject(dc,dc.pen);for(const points of paths)gui.draw(h,{op:'polyline',points,pen,brush:null});return 1;
+  });
   g('SetPolyFillMode',2,(h,mode)=>{const dc=gui.dc(h);if(!dc)return gui.api.fail(6);const old=dc.polyFillMode;dc.polyFillMode=mode|0;return old;});
   g('PolylineTo',3,(h,input,count)=>{
     const dc=gui.dc(h);if(!dc)return gui.api.fail(6);count>>>=0;

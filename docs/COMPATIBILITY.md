@@ -118,6 +118,8 @@ Polygon and Polyline read signed POINT arrays, use the selected pen/brush and DC
 
 PolylineTo connects the current position to a copied POINT array using the selected pen, then advances the position to the final point. Zero points succeed without drawing; null or unreadable nonempty input leaves position unchanged. Null pens still advance position. SaveDC/RestoreDC preserve the resulting current position. It uses the existing open-polyline renderer and the same 1,048,576-point runtime limit; native stroke-edge rasterization and coordinate transforms remain unfinished.
 
+PolyPolyline accepts consecutive POINT groups and a DWORD count array, emitting independent open line groups using the selected pen without changing current position. Every group must have at least two points. Empty/null input returns failure; invalid group sizes report ERROR_INVALID_PARAMETER. All counts and points are validated before drawing any group, with the existing total-point runtime limit. It reuses the open-polyline renderer and its current rasterization/mapping limitations.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
