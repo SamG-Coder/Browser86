@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Per-window extra storage - 2026-09-08
+
+**377 Node tests passed, 0 failed, 0 skipped.** GetWindowLongA/W and SetWindowLongA/W now support positive offsets into custom-window extra bytes. Tests cover RegisterClass/Ex A/W, initial zeroes, overlapping unaligned writes, previous values, sibling/class/user-data isolation, new-window reset, creation/destruction callback access, invalid handles and out-of-bounds access without mutation. The rebuilt HandleObjects.exe imports all four variants and verifies overlapping data and error 1413. Catalog remains 580 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-extra-tests.tap), [browser report](test-artifacts/window-extra-browser-report.json).
+
+Native private-window probes reserved eight bytes and called SetWindowLongA/GetWindowLongW. Overlapping writes matched the little-endian class-storage vectors; an offset-5 DWORD failed with error 1413 and retained the prior values. Valid writes preserved error 1234. All owned windows/classes and probe brushes were cleaned up. Reference: [Microsoft SetWindowLongA](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowlonga). Built-in control extra layouts, changing reserved sizes and full registration validation remain unfinished.
+
 ## Shared class data and brush replacement - 2026-09-08
 
 **373 Node tests passed, 0 failed, 0 skipped.** Added SetClassLongA/W for class-extra DWORD writes and background brush replacement. Tests cover cross-window/A/W visibility, overlapping unaligned bytes, previous values, bounds, invalid handles, unsupported fields, erasing with replacement brushes, null brushes and cleanup ownership. The rebuilt HandleObjects.exe imports both setters, verifies overlapping writes, and swaps/restores its class brush without deleting it prematurely. Catalog: 580 entries.

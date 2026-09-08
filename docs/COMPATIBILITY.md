@@ -210,6 +210,8 @@ GetClassLongA/W now queries retained custom-class style, atom, module, backgroun
 
 SetClassLongA/W now writes class-extra DWORDs and replaces GCL_HBRBACKGROUND. Extra storage is shared across windows of the class and supports unaligned, overlapping little-endian writes; setters return the previous value and reject out-of-bounds offsets with error 1413 before mutation. Brush replacement does not delete the old brush or trigger repaint. Subsequent erasing uses the replacement, and successful unregistration deletes only the current owned brush. Null replacement disables default erasing. Other metadata mutations, class procedure replacement and built-in class mutation remain explicitly unsupported.
 
+GetWindowLongA/W and SetWindowLongA/W now read and write positive DWORD offsets in custom-window extra storage reserved by cbWndExtra. Each window captures its storage size at creation and starts with zero bytes. Unaligned overlapping writes return the previous little-endian value; out-of-range offsets fail with error 1413 without mutation. Storage is independent of class-extra bytes, sibling windows and GWL_USERDATA, and remains accessible during creation/destruction callbacks. Built-in control extra layouts, changing reserved sizes and complete registration validation remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.
