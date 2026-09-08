@@ -124,6 +124,8 @@ PolyPolygon reads signed contour counts and consecutive POINT arrays, validates 
 
 PolyBezier and PolyBezierTo draw unfilled cubic curves with the selected pen. PolyBezier takes an initial point followed by triples of control/control/end points and preserves current position; PolyBezierTo starts at current position, consumes triples and advances to the last endpoint. Complete point-count and buffer validation precede drawing. Browser rendering uses canvas cubic curves; native rasterization, clipping, transforms and unsupported pen styles remain limitations.
 
+PolyDraw supports PT_MOVETO, PT_LINETO, PT_BEZIERTO triples and PT_CLOSEFIGURE on line/curve endpoints, emitting an unfilled mixed path with the selected pen. All point/type data and groups are validated before drawing or changing current position. Native-probed closure behavior retains the supplied endpoint as current position, despite the documentation describing the closing-line endpoint. GDI path recording via BeginPath/EndPath, transforms, clipping and native rasterization remain unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

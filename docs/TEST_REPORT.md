@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## PolyDraw mixed line and curve extension - 2026-09-08
+
+**238 Node tests passed, 0 failed, 0 skipped.** Three new tests cover native point-type sequences and final positions, combined move/line/curve/closure commands, selected pen color, copied inputs, malformed groups and atomic input validation. HandleObjects.exe imports PolyDraw and checks a closed cubic figure, endpoint position and malformed group error through x86 calls. The catalog contains 516 entries.
+
+**Twelve real-canvas checks passed in Edge 152.0.4191.66**, including PolyDraw cubic midpoint coverage and a closed line figure. Evidence: [canvas report](test-artifacts/poly-draw-canvas-report.json). **Eight existing real-origin browser checks passed with no page errors**, including the updated fixture, persistence and backup. Evidence: [Node TAP](test-artifacts/poly-draw-tests.tap) and [browser report](test-artifacts/poly-draw-browser-report.json).
+
+Native ctypes probes used an owned memory DC, deleted in finally, to verify valid/invalid type sequences, empty/null calls, current-position updates and errors. No guest executable ran on the host. Microsoft [PolyDraw](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-polydraw) documents grouping and closure. The probed Windows implementation retains the supplied endpoint after closure, differing from the documented closing-line endpoint; this implementation follows the observation. BeginPath/EndPath recording, clipping/transforms and pixel-exact rasterization remain unfinished.
+
 ## Cubic Bezier drawing extension - 2026-09-08
 
 **235 Node tests passed, 0 failed, 0 skipped.** Two new tests cover multi-curve control-point grouping, selected pen color, signed copied points, distinct current-position rules, saved-state restoration, invalid counts, null arrays and atomic memory validation. HandleObjects.exe imports PolyBezier and PolyBezierTo, checking both position contracts and invalid counts through x86 calls. The catalog contains 515 entries.

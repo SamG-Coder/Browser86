@@ -1,0 +1,92 @@
+{
+  "result": "PASS",
+  "browser": "152.0.4191.66",
+  "checks": [
+    "alternate leaves double-wound interior empty",
+    "winding fills double-wound interior",
+    "raw mode 3 uses alternate coverage",
+    "polyline remains open",
+    "polygon closes its outline",
+    "alternate nested contours leave a hole",
+    "winding nested contours with same direction fill",
+    "winding nested contours with opposite directions leave a hole",
+    "PolyBezier draws cubic curve through its midpoint",
+    "PolyBezierTo draws from current position through its midpoint",
+    "PolyDraw renders cubic segments",
+    "PolyDraw closes a line figure"
+  ],
+  "pixels": [
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      255,
+      255,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ]
+  ]
+}

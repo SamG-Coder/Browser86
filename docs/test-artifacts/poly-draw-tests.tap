@@ -1,0 +1,1438 @@
+TAP version 13
+# Subtest: Win32 address waits: exact 1/2/4/8-byte comparison and zero-timeout errors
+ok 1 - Win32 address waits: exact 1/2/4/8-byte comparison and zero-timeout errors
+  ---
+  duration_ms: 11.4451
+  type: 'test'
+  ...
+# Subtest: Win32 address waits: wake-single follows arrival order, wake-all matches exact addresses and does not store signals
+ok 2 - Win32 address waits: wake-single follows arrival order, wake-all matches exact addresses and does not store signals
+  ---
+  duration_ms: 2.4513
+  type: 'test'
+  ...
+# Subtest: Win32 address waits: timeout removes expired waiters before a subsequent wake
+ok 3 - Win32 address waits: timeout removes expired waiters before a subsequent wake
+  ---
+  duration_ms: 5.2058
+  type: 'test'
+  ...
+# Subtest: Win32 address waits: process polling suspends without instructions and wakes only within the same guest
+ok 4 - Win32 address waits: process polling suspends without instructions and wakes only within the same guest
+  ---
+  duration_ms: 3.0748
+  type: 'test'
+  ...
+# Subtest: Win32 address waits: invalid sizes and inaccessible ranges do not register a waiter
+ok 5 - Win32 address waits: invalid sizes and inaccessible ranges do not register a waiter
+  ---
+  duration_ms: 1.7977
+  type: 'test'
+  ...
+# Subtest: Win32 character types: all 196608 classifications match native output hashes
+ok 6 - Win32 character types: all 196608 classifications match native output hashes
+  ---
+  duration_ms: 34.8829
+  type: 'test'
+  ...
+# Subtest: Win32 character types: letters, digits, whitespace, bidi and script properties
+ok 7 - Win32 character types: letters, digits, whitespace, bidi and script properties
+  ---
+  duration_ms: 4.1542
+  type: 'test'
+  ...
+# Subtest: Win32 character types: negative counts include NUL, counted NULs and surrogates remain units
+ok 8 - Win32 character types: negative counts include NUL, counted NULs and surrogates remain units
+  ---
+  duration_ms: 4.5721
+  type: 'test'
+  ...
+# Subtest: Win32 character types: invalid parameters and whole-range validation preserve output
+ok 9 - Win32 character types: invalid parameters and whole-range validation preserve output
+  ---
+  duration_ms: 1.5943
+  type: 'test'
+  ...
+# Subtest: Win32 code pages: concrete availability differs from aliases and preserves last error
+ok 10 - Win32 code pages: concrete availability differs from aliases and preserves last error
+  ---
+  duration_ms: 10.0707
+  type: 'test'
+  ...
+# Subtest: Win32 code pages: basic x86 structure and aliases report fixed profiles
+ok 11 - Win32 code pages: basic x86 structure and aliases report fixed profiles
+  ---
+  duration_ms: 4.3556
+  type: 'test'
+  ...
+# Subtest: Win32 code pages: ANSI/Unicode extended structures contain exact offsets and names
+ok 12 - Win32 code pages: ANSI/Unicode extended structures contain exact offsets and names
+  ---
+  duration_ms: 4.0184
+  type: 'test'
+  ...
+# Subtest: Win32 code pages: flags and unsupported pages fail without writes, ranges validate atomically
+ok 13 - Win32 code pages: flags and unsupported pages fail without writes, ranges validate atomically
+  ---
+  duration_ms: 1.5761
+  type: 'test'
+  ...
+# Subtest: Win32 command line: shell parsing matches seeded native cases
+ok 14 - Win32 command line: shell parsing matches seeded native cases
+  ---
+  duration_ms: 13.4397
+  type: 'test'
+  ...
+# Subtest: Win32 command line: contiguous x86 pointer/string allocation is released by one LocalFree
+ok 15 - Win32 command line: contiguous x86 pointer/string allocation is released by one LocalFree
+  ---
+  duration_ms: 10.8166
+  type: 'test'
+  ...
+# Subtest: Win32 command line: empty input uses guest executable and leading whitespace yields empty argv zero
+ok 16 - Win32 command line: empty input uses guest executable and leading whitespace yields empty argv zero
+  ---
+  duration_ms: 3.3948
+  type: 'test'
+  ...
+# Subtest: Win32 command line: bad output/input pointers do not allocate or overwrite the count
+ok 17 - Win32 command line: bad output/input pointers do not allocate or overwrite the count
+  ---
+  duration_ms: 5.4132
+  type: 'test'
+  ...
+# Subtest: Win32 condition variables: zero timeout reacquires CS and both SRW modes
+ok 18 - Win32 condition variables: zero timeout reacquires CS and both SRW modes
+  ---
+  duration_ms: 14.9113
+  type: 'test'
+  ...
+# Subtest: Win32 condition variables: wake one/all matches current waiters and stores no future signal
+ok 19 - Win32 condition variables: wake one/all matches current waiters and stores no future signal
+  ---
+  duration_ms: 2.2789
+  type: 'test'
+  ...
+# Subtest: Win32 condition variables: timeout and wake both wait for lock reacquisition
+ok 20 - Win32 condition variables: timeout and wake both wait for lock reacquisition
+  ---
+  duration_ms: 5.2936
+  type: 'test'
+  ...
+# Subtest: Win32 condition variables: CS wake reacquires once and process-local wakes stay isolated
+ok 21 - Win32 condition variables: CS wake reacquires once and process-local wakes stay isolated
+  ---
+  duration_ms: 2.7557
+  type: 'test'
+  ...
+# Subtest: Win32 condition variables: invalid inputs preserve held locks and reject recursive CS sleep
+ok 22 - Win32 condition variables: invalid inputs preserve held locks and reject recursive CS sleep
+  ---
+  duration_ms: 3.4628
+  type: 'test'
+  ...
+# Subtest: memory: cross-page little-endian reads/writes and protection
+ok 23 - memory: cross-page little-endian reads/writes and protection
+  ---
+  duration_ms: 1.6775
+  type: 'test'
+  ...
+# Subtest: heap: aligned zeroing, reuse, coalescing, realloc copy
+ok 24 - heap: aligned zeroing, reuse, coalescing, realloc copy
+  ---
+  duration_ms: 0.5413
+  type: 'test'
+  ...
+# Subtest: ANSI/UTF16 strings retain supported characters and terminate
+ok 25 - ANSI/UTF16 strings retain supported characters and terminate
+  ---
+  duration_ms: 0.5642
+  type: 'test'
+  ...
+# Subtest: ALU: 18,000 deterministic arithmetic/flag cases vs BigInt reference
+ok 26 - ALU: 18,000 deterministic arithmetic/flag cases vs BigInt reference
+  ---
+  duration_ms: 36.6125
+  type: 'test'
+  ...
+# Subtest: CPU: byte/high-byte and operand-size register preservation
+ok 27 - CPU: byte/high-byte and operand-size register preservation
+  ---
+  duration_ms: 0.834
+  type: 'test'
+  ...
+# Subtest: CPU: ModRM/SIB and FS segment base
+ok 28 - CPU: ModRM/SIB and FS segment base
+  ---
+  duration_ms: 0.3946
+  type: 'test'
+  ...
+# Subtest: CPU: call/ret and stack restoration
+ok 29 - CPU: call/ret and stack restoration
+  ---
+  duration_ms: 0.2395
+  type: 'test'
+  ...
+# Subtest: CPU: signed multiply/divide, divide errors
+ok 30 - CPU: signed multiply/divide, divide errors
+  ---
+  duration_ms: 0.9627
+  type: 'test'
+  ...
+# Subtest: CPU: REP MOVSB yields and resumes with correct ECX
+ok 31 - CPU: REP MOVSB yields and resumes with correct ECX
+  ---
+  duration_ms: 2.2625
+  type: 'test'
+  ...
+# Subtest: CPU: reverse REP and REPE termination
+ok 32 - CPU: reverse REP and REPE termination
+  ---
+  duration_ms: 0.3572
+  type: 'test'
+  ...
+# Subtest: CPU: CPUID preserves non-output registers and stack
+ok 33 - CPU: CPUID preserves non-output registers and stack
+  ---
+  duration_ms: 0.511
+  type: 'test'
+  ...
+# Subtest: CPU: SHLD/SHRD preserve full unsigned 32-bit precision
+ok 34 - CPU: SHLD/SHRD preserve full unsigned 32-bit precision
+  ---
+  duration_ms: 0.2958
+  type: 'test'
+  ...
+# Subtest: CPU: x87 subtract/reverse subtract/divide destinations and pops
+ok 35 - CPU: x87 subtract/reverse subtract/divide destinations and pops
+  ---
+  duration_ms: 1.1279
+  type: 'test'
+  ...
+# Subtest: CPU: scalar SSE addition and clearing only documented lanes
+ok 36 - CPU: scalar SSE addition and clearing only documented lanes
+  ---
+  duration_ms: 0.526
+  type: 'test'
+  ...
+# Subtest: CPU: unimplemented instructions fail with address/bytes
+ok 37 - CPU: unimplemented instructions fail with address/bytes
+  ---
+  duration_ms: 0.1973
+  type: 'test'
+  ...
+# Subtest: Win32 critical sections: recursive enter/try/leave update the x86 structure
+ok 38 - Win32 critical sections: recursive enter/try/leave update the x86 structure
+  ---
+  duration_ms: 14.9506
+  type: 'test'
+  ...
+# Subtest: Win32 critical sections: Ex flags and single-processor spin behavior are consistent across constructors
+ok 39 - Win32 critical sections: Ex flags and single-processor spin behavior are consistent across constructors
+  ---
+  duration_ms: 2.422
+  type: 'test'
+  ...
+# Subtest: Win32 critical sections: lifecycle misuse produces diagnostics and failed access leaves counts unchanged
+ok 40 - Win32 critical sections: lifecycle misuse produces diagnostics and failed access leaves counts unchanged
+  ---
+  duration_ms: 2.4382
+  type: 'test'
+  ...
+# Subtest: Win32 critical sections: page validation is atomic and storage is isolated between guests
+ok 41 - Win32 critical sections: page validation is atomic and storage is isolated between guests
+  ---
+  duration_ms: 4.6585
+  type: 'test'
+  ...
+# Subtest: DC pen and brush colors preserve full COLORREFs, saved state and native errors
+ok 42 - DC pen and brush colors preserve full COLORREFs, saved state and native errors
+  ---
+  duration_ms: 10.9681
+  type: 'test'
+  ...
+# Subtest: DC stock colors affect selected drawing objects without mutating shared handles
+ok 43 - DC stock colors affect selected drawing objects without mutating shared handles
+  ---
+  duration_ms: 2.7854
+  type: 'test'
+  ...
+# Subtest: Win32 DC queries: defaults, mutations and restored values are observable independently
+ok 44 - Win32 DC queries: defaults, mutations and restored values are observable independently
+  ---
+  duration_ms: 4.6764
+  type: 'test'
+  ...
+# Subtest: Win32 GDI object queries: selected handles, restored identity and deleted objects
+ok 45 - Win32 GDI object queries: selected handles, restored identity and deleted objects
+  ---
+  duration_ms: 2.1418
+  type: 'test'
+  ...
+# Subtest: Win32 GDI object queries: invalid types and unsupported selections are explicit
+ok 46 - Win32 GDI object queries: invalid types and unsupported selections are explicit
+  ---
+  duration_ms: 6.1446
+  type: 'test'
+  ...
+# Subtest: Win32 DC state: nested restores pop newer saves and reuse levels
+ok 47 - Win32 DC state: nested restores pop newer saves and reuse levels
+  ---
+  duration_ms: 1.4995
+  type: 'test'
+  ...
+# Subtest: Win32 DC state: restored position, selections and colors reach drawing commands
+ok 48 - Win32 DC state: restored position, selections and colors reach drawing commands
+  ---
+  duration_ms: 2.8907
+  type: 'test'
+  ...
+# Subtest: Win32 DC state: stacks are independent and saved selections remain valid
+ok 49 - Win32 DC state: stacks are independent and saved selections remain valid
+  ---
+  duration_ms: 2.0128
+  type: 'test'
+  ...
+# Subtest: Win32 DC state: invalid handles, levels and output ranges preserve state
+ok 50 - Win32 DC state: invalid handles, levels and output ranges preserve state
+  ---
+  duration_ms: 2.177
+  type: 'test'
+  ...
+# Subtest: Win32 directory rename: subtree identities, timestamps, bytes and root handles survive both APIs
+ok 51 - Win32 directory rename: subtree identities, timestamps, bytes and root handles survive both APIs
+  ---
+  duration_ms: 12.1166
+  type: 'test'
+  ...
+# Subtest: Win32 directory rename: open descendants block moves until final duplicated handle closes
+ok 52 - Win32 directory rename: open descendants block moves until final duplicated handle closes
+  ---
+  duration_ms: 3.5736
+  type: 'test'
+  ...
+# Subtest: Win32 directory rename: self-descendant, current-directory ancestors and missing parents fail atomically
+ok 53 - Win32 directory rename: self-descendant, current-directory ancestors and missing parents fail atomically
+  ---
+  duration_ms: 4.1119
+  type: 'test'
+  ...
+# Subtest: Win32 directory rename: explicit replacement permits a closed file but never another directory
+ok 54 - Win32 directory rename: explicit replacement permits a closed file but never another directory
+  ---
+  duration_ms: 1.6675
+  type: 'test'
+  ...
+# Subtest: Win32 DOS times: native rounding vectors include sub-millisecond and calendar rollover
+ok 55 - Win32 DOS times: native rounding vectors include sub-millisecond and calendar rollover
+  ---
+  duration_ms: 14.7975
+  type: 'test'
+  ...
+# Subtest: Win32 DOS times: every packed calendar date is validated and valid dates round trip
+ok 56 - Win32 DOS times: every packed calendar date is validated and valid dates round trip
+  ---
+  duration_ms: 112.0894
+  type: 'test'
+  ...
+# Subtest: Win32 DOS times: invalid time fields and rounded range failures preserve output
+ok 57 - Win32 DOS times: invalid time fields and rounded range failures preserve output
+  ---
+  duration_ms: 3.3409
+  type: 'test'
+  ...
+# Subtest: Win32 DOS times: WORD argument truncation, overlapping buffers and atomic output checks
+ok 58 - Win32 DOS times: WORD argument truncation, overlapping buffers and atomic output checks
+  ---
+  duration_ms: 1.6001
+  type: 'test'
+  ...
+# Subtest: Win32 environment: case-insensitive names, empty values, deletion and last error
+ok 59 - Win32 environment: case-insensitive names, empty values, deletion and last error
+  ---
+  duration_ms: 38.2464
+  type: 'test'
+  ...
+# Subtest: Win32 environment: ACP byte counts differ from UTF-16 character counts
+ok 60 - Win32 environment: ACP byte counts differ from UTF-16 character counts
+  ---
+  duration_ms: 11.1047
+  type: 'test'
+  ...
+# Subtest: Win32 environment: expansion is single-pass and validates complete output before writing
+ok 61 - Win32 environment: expansion is single-pass and validates complete output before writing
+  ---
+  duration_ms: 1.8606
+  type: 'test'
+  ...
+# Subtest: Win32 environment: sorted independent OEM and Unicode blocks have owned allocations
+ok 62 - Win32 environment: sorted independent OEM and Unicode blocks have owned allocations
+  ---
+  duration_ms: 1.8389
+  type: 'test'
+  ...
+# Subtest: Win32 environment: guest processes are isolated and CRT getenv observes Win32 updates
+ok 63 - Win32 environment: guest processes are isolated and CRT getenv observes Win32 updates
+  ---
+  duration_ms: 9.7408
+  type: 'test'
+  ...
+# Subtest: Win32 append: independent and duplicate handles always append at current EOF despite seeking
+ok 64 - Win32 append: independent and duplicate handles always append at current EOF despite seeking
+  ---
+  duration_ms: 17.9151
+  type: 'test'
+  ...
+# Subtest: Win32 append: read/append seeks can read while write-data plus append retains positioned writes
+ok 65 - Win32 append: read/append seeks can read while write-data plus append retains positioned writes
+  ---
+  duration_ms: 3.3048
+  type: 'test'
+  ...
+# Subtest: Win32 append: sharing, readonly and creation dispositions enforce append access
+ok 66 - Win32 append: sharing, readonly and creation dispositions enforce append access
+  ---
+  duration_ms: 5.3478
+  type: 'test'
+  ...
+# Subtest: Win32 append: zero writes, invalid buffers, quota failures and deletion preserve lifetime and cursor rules
+ok 67 - Win32 append: zero writes, invalid buffers, quota failures and deletion preserve lifetime and cursor rules
+  ---
+  duration_ms: 1.9497
+  type: 'test'
+  ...
+# Subtest: Win32 disposition: cancellation through independent handles restores names, links and snapshots
+ok 68 - Win32 disposition: cancellation through independent handles restores names, links and snapshots
+  ---
+  duration_ms: 11.3983
+  type: 'test'
+  ...
+# Subtest: Win32 disposition: duplicate final-close, exclusive opens and DeleteFile cancellation use shared state
+ok 69 - Win32 disposition: duplicate final-close, exclusive opens and DeleteFile cancellation use shared state
+  ---
+  duration_ms: 2.9191
+  type: 'test'
+  ...
+# Subtest: Win32 disposition: cancellation cannot suppress delete-on-close or termination cleanup
+ok 70 - Win32 disposition: cancellation cannot suppress delete-on-close or termination cleanup
+  ---
+  duration_ms: 14.9352
+  type: 'test'
+  ...
+# Subtest: Win32 disposition: empty directory deletion blocks child creation and supports cancellation
+ok 71 - Win32 disposition: empty directory deletion blocks child creation and supports cancellation
+  ---
+  duration_ms: 1.844
+  type: 'test'
+  ...
+# Subtest: Win32 disposition: DELETE permission, readonly files, root protection and invalid inputs are atomic
+ok 72 - Win32 disposition: DELETE permission, readonly files, root protection and invalid inputs are atomic
+  ---
+  duration_ms: 1.5793
+  type: 'test'
+  ...
+# Subtest: Win32 extended info: standard layout follows size changes and pending deletion without moving the cursor
+ok 73 - Win32 extended info: standard layout follows size changes and pending deletion without moving the cursor
+  ---
+  duration_ms: 13.5989
+  type: 'test'
+  ...
+# Subtest: Win32 extended info: file IDs and attributes agree across independent opens, duplication and rename
+ok 74 - Win32 extended info: file IDs and attributes agree across independent opens, duplication and rename
+  ---
+  duration_ms: 4.6483
+  type: 'test'
+  ...
+# Subtest: Win32 extended info: UTF-16 names have byte lengths, partial output and no added terminator
+ok 75 - Win32 extended info: UTF-16 names have byte lengths, partial output and no added terminator
+  ---
+  duration_ms: 3.5709
+  type: 'test'
+  ...
+# Subtest: Win32 extended info: metadata-only directory handles return directory flag and stable root names
+ok 76 - Win32 extended info: metadata-only directory handles return directory flag and stable root names
+  ---
+  duration_ms: 1.4964
+  type: 'test'
+  ...
+# Subtest: Win32 extended info: invalid handles/classes and short buffers return precise errors without output mutation
+ok 77 - Win32 extended info: invalid handles/classes and short buffers return precise errors without output mutation
+  ---
+  duration_ms: 2.0034
+  type: 'test'
+  ...
+# Subtest: Win32 extended info: cross-page output validation is atomic and oversized buffers do not require unused pages
+ok 78 - Win32 extended info: cross-page output validation is atomic and oversized buffers do not require unused pages
+  ---
+  duration_ms: 2.3543
+  type: 'test'
+  ...
+# Subtest: Win32 metadata: exact independent FILETIMEs, write updates and zero/no-change sentinels
+ok 79 - Win32 metadata: exact independent FILETIMEs, write updates and zero/no-change sentinels
+  ---
+  duration_ms: 12.2946
+  type: 'test'
+  ...
+# Subtest: Win32 metadata: BY_HANDLE_FILE_INFORMATION and A/W attributes/find data agree on layout and times
+ok 80 - Win32 metadata: BY_HANDLE_FILE_INFORMATION and A/W attributes/find data agree on layout and times
+  ---
+  duration_ms: 15.5402
+  type: 'test'
+  ...
+# Subtest: Win32 metadata: timestamp suppression follows the shared file object but not independent opens
+ok 81 - Win32 metadata: timestamp suppression follows the shared file object but not independent opens
+  ---
+  duration_ms: 4.5709
+  type: 'test'
+  ...
+# Subtest: Win32 metadata: readonly attributes deny new writes/deletes, normalize NORMAL and preserve directory type
+ok 82 - Win32 metadata: readonly attributes deny new writes/deletes, normalize NORMAL and preserve directory type
+  ---
+  duration_ms: 1.6809
+  type: 'test'
+  ...
+# Subtest: Win32 metadata: IDs survive writes and shared-handle rename, copies and recreated files get new IDs
+ok 83 - Win32 metadata: IDs survive writes and shared-handle rename, copies and recreated files get new IDs
+  ---
+  duration_ms: 2.0122
+  type: 'test'
+  ...
+# Subtest: Win32 metadata: access checks and invalid input/output buffers are atomic
+ok 84 - Win32 metadata: access checks and invalid input/output buffers are atomic
+  ---
+  duration_ms: 3.1097
+  type: 'test'
+  ...
+# Subtest: VFS metadata: snapshot and backup ZIP preserve IDs, exact FILETIMEs and attributes without aliasing
+ok 85 - VFS metadata: snapshot and backup ZIP preserve IDs, exact FILETIMEs and attributes without aliasing
+  ---
+  duration_ms: 7.4357
+  type: 'test'
+  ...
+# Subtest: VFS metadata: old backups remain readable and malformed/duplicate metadata is rejected
+ok 86 - VFS metadata: old backups remain readable and malformed/duplicate metadata is rejected
+  ---
+  duration_ms: 1.5197
+  type: 'test'
+  ...
+# Subtest: Win32 files: exact 64-bit cursors above quota and JS integer range allocate no disk storage
+ok 87 - Win32 files: exact 64-bit cursors above quota and JS integer range allocate no disk storage
+  ---
+  duration_ms: 11.9146
+  type: 'test'
+  ...
+# Subtest: Win32 files: legacy seek high words, signed relative offsets and ambiguous success sentinel
+ok 88 - Win32 files: legacy seek high words, signed relative offsets and ambiguous success sentinel
+  ---
+  duration_ms: 3.479
+  type: 'test'
+  ...
+# Subtest: Win32 files: EOF reads and zero-byte writes leave large cursors and disk contents unchanged
+ok 89 - Win32 files: EOF reads and zero-byte writes leave large cursors and disk contents unchanged
+  ---
+  duration_ms: 4.0837
+  type: 'test'
+  ...
+# Subtest: Win32 files: writes zero-fill gaps, truncation preserves cursor and quota failure is atomic
+ok 90 - Win32 files: writes zero-fill gaps, truncation preserves cursor and quota failure is atomic
+  ---
+  duration_ms: 2.3059
+  type: 'test'
+  ...
+# Subtest: Win32 files: invalid output pages do not change cursor or file data
+ok 91 - Win32 files: invalid output pages do not change cursor or file data
+  ---
+  duration_ms: 2.0283
+  type: 'test'
+  ...
+# Subtest: Win32 files: access checks, invalid methods/handles and unsupported I/O remain explicit
+ok 92 - Win32 files: access checks, invalid methods/handles and unsupported I/O remain explicit
+  ---
+  duration_ms: 2.3822
+  type: 'test'
+  ...
+# Subtest: Win32 lifetime: pending deletion retains data and ID until every independent and duplicate handle closes
+ok 93 - Win32 lifetime: pending deletion retains data and ID until every independent and duplicate handle closes
+  ---
+  duration_ms: 18.1208
+  type: 'test'
+  ...
+# Subtest: Win32 lifetime: DELETE access and FILE_SHARE_DELETE are checked in both directions
+ok 94 - Win32 lifetime: DELETE access and FILE_SHARE_DELETE are checked in both directions
+  ---
+  duration_ms: 2.4321
+  type: 'test'
+  ...
+# Subtest: Win32 lifetime: delete-on-close tracks open objects rather than closing the first duplicate
+ok 95 - Win32 lifetime: delete-on-close tracks open objects rather than closing the first duplicate
+  ---
+  duration_ms: 2.4014
+  type: 'test'
+  ...
+# Subtest: Win32 lifetime: CLOSE_SOURCE failure still releases a final delete-on-close reference
+ok 96 - Win32 lifetime: CLOSE_SOURCE failure still releases a final delete-on-close reference
+  ---
+  duration_ms: 8.4806
+  type: 'test'
+  ...
+# Subtest: Win32 lifetime: snapshots exclude pending and delete-on-close files; exit/stop/fault force file cleanup
+ok 97 - Win32 lifetime: snapshots exclude pending and delete-on-close files; exit/stop/fault force file cleanup
+  ---
+  duration_ms: 7.3175
+  type: 'test'
+  ...
+# Subtest: Win32 lifetime: VFS path operations and copies cannot bypass pending deletion or sharing
+ok 98 - Win32 lifetime: VFS path operations and copies cannot bypass pending deletion or sharing
+  ---
+  duration_ms: 2.2408
+  type: 'test'
+  ...
+# Subtest: Win32 lifetime: inherited handles, readonly create flags and metadata-only directory restrictions
+ok 99 - Win32 lifetime: inherited handles, readonly create flags and metadata-only directory restrictions
+  ---
+  duration_ms: 2.0319
+  type: 'test'
+  ...
+# Subtest: Win32 rename: shared file identity, cursor and metadata survive Unicode and case-only rename
+ok 100 - Win32 rename: shared file identity, cursor and metadata survive Unicode and case-only rename
+  ---
+  duration_ms: 12.474
+  type: 'test'
+  ...
+# Subtest: Win32 rename: current directory and directory-handle roots resolve relative names
+ok 101 - Win32 rename: current directory and directory-handle roots resolve relative names
+  ---
+  duration_ms: 2.7242
+  type: 'test'
+  ...
+# Subtest: Win32 rename: replacement releases destination quota but rejects open, readonly and directory targets
+ok 102 - Win32 rename: replacement releases destination quota but rejects open, readonly and directory targets
+  ---
+  duration_ms: 4.4165
+  type: 'test'
+  ...
+# Subtest: Win32 rename: pending files, DELETE access, invalid paths and unsupported modes preserve the source
+ok 103 - Win32 rename: pending files, DELETE access, invalid paths and unsupported modes preserve the source
+  ---
+  duration_ms: 1.8742
+  type: 'test'
+  ...
+# Subtest: Win32 rename: x86 input bounds and inaccessible UTF-16 data fail before filesystem mutation
+ok 104 - Win32 rename: x86 input bounds and inaccessible UTF-16 data fail before filesystem mutation
+  ---
+  duration_ms: 1.6676
+  type: 'test'
+  ...
+# Subtest: Win32 set info: explicit EOF grows, truncates and clears data without moving shared or independent cursors
+ok 105 - Win32 set info: explicit EOF grows, truncates and clears data without moving shared or independent cursors
+  ---
+  duration_ms: 21.7291
+  type: 'test'
+  ...
+# Subtest: Win32 set info: negative and exact 64-bit oversized lengths fail atomically with quota accounting
+ok 106 - Win32 set info: negative and exact 64-bit oversized lengths fail atomically with quota accounting
+  ---
+  duration_ms: 2.6584
+  type: 'test'
+  ...
+# Subtest: Win32 set info: pending files resize through existing handles and retain suppressed timestamps
+ok 107 - Win32 set info: pending files resize through existing handles and retain suppressed timestamps
+  ---
+  duration_ms: 4.4304
+  type: 'test'
+  ...
+# Subtest: Win32 set info: invalid handles, denied rights, directories, short structures and unsupported classes
+ok 108 - Win32 set info: invalid handles, denied rights, directories, short structures and unsupported classes
+  ---
+  duration_ms: 1.8668
+  type: 'test'
+  ...
+# Subtest: Win32 set info: input validation precedes mutation and accepts read-only input memory
+ok 109 - Win32 set info: input validation precedes mutation and accepts read-only input memory
+  ---
+  duration_ms: 8.5269
+  type: 'test'
+  ...
+# Subtest: ZIP: CRC32 standard known vector
+ok 110 - ZIP: CRC32 standard known vector
+  ---
+  duration_ms: 0.9047
+  type: 'test'
+  ...
+# Subtest: ZIP: stored Unicode/empty directory round-trip
+ok 111 - ZIP: stored Unicode/empty directory round-trip
+  ---
+  duration_ms: 0.4939
+  type: 'test'
+  ...
+# Subtest: ZIP: real DEFLATE compiled package imports thirteen entries
+ok 112 - ZIP: real DEFLATE compiled package imports thirteen entries
+  ---
+  duration_ms: 0.1221
+  type: 'test'
+  ...
+# Subtest: ZIP: traversal, drives, absolute and ambiguous filenames rejected
+ok 113 - ZIP: traversal, drives, absolute and ambiguous filenames rejected
+  ---
+  duration_ms: 0.4416
+  type: 'test'
+  ...
+# Subtest: ZIP: case-insensitive duplicate and parent-as-file rejected
+ok 114 - ZIP: case-insensitive duplicate and parent-as-file rejected
+  ---
+  duration_ms: 0.4883
+  type: 'test'
+  ...
+# Subtest: ZIP: CRC mismatch and truncation do not mount
+ok 115 - ZIP: CRC mismatch and truncation do not mount
+  ---
+  duration_ms: 0.2657
+  type: 'test'
+  ...
+# Subtest: ZIP: symlink, encryption, unsupported methods, limits rejected
+ok 116 - ZIP: symlink, encryption, unsupported methods, limits rejected
+  ---
+  duration_ms: 0.4256
+  type: 'test'
+  ...
+# Subtest: VFS: package mounts preserve folders and case-insensitive paths
+ok 117 - VFS: package mounts preserve folders and case-insensitive paths
+  ---
+  duration_ms: 9.5194
+  type: 'test'
+  ...
+# Subtest: VFS: writes, sparse file growth, quota and snapshot independence
+ok 118 - VFS: writes, sparse file growth, quota and snapshot independence
+  ---
+  duration_ms: 1.1707
+  type: 'test'
+  ...
+# Subtest: VFS: file-parent conflicts and nonempty directory removal rejected
+ok 119 - VFS: file-parent conflicts and nonempty directory removal rejected
+  ---
+  duration_ms: 0.3009
+  type: 'test'
+  ...
+# Subtest: Backup: complete virtual C drive restores EXE selection and files
+ok 120 - Backup: complete virtual C drive restores EXE selection and files
+  ---
+  duration_ms: 4.6969
+  type: 'test'
+  ...
+# Subtest: Win32 final paths: A/W DOS and volume-relative names agree across rename and pending deletion
+ok 121 - Win32 final paths: A/W DOS and volume-relative names agree across rename and pending deletion
+  ---
+  duration_ms: 10.4223
+  type: 'test'
+  ...
+# Subtest: Win32 final paths: short buffers preserve output and reproduce observed A/W size conventions
+ok 122 - Win32 final paths: short buffers preserve output and reproduce observed A/W size conventions
+  ---
+  duration_ms: 3.047
+  type: 'test'
+  ...
+# Subtest: Win32 final paths: extended DOS results reopen the same node and Unicode counts use UTF-16 units
+ok 123 - Win32 final paths: extended DOS results reopen the same node and Unicode counts use UTF-16 units
+  ---
+  duration_ms: 7.3812
+  type: 'test'
+  ...
+# Subtest: Win32 final paths: directory/root queries and invalid flags or handles are explicit
+ok 124 - Win32 final paths: directory/root queries and invalid flags or handles are explicit
+  ---
+  duration_ms: 1.6379
+  type: 'test'
+  ...
+# Subtest: Win32 final paths: complete output range is checked before writing, unused capacity is not accessed
+ok 125 - Win32 final paths: complete output range is checked before writing, unused capacity is not accessed
+  ---
+  duration_ms: 1.6821
+  type: 'test'
+  ...
+# Subtest: ANSI font inspection matches native conversion for every nonzero UTF-16 unit
+ok 126 - ANSI font inspection matches native conversion for every nonzero UTF-16 unit
+  ---
+  duration_ms: 63.6124
+  type: 'test'
+  ...
+# Subtest: ANSI font names retain surrogate replacement count and query prefix boundaries
+ok 127 - ANSI font names retain surrogate replacement count and query prefix boundaries
+  ---
+  duration_ms: 2.8141
+  type: 'test'
+  ...
+# Subtest: Logical fonts preserve all fields and independent Unicode face-name storage
+ok 128 - Logical fonts preserve all fields and independent Unicode face-name storage
+  ---
+  duration_ms: 2.207
+  type: 'test'
+  ...
+# Subtest: CreateFont A/W and indirect ANSI preserve logical fields and truncate bounded names
+ok 129 - CreateFont A/W and indirect ANSI preserve logical fields and truncate bounded names
+  ---
+  duration_ms: 1.6701
+  type: 'test'
+  ...
+# Subtest: Font queries implement partial copies, A/W alignment and ANSI tail preservation
+ok 130 - Font queries implement partial copies, A/W alignment and ANSI tail preservation
+  ---
+  duration_ms: 2.9535
+  type: 'test'
+  ...
+# Subtest: Indirect GDI creation copies structures and supports selection, drawing and inspection
+ok 131 - Indirect GDI creation copies structures and supports selection, drawing and inspection
+  ---
+  duration_ms: 22.318
+  type: 'test'
+  ...
+# Subtest: Indirect GDI creation validates complete readable structures before allocating
+ok 132 - Indirect GDI creation validates complete readable structures before allocating
+  ---
+  duration_ms: 15.6931
+  type: 'test'
+  ...
+# Subtest: GetObject A/W reports logical pen widths, null pens and x86 brush layouts
+ok 133 - GetObject A/W reports logical pen widths, null pens and x86 brush layouts
+  ---
+  duration_ms: 1.6799
+  type: 'test'
+  ...
+# Subtest: GetObject enforces alignment and pen capacity, and bounds short brush writes
+ok 134 - GetObject enforces alignment and pen capacity, and bounds short brush writes
+  ---
+  duration_ms: 1.5834
+  type: 'test'
+  ...
+# Subtest: GetObject validates the actual write range before changing guest memory
+ok 135 - GetObject validates the actual write range before changing guest memory
+  ---
+  duration_ms: 1.4547
+  type: 'test'
+  ...
+# Subtest: Win32 handles: duplicated files share position and survive closing the original
+ok 136 - Win32 handles: duplicated files share position and survive closing the original
+  ---
+  duration_ms: 12.6745
+  type: 'test'
+  ...
+# Subtest: Win32 handles: flags are per handle, mask updates preserve other bits and close protection works
+ok 137 - Win32 handles: flags are per handle, mask updates preserve other bits and close protection works
+  ---
+  duration_ms: 2.6345
+  type: 'test'
+  ...
+# Subtest: Win32 handles: aliases share semaphore counts and mutex ownership without double-acquiring wait-all
+ok 138 - Win32 handles: aliases share semaphore counts and mutex ownership without double-acquiring wait-all
+  ---
+  duration_ms: 3.8086
+  type: 'test'
+  ...
+# Subtest: Win32 handles: CLOSE_SOURCE succeeds, closes on failure, and supports no target process
+ok 139 - Win32 handles: CLOSE_SOURCE succeeds, closes on failure, and supports no target process
+  ---
+  duration_ms: 2.0135
+  type: 'test'
+  ...
+# Subtest: Win32 handles: invalid types, buffers and unsupported modes do not allocate duplicates
+ok 140 - Win32 handles: invalid types, buffers and unsupported modes do not allocate duplicates
+  ---
+  duration_ms: 1.5905
+  type: 'test'
+  ...
+# Subtest: Win32 handles: process/thread pseudo handles become real queryable waitable handles
+ok 141 - Win32 handles: process/thread pseudo handles become real queryable waitable handles
+  ---
+  duration_ms: 4.9087
+  type: 'test'
+  ...
+# Subtest: EXE: handle duplication, shared file position, flags and process queries use real imports
+ok 142 - EXE: handle duplication, shared file position, flags and process queries use real imports
+  ---
+  duration_ms: 30.9104
+  type: 'test'
+  ...
+# Subtest: Win32 init once: check-only, begin, completion and failed-attempt retry preserve outputs
+ok 143 - Win32 init once: check-only, begin, completion and failed-attempt retry preserve outputs
+  ---
+  duration_ms: 9.8869
+  type: 'test'
+  ...
+# Subtest: Win32 init once: callback arguments, retry error and cached context use guest continuations
+ok 144 - Win32 init once: callback arguments, retry error and cached context use guest continuations
+  ---
+  duration_ms: 4.0941
+  type: 'test'
+  ...
+# Subtest: Win32 init once: async attempts share the winning context and reject mode mismatches
+ok 145 - Win32 init once: async attempts share the winning context and reject mode mismatches
+  ---
+  duration_ms: 4.5697
+  type: 'test'
+  ...
+# Subtest: Win32 init once: synchronous waits suspend and recover after completion or retry
+ok 146 - Win32 init once: synchronous waits suspend and recover after completion or retry
+  ---
+  duration_ms: 1.5223
+  type: 'test'
+  ...
+# Subtest: Win32 init once: bad flags, reserved context bits, invalid state and output pages are atomic
+ok 147 - Win32 init once: bad flags, reserved context bits, invalid state and output pages are atomic
+  ---
+  duration_ms: 1.6864
+  type: 'test'
+  ...
+# Subtest: Win32 MulDiv: native edge combinations and seeded full-width inputs match
+ok 148 - Win32 MulDiv: native edge combinations and seeded full-width inputs match
+  ---
+  duration_ms: 18.9368
+  type: 'test'
+  ...
+# Subtest: Win32 MulDiv: signed half rounding and exact products above Number precision
+ok 149 - Win32 MulDiv: signed half rounding and exact products above Number precision
+  ---
+  duration_ms: 0.1819
+  type: 'test'
+  ...
+# Subtest: Win32 MulDiv: failures and legitimate negative results preserve guest last error
+ok 150 - Win32 MulDiv: failures and legitimate negative results preserve guest last error
+  ---
+  duration_ms: 12.5467
+  type: 'test'
+  ...
+# Subtest: Win32 names: create-existing returns a new handle without resetting state or initial ownership
+ok 151 - Win32 names: create-existing returns a new handle without resetting state or initial ownership
+  ---
+  duration_ms: 11.5288
+  type: 'test'
+  ...
+# Subtest: Win32 names: Unicode, case-sensitive names and Local/Global namespaces remain guest-isolated
+ok 152 - Win32 names: Unicode, case-sensitive names and Local/Global namespaces remain guest-isolated
+  ---
+  duration_ms: 4.2665
+  type: 'test'
+  ...
+# Subtest: Win32 names: type collisions and final close honor opened/duplicated references
+ok 153 - Win32 names: type collisions and final close honor opened/duplicated references
+  ---
+  duration_ms: 3.2063
+  type: 'test'
+  ...
+# Subtest: Win32 names: access rights constrain waits and mutation across opens and duplicates
+ok 154 - Win32 names: access rights constrain waits and mutation across opens and duplicates
+  ---
+  duration_ms: 1.6082
+  type: 'test'
+  ...
+# Subtest: Win32 names: SECURITY_ATTRIBUTES records inheritance, validates layout and rejects custom descriptors
+ok 155 - Win32 names: SECURITY_ATTRIBUTES records inheritance, validates layout and rejects custom descriptors
+  ---
+  duration_ms: 4.1523
+  type: 'test'
+  ...
+# Subtest: Win32 names: A/W Ex creation and Open functions preserve flags, generic rights and mutex release
+ok 156 - Win32 names: A/W Ex creation and Open functions preserve flags, generic rights and mutex release
+  ---
+  duration_ms: 8.4385
+  type: 'test'
+  ...
+# Subtest: Win32 names: invalid names, pointers, access masks and Ex flags fail without allocating objects
+ok 157 - Win32 names: invalid names, pointers, access masks and Ex flags fail without allocating objects
+  ---
+  duration_ms: 5.8617
+  type: 'test'
+  ...
+# Subtest: Win32 ordinal search: forward, backward, prefix and suffix modes clear last error
+ok 158 - Win32 ordinal search: forward, backward, prefix and suffix modes clear last error
+  ---
+  duration_ms: 16.5802
+  type: 'test'
+  ...
+# Subtest: Win32 ordinal search: empty values and counted embedded NULs use UTF-16 offsets
+ok 159 - Win32 ordinal search: empty values and counted embedded NULs use UTF-16 offsets
+  ---
+  duration_ms: 3.2316
+  type: 'test'
+  ...
+# Subtest: Win32 ordinal search: pinned case mappings preserve nonlinguistic distinctions
+ok 160 - Win32 ordinal search: pinned case mappings preserve nonlinguistic distinctions
+  ---
+  duration_ms: 1.8985
+  type: 'test'
+  ...
+# Subtest: Win32 ordinal search: invalid flags, arguments and inaccessible counted buffers
+ok 161 - Win32 ordinal search: invalid flags, arguments and inaccessible counted buffers
+  ---
+  duration_ms: 3.9457
+  type: 'test'
+  ...
+# Subtest: Win32 ordinal comparison: UTF-16 lengths, embedded NULs and CSTR result codes
+ok 162 - Win32 ordinal comparison: UTF-16 lengths, embedded NULs and CSTR result codes
+  ---
+  duration_ms: 16.78
+  type: 'test'
+  ...
+# Subtest: Win32 ordinal comparison: native nonlinguistic case behavior avoids Unicode expansion
+ok 163 - Win32 ordinal comparison: native nonlinguistic case behavior avoids Unicode expansion
+  ---
+  duration_ms: 2.3092
+  type: 'test'
+  ...
+# Subtest: Win32 ordinal comparison: seeded native Windows vectors match on all platforms
+ok 164 - Win32 ordinal comparison: seeded native Windows vectors match on all platforms
+  ---
+  duration_ms: 7.8863
+  type: 'test'
+  ...
+# Subtest: Win32 ordinal comparison: validates pointers, signed lengths, booleans and counted ranges
+ok 165 - Win32 ordinal comparison: validates pointers, signed lengths, booleans and counted ranges
+  ---
+  duration_ms: 1.6996
+  type: 'test'
+  ...
+# Subtest: PolyDraw native point types and final positions include closure endpoint behavior
+ok 166 - PolyDraw native point types and final positions include closure endpoint behavior
+  ---
+  duration_ms: 10.8971
+  type: 'test'
+  ...
+# Subtest: PolyDraw combines moves, lines, curves and closure into an unfilled path
+ok 167 - PolyDraw combines moves, lines, curves and closure into an unfilled path
+  ---
+  duration_ms: 4.464
+  type: 'test'
+  ...
+# Subtest: PolyDraw validates both arrays before emitting or changing state
+ok 168 - PolyDraw validates both arrays before emitting or changing state
+  ---
+  duration_ms: 4.2402
+  type: 'test'
+  ...
+# Subtest: Bezier calls retain cubic control points and apply distinct current-position rules
+ok 169 - Bezier calls retain cubic control points and apply distinct current-position rules
+  ---
+  duration_ms: 10.724
+  type: 'test'
+  ...
+# Subtest: Bezier input errors preserve current position and never emit partial curves
+ok 170 - Bezier input errors preserve current position and never emit partial curves
+  ---
+  duration_ms: 2.0144
+  type: 'test'
+  ...
+# Subtest: PolyPolygon emits a single compound path with selected fill mode and independent contours
+ok 171 - PolyPolygon emits a single compound path with selected fill mode and independent contours
+  ---
+  duration_ms: 4.653
+  type: 'test'
+  ...
+# Subtest: PolyPolygon signed counts and inaccessible late contours fail without partial drawing
+ok 172 - PolyPolygon signed counts and inaccessible late contours fail without partial drawing
+  ---
+  duration_ms: 2.9592
+  type: 'test'
+  ...
+# Subtest: PolyPolyline keeps groups disconnected and leaves current position unchanged
+ok 173 - PolyPolyline keeps groups disconnected and leaves current position unchanged
+  ---
+  duration_ms: 2.6761
+  type: 'test'
+  ...
+# Subtest: PolyPolyline validates every count and full point range before drawing
+ok 174 - PolyPolyline validates every count and full point range before drawing
+  ---
+  duration_ms: 1.8461
+  type: 'test'
+  ...
+# Subtest: PolylineTo connects and updates current position across drawing and saved state
+ok 175 - PolylineTo connects and updates current position across drawing and saved state
+  ---
+  duration_ms: 2.1518
+  type: 'test'
+  ...
+# Subtest: PolylineTo zero count succeeds and failed inputs leave position and output intact
+ok 176 - PolylineTo zero count succeeds and failed inputs leave position and output intact
+  ---
+  duration_ms: 1.282
+  type: 'test'
+  ...
+# Subtest: Polygon fill mode retains native raw values, per-DC isolation and saved state
+ok 177 - Polygon fill mode retains native raw values, per-DC isolation and saved state
+  ---
+  duration_ms: 1.8918
+  type: 'test'
+  ...
+# Subtest: Polygon and polyline copy signed points and selected colors without changing current position
+ok 178 - Polygon and polyline copy signed points and selected colors without changing current position
+  ---
+  duration_ms: 3.195
+  type: 'test'
+  ...
+# Subtest: Polygon inputs fail atomically with native count and handle results
+ok 179 - Polygon inputs fail atomically with native count and handle results
+  ---
+  duration_ms: 1.1984
+  type: 'test'
+  ...
+# Subtest: FillRect and FrameRect match 72 native offscreen pixel-coverage cases
+ok 180 - FillRect and FrameRect match 72 native offscreen pixel-coverage cases
+  ---
+  duration_ms: 12.4144
+  type: 'test'
+  ...
+# Subtest: Rectangle brush drawing respects hollow brushes, selected fallback and DC colors
+ok 181 - Rectangle brush drawing respects hollow brushes, selected fallback and DC colors
+  ---
+  duration_ms: 3.177
+  type: 'test'
+  ...
+# Subtest: Rectangle brush drawing validates inputs before emitting and preserves native DC errors
+ok 182 - Rectangle brush drawing validates inputs before emitting and preserves native DC errors
+  ---
+  duration_ms: 4.5233
+  type: 'test'
+  ...
+# Subtest: Win32 rectangles: native intersections, unions and bounding differences match with aliasing
+ok 183 - Win32 rectangles: native intersections, unions and bounding differences match with aliasing
+  ---
+  duration_ms: 42.0581
+  type: 'test'
+  ...
+# Subtest: Win32 rectangles: point inclusion excludes right/bottom and empty/inverted rectangles
+ok 184 - Win32 rectangles: point inclusion excludes right/bottom and empty/inverted rectangles
+  ---
+  duration_ms: 2.6388
+  type: 'test'
+  ...
+# Subtest: Win32 rectangles: constructors, copy, equality, inflate and offset retain signed 32-bit coordinates
+ok 185 - Win32 rectangles: constructors, copy, equality, inflate and offset retain signed 32-bit coordinates
+  ---
+  duration_ms: 1.6914
+  type: 'test'
+  ...
+# Subtest: Win32 rectangles: complete destination validation prevents partial writes
+ok 186 - Win32 rectangles: complete destination validation prevents partial writes
+  ---
+  duration_ms: 1.4197
+  type: 'test'
+  ...
+# Subtest: PE: identifies compiled console/GUI images and imports
+ok 187 - PE: identifies compiled console/GUI images and imports
+  ---
+  duration_ms: 1.9977
+  type: 'test'
+  ...
+# Subtest: PE: malformed headers, managed and wrong CPU rejected
+ok 188 - PE: malformed headers, managed and wrong CPU rejected
+  ---
+  duration_ms: 0.7138
+  type: 'test'
+  ...
+# Subtest: PE: 80 malformed section/import mutations fail safely or parse within bounds
+ok 189 - PE: 80 malformed section/import mutations fail safely or parse within bounds
+  ---
+  duration_ms: 3.9004
+  type: 'test'
+  ...
+# Subtest: EXE: console program runs native x86 instructions, imports and CRT then exits 0
+ok 190 - EXE: console program runs native x86 instructions, imports and CRT then exits 0
+  ---
+  duration_ms: 14.6809
+  type: 'test'
+  ...
+# Subtest: EXE: relative package file reads and real virtual file writes
+ok 191 - EXE: relative package file reads and real virtual file writes
+  ---
+  duration_ms: 6.4878
+  type: 'test'
+  ...
+# Subtest: EXE: two packaged DLLs initialize, relocate and resolve dynamic exports
+ok 192 - EXE: two packaged DLLs initialize, relocate and resolve dynamic exports
+  ---
+  duration_ms: 2.5
+  type: 'test'
+  ...
+# Subtest: EXE: console ReadFile blocks then resumes on input
+ok 193 - EXE: console ReadFile blocks then resumes on input
+  ---
+  duration_ms: 2.5565
+  type: 'test'
+  ...
+# Subtest: EXE: window callbacks, GDI, button write, modal result, timers, quit
+ok 194 - EXE: window callbacks, GDI, button write, modal result, timers, quit
+  ---
+  duration_ms: 7.4632
+  type: 'test'
+  ...
+# Subtest: EXE: computed DIB pixel buffer has genuine varied RGBA data
+ok 195 - EXE: computed DIB pixel buffer has genuine varied RGBA data
+  ---
+  duration_ms: 72.7309
+  type: 'test'
+  ...
+# Subtest: EXE: unsupported API is a structured fault, never a fabricated success
+ok 196 - EXE: unsupported API is a structured fault, never a fabricated success
+  ---
+  duration_ms: 1.4936
+  type: 'test'
+  ...
+# Subtest: Debugger: entry breakpoint, single step, resume and instruction budget
+ok 197 - Debugger: entry breakpoint, single step, resume and instruction budget
+  ---
+  duration_ms: 2.1239
+  type: 'test'
+  ...
+# Subtest: API: private heap ownership, capacity, zeroing, destruction
+ok 198 - API: private heap ownership, capacity, zeroing, destruction
+  ---
+  duration_ms: 1.0924
+  type: 'test'
+  ...
+# Subtest: Isolation: independent process disks and capped console input
+ok 199 - Isolation: independent process disks and capped console input
+  ---
+  duration_ms: 1.547
+  type: 'test'
+  ...
+# Subtest: Win32 SBCS: exact OEM round trip for all bytes and ACP/thread/OEM aliases
+ok 200 - Win32 SBCS: exact OEM round trip for all bytes and ACP/thread/OEM aliases
+  ---
+  duration_ms: 11.239
+  type: 'test'
+  ...
+# Subtest: Win32 SBCS: best-fit versus exact mapping, custom defaults and surrogate code units
+ok 201 - Win32 SBCS: best-fit versus exact mapping, custom defaults and surrogate code units
+  ---
+  duration_ms: 4.1948
+  type: 'test'
+  ...
+# Subtest: Win32 SBCS: decomposition, glyph mode, signed counts and query default reporting
+ok 202 - Win32 SBCS: decomposition, glyph mode, signed counts and query default reporting
+  ---
+  duration_ms: 4.3503
+  type: 'test'
+  ...
+# Subtest: Win32 SBCS: short buffers preserve native prefixes and report substitutions actually written
+ok 203 - Win32 SBCS: short buffers preserve native prefixes and report substitutions actually written
+  ---
+  duration_ms: 1.4363
+  type: 'test'
+  ...
+# Subtest: Win32 SBCS: invalid flags, unsupported composition and memory errors are explicit
+ok 204 - Win32 SBCS: invalid flags, unsupported composition and memory errors are explicit
+  ---
+  duration_ms: 1.7033
+  type: 'test'
+  ...
+# Subtest: Static server delivers modules/ZIP without an execution or upload endpoint
+ok 205 - Static server delivers modules/ZIP without an execution or upload endpoint
+  ---
+  duration_ms: 145.7192
+  type: 'test'
+  ...
+# Subtest: Win32 SRW: static and dynamic initialization support both modes and preserve last error
+ok 206 - Win32 SRW: static and dynamic initialization support both modes and preserve last error
+  ---
+  duration_ms: 11.0798
+  type: 'test'
+  ...
+# Subtest: Win32 SRW: exclusive ownership rejects both try modes without changing state
+ok 207 - Win32 SRW: exclusive ownership rejects both try modes without changing state
+  ---
+  duration_ms: 3.0386
+  type: 'test'
+  ...
+# Subtest: Win32 SRW: conflicting acquisition suspends the CPU until lock release
+ok 208 - Win32 SRW: conflicting acquisition suspends the CPU until lock release
+  ---
+  duration_ms: 6.4991
+  type: 'test'
+  ...
+# Subtest: Win32 SRW: invalid memory and mismatched releases fail without mutating locks
+ok 209 - Win32 SRW: invalid memory and mismatched releases fail without mutating locks
+  ---
+  duration_ms: 1.7382
+  type: 'test'
+  ...
+# Subtest: Win32 SRW: separate locks and separate processes do not share ownership
+ok 210 - Win32 SRW: separate locks and separate processes do not share ownership
+  ---
+  duration_ms: 3.5332
+  type: 'test'
+  ...
+# Subtest: Win32 sync: A/W manual and auto events preserve reset semantics
+ok 211 - Win32 sync: A/W manual and auto events preserve reset semantics
+  ---
+  duration_ms: 11.5998
+  type: 'test'
+  ...
+# Subtest: Win32 sync: A/W mutex initial ownership, recursion and unowned release
+ok 212 - Win32 sync: A/W mutex initial ownership, recursion and unowned release
+  ---
+  duration_ms: 4.2652
+  type: 'test'
+  ...
+# Subtest: Win32 sync: A/W semaphore counts, signed LONG bounds and failed release atomicity
+ok 213 - Win32 sync: A/W semaphore counts, signed LONG bounds and failed release atomicity
+  ---
+  duration_ms: 3.1086
+  type: 'test'
+  ...
+# Subtest: Win32 sync: wait-any chooses the first ready index and consumes only that object
+ok 214 - Win32 sync: wait-any chooses the first ready index and consumes only that object
+  ---
+  duration_ms: 1.4626
+  type: 'test'
+  ...
+# Subtest: Win32 sync: wait-all is atomic for event, semaphore and mutex on timeout and success
+ok 215 - Win32 sync: wait-all is atomic for event, semaphore and mutex on timeout and success
+  ---
+  duration_ms: 1.5631
+  type: 'test'
+  ...
+# Subtest: Win32 sync: invalid handles, duplicate handles and array bounds leave signals untouched
+ok 216 - Win32 sync: invalid handles, duplicate handles and array bounds leave signals untouched
+  ---
+  duration_ms: 2.568
+  type: 'test'
+  ...
+# Subtest: Win32 sync: unsupported security descriptors and APC modes fail explicitly
+ok 217 - Win32 sync: unsupported security descriptors and APC modes fail explicitly
+  ---
+  duration_ms: 3.3748
+  type: 'test'
+  ...
+# Subtest: Win32 sync: pending waits integrate with process polling and resume only when ready
+ok 218 - Win32 sync: pending waits integrate with process polling and resume only when ready
+  ---
+  duration_ms: 1.2264
+  type: 'test'
+  ...
+# Subtest: Win32 sync: finite timeout is deterministic; infinite waits have no deadline
+ok 219 - Win32 sync: finite timeout is deterministic; infinite waits have no deadline
+  ---
+  duration_ms: 1.6541
+  type: 'test'
+  ...
+# Subtest: EXE: compiled synchronization imports, stdcall stack, blocked wait and clean exit
+ok 220 - EXE: compiled synchronization imports, stdcall stack, blocked wait and clean exit
+  ---
+  duration_ms: 4.9463
+  type: 'test'
+  ...
+# Subtest: EXE: compiled synchronization timeout resumes through the guest ABI
+ok 221 - EXE: compiled synchronization timeout resumes through the guest ABI
+  ---
+  duration_ms: 2.2978
+  type: 'test'
+  ...
+# Subtest: Win32 temporary names: automatic names reserve empty files, skip collisions and wrap the numeric range
+ok 222 - Win32 temporary names: automatic names reserve empty files, skip collisions and wrap the numeric range
+  ---
+  duration_ms: 11.0286
+  type: 'test'
+  ...
+# Subtest: Win32 temporary names: explicit low-word values generate only names; a zero low word reserves a file
+ok 223 - Win32 temporary names: explicit low-word values generate only names; a zero low word reserves a file
+  ---
+  duration_ms: 3.2972
+  type: 'test'
+  ...
+# Subtest: Win32 temporary names: A/W prefixes, relative directories and returned paths reopen within the guest
+ok 224 - Win32 temporary names: A/W prefixes, relative directories and returned paths reopen within the guest
+  ---
+  duration_ms: 4.2113
+  type: 'test'
+  ...
+# Subtest: Win32 temporary names: missing or pending directories, length and inaccessible output leave the disk unchanged
+ok 225 - Win32 temporary names: missing or pending directories, length and inaccessible output leave the disk unchanged
+  ---
+  duration_ms: 2.4016
+  type: 'test'
+  ...
+# Subtest: Win32 time conversion: known epochs, leap date and high FILETIME boundary match native vectors
+ok 226 - Win32 time conversion: known epochs, leap date and high FILETIME boundary match native vectors
+  ---
+  duration_ms: 16.2036
+  type: 'test'
+  ...
+# Subtest: Win32 time conversion: rejects invalid dates and high-bit FILETIMEs without changing output
+ok 227 - Win32 time conversion: rejects invalid dates and high-bit FILETIMEs without changing output
+  ---
+  duration_ms: 2.7211
+  type: 'test'
+  ...
+# Subtest: Win32 time conversion: millisecond truncation and exact unsigned 100ns comparisons
+ok 228 - Win32 time conversion: millisecond truncation and exact unsigned 100ns comparisons
+  ---
+  duration_ms: 2.8889
+  type: 'test'
+  ...
+# Subtest: Win32 time conversion: whole-buffer validation and overlapping input/output
+ok 229 - Win32 time conversion: whole-buffer validation and overlapping input/output
+  ---
+  duration_ms: 3.1563
+  type: 'test'
+  ...
+# Subtest: Win32 TLS: freed indices are reused and zeroed without freeing guest pointer data
+ok 230 - Win32 TLS: freed indices are reused and zeroed without freeing guest pointer data
+  ---
+  duration_ms: 10.3182
+  type: 'test'
+  ...
+# Subtest: Win32 TLS: guest TEB and expansion slots are authoritative and separate from static PE TLS
+ok 231 - Win32 TLS: guest TEB and expansion slots are authoritative and separate from static PE TLS
+  ---
+  duration_ms: 2.5586
+  type: 'test'
+  ...
+# Subtest: Win32 TLS: exhaustion reports error 8 and freeing base or expansion slots recovers capacity
+ok 232 - Win32 TLS: exhaustion reports error 8 and freeing base or expansion slots recovers capacity
+  ---
+  duration_ms: 7.7677
+  type: 'test'
+  ...
+# Subtest: Win32 TLS: GetValue clears last error, GetValue2 preserves it, invalid frees and bounds are checked
+ok 233 - Win32 TLS: GetValue clears last error, GetValue2 preserves it, invalid frees and bounds are checked
+  ---
+  duration_ms: 1.0825
+  type: 'test'
+  ...
+# Subtest: Win32 TLS: unallocated in-range slots and process isolation follow the native bounds model
+ok 234 - Win32 TLS: unallocated in-range slots and process isolation follow the native bounds model
+  ---
+  duration_ms: 2.2363
+  type: 'test'
+  ...
+# Subtest: Win32 UTF-8: BOM preservation, supplementary characters and terminator counts
+ok 235 - Win32 UTF-8: BOM preservation, supplementary characters and terminator counts
+  ---
+  duration_ms: 12.1094
+  type: 'test'
+  ...
+# Subtest: Win32 UTF-8: malformed byte sequences match native replacement consumption and strict failures
+ok 236 - Win32 UTF-8: malformed byte sequences match native replacement consumption and strict failures
+  ---
+  duration_ms: 1.9723
+  type: 'test'
+  ...
+# Subtest: Win32 UTF-8: unpaired UTF-16 surrogates reject strictly or encode replacement characters
+ok 237 - Win32 UTF-8: unpaired UTF-16 surrogates reject strictly or encode replacement characters
+  ---
+  duration_ms: 2.5451
+  type: 'test'
+  ...
+# Subtest: Win32 UTF-8: flags, pointers, capacities and complete output memory are validated
+ok 238 - Win32 UTF-8: flags, pointers, capacities and complete output memory are validated
+  ---
+  duration_ms: 1.0719
+  type: 'test'
+  ...
+1..238
+# tests 238
+# suites 0
+# pass 238
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 656.756

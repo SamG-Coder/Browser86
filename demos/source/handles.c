@@ -192,7 +192,9 @@ void mainCRTStartup(void){
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
   POINT shapePoints[3]={{1,1},{9,1},{5,9}};
-  POINT curvePoints[4]={{1,1},{3,9},{7,9},{9,1}};
+  POINT curvePoints[4]={{1,1},{3,9},{7,9},{9,1}};BYTE curveTypes[4]={6,4,4,5};
+  CHECK(PolyDraw(savedDC,curvePoints,curveTypes,4)&&GetCurrentPositionEx(savedDC,&savedPosition)&&savedPosition.x==9&&savedPosition.y==1);
+  curveTypes[2]=2;CHECK(!PolyDraw(savedDC,curvePoints,curveTypes,4)&&GetLastError()==87);
   CHECK(MoveToEx(savedDC,7,8,NULL)&&PolyBezier(savedDC,curvePoints,4)&&GetCurrentPositionEx(savedDC,&savedPosition)&&savedPosition.x==7&&savedPosition.y==8);
   CHECK(PolyBezierTo(savedDC,curvePoints+1,3)&&GetCurrentPositionEx(savedDC,&savedPosition)&&savedPosition.x==9&&savedPosition.y==1);
   CHECK(!PolyBezier(savedDC,curvePoints,3)&&GetLastError()==87);

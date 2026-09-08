@@ -1,6 +1,7 @@
 import {ansiDecode} from './memory.js';
 import {installRectangleDrawing} from './rectangle-drawing.js';
 import {installRectangles} from './rectangles.js';
+import {installPolyDraw} from './poly-draw.js';
 import {installPolygons} from './polygons.js';
 import {installFonts} from './fonts.js';
 import {installGDIObjects} from './gdi-objects.js';
@@ -84,6 +85,7 @@ export class GUI {
     installGDIObjects(this);
     installFonts(this);
     installPolygons(this);
+    installPolyDraw(this);
     g('GetStockObject',1,i=>this.stockObject(i));g('CreateSolidBrush',1,color=>p.handle('gdi',{kind:'brush',color}));
     g('SelectObject',2,(hdc,obj)=>{const dc=this.dc(hdc),object=p.object(obj,'gdi');if(!dc||!object)return 0;const old=dc[object.kind];dc[object.kind]=obj;return old||0;});
     g('DeleteObject',1,h=>{const obj=p.object(h,'gdi');if(!obj||obj.stock)return 0;if([...p.handles.values()].some(dc=>dc.type==='dc'&&dcSelectsObject(dc,h)))return 0;p.releaseHandle(h);return 1;});
