@@ -8,6 +8,10 @@ Browser86 is an original JavaScript IA-32 interpreter, PE32 loader, and **partia
 
 ## Start on Windows
 
+Try the hosted app at **[samg-coder.github.io/Browser86](https://samg-coder.github.io/Browser86/)**. GitHub Pages runs the same client-side runtime; guest packages execute in your browser. Pushes to `main` run the Node tests and publish the static app through [the Pages workflow](.github/workflows/pages.yml).
+
+For a real prebuilt application test, see the [Free42 compatibility report](docs/FREE42.md). Its 32-bit executables currently stop during CRT startup before opening a window.
+
 Extract the project ZIP and double-click **`run.cmd`**. With Node.js available, it starts a static server and opens the browser after the server is listening. With Python available instead, it prints the address to open.
 
 Or, from the extracted project directory:

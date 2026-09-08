@@ -1,0 +1,45 @@
+name: Deploy Browser86 to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test runtime
+        run: npm test
+      - uses: actions/configure-pages@v5
+      - name: Assemble public site
+        run: |
+          mkdir -p _site/demos _site/docs
+          cp index.html styles.css LICENSE _site/
+          cp -R src _site/src
+          cp demos/browser86-demo.zip _site/demos/
+          cp docs/COMPATIBILITY.md _site/docs/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

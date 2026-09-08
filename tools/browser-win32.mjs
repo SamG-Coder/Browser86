@@ -39,7 +39,7 @@ try{
   assert.ok(cursorStyles.some(style=>style.includes('cursor: none')));
   checks.push('Guest SetCursor updates browser canvas cursor styles through the worker bridge');
   const mouseResult=await page.evaluate(async()=>{
-    const {GuestDisplay}=await import('/src/ui/display.js'),{mouseMessage}=await import('/src/runtime/mouse-messages.js'),{classifyClick}=await import('/src/runtime/double-click.js');
+    const {GuestDisplay}=await import(new URL('src/ui/display.js',document.baseURI).href),{mouseMessage}=await import(new URL('src/runtime/mouse-messages.js',document.baseURI).href),{classifyClick}=await import(new URL('src/runtime/double-click.js',document.baseURI).href);
     const state={classes:new Map([['inputcheck',{style:8}]]),doubleClickTime:500,lastClick:null};
     const root=document.createElement('div');document.body.append(root);const messages=[],display=new GuestDisplay(root,event=>{const message=mouseMessage(event);classifyClick(state,event,{hwnd:123,className:'InputCheck'},message,event.x,event.y);messages.push(message);});
     try{
@@ -59,7 +59,7 @@ try{
   assert.deepEqual(mouseResult.doubleMessages.map(message=>message.message),[0x201,0x202,0x203,0x202]);
   checks.push('Browser click timestamps drive CS_DBLCLKS down-up-double-up classification');
   const checkControls=await page.evaluate(async()=>{
-    const {GuestDisplay}=await import('/src/ui/display.js'),root=document.createElement('div');document.body.append(root);const inputs=[],display=new GuestDisplay(root,event=>inputs.push(event));
+    const {GuestDisplay}=await import(new URL('src/ui/display.js',document.baseURI).href),root=document.createElement('div');document.body.append(root);const inputs=[],display=new GuestDisplay(root,event=>inputs.push(event));
     try{
       const base={title:'Options',x:0,y:0,width:240,height:160,visible:true,enabled:true};display.window({op:'create',window:{...base,hwnd:321,className:'Custom',style:0}});
       const control={...base,hwnd:322,parent:321,className:'BUTTON',style:0x40010005,title:'Remember choice',width:180,height:24};
@@ -77,8 +77,8 @@ try{
   assert.deepEqual(checkControls.radio,{role:'radio',checked:'true',disabled:true,tab:-1});assert.deepEqual(checkControls.push,{role:null,checked:null,text:'Push'});
   checks.push('Checkbox and radio display follows guest state, accessibility, enabled state and style changes');
   const automaticClicks=await page.evaluate(async()=>{
-    const {GuestDisplay}=await import('/src/ui/display.js'),{GuestProcess}=await import('/src/runtime/process.js'),{readZip}=await import('/src/runtime/zip.js');
-    const entries=await readZip(new Uint8Array(await (await fetch('/demos/browser86-demo.zip')).arrayBuffer())),root=document.createElement('div');document.body.append(root);let process;const display=new GuestDisplay(root,event=>process.inputEvent(event));
+    const {GuestDisplay}=await import(new URL('src/ui/display.js',document.baseURI).href),{GuestProcess}=await import(new URL('src/runtime/process.js',document.baseURI).href),{readZip}=await import(new URL('src/runtime/zip.js',document.baseURI).href);
+    const entries=await readZip(new Uint8Array(await (await fetch(new URL('demos/browser86-demo.zip',document.baseURI))).arrayBuffer())),root=document.createElement('div');document.body.append(root);let process;const display=new GuestDisplay(root,event=>process.inputEvent(event));
     try{
       process=new GuestProcess({entries,exePath:'C:/app/HelloConsole.exe',emit:(type,data)=>{if(type==='window')display.window(data);}});const u=(n,...a)=>process.apis.lookup('user32.dll',n).fn(...a);
       const parent=u('CreateWindowExA',0,process.heap.string('STATIC'),0,0x10000000,0,0,220,120,0,0,0,0),child=u('CreateWindowExA',0,process.heap.string('BUTTON'),process.heap.string('Automatic'),0x50010006,10,10,180,26,parent,42,0,0),node=display.windows.get(child).element,states=[];
