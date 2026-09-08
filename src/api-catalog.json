@@ -967,6 +967,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GetStringTypeW",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GetSystemDirectoryA",
     "argc": 2,
     "cdecl": false,

@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Unicode character classification extension — 2026-09-08
+
+**191 Node tests passed, 0 failed, 0 skipped.** Four new tests verify all 196,608 results (65,536 UTF-16 units across three modes) against SHA-256 hashes of native Windows output. Additional assertions cover letters/digits/whitespace, bidirectional classes, combining marks, ideographs, surrogate halves, negative counts including NUL, last-error preservation, invalid flags/parameters and atomic memory validation. HandleObjects.exe was rebuilt with the four-stack-slot GetStringTypeW import and exercises all modes plus invalid flags through the x86 interpreter. The catalog contains 477 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** Actual workers executed the updated fixture under the deployed CSP; IndexedDB, reload, deletion and backup checks passed. Evidence: [Node TAP](test-artifacts/character-type-tests.tap) and [browser report](test-artifacts/character-type-browser-report.json).
+
+tools/build-character-types.py captures native Windows 10.0.26200 output into compressed range tables and separate output hashes. Additional ctypes probes verified representative text, surrogate handling, invalid mode/count results and negative lengths. Native calls used owned buffers; no guest executable ran on the host. Microsoft's [GetStringTypeW documentation](https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-getstringtypew) establishes the three modes and output/count semantics. This is version-pinned Windows classification, not modern Unicode scalar classification or support for the ANSI/Ex variants.
+
 ## SBCS conversion extension — 2026-09-08
 
 **187 Node tests passed, 0 failed, 0 skipped.** Five new tests cover all-byte OEM round trips, ACP/thread/OEM aliases, native best-fit versus exact-only mappings, custom defaults, substitution reporting, surrogate code units, decomposition, glyph mode, signed lengths, size queries, short-buffer prefix behavior, invalid flags and output validation. The rebuilt HandleObjects.exe exercises Windows-1252 best-fit/exact conversion and an OEM 437 round trip through the existing conversion imports. The catalog remains at 476 entries.

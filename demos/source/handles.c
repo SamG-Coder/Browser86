@@ -190,6 +190,11 @@ void mainCRTStartup(void){
   CHECK(CompareFileTime(&epoch,&stamp)==-1&&CompareFileTime(&stamp,&epoch)==1&&CompareFileTime(&stamp,&stamp)==0);
   utc.year=1900;CHECK(!SystemTimeToFileTime(&utc,&stamp)&&GetLastError()==87);
   WORD fatDate,fatTime;
+  WORD typedText[]={'A','0',' ',0},charTypes[4];
+  CHECK(GetStringTypeW(1,typedText,-1,charTypes)&&(charTypes[0]&0x101)==0x101&&(charTypes[1]&4)&&(charTypes[2]&8)&&(charTypes[3]&0x20));
+  CHECK(GetStringTypeW(2,typedText,3,charTypes)&&charTypes[0]==1&&charTypes[1]==3&&charTypes[2]==10);
+  CHECK(GetStringTypeW(4,typedText,3,charTypes)&&(charTypes[0]&0x8000));
+  CHECK(!GetStringTypeW(3,typedText,3,charTypes)&&GetLastError()==1004);
   CPINFO cpInfo;CPINFOEXA cpInfoA;CPINFOEXW cpInfoW;
   CHECK(sizeof(CPINFO)==20&&sizeof(CPINFOEXA)==284&&sizeof(CPINFOEXW)==544);
   CHECK(IsValidCodePage(65001)&&!IsValidCodePage(0));
