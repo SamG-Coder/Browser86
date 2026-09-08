@@ -4,8 +4,9 @@ unsigned long __readfsdword(unsigned long);
 #pragma intrinsic(__readfsdword)
 #define CHECK(expression) do { if(!(expression)) { printf("Handle failure at line %d\n",__LINE__); ExitProcess(__LINE__); } } while(0)
 static HWND lifetimeWindows[4];
-static DWORD creationWide,creationCount,textMessageCount;
+static DWORD creationWide,creationCount,textMessageCount,contextCount;
 static long WINAPI encodingProc(HWND h,DWORD msg,DWORD wp,long lp){
+  if(msg==0x7b){CHECK(wp==(DWORD)h);CHECK((DWORD)lp==0x00060005);contextCount++;return 7;}
   if(msg==0x401)return 11;
   if(msg==14)return 7;
   if(msg==13){
@@ -73,6 +74,7 @@ void mainCRTStartup(void){
   CHECK(((const char*)GetClassLongA(encodingWindow,-8))[3]==(char)233);CHECK(((const WORD*)GetClassLongW(encodingWindow,-8))[3]==233);CHECK(GetClassLongA(encodingWindow,-8)==GetClassLongA(encodingWindow,-8));
   CHECK(!SetClassLongW(encodingWindow,-26,0x80000403));CHECK(GetClassLongA(encodingWindow,-26)==3);SetLastError(1234);CHECK(!SetClassLongA(encodingWindow,-26,0x10000));CHECK(GetLastError()==13);CHECK(SetClassLongA(encodingWindow,-26,0)==0x80000403);
   {HANDLE cursor=LoadCursorA(NULL,(const char*)32512);CHECK(cursor&&cursor==LoadCursorW(NULL,(const WORD*)32512));CHECK(!SetCursor(cursor));CHECK(GetCursor()==cursor);CHECK(ShowCursor(0)==-1);CHECK(ShowCursor(0)==-2);CHECK(GetCursor()==cursor);CHECK(ShowCursor(2)==-1);CHECK(ShowCursor(1)==0);CHECK(SetClassLongW(encodingWindow,-12,(long)cursor)==0);CHECK(GetClassLongA(encodingWindow,-12)==(DWORD)cursor);CHECK(SetCursor(NULL)==cursor);CHECK(DefWindowProcA(encodingWindow,0x20,(DWORD)encodingWindow,0x02000001)==0);CHECK(GetCursor()==cursor);CHECK(DefWindowProcA(encodingWindow,0x20,(DWORD)encodingWindow,0x0200000a)==1);CHECK(GetCursor()==LoadCursorA(NULL,(const char*)32644));CHECK(SetCursor(cursor)==LoadCursorA(NULL,(const char*)32644));CHECK(DestroyCursor(cursor));CHECK(SetCursor(NULL)==cursor);CHECK(SetClassLongA(encodingWindow,-12,0)==(DWORD)cursor);}
+  CHECK(DefWindowProcA(encodingWindow,0x205,2,0x00060005)==0);CHECK(contextCount==1);
   CHECK(GetDoubleClickTime()==500);CHECK(SetDoubleClickTime(6000));CHECK(GetDoubleClickTime()==5000);CHECK(SetDoubleClickTime(0));CHECK(GetDoubleClickTime()==500);
   CHECK(!GetCapture());CHECK(!SetCapture(encodingWindow));CHECK(GetCapture()==encodingWindow);CHECK(SetCapture(encodingWindow)==encodingWindow);SetLastError(1234);CHECK(!SetCapture((HWND)123));CHECK(GetLastError()==1400);CHECK(GetCapture()==encodingWindow);CHECK(ReleaseCapture());CHECK(!GetCapture());CHECK(ReleaseCapture());CHECK(!SetCapture(encodingWindow));CHECK(DefWindowProcA(encodingWindow,0x1f,0,0)==0);CHECK(!GetCapture());
   CHECK(GetClassLongA(encodingWindow,-32)==encodingAtomA);CHECK(GetClassLongW(encodingWindow,-10)==(DWORD)encodingA.brush);CHECK(GetClassLongA(encodingWindow,-24)==(DWORD)encodingProc);

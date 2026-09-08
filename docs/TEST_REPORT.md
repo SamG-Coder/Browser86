@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Right-button context-menu messages - 2026-09-08
+
+**442 Node tests passed, 0 failed, 0 skipped.** Default WM_RBUTTONUP processing sends WM_CONTEXTMENU with virtual screen coordinates. Default child processing forwards to the parent and preserves the original HWND and position. Tests cover signed coordinates, A/W callbacks, the keyboard-position sentinel, owned popups, nested synchronous dispatch, ignored callback return values and custom-procedure overrides. The rebuilt HandleObjects.exe verifies the callback parameters and completion result. Catalog remains 588 entries.
+
+**Eleven real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/context-menu-tests.tap), [browser report](test-artifacts/context-menu-browser-report.json).
+
+Native private hidden A/W window probes confirmed synchronous WM_CONTEXTMENU delivery from default right-button release handling and parent forwarding from default child context-menu handling. Both returned zero even when the callback returned seven, and preserved error 1234. Probe windows/classes were cleaned up. Reference: [Microsoft WM_CONTEXTMENU](https://learn.microsoft.com/en-us/windows/win32/menurc/wm-contextmenu). Keyboard trigger generation, nonclient triggers, caption/system menus and popup-menu rendering remain unfinished.
+
 ## Double-click timing and message generation - 2026-09-08
 
 **438 Node tests passed, 0 failed, 0 skipped.** GetDoubleClickTime/SetDoubleClickTime provide default/reset/clamped guest-local timing. CS_DBLCLKS classification supports five buttons, correct down-up-double-up sequences, capture, screen-space distance checks, class opt-in, release requirements and target/button/time separation. The rebuilt HandleObjects.exe checks timing reset and clamping. Catalog now contains 588 entries, without implying full API parity.
