@@ -7,6 +7,10 @@
 typedef unsigned int DWORD;typedef int BOOL;typedef void* HANDLE;typedef HANDLE HWND;typedef HANDLE HDC;typedef unsigned short WORD;typedef unsigned char BYTE;
 typedef struct {DWORD low,high;} FILETIME;
 typedef struct {DWORD attributes;FILETIME creation,access,write;DWORD volume,sizeHigh,sizeLow,links,idHigh,idLow;} BY_HANDLE_FILE_INFORMATION;
+typedef struct {long long allocationSize,endOfFile;DWORD links;BYTE deletePending,directory;} FILE_STANDARD_INFO;
+typedef struct {unsigned long long volume;BYTE id[16];} FILE_ID_INFO;
+typedef struct {DWORD attributes,reparseTag;} FILE_ATTRIBUTE_TAG_INFO;
+typedef struct {DWORD length;WORD name[128];} FILE_NAME_BUFFER;
 typedef long (WINAPI *WNDPROC)(HWND,DWORD,DWORD,long);
 typedef struct {DWORD style;WNDPROC proc;int classExtra,windowExtra;HANDLE instance,icon,cursor,brush;const char *menu,*name;} WNDCLASSA;
 typedef struct {HWND hwnd;DWORD message,wParam;long lParam;DWORD time;long x,y;} MSG;
@@ -36,6 +40,7 @@ API BOOL WINAPI SetEndOfFile(HANDLE);
 API BOOL WINAPI GetFileTime(HANDLE,FILETIME*,FILETIME*,FILETIME*);
 API BOOL WINAPI SetFileTime(HANDLE,const FILETIME*,const FILETIME*,const FILETIME*);
 API BOOL WINAPI GetFileInformationByHandle(HANDLE,BY_HANDLE_FILE_INFORMATION*);
+API BOOL WINAPI GetFileInformationByHandleEx(HANDLE,DWORD,void*,DWORD);
 API BOOL WINAPI SetFileAttributesA(const char*,DWORD);
 API BOOL WINAPI SetFileAttributesW(const WORD*,DWORD);
 API DWORD WINAPI GetFileAttributesA(const char*);

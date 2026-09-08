@@ -7,6 +7,10 @@ void mainCRTStartup(void){
   long long position;
   FILETIME creation={123,30000000},access={456,30000001},write={789,30000002},returned;
   BY_HANDLE_FILE_INFORMATION info;
+  FILE_STANDARD_INFO standard;
+  FILE_ID_INFO identity;
+  FILE_ATTRIBUTE_TAG_INFO tag;
+  FILE_NAME_BUFFER filename;
   DWORD originalId;
   const WORD wideFile[]={'h','a','n','d','l','e','s','.','t','x','t',0};
   file=CreateFileA("handles.txt",GENERIC_READ|GENERIC_WRITE,0,NULL,2,0,NULL);
@@ -38,6 +42,14 @@ void mainCRTStartup(void){
   CHECK(info.creation.low==123&&info.access.low==456&&info.write.low==789);
   CHECK(SetFileAttributesA("handles.txt",3)&&GetFileAttributesA("handles.txt")==3);
   CHECK(SetFileAttributesW(wideFile,128)&&GetFileAttributesA("handles.txt")==128);
+  CHECK(sizeof(standard)==24&&sizeof(identity)==24&&sizeof(tag)==8);
+  CHECK(GetFileInformationByHandleEx(copy,1,&standard,sizeof(standard)));
+  CHECK(standard.endOfFile==2&&standard.allocationSize==2&&standard.links==1&&!standard.deletePending&&!standard.directory);
+  CHECK(GetFileInformationByHandleEx(copy,18,&identity,sizeof(identity)));
+  CHECK(identity.volume==0xB8600001ULL&&*(DWORD*)identity.id==originalId);
+  CHECK(GetFileInformationByHandleEx(copy,9,&tag,sizeof(tag))&&tag.attributes==128&&tag.reparseTag==0);
+  CHECK(GetFileInformationByHandleEx(copy,2,&filename,sizeof(filename))&&filename.name[0]=='\\');
+  CHECK(!GetFileInformationByHandleEx(copy,2,&filename,8)&&GetLastError()==234&&filename.length>4);
   CHECK(CloseHandle(copy));
   /* A deleted name stays reserved until the last open file object closes. */
   file=CreateFileA("pending.txt",GENERIC_READ|GENERIC_WRITE,7,NULL,2,0,NULL);
@@ -45,6 +57,7 @@ void mainCRTStartup(void){
   CHECK(WriteFile(file,"xy",2,&count,NULL)&&count==2);
   CHECK(DuplicateHandle(self,file,self,&copy,0,0,2));
   CHECK(DeleteFileA("pending.txt"));
+  CHECK(GetFileInformationByHandleEx(copy,1,&standard,sizeof(standard))&&standard.deletePending&&standard.links==0);
   CHECK(CreateFileA("pending.txt",GENERIC_READ,7,NULL,2,0,NULL)==INVALID_HANDLE&&GetLastError()==5);
   CHECK(CloseHandle(file));
   CHECK(SetFilePointer(copy,0,NULL,0)==0);

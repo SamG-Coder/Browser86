@@ -38,6 +38,14 @@ Run `node tools/serve.mjs`, then `node tools/browser-win32.mjs http://127.0.0.1:
 
 Contracts: [DeleteFileW](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-deletefilew), [CreateFileW](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew). POSIX unlink, mappings and CRT stream lifetime are outside this stage.
 
+## Extended file information — 2026-09-08
+
+**92 Node tests passed, 0 failed, 0 skipped.** Six new tests cover the four supported GetFileInformationByHandleEx classes, x86 field offsets and padding, byte allocation/EOF updates, zero links during pending deletion, IDs across independent/duplicate handles and rename, UTF-16 surrogate pairs and truncated names, directory/root queries, invalid classes/handles, short buffers and atomic cross-page output validation. HandleObjects.exe imports the new four-stack-slot API and verifies the C structures in the interpreter. Catalog: 437 entries.
+
+Native kernel32 probes on this Windows host verified ERROR_BAD_LENGTH (24) for buffers below fixed structure sizes, ERROR_MORE_DATA (234) and a required byte length for truncated names, preservation of an odd trailing byte, and zero links during pending deletion in both standard and legacy information queries. These probes called Windows from Python on README.md and newly created disposable data files; guest EXEs were executed only in Browser86. Virtual allocation uses exact byte lengths rather than native cluster allocation.
+
+**Eight real-origin Edge browser checks passed with no page errors** after rebuilding the fixture. Results: `test-artifacts/file-info-ex-tests.tap` and `test-artifacts/file-info-ex-browser-report.json`. Contracts: [GetFileInformationByHandleEx](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getfileinformationbyhandleex), [FILE_NAME_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_name_info), [FILE_STANDARD_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_standard_info), [FILE_ID_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_id_info).
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

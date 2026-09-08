@@ -715,6 +715,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "GetFileInformationByHandleEx",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "GetFileSize",
     "argc": 2,
     "cdecl": false,

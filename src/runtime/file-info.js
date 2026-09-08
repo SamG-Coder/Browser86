@@ -1,9 +1,35 @@
 import {FILE_ATTRIBUTE_MASK} from './vfs.js';
 import {checkBuffer} from './files.js';
+import {RuntimeFault} from './errors.js';
 
 export function writeFileTime(memory,out,value){const time=BigInt(value);memory.w32(out,Number(time&0xFFFFFFFFn));memory.w32(out+4,Number(time>>32n));}
 export function installFileInformation(api){
   const p=api.p,m=api.m,v=api.vfs,k=(name,n,fn)=>api.add('kernel32.dll',name,n,fn);
+  k('GetFileInformationByHandleEx',4,(h,infoClass,out,size)=>{
+    const f=p.object(h,'file');if(!f)return api.fail(6);
+    if(infoClass>=25||[3,4,5,6,12,21,22].includes(infoClass))return api.fail(87);
+    const required={1:24,2:8,9:8,18:24}[infoClass];
+    if(!required)throw new RuntimeFault('UNSUPPORTED_FILE_INFO',`File information class ${infoClass} is not implemented.`,{infoClass});
+    if(size<required)return api.fail(24);
+    if(!out)return api.fail(87);
+    const node=f.node;
+    if(infoClass===2){
+      // FILE_NAME_INFO uses a byte count, UTF-16 code units and no terminator.
+      const name=node.path.slice(2).replaceAll('/','\\'),length=name.length*2;
+      const count=Math.min(name.length,Math.floor((size-4)/2));
+      checkBuffer(m,out,4+count*2);m.w32(out,length);
+      for(let i=0;i<count;i++)m.w16(out+4+i*2,name.charCodeAt(i));
+      return count===name.length?1:api.fail(234);
+    }
+    checkBuffer(m,out,required);m.fill(out,required);
+    if(infoClass===1){
+      // The virtual disk allocates exactly its data length, with no clusters.
+      const length=node.data?.length||0;m.w32(out,length);m.w32(out+8,length);
+      m.w32(out+16,node.deletePending?0:1);m.w8(out+20,node.deletePending?1:0);m.w8(out+21,node.directory?1:0);
+    }else if(infoClass===9){m.w32(out,node.attributes);}
+    else {m.w32(out,0xB8600001);m.w32(out+8,node.id);}
+    return 1;
+  });
   k('GetFileTime',4,(h,creation,access,write)=>{
     const f=p.object(h,'file');if(!f)return api.fail(6);if(!f.readAttributes)return api.fail(5);
     return api.expected(()=>{
@@ -35,7 +61,7 @@ export function installFileInformation(api){
       const node=f.node;if(!node)return api.fail(2);
       checkBuffer(m,out,52);m.fill(out,52);m.w32(out,node.attributes);
       for(const [offset,key]of [[4,'creation'],[12,'access'],[20,'write']])writeFileTime(m,out+offset,node.times[key]);
-      m.w32(out+28,0xB8600001);m.w32(out+36,node.data?.length||0);m.w32(out+40,1);m.w32(out+48,node.id);return 1;
+      m.w32(out+28,0xB8600001);m.w32(out+36,node.data?.length||0);m.w32(out+40,node.deletePending?0:1);m.w32(out+48,node.id);return 1;
     });
   });
   for(const wide of [false,true]){
