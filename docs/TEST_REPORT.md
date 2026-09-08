@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Indirect GDI object creation extension - 2026-09-08
+
+**214 Node tests passed, 0 failed, 0 skipped.** Two new tests cover copying and independence from input structures, selected objects in emitted drawing commands, hollow brushes, GetObject inspection, deletion, invalid pointers, complete input validation before allocation, unsupported styles and pen-style normalization. The rebuilt HandleObjects.exe imports CreatePenIndirect and CreateBrushIndirect and verifies both structures through actual x86 calls. The catalog contains 499 entries.
+
+**Eight real-origin browser checks passed with no page errors in Edge 152.0.4191.66.** The updated fixture ran in the actual worker; persistence/reload/deletion/backup checks passed. Evidence: [Node TAP](test-artifacts/indirect-gdi-tests.tap) and [browser report](test-artifacts/indirect-gdi-browser-report.json).
+
+Native ctypes probes created and deleted owned objects and verified ignored Y width/hatch fields, negative width normalization, null styles, invalid brush style failure, unchanged last error and unrecognized pen-style fallback. Null input caused a caught native access violation; guest input instead follows Browser86's memory-fault path. Native brush structures were 64-bit; the guest explicitly reads the 12-byte x86 layout. No guest executable ran on the host. References: Microsoft [CreatePenIndirect](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createpenindirect) and [CreateBrushIndirect](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createbrushindirect). Only solid/null styles are implemented; other recognized styles still fault explicitly.
+
 ## GDI pen and brush descriptions extension - 2026-09-08
 
 **212 Node tests passed, 0 failed, 0 skipped.** Three new tests cover both GetObject variants, pen/brush layouts, size queries, zero/negative/null pen widths, null brushes, short buffers, alignment, last-error preservation, invalid handles, explicit unsupported fonts and atomic guest-memory validation. HandleObjects.exe imports both APIs and checks stock-object descriptions and short pen-buffer failure through x86 calls. The catalog contains 497 entries.

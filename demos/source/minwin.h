@@ -185,6 +185,8 @@ API int WINAPI SetBkMode(HDC,int);
 API DWORD WINAPI SetBkColor(HDC,DWORD);
 API HANDLE WINAPI CreateSolidBrush(DWORD);
 API HANDLE WINAPI CreatePen(int,int,DWORD);
+API HANDLE WINAPI CreatePenIndirect(const void*);
+API HANDLE WINAPI CreateBrushIndirect(const void*);
 API HANDLE WINAPI SelectObject(HDC,HANDLE);
 API BOOL WINAPI DeleteObject(HANDLE);
 API HANDLE WINAPI GetStockObject(int);

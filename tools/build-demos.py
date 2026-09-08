@@ -30,6 +30,7 @@ U={'RegisterClassA':1,'CreateWindowExA':12,'ShowWindow':2,'UpdateWindow':1,'GetM
 G={'TextOutA':5,'SetTextColor':2,'SetBkMode':2,'SetBkColor':2,'CreateSolidBrush':1,'CreatePen':3,'SelectObject':2,'DeleteObject':1,'GetStockObject':1,'Rectangle':5,'Ellipse':5,'MoveToEx':4,'LineTo':3,'StretchDIBits':13}
 C={'printf':1,'sprintf':2,'puts':1,'memset':3,'memcpy':3}
 S={'WaitOnAddress':4,'WakeByAddressSingle':1,'WakeByAddressAll':1}
+G.update({'CreatePenIndirect':1,'CreateBrushIndirect':1})
 G.update({'GetObjectA':3,'GetObjectW':3})
 G.update({'SaveDC':1,'RestoreDC':2,'GetCurrentPositionEx':2})
 G.update({'GetTextColor':1,'GetBkColor':1,'GetBkMode':1,'GetTextAlign':1,'GetCurrentObject':2,'GetObjectType':1})

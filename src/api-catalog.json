@@ -78,6 +78,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "CreateBrushIndirect",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "CreateFontA",
     "argc": 14,
     "cdecl": false,
@@ -94,6 +101,13 @@
     "dll": "gdi32.dll",
     "name": "CreatePen",
     "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "CreatePenIndirect",
+    "argc": 1,
     "cdecl": false,
     "data": false
   },

@@ -106,6 +106,8 @@ GDI state queries now include GetTextColor, GetBkColor, GetBkMode, GetTextAlign,
 
 GetObjectA/W return x86 LOGPEN (16 bytes) and LOGBRUSH (12 bytes) for supported pens and solid/null brushes. Null output queries the required size. Pen output requires the full structure; brush output copies the available prefix and returns the full size. Output must be DWORD-aligned. Logical zero-width pens remain distinguishable from one-unit pens, negative widths use their magnitude, and null pens report the native default width/color. Font descriptions and other GDI object structures remain explicitly unsupported.
 
+CreatePenIndirect and CreateBrushIndirect consume complete x86 LOGPEN/LOGBRUSH structures, copying supported properties into independent GDI objects. Solid/null styles support selection, drawing, inspection and deletion. The unused pen Y width and solid/null brush hatch are ignored. CreatePen and CreatePenIndirect share normalization, including unrecognized pen styles falling back to solid. Unreadable input faults before handle allocation; unrecognized brush styles return zero without changing last error. Dashed/dotted/inside-frame pens and hatched/pattern/DIB brushes remain explicitly unsupported.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

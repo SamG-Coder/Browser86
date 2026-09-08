@@ -192,6 +192,11 @@ void mainCRTStartup(void){
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
   DWORD penDescription[4],brushDescription[3];
+  DWORD indirectPenData[4]={0,(DWORD)-3,99,0x123456},indirectBrushData[3]={1,0xabcdef,99};
+  HANDLE indirectPen=CreatePenIndirect(indirectPenData),indirectBrush=CreateBrushIndirect(indirectBrushData);
+  CHECK(indirectPen&&indirectBrush&&GetObjectW(indirectPen,16,penDescription)==16&&penDescription[1]==3&&penDescription[2]==0&&penDescription[3]==0x123456);
+  CHECK(GetObjectA(indirectBrush,12,brushDescription)==12&&brushDescription[0]==1&&brushDescription[1]==0&&brushDescription[2]==0);
+  CHECK(DeleteObject(indirectPen)&&DeleteObject(indirectBrush));
   CHECK(GetObjectA(GetCurrentObject(savedDC,1),0,NULL)==16);
   CHECK(GetObjectW(GetCurrentObject(savedDC,1),16,penDescription)==16&&penDescription[0]==0&&penDescription[1]==1&&penDescription[2]==0&&penDescription[3]==0);
   CHECK(GetObjectA(GetCurrentObject(savedDC,2),12,brushDescription)==12&&brushDescription[0]==0&&brushDescription[1]==0xffffff&&brushDescription[2]==0);
