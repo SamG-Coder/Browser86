@@ -1,0 +1,9 @@
+{
+  "url": "http://127.0.0.1:8096/",
+  "browser": "152.0.4191.66",
+  "status": "fault",
+  "detail": "UNSUPPORTED_API",
+  "terminal": "Launching C:/app/metapad.exe\nRuntime: original IA-32 interpreter / custom Win32 handlers.\nMapped C:/app/metapad.exe at 0x00400000 (216.0 KiB)\nEntrypoint loaded. Working directory: C:/app\n53 unresolved import(s). Execution stops only if an unresolved import is called.\nDialog base units use the virtual system font metrics; native Windows font rasterization is approximate.\n\nUNSUPPORTED_API\nNot implemented: comctl32.dll!CreateToolbarEx. This Windows API has no implementation in this build.\n{\n  \"dll\": \"comctl32.dll\",\n  \"symbol\": \"CreateToolbarEx\",\n  \"caller\": \"0x0040215f\"\n}",
+  "guestWindows": 1,
+  "pageErrors": []
+}

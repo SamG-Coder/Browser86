@@ -67,7 +67,7 @@ Importing the exact same original ZIP again restores that package's saved disk; 
 | Windows compatibility | Original kernel/file/heap/path/console handlers, portions of CRT, basic registry storage, window callbacks/messages, timers, basic controls and GDI drawing. |
 | Diagnostics | Pause/resume/step, breakpoint, register and memory-map display, recent API/EIP traces, exact unsupported import/opcode reports and JSON export. |
 
-`src/api-catalog.json` contains **713 registered import entries**, including A/W variants, CRT functions and data entries. **That count is not 713 fully compatible Windows APIs.** Many handlers implement a restricted argument/behavior subset; others explicitly reject unsupported modes. See the source and compatibility notes before assuming parity.
+`src/api-catalog.json` contains **722 registered import entries**, including A/W variants, CRT functions and data entries. **That count is not 722 fully compatible Windows APIs.** Many handlers implement a restricted argument/behavior subset; others explicitly reject unsupported modes. See the source and compatibility notes before assuming parity.
 
 ## Included compiled programs
 
@@ -93,7 +93,7 @@ npm test
 node --test tests/*.test.mjs
 ```
 
-The recorded run passes **553 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks, environment buffers and blocks, open-file deletion lifetime, extended file-information queries and static-server delivery.
+The recorded run passes **562 tests**, including 18,000 deterministic ALU/flag comparisons, memory/ZIP/VFS validation, all eight supported demos, the intentional failure, GUI callbacks, DLL relocation, synchronization state/error/timeout checks, environment buffers and blocks, open-file deletion lifetime, extended file-information queries and static-server delivery.
 
 The optional browser harness is:
 
