@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Window text output conversion - 2026-09-08
+
+**344 Node tests passed, 0 failed, 0 skipped.** Cross-encoding WM_GETTEXT now supplies a temporary procedure-encoded buffer and converts output back to the caller encoding. Tests cover capacities 0, 1, 2, 4 and 16 in both directions, native callback capacities and return counts, output sentinels, same-encoding passthrough, invalid output memory, explicit conversion limits, invalid callback counts, nesting, window destruction and allocation cleanup. The rebuilt HandleObjects.exe checks full ANSI/Unicode results, best-fit conversion and native short Unicode output behavior. Catalog remains 576 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/window-gettext-tests.tap), [browser report](test-artifacts/window-gettext-browser-report.json).
+
+Native ctypes probes used owned hidden A/W windows and 512-byte sentinel buffers with bounded capacities. A Unicode caller requesting capacity 2 passed capacity 4 to its ANSI procedure, received result 3 and two unterminated UTF-16 characters; following bytes remained unchanged. ANSI callers passed their capacity unchanged to Unicode procedures and received CP1252 best-fit output. Zero capacity left output untouched. All windows/classes were cleaned up. Reference: [Microsoft WM_GETTEXT](https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-gettext). GetWindowText API callback dispatch, null output translation, length-message adjustment and multibyte code pages remain unfinished.
+
 ## Window text message dispatch - 2026-09-08
 
 **340 Node tests passed, 0 failed, 0 skipped.** WM_SETTEXT now converts caller text to the current procedure encoding. SetWindowTextA/W invokes the procedure and normalizes its result to Boolean, allowing application handling or rejection without overwriting the stored title. Tests cover all four encoding combinations, CP1252 best-fit conversion, null input, return values, default processing, nested conversion buffers, callback destruction, invalid HWNDs and malformed guest text. The rebuilt HandleObjects.exe imports SendMessageA/W and SetWindowTextA/W and verifies both cross-encoding directions and return conventions. Catalog remains 576 entries.

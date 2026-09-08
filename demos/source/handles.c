@@ -6,6 +6,11 @@ unsigned long __readfsdword(unsigned long);
 static HWND lifetimeWindows[4];
 static DWORD creationWide,creationCount,textMessageCount;
 static long WINAPI encodingProc(HWND h,DWORD msg,DWORD wp,long lp){
+  if(msg==13){
+    WORD text[]={'C','a','f',233,' ',256,0};DWORD length=creationWide?6:4,count=wp?(length<wp-1?length:wp-1):0;
+    for(DWORD i=0;i<count;i++){if(creationWide)((WORD*)lp)[i]=text[i];else ((char*)lp)[i]=(char)text[i];}
+    if(wp){if(creationWide)((WORD*)lp)[count]=0;else ((char*)lp)[count]=0;}return count;
+  }
   if(msg==12){
     textMessageCount++;
     if(creationWide){WORD *text=(WORD*)lp;CHECK(text[0]=='C'&&text[3]==233&&text[4]==0);}
@@ -50,10 +55,13 @@ void mainCRTStartup(void){
   WNDCLASSA encodingA={0};encodingA.proc=encodingProc;encodingA.name="A\xe9";CHECK(RegisterClassA(&encodingA));
   WORD aName[]={'A',233,0},wTitle[]={'C','a','f',233,' ',256,0};
   HWND encodingWindow=CreateWindowExW(0,aName,wTitle,0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);
-  CHECK(SendMessageW(encodingWindow,12,99,(long)wTitle)==7);CHECK(SetWindowTextW(encodingWindow,wTitle)==1);CHECK(textMessageCount==2);CHECK(DestroyWindow(encodingWindow));
+  CHECK(SendMessageW(encodingWindow,12,99,(long)wTitle)==7);CHECK(SetWindowTextW(encodingWindow,wTitle)==1);CHECK(textMessageCount==2);
+  WORD readWide[16]={0};CHECK(SendMessageW(encodingWindow,13,16,(long)readWide)==4);CHECK(readWide[3]==233&&readWide[4]==0);
+  readWide[2]=0x5858;CHECK(SendMessageW(encodingWindow,13,2,(long)readWide)==3);CHECK(readWide[0]=='C'&&readWide[1]=='a'&&readWide[2]==0x5858);CHECK(DestroyWindow(encodingWindow));
   WORD wName[]={'W',233,0};WNDCLASSW encodingW={0};encodingW.proc=encodingProc;encodingW.name=wName;CHECK(RegisterClassW(&encodingW));creationWide=1;creationCount=0;
   encodingWindow=CreateWindowExA(0,"W\xe9","Caf\xe9",0x80000000,0,0,20,20,NULL,NULL,NULL,NULL);CHECK(encodingWindow&&creationCount==2);
-  CHECK(SendMessageA(encodingWindow,12,99,(long)"Caf\xe9")==7);CHECK(SetWindowTextA(encodingWindow,"Caf\xe9")==1);CHECK(textMessageCount==4);CHECK(DestroyWindow(encodingWindow));
+  CHECK(SendMessageA(encodingWindow,12,99,(long)"Caf\xe9")==7);CHECK(SetWindowTextA(encodingWindow,"Caf\xe9")==1);CHECK(textMessageCount==4);
+  char readAnsi[16];CHECK(SendMessageA(encodingWindow,13,16,(long)readAnsi)==6);CHECK((unsigned char)readAnsi[3]==233&&readAnsi[5]=='A'&&readAnsi[6]==0);CHECK(DestroyWindow(encodingWindow));
   HANDLE self=GetCurrentProcess(),file,copy,process,thread;
   DWORD flags,count,code;
   char bytes[4];

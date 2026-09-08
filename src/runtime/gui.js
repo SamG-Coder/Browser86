@@ -8,6 +8,7 @@ import {installRegions} from './regions.js';
 import {installSystemColors} from './system-colors.js';
 import {ansiDecode} from './memory.js';
 import {sbcsTables} from './sbcs-tables.js';
+import {checkBuffer} from './files.js';
 import {installRectangleDrawing} from './rectangle-drawing.js';
 import {installRectangles} from './rectangles.js';
 import {installPolyDraw} from './poly-draw.js';
@@ -41,6 +42,22 @@ export class GUI {
   }
   send(hwnd,msg,wp,lp,wide=false,done=value=>value){
     const w=this.window(hwnd);if(!w)return done(0);
+    if(w.proc&&msg===0x0D&&wide!==w.wide&&lp){
+      const capacity=wp>>>0;requireThat(capacity<=1048576,'STRING_LIMIT','Window text buffer exceeds the conversion limit.');
+      if(capacity)checkBuffer(this.m,lp,capacity*(wide?2:1));
+      const procedureWide=w.wide,procedureCapacity=capacity*(wide?2:1),buffer=this.p.heap.alloc(Math.max(1,procedureCapacity*(procedureWide?2:1)),true);
+      return this.p.call(w.proc,[hwnd,msg,procedureCapacity,buffer],result=>{
+        try {
+          const count=result>>>0;requireThat(count<=Math.max(0,procedureCapacity-1),'CALLBACK_RESULT','WM_GETTEXT returned a count outside its buffer.');
+          const copied=Math.min(capacity,count+1);if(copied)checkBuffer(this.m,lp,copied*(wide?2:1));
+          for(let i=0;i<copied;i++){
+            if(wide)this.m.w16(lp+i*2,ansiDecode(this.m.read(buffer+i,1)).charCodeAt(0));
+            else this.m.w8(lp+i,windowAnsiBestFit.get(this.m.u16(buffer+i*2))??63);
+          }
+          return done(count);
+        } finally {this.p.heap.free(buffer);}
+      });
+    }
     if(w.proc){const temporary=[];if(msg===0x0C)lp=this.convertString(lp,wide,w.wide,temporary);
       return this.p.call(w.proc,[hwnd,msg,wp,lp],result=>{for(const address of temporary)this.p.heap.free(address);return done(result);});}
     return done(this.defWindow(hwnd,msg,wp,lp,wide));
