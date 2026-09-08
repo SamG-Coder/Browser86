@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {guest} from './helpers.mjs';
+function setup(){const {p}=guest('HelloConsole.exe'),m=p.memory,outputs=Array.from({length:5},()=>p.heap.alloc(64,true)),args=p.heap.alloc(20);outputs.forEach((a,i)=>m.w32(args+i*4,a));return {p,m,outputs,scan:(text,fmt,count=0xffffffff)=>p.apis.lookup('msvcrt.dll','__stdio_common_vsscanf').fn(2,0,p.heap.string(text),count,p.heap.string(fmt),0,args)};}
+test('scanf parses integers, bases, floats and consumed-character counts',()=>{const {m,outputs:o,scan}=setup();assert.equal(scan('-12 0x2a 2.5','%d %i %lf%n'),3);assert.equal(m.i32(o[0]),-12);assert.equal(m.u32(o[1]),42);assert.equal(new DataView(m.read(o[2],8).buffer).getFloat64(0,true),2.5);assert.equal(m.u32(o[3]),12);});
+test('scanf field widths, scansets and assignment suppression advance independently',()=>{const {m,outputs:o,scan}=setup();assert.equal(scan('skip abc123 XYZ','%*s %3[a-z]%3d %2c'),3);assert.equal(m.cstr(o[0]),'abc');assert.equal(m.u32(o[1]),123);assert.deepEqual([...m.read(o[2],2)],[88,89]);});
+test('scanf distinguishes EOF and matching failures and honors bounded input',()=>{const {m,outputs:o,scan}=setup();assert.equal(scan('','%d'),-1);assert.equal(scan('no','%d'),0);assert.equal(scan('12 wrong','%d %d'),1);assert.equal(scan('1234','%d',2),1);assert.equal(m.u32(o[0]),12);assert.equal(scan('','%n'),0);assert.equal(m.u32(o[0]),0);});

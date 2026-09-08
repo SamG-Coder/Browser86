@@ -1,9 +1,11 @@
 import {RuntimeFault,requireThat} from './errors.js';
 import {ansiEncode,ansiDecode} from './memory.js';
+import {scanCRT} from './crt-scan.js';
 export function splitCommandLine(text){const args=[];let i=0;while(i<text.length){while(/\s/.test(text[i]||'')&&i<text.length)i++;if(i>=text.length)break;let s='',quote=false;while(i<text.length){if(!quote&&/\s/.test(text[i]))break;let slashes=0;while(text[i]==='\\'){slashes++;i++;}if(text[i]==='"'){s+='\\'.repeat(Math.floor(slashes/2));if(slashes%2){s+='"';i++;}else{if(quote&&text[i+1]==='"'){s+='"';i+=2;}else{quote=!quote;i++;}}}else{s+='\\'.repeat(slashes);if(i<text.length)s+=text[i++];}}args.push(s);while(i<text.length&&/\s/.test(text[i]))i++;}return args;}
 export function installCRT(api){const p=api.p,m=api.m,v=api.vfs;const c=(name,n,fn)=>api.add('msvcrt.dll',name,n,fn,true);const ptr=s=>p.heap.string(s);const errno=p.heap.alloc(4,true);const error=n=>{m.w32(errno,n);return -1;};
   // CRT startup writes this process-local default through a stable int pointer.
   const commode=p.heap.alloc(4,true);c('__p__commode',0,()=>commode);api.data('msvcrt.dll','_commode',commode);
+  c('__stdio_common_vsscanf',7,(flags,high,input,count,fmt,locale,args)=>{requireThat(!(flags&~2)&&!high&&!locale,'CRT_SCAN','Unsupported UCRT scanf options or explicit locale.',{flags,high,locale});let size=0;while(size<count&&m.u8(input+size))size++;return scanCRT(m,Array.from(m.read(input,size),ch=>String.fromCharCode(ch)).join(''),m.cstr(fmt),args);});
   let threadLocale=2;c('_configthreadlocale',1,mode=>{const previous=threadLocale;if(mode===1||mode===2)threadLocale=mode;else if(mode!==0)return error(22);return previous;});
   c('_set_new_mode',1,mode=>{if(mode!==0&&mode!==1)return error(22);requireThat(mode===0,'CRT_NEW_MODE','malloc new-handler invocation is not implemented.');return 0;});c('_query_new_mode',0,()=>0);
   c('_controlfp_s',3,(out,value,mask)=>{

@@ -2638,6 +2638,13 @@
   },
   {
     "dll": "msvcrt.dll",
+    "name": "__stdio_common_vsscanf",
+    "argc": 7,
+    "cdecl": true,
+    "data": false
+  },
+  {
+    "dll": "msvcrt.dll",
     "name": "__stdio_common_vswprintf",
     "argc": 7,
     "cdecl": true,
