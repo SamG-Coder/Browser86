@@ -638,6 +638,20 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "AddAtomA",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "AddAtomW",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "AllocConsole",
     "argc": 0,
     "cdecl": false,
@@ -799,6 +813,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "DeleteAtom",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "DeleteCriticalSection",
     "argc": 1,
     "cdecl": false,
@@ -878,6 +899,20 @@
     "dll": "kernel32.dll",
     "name": "FileTimeToSystemTime",
     "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "FindAtomA",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "FindAtomW",
+    "argc": 1,
     "cdecl": false,
     "data": false
   },
@@ -990,6 +1025,20 @@
     "dll": "kernel32.dll",
     "name": "GetACP",
     "argc": 0,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GetAtomNameA",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
+    "name": "GetAtomNameW",
+    "argc": 3,
     "cdecl": false,
     "data": false
   },

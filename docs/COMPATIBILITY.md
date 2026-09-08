@@ -182,6 +182,8 @@ SetPropA/W, GetPropA/W and RemovePropA/W now provide per-window application data
 
 EnumPropsA/W and EnumPropsExA/W now enumerate guest window properties through the three/four-argument callback ABI, preserving original string spelling and integer keys. They return the last callback result, stop on zero, and return -1 for an empty list. Current-property removal and nested enumeration are supported; callback name buffers are temporary and released on return. Enumeration uses a snapshot and does not reproduce native control-internal/system properties. Global atom identity, ANSI best-fit parity outside representable CP1252 names, and unsupported callback mutations remain unfinished.
 
+AddAtomA/W, FindAtomA/W, GetAtomNameA/W and DeleteAtom now implement a process-local atom table with case-insensitive A/W names, first-spelling retention, reference counts, integer atoms and #decimal aliases. Name output truncates with a terminator and uses the existing Windows CP1252 best-fit table for ANSI. Native-tested errors distinguish zero/one capacity, invalid IDs and missing names; null AddAtom/FindAtom inputs preserve last error. Tables are separate from window property keys and global atoms. InitAtomTable, global atom APIs and reference-count saturation parity remain unfinished; reference counts above 65535 raise an explicit limit fault.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

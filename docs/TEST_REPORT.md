@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Local atom tables - 2026-09-08
+
+**319 Node tests passed, 0 failed, 0 skipped.** Added AddAtomA/W, FindAtomA/W, GetAtomNameA/W and DeleteAtom. Tests cover process isolation, A/W identity, case-insensitive lookup with original spelling, matched reference deletion, numeric aliases, missing/empty/long names, capacity/error precedence, negative capacity bit patterns, truncated null-terminated output, complete output-buffer validation and CP1252 best-fit output. The rebuilt HandleObjects.exe imports all seven APIs and verifies shared reference lifetime, original spelling, bounded output and integer atoms. Catalog: 564 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/local-atom-tests.tap), [browser report](test-artifacts/local-atom-browser-report.json).
+
+Native ctypes probes used the probe process's local atom table, matched successful string additions with deletions, and verified numeric atoms, reference counts, missing-name error 2, empty-name error 123, invalid numeric-name error 87, and GetAtomName output at capacities 0/1/3/6/20 and negative values. Zero capacity returned error 234; capacity one returned error 122 without writing; truncation returned the copied count and preserved error 1234. DeleteAtom returned zero/error 6 for invalid string atoms on the tested Windows version. No guest executable ran on the host. References: [AddAtomW](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-addatomw), [GetAtomNameW](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getatomnamew), [DeleteAtom](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-deleteatom). InitAtomTable, global atoms and reference-count saturation parity remain unfinished. Local tables are isolated from window property atom keys; reference counts above 65535 raise an explicit runtime limit fault.
+
 ## Window property enumeration - 2026-09-08
 
 **314 Node tests passed, 0 failed, 0 skipped.** Added EnumPropsA/W and EnumPropsExA/W using guest callback continuations. Property metadata now preserves original spelling across case-insensitive replacements. Tests cover both encodings, integer keys, zero data, Ex application parameters, signed last-callback results, early stopping, empty lists, invalid HWNDs, null callback rejection for nonempty lists, current-property removal and nested temporary-buffer lifetimes. The rebuilt HandleObjects.exe imports all four functions, verifies two-property enumeration and early stopping, then removes the properties through an ExW callback. Catalog: 557 entries.

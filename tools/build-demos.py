@@ -10,6 +10,7 @@ SRC=ROOT/'demos'/'source'; BUILD=ROOT/'.build'; BUILD.mkdir(exist_ok=True)
 for tool in ['clang','lld-link']:
     if not shutil.which(tool): raise SystemExit(f'{tool} is required to rebuild demos; the prebuilt demo ZIP can still run.')
 K={'GetStdHandle':1,'WriteFile':5,'ReadFile':5,'ExitProcess':1,'CreateFileA':7,'CloseHandle':1,'GetLastError':0,'GetCurrentDirectoryA':2,'GetModuleHandleA':1,'LoadLibraryA':1,'GetProcAddress':2,'GetTickCount':0,'CreateThread':6}
+K.update({'AddAtomA':1,'AddAtomW':1,'FindAtomA':1,'FindAtomW':1,'DeleteAtom':1,'GetAtomNameA':3,'GetAtomNameW':3})
 K.update({'CreateEventA':4,'CreateEventW':4,'CreateMutexA':3,'CreateMutexW':3,'CreateSemaphoreA':4,'CreateSemaphoreW':4,'SetEvent':1,'ResetEvent':1,'ReleaseMutex':1,'ReleaseSemaphore':3,'WaitForSingleObject':2,'WaitForSingleObjectEx':3,'WaitForMultipleObjects':4,'WaitForMultipleObjectsEx':5})
 K.update({'GetCurrentProcess':0,'GetCurrentThread':0,'DuplicateHandle':7,'GetHandleInformation':2,'SetHandleInformation':3,'GetProcessId':1,'GetThreadId':1,'GetExitCodeProcess':2,'GetExitCodeThread':2,'SetFilePointer':4})
 K.update({'SetFilePointerEx':5,'GetFileSizeEx':2,'SetEndOfFile':1})

@@ -330,6 +330,12 @@ void mainCRTStartup(void){
   CHECK(enableCount==4&&enableLog[0]==31&&enableState[0]==1&&enableLog[1]==10&&enableState[1]==0&&enableLog[2]==31&&enableState[2]==0&&enableLog[3]==10&&enableState[3]==1);
   CHECK(GetParent(lifetimeWindows[2])==lifetimeWindows[1]&&GetParent(lifetimeWindows[3])==lifetimeWindows[0]);
   CHECK(IsChild(lifetimeWindows[0],lifetimeWindows[2])&&!IsChild(lifetimeWindows[0],lifetimeWindows[3])&&!IsChild(lifetimeWindows[0],lifetimeWindows[0]));
+  WORD atomWide[]={ 'M','I','X','E','D',0 },atomOutput[16];char atomAnsi[16];
+  WORD localAtom=AddAtomA("MiXeD");CHECK(localAtom>=0xc000&&AddAtomW(atomWide)==localAtom&&FindAtomW(atomWide)==localAtom);
+  CHECK(GetAtomNameA(localAtom,atomAnsi,3)==2&&atomAnsi[0]=='M'&&atomAnsi[1]=='i'&&!atomAnsi[2]);
+  CHECK(GetAtomNameW(localAtom,atomOutput,16)==5&&atomOutput[0]=='M'&&atomOutput[1]=='i'&&atomOutput[2]=='X'&&atomOutput[3]=='e'&&atomOutput[4]=='D'&&!atomOutput[5]);
+  CHECK(!DeleteAtom(localAtom)&&FindAtomA("mixed")==localAtom);CHECK(!DeleteAtom(localAtom));SetLastError(1234);CHECK(!FindAtomA("mixed")&&GetLastError()==2);
+  CHECK(AddAtomA("#0001")==1&&FindAtomW((const WORD*)1)==1&&GetAtomNameA(1,atomAnsi,16)==2&&atomAnsi[0]=='#'&&atomAnsi[1]=='1');
   WORD propertyName[]={ 'C','o','n','t','e','x','t',0 };
   CHECK(SetPropA(lifetimeWindows[0],"context",(HANDLE)0x12345678));CHECK(GetPropW(lifetimeWindows[0],propertyName)==(HANDLE)0x12345678);
   CHECK(SetPropW(lifetimeWindows[0],propertyName,(HANDLE)0xffffffff));CHECK(RemovePropA(lifetimeWindows[0],"CONTEXT")== (HANDLE)0xffffffff);
