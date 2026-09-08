@@ -176,6 +176,13 @@
   },
   {
     "dll": "gdi32.dll",
+    "name": "FillRgn",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
     "name": "GetBkColor",
     "argc": 1,
     "cdecl": false,
@@ -332,6 +339,13 @@
     "dll": "gdi32.dll",
     "name": "OffsetRgn",
     "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdi32.dll",
+    "name": "PaintRgn",
+    "argc": 2,
     "cdecl": false,
     "data": false
   },

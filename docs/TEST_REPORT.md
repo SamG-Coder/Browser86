@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Region fill and paint APIs - 2026-09-08
+
+**264 Node tests passed, 0 failed, 0 skipped.** FillRgn and PaintRgn now render rectangular region bounds with explicit and selected solid brushes. Tests cover selection/current-position preservation, moved region bounds, dynamic DC brush/pen colors, empty regions, invalid handles and visible hollow brush failures. The rebuilt HandleObjects.exe imports both functions and checks ordinary fills, painting, null brush failure and empty-region success. The catalog contains 533 entries.
+
+**Twenty-four real-canvas checks and eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Added canvas cases exercise FillRgn and PaintRgn through runtime-created regions and selected brushes. Evidence: [Node TAP](test-artifacts/region-paint-tests.tap), [canvas report](test-artifacts/region-paint-canvas-report.json), [browser report](test-artifacts/region-paint-browser-report.json).
+
+Native probes used an owned 8x8 bitmap/DC to verify visible fills, pen-color acceptance, hollow brush failures and empty-region validation order. A default memory DC revealed native early-success behavior for fully clipped regions; that clipping-dependent behavior remains outside the current renderer. Resources were released, and no guest executable ran on the host. Reference: [FillRgn](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-fillrgn). Complex regions, mapping, clipping, patterned brushes and raster-operation modes remain unfinished.
+
 ## Region data export - 2026-09-08
 
 **262 Node tests passed, 0 failed, 0 skipped.** GetRegionData now exports native-layout RGNDATA for empty and rectangular regions. Tests cover normalized and negative coordinates, null size queries, exact/oversized/short buffers, unchanged tails, unsigned counts, mutation visibility, invalid handles and complete output validation without partial writes. The rebuilt HandleObjects.exe imports the real symbol and checks size, header fields, rectangle data, short-buffer error and empty-region output. The catalog contains 531 entries.

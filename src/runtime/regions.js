@@ -4,6 +4,13 @@ const inRange=values=>values.every(n=>n>=-0x8000000&&n<0x8000000);
 export function installRegions(gui){
  const {p,m,api}=gui,g=(n,c,f)=>api.add('gdi32.dll',n,c,f),region=h=>{const o=p.object(h,'gdi');return o?.kind==='region'?o:null;};
  const create=(...values)=>{values=values.map(n=>n|0);if(!inRange(values))return api.fail(87);return p.handle('gdi',{kind:'region',rect:normalize(...values)});};
+ const fill=(dcHandle,regionHandle,brushHandle)=>{
+  if(!brushHandle)return 0;const dc=gui.dc(dcHandle);if(!dc)return api.fail(6);const o=region(regionHandle);if(!o)return 0;if(!o.rect)return 1;
+  const brush=p.object(brushHandle,'gdi');if(!brush||!['brush','pen'].includes(brush.kind)||brush.null)return 0;
+  const [l,t,r,b]=o.rect;gui.draw(dcHandle,{op:'fill',x:l,y:t,width:r-l,height:b-t,color:brush.dcColor?dc[brush.dcColor]:brush.color});return 1;
+ };
+ g('FillRgn',3,fill);
+ g('PaintRgn',2,(h,r)=>{const dc=gui.dc(h);return dc?fill(h,r,dc.brush):api.fail(6);});
  g('CreateRectRgn',4,create);
  g('CreateRectRgnIndirect',1,input=>{checkBuffer(m,input,16,'r');return create(...[0,4,8,12].map(i=>m.i32(input+i)));});
  g('SetRectRgn',5,(h,l,t,r,b)=>{const o=region(h);if(!o)return 0;o.rect=normalize(l|0,t|0,r|0,b|0);return 1;});
