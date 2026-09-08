@@ -1548,6 +1548,13 @@
   },
   {
     "dll": "kernel32.dll",
+    "name": "SetFileInformationByHandle",
+    "argc": 4,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "kernel32.dll",
     "name": "SetFilePointer",
     "argc": 4,
     "cdecl": false,

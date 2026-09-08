@@ -41,6 +41,7 @@ API BOOL WINAPI GetFileTime(HANDLE,FILETIME*,FILETIME*,FILETIME*);
 API BOOL WINAPI SetFileTime(HANDLE,const FILETIME*,const FILETIME*,const FILETIME*);
 API BOOL WINAPI GetFileInformationByHandle(HANDLE,BY_HANDLE_FILE_INFORMATION*);
 API BOOL WINAPI GetFileInformationByHandleEx(HANDLE,DWORD,void*,DWORD);
+API BOOL WINAPI SetFileInformationByHandle(HANDLE,DWORD,const void*,DWORD);
 API BOOL WINAPI SetFileAttributesA(const char*,DWORD);
 API BOOL WINAPI SetFileAttributesW(const WORD*,DWORD);
 API DWORD WINAPI GetFileAttributesA(const char*);

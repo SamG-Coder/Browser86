@@ -1,10 +1,20 @@
 import {FILE_ATTRIBUTE_MASK} from './vfs.js';
-import {checkBuffer} from './files.js';
+import {checkBuffer,resizeFile} from './files.js';
 import {RuntimeFault} from './errors.js';
 
 export function writeFileTime(memory,out,value){const time=BigInt(value);memory.w32(out,Number(time&0xFFFFFFFFn));memory.w32(out+4,Number(time>>32n));}
 export function installFileInformation(api){
   const p=api.p,m=api.m,v=api.vfs,k=(name,n,fn)=>api.add('kernel32.dll',name,n,fn);
+  k('SetFileInformationByHandle',4,(h,infoClass,input,size)=>{
+    const f=p.object(h,'file');if(!f)return api.fail(6);
+    if(![0,3,4,5,6,12,21,22,23].includes(infoClass))return api.fail(87);
+    if(infoClass!==6)throw new RuntimeFault('UNSUPPORTED_FILE_INFO',`Setting file information class ${infoClass} is not implemented.`,{infoClass});
+    if(size<8)return api.fail(24);if(!input)return api.fail(87);
+    if(f.directory||!f.write)return api.fail(5);
+    checkBuffer(m,input,8,'r');
+    const length=BigInt(m.u32(input))|(BigInt(m.i32(input+4))<<32n);
+    return api.expected(()=>resizeFile(api,f,length));
+  });
   k('GetFileInformationByHandleEx',4,(h,infoClass,out,size)=>{
     const f=p.object(h,'file');if(!f)return api.fail(6);
     if(infoClass>=25||[3,4,5,6,12,21,22].includes(infoClass))return api.fail(87);

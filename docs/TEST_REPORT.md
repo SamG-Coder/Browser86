@@ -46,6 +46,12 @@ Native kernel32 probes on this Windows host verified ERROR_BAD_LENGTH (24) for b
 
 **Eight real-origin Edge browser checks passed with no page errors** after rebuilding the fixture. Results: `test-artifacts/file-info-ex-tests.tap` and `test-artifacts/file-info-ex-browser-report.json`. Contracts: [GetFileInformationByHandleEx](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getfileinformationbyhandleex), [FILE_NAME_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_name_info), [FILE_STANDARD_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_standard_info), [FILE_ID_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_id_info).
 
+## Handle-based EOF changes — 2026-09-08
+
+**97 Node tests passed, 0 failures or skips; eight real-origin Edge checks passed with no page errors.** SetFileInformationByHandle now implements FileEndOfFileInfo. Five new tests cover growth/truncation/zero length, independent and duplicate cursors, exact signed 64-bit bounds and quota accounting, pending deletion, suppressed timestamps, denied rights, directories, invalid classes, short and cross-page buffers, and read-only input memory. HandleObjects.exe imports the new API and verifies growth, unchanged cursor, negative input and truncation through the interpreter. The catalog contains 438 entries.
+
+Native Windows probes on disposable data files verified that EOF changes leave a cursor at offset 5 unchanged through growth, truncation and clearing; seven-byte inputs return ERROR_BAD_LENGTH (24), and negative lengths return ERROR_INVALID_PARAMETER (87). Contract: [SetFileInformationByHandle](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfileinformationbyhandle) and [FILE_END_OF_FILE_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_end_of_file_info). Results: `test-artifacts/file-set-info-tests.tap` and `test-artifacts/file-set-info-browser-report.json`.
+
 ## Original baseline results (historical)
 
 | Check | Recorded result |

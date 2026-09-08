@@ -5,6 +5,7 @@ void mainCRTStartup(void){
   DWORD flags,count,code;
   char bytes[4];
   long long position;
+  long long endOfFile;
   FILETIME creation={123,30000000},access={456,30000001},write={789,30000002},returned;
   BY_HANDLE_FILE_INFORMATION info;
   FILE_STANDARD_INFO standard;
@@ -36,6 +37,14 @@ void mainCRTStartup(void){
   CHECK(SetFilePointerEx(copy,-2,&position,2)&&position==2);
   CHECK(SetEndOfFile(copy));
   CHECK(GetFileSizeEx(copy,&position)&&position==2);
+  endOfFile=8;
+  CHECK(SetFileInformationByHandle(copy,6,&endOfFile,sizeof(endOfFile)));
+  CHECK(GetFileSizeEx(copy,&position)&&position==8);
+  CHECK(SetFilePointerEx(copy,0,&position,1)&&position==2);
+  endOfFile=-1;
+  CHECK(!SetFileInformationByHandle(copy,6,&endOfFile,sizeof(endOfFile))&&GetLastError()==87);
+  endOfFile=2;
+  CHECK(SetFileInformationByHandle(copy,6,&endOfFile,sizeof(endOfFile)));
   CHECK(SetFileTime(copy,&creation,&access,&write));
   CHECK(GetFileTime(copy,NULL,NULL,&returned)&&returned.low==789&&returned.high==30000002);
   CHECK(GetFileInformationByHandle(copy,&info)&&info.idLow==originalId&&info.sizeLow==2&&info.links==1);

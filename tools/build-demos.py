@@ -15,6 +15,7 @@ K.update({'GetCurrentProcess':0,'GetCurrentThread':0,'DuplicateHandle':7,'GetHan
 K.update({'SetFilePointerEx':5,'GetFileSizeEx':2,'SetEndOfFile':1})
 K.update({'DeleteFileA':1})
 K.update({'GetFileInformationByHandleEx':4})
+K.update({'SetFileInformationByHandle':4})
 K.update({'GetFileTime':4,'SetFileTime':4,'GetFileInformationByHandle':2,'SetFileAttributesA':2,'SetFileAttributesW':2,'GetFileAttributesA':1})
 for suffix in ['A','W']:
     for name,count in [('OpenEvent',3),('OpenMutex',3),('OpenSemaphore',3),('CreateEventEx',4),('CreateMutexEx',4),('CreateSemaphoreEx',6)]:

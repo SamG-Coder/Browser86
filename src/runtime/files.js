@@ -9,6 +9,16 @@ export function checkBuffer(memory,address,length,access='w'){
 }
 function write64(m,out,value){m.w32(out,Number(value&0xFFFFFFFFn));m.w32(out+4,Number(value>>32n));}
 
+// Both EOF APIs resize the shared file without changing its seek position.
+export function resizeFile(api,f,length){
+  if(!f.write)return api.fail(5);
+  if(length<0n)return api.fail(87);
+  const v=api.vfs,old=f.node.data;
+  if(length>BigInt(v.limit)||BigInt(v.bytes-old.length)+length>BigInt(v.limit))return api.fail(112);
+  const data=new Uint8Array(Number(length));data.set(old.subarray(0,data.length));
+  v.writeFile(f.path,data,{node:f.node,preserveWriteTime:!!f.suppressWrite,preserveAccessTime:!!f.suppressAccess});return 1;
+}
+
 export function installFileIO(api){
   const p=api.p,m=api.m,v=api.vfs,k=(name,n,fn)=>api.add('kernel32.dll',name,n,fn);
   const diskFile=h=>{const f=p.object(h,'file');return f&&!f.directory?f:null;};
@@ -89,12 +99,8 @@ export function installFileIO(api){
     });
   });
   k('SetEndOfFile',1,h=>{
-    const f=diskFile(h);if(!f)return api.fail(6);if(!f.write)return api.fail(5);
-    return api.expected(()=>{
-      const old=f.node.data,position=BigInt(f.position);
-      if(position>BigInt(v.limit)||BigInt(v.bytes-old.length)+position>BigInt(v.limit))return api.fail(112);
-      const data=new Uint8Array(Number(position));data.set(old.subarray(0,data.length));v.writeFile(f.path,data,{node:f.node,preserveWriteTime:!!f.suppressWrite,preserveAccessTime:!!f.suppressAccess});return 1;
-    });
+    const f=diskFile(h);if(!f)return api.fail(6);
+    return api.expected(()=>resizeFile(api,f,BigInt(f.position)));
   });
   k('FlushFileBuffers',1,h=>{const f=diskFile(h);return !f?api.fail(6):!f.write?api.fail(5):1;});
 }
