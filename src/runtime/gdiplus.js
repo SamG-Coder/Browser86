@@ -1,6 +1,8 @@
 import {requireThat} from './errors.js';
+import {installGDIPlusBitmaps} from './gdiplus-bitmap.js';
 
 export function installGDIPlus(api){
+  installGDIPlusBitmaps(api);
   const p=api.p,m=api.m,g=(name,argc,fn)=>api.add('gdiplus.dll',name,argc,fn);
   g('GdiplusStartup',3,(out,input,output)=>{
     if(!out||!input)return 2;

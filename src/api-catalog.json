@@ -631,6 +631,34 @@
   },
   {
     "dll": "gdiplus.dll",
+    "name": "GdipCloneImage",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipCreateBitmapFromGdiDib",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipCreateBitmapFromScan0",
+    "argc": 6,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipDisposeImage",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
     "name": "GdipFree",
     "argc": 1,
     "cdecl": false,
@@ -647,6 +675,13 @@
     "dll": "gdiplus.dll",
     "name": "GdiplusStartup",
     "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipSetImagePalette",
+    "argc": 2,
     "cdecl": false,
     "data": false
   },
