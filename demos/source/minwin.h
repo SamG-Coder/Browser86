@@ -213,6 +213,8 @@ API WORD WINAPI RegisterClassA(const WNDCLASSA*);
 API WORD WINAPI RegisterClassW(const WNDCLASSW*);
 API BOOL WINAPI UnregisterClassA(const char*,HANDLE);
 API BOOL WINAPI UnregisterClassW(const WORD*,HANDLE);
+API DWORD WINAPI GetClassLongA(HWND,int);
+API DWORD WINAPI GetClassLongW(HWND,int);
 API HWND WINAPI CreateWindowExW(DWORD,const WORD*,const WORD*,DWORD,int,int,int,int,HWND,HANDLE,HANDLE,void*);
 API HWND WINAPI CreateWindowExA(DWORD,const char*,const char*,DWORD,int,int,int,int,HWND,HANDLE,HANDLE,void*);
 API BOOL WINAPI ShowWindow(HWND,int);

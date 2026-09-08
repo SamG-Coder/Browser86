@@ -3434,6 +3434,20 @@
   },
   {
     "dll": "user32.dll",
+    "name": "GetClassLongA",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
+    "name": "GetClassLongW",
+    "argc": 2,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "user32.dll",
     "name": "GetClassNameA",
     "argc": 3,
     "cdecl": false,

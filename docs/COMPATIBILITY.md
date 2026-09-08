@@ -206,6 +206,8 @@ Successful UnregisterClassA/W now releases an ordinary owned class-background br
 
 DefWindowProcA/W now handles WM_ERASEBKGND using the registered class background brush and the DC supplied in wParam. Erasing fills the DC clipping bounds through GetClipBox/FillRect and respects rectangular clipping, system-color brush values and hollow brushes. A null class brush returns zero without drawing or validating the DC. With a brush, invalid DCs return one/error 6, matching native probes. Automatic BeginPaint erase scheduling, nonrectangular clipping, pattern-brush origin rules and built-in control-specific erasing remain unfinished.
 
+GetClassLongA/W now queries retained custom-class style, atom, module, background brush, cursor, icon, small icon and extra-storage sizes. Same-encoding class procedure and integer/null menu identifiers are supported. Extra DWORD reads return the initial zero value within the registered byte count, including unaligned offsets, and error 1413 outside it. Invalid HWNDs return error 1400. Built-in class metadata, cross-encoding procedure thunks, menu string pointer lifetime, extra-storage mutation and complete registration validation remain explicitly unfinished.
+
 ## Working with other programs
 
 Package the **complete native application folder**, preserving directories. Select the actual application EXE rather than an installer whenever possible. Installers often require missing Windows services, child processes or managed runtimes.

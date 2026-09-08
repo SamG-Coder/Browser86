@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Class metadata queries - 2026-09-08
+
+**369 Node tests passed, 0 failed, 0 skipped.** Added GetClassLongA/W for custom-class scalar metadata, same-encoding procedure addresses, integer/null menu identifiers and initial zeroed class-extra DWORDs. Registration retains the x86 WNDCLASS/EX fields. Tests cover A/W and extended variants, overwritten registration input, zero values preserving last error, extra-storage bounds, invalid/destroyed HWNDs, subclass distinction and explicit unsupported paths. The rebuilt HandleObjects.exe imports both APIs and queries its atom, brush and procedure plus an invalid extra offset. Catalog: 578 entries.
+
+**Eight real-origin browser checks passed in Edge 152.0.4191.66 with no page errors.** Evidence: [Node TAP](test-artifacts/class-queries-tests.tap), [browser report](test-artifacts/class-queries-browser-report.json).
+
+Native private-class probes confirmed scalar metadata, zero-initialized extra bytes, error 1413 for out-of-range extra offsets, and error 1400 for invalid HWNDs. Handle fields were separately checked with native GetClassLongPtr because the probe process is 64-bit; the implementation uses the documented x86 GetClassLong ABI. All owned windows/classes were cleaned up. Reference: [Microsoft GetClassLongW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getclasslongw). Built-in metadata, menu string pointer lifetime, opposite-encoding procedure thunks, extra-storage mutation and full registration validation remain unfinished.
+
 ## Class background erasing - 2026-09-08
 
 **365 Node tests passed, 0 failed, 0 skipped.** Default WM_ERASEBKGND processing now uses the registered brush, supplied DC and its clipping bounds. Tests cover A/W default procedures, color and drawing destination, rectangular clips extending beyond the window client area, null and hollow brushes, system-color values, invalid/empty DC paths and temporary rectangle cleanup. The rebuilt HandleObjects.exe checks successful class erasing and invalid-DC return/error behavior. Catalog remains 576 entries.

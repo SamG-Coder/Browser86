@@ -1,3 +1,4 @@
+import {installClassQueries} from './class-queries.js';
 import {installWindowIdentity} from './window-identity.js';
 import {installWindowProperties,releaseWindowProperties} from './window-properties.js';
 import {installWindowFocus} from './window-focus.js';
@@ -108,7 +109,7 @@ export class GUI {
   }
   install(){const a=this.api,p=this.p,m=this.m;const u=(name,n,fn,cdecl=false)=>a.add('user32.dll',name,n,fn,cdecl);const g=(name,n,fn)=>a.add('gdi32.dll',name,n,fn);
     for(const wide of [false,true]){const suffix=wide?'W':'A',str=pointer=>a.str(pointer,wide);
-      for(const extended of [false,true])u('RegisterClass'+(extended?'Ex':'')+suffix,1,pointer=>{const o=extended?4:0;if(extended&&m.u32(pointer)<48)return a.fail(87);const proc=m.u32(pointer+o+4),name=str(m.u32(pointer+o+36));if(!name)return a.fail(87);if(this.classes.has(name.toLowerCase()))return a.fail(1410);const atom=this.nextAtom++;this.classes.set(name.toLowerCase(),{name,atom,proc,instance:m.u32(pointer+o+16),background:m.u32(pointer+o+28),wide});return atom;});
+      for(const extended of [false,true])u('RegisterClass'+(extended?'Ex':'')+suffix,1,pointer=>{const o=extended?4:0;if(extended&&m.u32(pointer)<48)return a.fail(87);const proc=m.u32(pointer+o+4),name=str(m.u32(pointer+o+36));if(!name)return a.fail(87);if(this.classes.has(name.toLowerCase()))return a.fail(1410);const atom=this.nextAtom++;this.classes.set(name.toLowerCase(),{name,atom,proc,style:m.u32(pointer+o),classExtra:m.u32(pointer+o+8),windowExtra:m.u32(pointer+o+12),icon:m.u32(pointer+o+20),cursor:m.u32(pointer+o+24),menu:m.u32(pointer+o+32),smallIcon:extended?m.u32(pointer+44):0,instance:m.u32(pointer+o+16),background:m.u32(pointer+o+28),wide});return atom;});
       u('UnregisterClass'+suffix,2,(name,instance)=>{
         name>>>=0;if(!name)return a.fail(87);
         const atom=name<65536,cls=atom?[...this.classes.values()].find(c=>c.atom===name):this.classes.get(str(name).toLowerCase());
@@ -172,7 +173,7 @@ export class GUI {
     u('IsWindow',1,h=>this.window(h)?1:0);
     u('GetActiveWindow',0,()=>this.focus||[...this.windows.keys()][0]||0);u('SetActiveWindow',1,h=>{const old=this.focus;this.focus=h;return old;});
     u('GetDlgCtrlID',1,h=>this.window(h)?.id||0);u('GetDlgItem',2,(h,id)=>[...this.windows.values()].find(w=>w.parent===h&&w.id===id)?.hwnd||0);
-    u('SetCursor',1,cursor=>cursor);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
+    u('SetCursor',1,cursor=>cursor);u('GetSystemMetrics',1,index=>({0:1280,1:720,2:17,3:17,4:28,5:1,6:1,32:4,33:4,61:1,80:1}[index]??0));installClassQueries(this);installWindowIdentity(this);installWindowProperties(this);installWindowFocus(this);installWindowState(this);installWindowHierarchy(this);installWindowCoordinates(this);installSystemColors(this);installRegions(this);
     u('SetTimer',4,(hwnd,id,period,proc)=>{if(hwnd&&!this.window(hwnd))return 0;if(!id)id=this.nextTimer++;const ms=Math.max(10,period);p.timers.set(hwnd+':'+id,{hwnd,id,period:ms,next:performance.now()+ms,proc});return id;});u('KillTimer',2,(hwnd,id)=>p.timers.delete(hwnd+':'+id)?1:0);
     u('GetMessageTime',0,()=>Math.floor(performance.now()-p.started));
     installRectangles(this.api);
