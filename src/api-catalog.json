@@ -623,6 +623,34 @@
     "data": false
   },
   {
+    "dll": "gdiplus.dll",
+    "name": "GdipAlloc",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdipFree",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdiplusShutdown",
+    "argc": 1,
+    "cdecl": false,
+    "data": false
+  },
+  {
+    "dll": "gdiplus.dll",
+    "name": "GdiplusStartup",
+    "argc": 3,
+    "cdecl": false,
+    "data": false
+  },
+  {
     "dll": "kernel32.dll",
     "name": "AcquireSRWLockExclusive",
     "argc": 1,

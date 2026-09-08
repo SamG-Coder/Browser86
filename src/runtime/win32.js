@@ -3,6 +3,7 @@ import {RuntimeFault,requireThat,hex} from './errors.js';
 import {alignUp,ansiEncode,ansiDecode} from './memory.js';
 import {GUI} from './gui.js';
 import {installCRT} from './crt.js';
+import {installGDIPlus} from './gdiplus.js';
 import {installSynchronization} from './sync.js';
 import {installHandles} from './handles.js';
 import {installFileIO} from './files.js';
@@ -23,9 +24,9 @@ import {installCharacterTypes} from './character-type.js';
 import {installCommandLineParsing} from './command-line.js';
 import {mulDiv} from './integer-math.js';
 const INVALID=0xFFFFFFFF;
-const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','vcruntime140.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
+const SYSTEM=new Set(['kernel32.dll','kernelbase.dll','user32.dll','gdi32.dll','gdiplus.dll','advapi32.dll','msvcrt.dll','ucrtbase.dll','vcruntime140.dll','ntdll.dll','shell32.dll','shlwapi.dll','winmm.dll','comdlg32.dll','comctl32.dll','ole32.dll','oleaut32.dll','version.dll','ws2_32.dll']);
 export class Win32 {
-  constructor(process){this.p=process;this.m=process.memory;this.vfs=process.vfs;this.functions=new Map();this.traps=new Map();this.nextTrap=0xF0000000;this.moduleHandles=new Map();this.missingMap=new Map();this.allocations=new Map();this.resources=new Map();this.installKernel();this.gui=new GUI(this);installCRT(this);this.installRegistry();}
+  constructor(process){this.p=process;this.m=process.memory;this.vfs=process.vfs;this.functions=new Map();this.traps=new Map();this.nextTrap=0xF0000000;this.moduleHandles=new Map();this.missingMap=new Map();this.allocations=new Map();this.resources=new Map();this.installKernel();this.gui=new GUI(this);installCRT(this);installGDIPlus(this);this.installRegistry();}
   canonical(dll){dll=dll.toLowerCase();if(!dll.endsWith('.dll'))dll+='.dll';if(dll==='kernelbase.dll'||dll.startsWith('api-ms-win-core-')||dll.startsWith('ext-ms-win-kernel'))return 'kernel32.dll';if(dll==='ucrtbase.dll'||dll.startsWith('api-ms-win-crt-'))return 'msvcrt.dll';return dll;}
   isSystemModule(dll){return SYSTEM.has(dll.toLowerCase())||/^api-ms-win-(core|crt)-/.test(dll.toLowerCase());}
   add(dll,name,argc,fn,cdecl=false,description=''){dll=this.canonical(dll);const key=dll+'!'+name;const address=this.nextTrap;this.nextTrap+=16;const record={dll,name,argc,fn,cdecl,address,description};this.functions.set(key,record);this.traps.set(address,record);return address;}
