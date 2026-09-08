@@ -2,6 +2,14 @@
 
 Build date: 2026-09-08. Tests use the source and compiled demonstration binaries delivered with this project.
 
+## Extended null-pen compatibility - 2026-09-08
+
+**247 Node tests passed, 0 failed, 0 skipped.** Two new tests cover shared stock-handle identity, ignored width/brush/cap/join fields, ordinary object type/description, invisible draw commands, current-position updates and invalid style-array arguments. The rebuilt HandleObjects.exe imports ExtCreatePen with PS_NULL and checks its stock handle and object type. The catalog remains at 519 entries.
+
+**Seventeen real-canvas checks passed in Edge 152.0.4191.66**, including an unchanged canvas under the extended null pen. Evidence: [canvas report](test-artifacts/null-pen-canvas-report.json). **Eight existing real-origin browser checks passed with no page errors**, including fixture execution, persistence and backup. Evidence: [Node TAP](test-artifacts/null-pen-tests.tap) and [browser report](test-artifacts/null-pen-browser-report.json).
+
+Native ctypes probes verified stock-handle identity, ignored fields and dash-argument failures. Null brush input raised a native access violation; Browser86 reports a guest memory fault. No guest executable ran on the host. Microsoft documents the invisible PS_NULL style in [ExtCreatePen](https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-extcreatepen). Native special-size extended descriptions for stock null pens remain a limitation; this stage verifies ordinary LOGPEN output.
+
 ## Geometric user-style dash extension - 2026-09-08
 
 **245 Node tests passed, 0 failed, 0 skipped.** Two new tests cover copied style arrays, zero and odd-length entries, sixteen-entry patterns, variable-sized GetObjectA/W descriptions, short buffers, invalid/all-zero/high-bit patterns and input validation before allocation. HandleObjects.exe creates and inspects a three-entry geometric user-style pen through x86 imports. The catalog remains at 519 entries.

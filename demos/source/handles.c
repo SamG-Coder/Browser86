@@ -193,6 +193,7 @@ void mainCRTStartup(void){
   WORD fatDate,fatTime;
   HDC savedDC=GetDC(NULL);POINT savedPosition;
   DWORD extBrush[3]={0,0x123456,99},extDescription[6];
+  HANDLE extNullPen=ExtCreatePen(0x10005,99,extBrush,0,NULL);CHECK(extNullPen==GetStockObject(8)&&GetObjectType(extNullPen)==1);
   DWORD dashStyle[3]={3,2,1},dashDescription[9];HANDLE dashPen=ExtCreatePen(0x12207,4,extBrush,3,dashStyle);
   CHECK(dashPen&&GetObjectW(dashPen,36,dashDescription)==36&&dashDescription[5]==3&&dashDescription[6]==3&&dashDescription[7]==2&&dashDescription[8]==1&&DeleteObject(dashPen));
   HANDLE extPen=ExtCreatePen(0x12200,4,extBrush,0,NULL);

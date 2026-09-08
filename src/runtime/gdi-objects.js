@@ -6,6 +6,7 @@ export function installGDIObjects(gui){
   const g=(name,count,fn)=>gui.api.add('gdi32.dll',name,count,fn),m=gui.m;
   g('ExtCreatePen',5,(style,width,brush,styleCount,styles)=>{
     const type=style&0xf0000,cap=style&0xf00,join=style&0xf000,pattern=style&15;
+    if(pattern===5){if(styleCount||styles)return gui.api.fail(87);checkBuffer(m,brush,12,'r');return gui.stockObject(8);}
     if((style&~0x1ff0f)||![0,0x10000].includes(type)||cap>0x200||join>0x2000||pattern>8)return gui.api.fail(87);
     if(pattern!==7&&(styleCount||styles))return gui.api.fail(87);
     if(!brush)return 0;checkBuffer(m,brush,12,'r');const brushStyle=m.u32(brush),color=m.u32(brush+4),hatch=m.u32(brush+8);
