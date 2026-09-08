@@ -28,6 +28,7 @@ try{
     new MutationObserver(records=>{for(const record of records)if(record.target.tagName==='CANVAS')window.cursorStyles.push(record.oldValue||'',record.target.getAttribute('style')||'');}).observe(document.getElementById('desktop'),{subtree:true,attributes:true,attributeFilter:['style'],attributeOldValue:true});
   });
   for(const [name,message]of [['SyncPrimitives.exe','Synchronization wait resumed.'],['HandleObjects.exe','Handle checks passed.']]){
+    if(await page.locator('.sidebar').isHidden())await page.locator('.shell-library').click();
     await page.locator('.exe-option').filter({hasText:name}).click();
     await page.locator('#run').click();
     await page.waitForFunction(()=>document.getElementById('status').dataset.state==='exited');

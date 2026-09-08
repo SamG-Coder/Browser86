@@ -1,6 +1,6 @@
 # Browser86
 
-**Drop an application ZIP into a browser, choose an EXE, and run it against an isolated virtual C: drive.**
+**Drop an EXE or application ZIP onto the desktop. Each application package gets an isolated virtual C: drive, saved in your browser.**
 
 Browser86 is an original JavaScript IA-32 interpreter, PE32 loader, and **partial** Windows user-mode compatibility runtime. It does not use Wine, Boxedwine, v86, QEMU, a Windows installation, remote execution, or an existing CPU emulator. The application and demo source are MIT licensed.
 
@@ -151,3 +151,11 @@ src/backup.js              Full virtual-disk backup format
 Read [ARCHITECTURE.md](docs/ARCHITECTURE.md), [EXTENDING.md](docs/EXTENDING.md), and [SECURITY.md](docs/SECURITY.md) before extending the runtime.
 
 **Use trusted test programs. This is not a hardened malware sandbox, a complete Windows implementation, or a production compatibility product.**
+
+## Desktop workflow
+
+Import an EXE or ZIP using drag and drop or the Import button. Double-click a desktop drive icon (or press Enter) to open its file explorer. Double-click an EXE in the file list to launch it, or choose it in Applications and press Run. Use Applications to reopen the launcher and Virtual disk to browse the current package. Logs and developer tools remain separate taskbar views.
+
+A standalone EXE uses the same PE validation and interpreter as a ZIP import. Adjacent DLLs and data files still need to be supplied together in a ZIP. Existing saved packages are retained without migration; importing identical content restores its saved disk. This release runs one guest process at a time and does not share files across package drives.
+
+Desktop acceptance test: set PLAYWRIGHT_MODULE and optionally BROWSER_EXE, then run `node tools/browser-desktop.mjs [url]`. It verifies EXE drag-and-drop, drive browsing, double-click launch, logs, persistence, and browser errors.
