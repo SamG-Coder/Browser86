@@ -17,15 +17,15 @@ jobs:
           $ErrorActionPreference = 'Stop'
           New-Item -ItemType Directory -Force artifacts | Out-Null
           $fx = "$env:WINDIR\Microsoft.NET\Framework\v4.0.30319"
-          & "$fx\csc.exe" /nologo /target:library /out:artifacts/ManagedLibrary.dll demos/managed/ManagedLibrary.cs
+          & "$fx\csc.exe" /nologo /target:library '/out:artifacts\ManagedLibrary.dll' '.\demos\managed\ManagedLibrary.cs'
           if ($LASTEXITCODE -ne 0) { throw 'Library compilation failed' }
-          & "$fx\csc.exe" /nologo /optimize+ /platform:x86 /out:artifacts/ManagedConsole.exe /reference:artifacts/ManagedLibrary.dll demos/managed/ManagedConsole.cs
+          & "$fx\csc.exe" /nologo /optimize+ /platform:x86 '/out:artifacts\ManagedConsole.exe' '/reference:artifacts\ManagedLibrary.dll' '.\demos\managed\ManagedConsole.cs'
           if ($LASTEXITCODE -ne 0) { throw 'Console compilation failed' }
-          & "$fx\csc.exe" /nologo /optimize- /platform:anycpu /out:artifacts/ManagedAnyCPU.exe /reference:artifacts/ManagedLibrary.dll demos/managed/ManagedConsole.cs
+          & "$fx\csc.exe" /nologo /optimize- /platform:anycpu '/out:artifacts\ManagedAnyCPU.exe' '/reference:artifacts\ManagedLibrary.dll' '.\demos\managed\ManagedConsole.cs'
           if ($LASTEXITCODE -ne 0) { throw 'AnyCPU compilation failed' }
-          & "$fx\csc.exe" /nologo /platform:x86 /target:winexe /out:artifacts/ManagedForms.exe /reference:System.Windows.Forms.dll /reference:System.Drawing.dll demos/managed/ManagedForms.cs
+          & "$fx\csc.exe" /nologo /platform:x86 /target:winexe '/out:artifacts\ManagedForms.exe' /reference:System.Windows.Forms.dll /reference:System.Drawing.dll '.\demos\managed\ManagedForms.cs'
           if ($LASTEXITCODE -ne 0) { throw 'WinForms compilation failed' }
-          & "$fx\vbc.exe" /nologo /platform:x86 /target:exe /out:artifacts/ManagedVB.exe demos/managed/ManagedVB.vb
+          & "$fx\vbc.exe" /nologo /platform:x86 /target:exe '/out:artifacts\ManagedVB.exe' '.\demos\managed\ManagedVB.vb'
           if ($LASTEXITCODE -ne 0) { throw 'VB compilation failed' }
           Push-Location artifacts
           & .\ManagedConsole.exe 'hello world' second | Set-Content -Encoding utf8 native-console.txt
