@@ -1,0 +1,46 @@
+name: Compile real .NET Framework fixtures
+on:
+  push:
+    branches: [dotnet-framework]
+    paths: ['demos/managed/**', '.github/workflows/managed-fixtures.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compile:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile Framework executable fixtures
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          $fx = "$env:WINDIR\Microsoft.NET\Framework\v4.0.30319"
+          & "$fx\csc.exe" /nologo /target:library /out:artifacts/ManagedLibrary.dll demos/managed/ManagedLibrary.cs
+          if ($LASTEXITCODE -ne 0) { throw 'Library compilation failed' }
+          & "$fx\csc.exe" /nologo /optimize+ /platform:x86 /out:artifacts/ManagedConsole.exe /reference:artifacts/ManagedLibrary.dll demos/managed/ManagedConsole.cs
+          if ($LASTEXITCODE -ne 0) { throw 'Console compilation failed' }
+          & "$fx\csc.exe" /nologo /optimize- /platform:anycpu /out:artifacts/ManagedAnyCPU.exe /reference:artifacts/ManagedLibrary.dll demos/managed/ManagedConsole.cs
+          if ($LASTEXITCODE -ne 0) { throw 'AnyCPU compilation failed' }
+          & "$fx\csc.exe" /nologo /platform:x86 /target:winexe /out:artifacts/ManagedForms.exe /reference:System.Windows.Forms.dll /reference:System.Drawing.dll demos/managed/ManagedForms.cs
+          if ($LASTEXITCODE -ne 0) { throw 'WinForms compilation failed' }
+          & "$fx\vbc.exe" /nologo /platform:x86 /target:exe /out:artifacts/ManagedVB.exe demos/managed/ManagedVB.vb
+          if ($LASTEXITCODE -ne 0) { throw 'VB compilation failed' }
+          Push-Location artifacts
+          & .\ManagedConsole.exe 'hello world' second | Set-Content -Encoding utf8 native-console.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Native console fixture failed' }
+          & .\ManagedAnyCPU.exe 'hello world' second | Set-Content -Encoding utf8 native-anycpu.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Native AnyCPU fixture failed' }
+          & .\ManagedVB.exe | Set-Content -Encoding utf8 native-vb.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Native VB fixture failed' }
+          Pop-Location
+          $files = [ordered]@{}
+          Get-ChildItem artifacts -File | ForEach-Object { $files[$_.Name] = [Convert]::ToBase64String([IO.File]::ReadAllBytes($_.FullName)) }
+          @{ compiler='Microsoft .NET Framework v4.0.30319 csc/vbc'; files=$files } | ConvertTo-Json -Depth 3 | Set-Content -Encoding utf8 artifacts/fixtures.json
+          Copy-Item demos/managed/*.cs,demos/managed/*.vb artifacts/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Browser86-managed-fixtures
+          path: artifacts/
+          retention-days: 7
