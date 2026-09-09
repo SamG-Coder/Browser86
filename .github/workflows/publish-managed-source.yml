@@ -1,0 +1,124 @@
+name: Publish and verify managed source
+on:
+  push:
+    branches: [dotnet-framework]
+    paths: ['.source-updates/**', '.github/workflows/publish-managed-source.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: browser86-managed-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/dotnet-framework'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dotnet-framework
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Restore the hash-verified, locally tested source
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f .source-updates/part-01.xzfrag ]; then
+            cat .source-updates/part-*.xzfrag > "$RUNNER_TEMP/managed-update.tar.xz"
+            python3 - <<'PY'
+          import hashlib, os, pathlib, tarfile
+          p = pathlib.Path(os.environ['RUNNER_TEMP']) / 'managed-update.tar.xz'
+          assert hashlib.sha256(p.read_bytes()).hexdigest() == '93258692a76a9f6457b8c12d6b2c3a9848a8d0a9c9beb9950d7748d4b175a47e', 'Transfer checksum mismatch'
+          with tarfile.open(p, 'r:xz') as archive:
+              members = archive.getmembers()
+              assert len(members) == 16 and sum(m.size for m in members) < 3000000
+              for m in members:
+                  name = pathlib.PurePosixPath(m.name)
+                  assert m.isfile() and not name.is_absolute() and '..' not in name.parts
+                  assert m.name.startswith(('src/', 'demos/', 'docs/', 'tests/', 'tools/')) or m.name == '.source-updates/managed-integration.patch'
+              archive.extractall('.', filter='data')
+          PY
+            cp README.md docs/UPSTREAM_README.md
+            git apply --check .source-updates/managed-integration.patch
+            git apply .source-updates/managed-integration.patch
+            node tools/build-managed-demos.mjs
+            python3 - <<'PY'
+          import hashlib, json, pathlib
+          files = json.loads(pathlib.Path('docs/managed-source-manifest.json').read_text())['files']
+          for name, expected in files.items():
+              assert hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest() == expected, 'Tested-source mismatch: ' + name
+          print('Verified all', len(files), 'tested source files')
+          PY
+            rm -r .source-updates
+          fi
+      - name: Native and managed regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm test | tee "$RUNNER_TEMP/Browser86-DotNet-tests.tap"
+      - name: Publish the verified implementation without changing main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name samgcoder
+          git config user.email 13449963+SamG-Coder@users.noreply.github.com
+          cat > "$RUNNER_TEMP/manifest.py" <<'PY'
+          import hashlib, json, pathlib, subprocess
+          paths = subprocess.check_output(['git','ls-files','-z']).decode().split('\0')
+          entries = []
+          for name in sorted(filter(None, paths)):
+              if name == 'MANIFEST.json' or not pathlib.Path(name).is_file():
+                  continue
+              data = pathlib.Path(name).read_bytes()
+              entries.append({'path':name, 'bytes':len(data), 'sha256':hashlib.sha256(data).hexdigest()})
+          pathlib.Path('MANIFEST.json').write_text(json.dumps({'project':'Browser86-DotNet','version':'0.2.0','native_baseline':'ddf12d8547effb095821c8dbf7af97b8ace136a4','files':entries}, indent=2)+'\n')
+          PY
+          git add -A
+          python3 "$RUNNER_TEMP/manifest.py"
+          git add MANIFEST.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Run actual managed CIL with experimental Framework and WinForms support"
+            git push origin HEAD:dotnet-framework
+          fi
+      - name: Install the optional real-browser test dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.57.0
+          npx playwright install --with-deps chromium
+      - name: Test real HTTP, module workers, GDI and IndexedDB
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tools/serve.mjs > "$RUNNER_TEMP/Browser86-http.log" 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8080/ > /dev/null; then break; fi
+            sleep 1
+          done
+          node tools/browser-dotnet.mjs http://127.0.0.1:8080
+      - name: Record successful real-origin browser evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add docs/managed-test-artifacts/
+          python3 "$RUNNER_TEMP/manifest.py"
+          git add MANIFEST.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Record real-origin managed browser execution and persistence tests"
+            git push origin HEAD:dotnet-framework
+          fi
+      - name: Archive the committed source
+        if: always()
+        run: git archive --format=tar HEAD -o "$RUNNER_TEMP/Browser86-DotNet-source.tar"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Browser86-DotNet-verified
+          path: |
+            ${{ runner.temp }}/Browser86-DotNet-source.tar
+            ${{ runner.temp }}/Browser86-DotNet-tests.tap
+            ${{ runner.temp }}/Browser86-http.log
+            docs/managed-test-artifacts/
+          retention-days: 7
