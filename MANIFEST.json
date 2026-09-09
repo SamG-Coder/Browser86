@@ -209,6 +209,16 @@
       "sha256": "56ec26f121eba6cf22a5277c44d667dcb3130316dcb3fcab662b466a8d0bdece"
     },
     {
+      "path": "docs/managed-test-artifacts/http-browser-report.json",
+      "bytes": 957,
+      "sha256": "f9c49eb813bb9eb8f4e2adb9c13a91062a9b13380d2542b68eed9f0764e22944"
+    },
+    {
+      "path": "docs/managed-test-artifacts/managed-winforms-http.png",
+      "bytes": 606697,
+      "sha256": "4cb2b4c81e64641a6226a68a46877f8d8181c5b949408d9909f9748f5ba52bf8"
+    },
+    {
       "path": "docs/managed-test-artifacts/offline-browser-report.json",
       "bytes": 909,
       "sha256": "8a23843e0b107807c783a3d199bcb2dcebdf34f0aef82f2b0a5a4c1278c04389"

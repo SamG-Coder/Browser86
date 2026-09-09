@@ -1,0 +1,18 @@
+{
+  "mode": "Real HTTP origin; unmodified CSP, module workers and IndexedDB",
+  "url": "http://127.0.0.1:8080",
+  "browser": "143.0.7499.4",
+  "checks": [
+    "Managed fixture loader, package import module worker and CIL inspection work under the served CSP",
+    "ManagedConsole.exe executes in a real runtime module worker and exits 0",
+    "ManagedAnyCPU.exe executes in a real runtime module worker and exits 0",
+    "ManagedVB.exe executes in a real runtime module worker and exits 0",
+    "Browser keyboard and mouse input execute compiled WinForms event handlers; guest controls are Canvas surfaces",
+    "Compiled System.Drawing call reaches the GDI bridge and produces the expected pixel",
+    "Worker snapshots persist the managed file in real IndexedDB",
+    "Reload restores managed executable inspection and saved file contents",
+    "Standalone managed EXE import follows the same execution path"
+  ],
+  "pageErrors": [],
+  "result": "PASS"
+}
