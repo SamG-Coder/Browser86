@@ -1,0 +1,29 @@
+{
+  "description": "SHA-256 of the locally tested managed implementation and integration files",
+  "files": {
+    "README.md": "12a7ddea59887e38dfc3e8df0b7bc87799828c66b11f7b794aa259f9a3a0f227",
+    "demos/browser86-managed-demo.zip": "06fd84e07d6f65f056741b0080f97c6050c3c326e3d74741434f892fb5d1ad8f",
+    "demos/managed/fixtures.json": "936b0736edd041088c1f827220f6768c41768ac39ae27862198a064e6bb9d48e",
+    "docs/COMPATIBILITY.md": "da542f750fd2450621bdd16efc5d0c1e11bcd52702cb9b06393785ff6bafd438",
+    "docs/DOTNET.md": "ca98009309309faa853a2917bdf6432f5cd4a11a352aeda63c4de2f8ab3e0184",
+    "docs/DOTNET_TEST_REPORT.md": "8ea1171c538ad224bdbce27a5a6ad8afccd9353f2a63a52bf18ec02b34e3d428",
+    "docs/UPSTREAM_README.md": "195790f292f953a40396cae7a4e0caa3252e6b11c49c6cfae4d233bcc665f135",
+    "docs/managed-test-artifacts/offline-browser-report.json": "8a23843e0b107807c783a3d199bcb2dcebdf34f0aef82f2b0a5a4c1278c04389",
+    "index.html": "1b0cc67a68e617f94036174e59db058f41de55c91be4e59e87c934bcd25b7677",
+    "package.json": "36a163adb198346d9873b9d47bcfd81a137b4e6304e4275b2dab333e9007571f",
+    "src/app.js": "3c75932076d564f0b7f07314ff6a9e07898609bcac48ebd29e9903be92031965",
+    "src/import-worker.js": "f36aceb75d601117d97fe1cb0d5a554a91b0d5ca0c44fff104559293255f496e",
+    "src/runtime-worker.js": "1818b4b7cd6f772e62479b4b6c2cff4b6197f1515515035783fcd64e10d856f5",
+    "src/runtime/dotnet/bcl.js": "0b73e440ffb04f6b2398633291fc86453400a06bb84167d2299e2a8c2044bc84",
+    "src/runtime/dotnet/forms.js": "136a28fc66639fa6bdeeb3192a19207b671cba88078f5bf64b9e6060a3569634",
+    "src/runtime/dotnet/metadata.js": "7f1a360e4629496e72f056a23fb8410daede238148ea419047cec7a042f396e1",
+    "src/runtime/dotnet/runtime.js": "f9e9f86f9069e273fdff805c9cf5a1818ab233af67d9180b43939882864b88c4",
+    "src/runtime/dotnet/values.js": "920ce5f97c95d68912b3abb12467088cbf9b09f0631f31ffaa9a095bc751120d",
+    "src/runtime/inspect.js": "bc3ad976f13dd6ce4d9fc16e4a5d5f40f6e4560db6ef9331a2e36502d648e1d5",
+    "src/runtime/process.js": "9ab52c92d7db49fcc8a23a441821f99d957d2958206714d8a4f15a2393b0c68f",
+    "tests/dotnet.test.mjs": "d5adbfbc270914edf6158390cd395352736314e6082454998b13dbb70c0d5972",
+    "tools/browser-dotnet-offline.py": "ed251948645537be76d1f7a6d0412afdb5946e9b27452e874eb72ff4cba66f37",
+    "tools/browser-dotnet.mjs": "38e009be82c4b3550eae88ec28c5f90f3d204bba25699b02885e56ae9e842ee4",
+    "tools/build-managed-demos.mjs": "2838bf2e237d9f900a8b6496ad2cdef89a8d65084ef1b7bdb3c21f286c9579c0"
+  }
+}

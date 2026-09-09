@@ -1,0 +1,18 @@
+{
+  "mode": "Offline about:blank; original application and workers with test-only origin adapters",
+  "httpModuleDeliveryTested": false,
+  "realIndexedDBTested": false,
+  "deployedCSPTested": false,
+  "checks": [
+    "Compiled managed demo package imported by the original import worker; four runnable EXEs",
+    "ManagedConsole.exe executes through runtime Worker and displays expected output",
+    "ManagedAnyCPU.exe executes through runtime Worker and displays expected output",
+    "ManagedVB.exe executes through runtime Worker and displays expected output",
+    "Canvas EDIT keyboard input reaches compiled Click handler; guest label is updated",
+    "Compiled System.Drawing FillRectangle reaches GDI and paints expected pixel [30,120,200]",
+    "Guest close exits Main and sends saved virtual file to the test store adapter"
+  ],
+  "browser": "144.0.7559.96",
+  "pageErrors": [],
+  "result": "PASS"
+}

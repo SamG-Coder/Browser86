@@ -1,7 +1,17 @@
 {
-  "name": "browser86", "version": "0.1.0", "private": true,
-  "description": "An original browser-hosted x86 interpreter, PE loader and small Win32 compatibility runtime. No Wine.",
-  "type": "module", "license": "MIT",
-  "scripts": {"start": "node tools/serve.mjs", "test": "node --test tests/*.test.mjs", "demos": "python tools/build-demos.py"},
-  "engines": {"node": ">=22"}
+  "name": "browser86-dotnet",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Browser86 clone with an original CIL interpreter and experimental .NET Framework / WinForms subset.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "demos": "python tools/build-demos.py",
+    "managed-demos": "node tools/build-managed-demos.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }

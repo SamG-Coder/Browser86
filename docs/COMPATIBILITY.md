@@ -1,3 +1,5 @@
+> This is the inherited **native x86** compatibility report. The clone adds a separate experimental managed path; see [DOTNET.md](DOTNET.md) and [DOTNET_TEST_REPORT.md](DOTNET_TEST_REPORT.md). Statements below that reject .NET describe the native loader, not that separate path.
+
 # Compatibility contract — Browser86 0.1
 
 ## The honest boundary

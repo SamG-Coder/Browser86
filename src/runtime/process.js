@@ -1,7 +1,8 @@
 import {Memory,Heap,alignUp,ansiEncode} from './memory.js';
 import {CPU,EAX,ESP} from './cpu.js';
 import {VirtualFileSystem} from './vfs.js';
-import {PELoader} from './pe.js';
+import {PELoader,PEImage} from './pe.js';
+import {ManagedRuntime} from './dotnet/runtime.js';
 import {Win32} from './win32.js';
 import {RuntimeFault,requireThat,hex} from './errors.js';
 const EXIT_TRAP=0xFFFFFF00;
@@ -15,6 +16,14 @@ export class GuestProcess {
     for(const [offset,value]of [[0,0xFFFFFFFF],[4,this.stackTop],[8,this.stackBase],[0x18,this.teb],[0x20,4],[0x24,8],[0x2C,this.tlsArray],[0x30,this.peb]])this.memory.w32(this.teb+offset,value);
     this.memory.w32(this.peb+0x18,0x100);this.commandLine='"'+this.exePath.replaceAll('/','\\')+'"'+(args?' '+args:'');this.commandA=this.heap.string(this.commandLine);this.commandW=this.heap.string(this.commandLine,true);
     this.apis=new Win32(this);this.loader=new PELoader(this);
+    const candidate=new PEImage(this.vfs.readFile(this.exePath),this.exePath);
+    if(candidate.managed){
+      this.managed=new ManagedRuntime(this,candidate);
+      this.main={path:this.exePath,name:candidate.name,image:candidate,base:0,size:candidate.sizeOfImage,entry:this.managed.main.entryToken};
+      this.status='running';
+      this.emit('loaded',{exe:{...candidate.summary(),managedInfo:this.managed.main.summary()},modules:[],missing:[],cwd:this.vfs.cwd,notes:['Experimental CIL interpreter and explicit Framework subset; not the Microsoft CLR.']});
+      this.managed.start();return;
+    }
     this.main=this.loader.load(this.exePath,{main:true});requireThat(!this.main.image.isDll,'PE_DLL','Choose an EXE, not a DLL.');this.memory.w32(this.peb+8,this.main.base);
     this.cpu.push(EXIT_TRAP);this.cpu.eip=this.main.entry;this.status='running';
     const init=this.loader.initializers.splice(0);if(init.length)this.sequence(init,()=>{});
@@ -68,16 +77,16 @@ export class GuestProcess {
   }
   apiArg(index){return this.memory.u32(this.apiStack+4+index*4);}
   poll(){const now=performance.now();for(const t of this.timers.values()){if(now>=t.next){t.next=now+t.period;this.postMessage(t.hwnd,0x113,t.id,t.proc);}}if(this.waiting){const result=this.waiting.check();if(result!==undefined){const w=this.waiting;this.waiting=null;w.complete(result);}}}
-  tick(budget=20000,milliseconds=12){if(this.status!=='running')return;this.poll();if(this.waiting)return;const end=performance.now()+milliseconds;
+  tick(budget=20000,milliseconds=12){if(this.status!=='running')return;if(this.managed)return this.managed.tick(budget,milliseconds);this.poll();if(this.waiting)return;const end=performance.now()+milliseconds;
     for(let i=0;i<budget;i++){if(this.status!=='running'||this.waiting)break;if(this.breakpoints.has(this.cpu.eip)){this.pause('Breakpoint at '+hex(this.cpu.eip));break;}this.cpu.step();if(this.cpu.instructions>=this.instructionsLimit)throw new RuntimeFault('INSTRUCTION_LIMIT','Instruction budget exceeded. Increase the explicit limit or inspect a possible infinite loop.',{limit:this.instructionsLimit});if((i&255)===255&&performance.now()>=end)break;}
   }
   pause(reason='Paused by user'){this.status='paused';this.pauseReason=reason;this.emit('status',{status:this.status,reason});}
   resume(){if(this.status==='paused'){this.status='running';this.emit('status',{status:this.status});}}
-  stepOne(){if(this.status!=='paused')return;this.poll();if(!this.waiting)this.cpu.step();this.emit('debug',this.debug());}
-  exit(code=0){this.status='exited';this.exitCode=code>>>0;this.waiting=null;this.closeFiles();this.emit('exit',{code:this.exitCode,instructions:this.cpu.instructions});}
+  stepOne(){if(this.status!=='paused')return;this.poll();if(!this.waiting){if(this.managed)this.managed.stepOne();else this.cpu.step();}this.emit('debug',this.debug());}
+  exit(code=0){this.status='exited';this.exitCode=code>>>0;this.waiting=null;this.closeFiles();this.emit('exit',{code:this.exitCode,instructions:this.cpu.instructions,runtime:this.managed?'cil':'x86'});}
   stop(){if(!['exited','stopped','fault'].includes(this.status)){this.status='stopped';this.waiting=null;this.closeFiles();this.emit('status',{status:this.status,reason:'Stopped by user; virtual files are retained.'});}}
   postMessage(hwnd,message,wParam=0,lParam=0){requireThat(this.messageQueue.length<8192,'MESSAGE_LIMIT','Guest message queue limit reached.');this.messageQueue.push({hwnd:hwnd>>>0,message:message>>>0,wParam:wParam>>>0,lParam:lParam>>>0,time:Math.floor(performance.now()-this.started),x:0,y:0});}
   inputEvent(event){if(event.kind==='console'){const text=String(event.text);requireThat(text.length<=65536&&this.input.length+text.length+2<=1024*1024,'INPUT_LIMIT','Console input queue limit reached.');const data=ansiEncode(text+'\r\n');for(const byte of data)this.input.push(byte);return;}if(event.kind==='dialog'){this.dialogResults.set(event.id,event.result);return;}this.apis.gui.input(event);}
-  debug(){return {...this.cpu.snapshot(),status:this.status,waiting:this.waiting?.reason||null,apiCalls:this.apiCalls,lastApi:this.lastApi,committedBytes:this.memory.allocated,mappings:this.memory.mappings(),modules:this.loader.order.map(m=>({path:m.path,base:hex(m.base),size:m.size})),callTrace:[...this.callTrace],missing:this.apis.missingImports(),notes:[...this.runtimeNotes]};}
+  debug(){return {...this.cpu.snapshot(),...(this.managed?.debug()||{}),status:this.status,waiting:this.waiting?.reason||null,apiCalls:this.apiCalls,lastApi:this.lastApi,committedBytes:this.memory.allocated,mappings:this.memory.mappings(),modules:this.loader.order.map(m=>({path:m.path,base:hex(m.base),size:m.size})),callTrace:[...this.callTrace],missing:this.apis.missingImports(),notes:[...this.runtimeNotes]};}
   fault(error){this.status='fault';this.closeFiles();const fault=error instanceof RuntimeFault?error.toJSON():{code:'HOST_RUNTIME_ERROR',message:String(error?.message||error),detail:{stack:error?.stack}};this.emit('fault',{...fault,debug:this.debug()});}
 }
