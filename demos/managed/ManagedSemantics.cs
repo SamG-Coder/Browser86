@@ -17,7 +17,7 @@ class ManagedSemantics {
     static int total;
     static string flow = "";
     static T Identity<T>(T value) { return value; }
-    static int Double(int n) { return n * 2; }
+    static int Twice(int n) { return n * 2; }
     static int Switch(int n) { switch (n) { case 0:return 11; case 1:return 22; case 2:return 33; case 3:return 44; default:return 99; } }
     static void Check(bool ok, string name) { if (!ok) throw new Exception("FAILED: " + name); total++; Console.WriteLine("PASS " + name); }
     static void Nested() {
@@ -40,7 +40,7 @@ class ManagedSemantics {
         Check(a.X == 8 && b.X == 11, "struct construction and value copies");
         Pair[] pairs = new Pair[2]; pairs[1] = b; pairs[1].Add(2);
         Check(pairs[1].X == 13 && b.X == 11, "struct array managed references");
-        Func<int, int> fn = Double; Check(fn(12) == 24, "delegate invocation");
+        Func<int, int> fn = Twice; Check(fn(12) == 24, "delegate invocation");
         Check(Switch(0) == 11 && Switch(3) == 44 && Switch(20) == 99, "switch targets");
         int[] data = { 10, 20, 30, 40, 50, 60 };
         Check(data[5] == 60, "FieldRVA array initializer");
