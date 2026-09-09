@@ -1,0 +1,24 @@
+name: Verify Browser86 managed runtime
+on:
+  push:
+    branches: [dotnet-framework]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Native and managed runtime tests
+        run: npm test
+      - name: Build portable source archive
+        run: git archive --format=tar HEAD -o Browser86-source.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Browser86-DotNet-source
+          path: Browser86-source.tar
+          retention-days: 2
