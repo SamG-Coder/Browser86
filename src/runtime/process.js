@@ -6,7 +6,7 @@ import {Win32} from './win32.js';
 import {RuntimeFault,requireThat,hex} from './errors.js';
 const EXIT_TRAP=0xFFFFFF00;
 export class GuestProcess {
-  constructor({entries=[],exePath,args='',memoryMiB=256,emit=()=>{},instructionLimit=2_000_000_000}={}) {
+  constructor({entries=[],exePath,args='',memoryMiB=256,emit=()=>{},instructionLimit=2_000_000_000,initializeNative=true}={}) {
     this.emit=emit;this.vfs=new VirtualFileSystem(entries);this.exePath=this.vfs.path(exePath);this.vfs.cwd=this.exePath.slice(0,this.exePath.lastIndexOf('/'))||'C:/';
     this.args=args;this.memory=new Memory(Math.max(32,Math.min(512,memoryMiB))*1024*1024);this.heap=new Heap(this.memory);this.cpu=new CPU(this.memory,a=>this.bridge(a));this.status='loading';this.exitCode=null;this.started=performance.now();this.lastError=0;this.handles=new Map();this.nextHandle=0x1000;this.callbacks=new Map();this.nextCallback=0xF1000000;this.callTrace=[];this.instructionsLimit=instructionLimit;this.waiting=null;this.messageQueue=[];this.input=[];this.dialogResults=new Map();this.nextDialog=1;this.timers=new Map();this.breakpoints=new Set();this.pauseReason='';this.apiCalls=0;this.lastApi=null;this.runtimeNotes=[];
     this.environment=new Map(Object.entries({OS:'Windows_NT',WINDIR:'C:\\Windows',SYSTEMROOT:'C:\\Windows',SYSTEMDRIVE:'C:',COMSPEC:'',TEMP:'C:\\Temp',TMP:'C:\\Temp',USERPROFILE:'C:\\Users\\Browser',USERNAME:'Browser',PATH:'C:\\Windows\\System32;C:\\Windows',BROWSER86:'1'}));
@@ -15,6 +15,8 @@ export class GuestProcess {
     for(const [offset,value]of [[0,0xFFFFFFFF],[4,this.stackTop],[8,this.stackBase],[0x18,this.teb],[0x20,4],[0x24,8],[0x2C,this.tlsArray],[0x30,this.peb]])this.memory.w32(this.teb+offset,value);
     this.memory.w32(this.peb+0x18,0x100);this.commandLine='"'+this.exePath.replaceAll('/','\\')+'"'+(args?' '+args:'');this.commandA=this.heap.string(this.commandLine);this.commandW=this.heap.string(this.commandLine,true);
     this.apis=new Win32(this);this.loader=new PELoader(this);
+    // ManagedProcess reuses the same VFS, USER32/GDI and handles, but supplies its own CPU-independent CIL execution path.
+    if(!initializeNative)return;
     this.main=this.loader.load(this.exePath,{main:true});requireThat(!this.main.image.isDll,'PE_DLL','Choose an EXE, not a DLL.');this.memory.w32(this.peb+8,this.main.base);
     this.cpu.push(EXIT_TRAP);this.cpu.eip=this.main.entry;this.status='running';
     const init=this.loader.initializers.splice(0);if(init.length)this.sequence(init,()=>{});

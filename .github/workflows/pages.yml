@@ -35,8 +35,8 @@ jobs:
           mkdir -p _site/demos _site/docs
           cp index.html styles.css LICENSE _site/
           cp -R src _site/src
-          cp demos/browser86-demo.zip _site/demos/
-          cp docs/COMPATIBILITY.md _site/docs/
+          cp demos/browser86-demo.zip demos/browser86-managed.zip _site/demos/
+          cp docs/COMPATIBILITY.md docs/DOTNET.md docs/DOTNET_VERIFICATION.md _site/docs/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site

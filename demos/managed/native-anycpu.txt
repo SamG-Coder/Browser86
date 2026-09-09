@@ -1,0 +1,31 @@
+Browser86 .NET Framework / compiled CIL
+PASS recursive calls
+PASS loop and branch
+PASS int32 wrap
+PASS unsigned shift
+PASS exact int64
+PASS double arithmetic
+PASS float arithmetic
+PASS managed byref
+PASS arrays
+PASS boxing
+PASS virtual dispatch and static initializer
+PASS string methods
+PASS string format
+PASS StringBuilder
+PASS generic List
+PASS generic Dictionary
+PASS numeric parsing
+PASS Math
+PASS virtual filesystem
+PASS Path
+PASS cross-frame exception and finally
+finally-return
+PASS return through finally
+PASS divide by zero exception
+PASS array bounds exception
+PASS checked integer overflow
+PASS packaged assembly resolution
+PASS command line arguments
+PASS PInvoke kernel32 bridge
+CHECKS=28

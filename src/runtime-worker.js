@@ -1,12 +1,12 @@
-import {GuestProcess} from './runtime/process.js';
+import {createProcess} from './runtime/factory.js';
 let process=null,loop=null,draws=[],lastStats=0,lastSave=0,lastRevision=-1,snapshotPending=false;
 const emit=(type,data)=>{if(type==='draw'){draws.push(data);if(draws.length>=512)flush();}else{if(type==='fault'||type==='exit')flush();postMessage({...data,type});}};
 function flush(){if(draws.length){postMessage({type:'drawBatch',commands:draws});draws=[];}}
 function snapshot(force=false){if(!process)return;if(!force&&snapshotPending)return;if(force||process.vfs.revision!==lastRevision){const revision=process.vfs.revision;const entries=process.vfs.snapshot();lastRevision=revision;snapshotPending=true;postMessage({type:'snapshot',entries,revision},entries.filter(e=>e.data).map(e=>e.data.buffer));}}
 function schedule(){clearTimeout(loop);loop=setTimeout(run,0);}
-function run(){if(!process)return;try{process.tick(20000,10);}catch(e){process.fault(e);}flush();const now=performance.now();if(now-lastStats>500){postMessage({type:'stats',status:process.status,instructions:process.cpu.instructions,apiCalls:process.apiCalls,lastApi:process.lastApi,committedBytes:process.memory.allocated,waiting:process.waiting?.reason,elapsedMs:now-process.started});lastStats=now;}if(now-lastSave>3000){snapshot();lastSave=now;}if(['fault','exited','stopped'].includes(process.status)){snapshot(true);return;}loop=setTimeout(run,process.status==='paused'?60:process.waiting?12:0);}
+function run(){if(!process)return;try{process.tick(20000,10);}catch(e){process.fault(e);}flush();const now=performance.now();if(now-lastStats>500){postMessage({type:'stats',status:process.status,instructions:process.cpu.instructions,apiCalls:process.apiCalls,lastApi:process.lastApi,runtime:process.runtime||'x86',committedBytes:process.memory.allocated+(process.managedAllocated||0),waiting:process.waiting?.reason,elapsedMs:now-process.started});lastStats=now;}if(now-lastSave>3000){snapshot();lastSave=now;}if(['fault','exited','stopped'].includes(process.status)){snapshot(true);return;}loop=setTimeout(run,process.status==='paused'?60:process.waiting?12:0);}
 self.onmessage=event=>{const msg=event.data;try{
-  if(msg.type==='start'){clearTimeout(loop);draws=[];lastRevision=-1;snapshotPending=false;lastStats=-Infinity;lastSave=performance.now();process=null;process=new GuestProcess({...msg,emit});schedule();}
+  if(msg.type==='start'){clearTimeout(loop);draws=[];lastRevision=-1;snapshotPending=false;lastStats=-Infinity;lastSave=performance.now();process=null;process=createProcess({...msg,emit});schedule();}
   else if(msg.type==='saved'){snapshotPending=false;}
   else if(msg.type==='pause'){process?.pause();postMessage({type:'debug',...process.debug()});}
   else if(msg.type==='resume'){process?.resume();schedule();}

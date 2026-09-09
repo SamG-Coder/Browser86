@@ -6,6 +6,10 @@ Browser86 is an original JavaScript IA-32 interpreter, PE32 loader, and **partia
 
 **This is an executable prototype, not universal Windows compatibility.** It executes real 32-bit x86 machine code and can run the eight included supported demonstration programs. It will not run arbitrary modern Windows applications. Importing a package successfully does not mean its software is compatible. See [COMPATIBILITY.md](docs/COMPATIBILITY.md) for the actual boundary.
 
+## Experimental .NET support
+
+Pure-IL PE32 .NET executables can also use the new CIL interpreter. The managed compatibility layer shares the virtual drive and USER32/GDI renderer with native applications. Select **Load compiled .NET demos** in Applications to try the included compiled programs. This is partial Framework support; full WinForms, WPF and arbitrary .NET applications are not supported. See [the managed boundary](docs/DOTNET.md) and [verification report](docs/DOTNET_VERIFICATION.md).
+
 ## Start on Windows
 
 Try the hosted app at **[samg-coder.github.io/Browser86](https://samg-coder.github.io/Browser86/)**. GitHub Pages runs the same client-side runtime; guest packages execute in your browser. Pushes to `main` run the Node tests and publish the static app through [the Pages workflow](.github/workflows/pages.yml).

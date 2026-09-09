@@ -1,0 +1,2 @@
+VB.NET running as compiled CIL
+SUM=55

@@ -1,4 +1,13 @@
 import {readZip} from './runtime/zip.js';
-import {PEImage} from './runtime/pe.js';
+import {inspectExecutable} from './runtime/inspect.js';
 import {decodePackage} from './backup.js';
-self.onmessage=async event=>{try{const raw=event.data.filename&&/\.exe$/i.test(event.data.filename)?[{path:event.data.filename.replace(/^.*[\\/]/,''),data:new Uint8Array(event.data.buffer)}]:await readZip(event.data.buffer,progress=>postMessage({type:'progress',...progress}));const {entries,manifest}=decodePackage(raw);const executables=[];for(const entry of entries){if(!entry.directory&&/\.exe$/i.test(entry.path)){try{const image=new PEImage(entry.data,entry.path);let runnable=true,reason='';try{image.validateRunnable();if(image.isDll){runnable=false;reason='DLL image, not an application.';}}catch(e){runnable=false;reason=e.message;}executables.push({path:/^C:\//i.test(entry.path)?entry.path:'C:/app/'+entry.path,...image.summary(),runnable,reason});}catch(e){executables.push({path:/^C:\//i.test(entry.path)?entry.path:'C:/app/'+entry.path,name:entry.path,runnable:false,reason:e.message,architecture:'Unknown'});}}}postMessage({type:'complete',entries,executables,manifest},entries.map(e=>e.data.buffer));}catch(e){postMessage({type:'error',code:e.code||'IMPORT_ERROR',message:e.message,detail:e.detail});}};
+self.onmessage=async event=>{
+ try{
+  const raw=event.data.filename&&/\.exe$/i.test(event.data.filename)
+   ?[{path:event.data.filename.replace(/^.*[\\/]/,''),data:new Uint8Array(event.data.buffer)}]
+   :await readZip(event.data.buffer,progress=>postMessage({type:'progress',...progress}));
+  const {entries,manifest}=decodePackage(raw);
+  const executables=entries.filter(e=>!e.directory&&/\.exe$/i.test(e.path)).map(e=>inspectExecutable(e.data,e.path));
+  postMessage({type:'complete',entries,executables,manifest},entries.filter(e=>e.data).map(e=>e.data.buffer));
+ }catch(e){postMessage({type:'error',code:e.code||'IMPORT_ERROR',message:e.message,detail:e.detail});}
+};
